@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="17G65" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+    <entity name="AssessmentMethodCode" representedClassName="AssessmentMethodCode" syncable="YES">
+        <attribute name="assessmentMethodCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="assessmentMethodCodeStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumAssessmentMethodCode" inverseEntity="WasteStratum" syncable="YES"/>
+    </entity>
+    <entity name="BorderlineCode" representedClassName="BorderlineCode" syncable="YES">
+        <attribute name="borderlineCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="borderlineCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceBorderlineCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="ButtEndCode" representedClassName="ButtEndCode" syncable="YES">
+        <attribute name="buttEndCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="buttEndCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceButtEndCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="CheckerStatusCode" representedClassName="CheckerStatusCode" syncable="YES">
+        <attribute name="checkerStatusCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="checkerStatusCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceCheckerStatusCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="CommentCode" representedClassName="CommentCode" syncable="YES">
+        <attribute name="commentCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="commentCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceCommentCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="DecayTypeCode" representedClassName="DecayTypeCode" syncable="YES">
+        <attribute name="decayTypeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="decayTypeCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceDecayTypeCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="EFWCoastStat" representedClassName="EFWCoastStat" syncable="YES">
+        <attribute name="gradeJValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeJValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeJVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeJVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeUHBValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeUHBValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeUHBVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeUHBVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeXHBValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeXHBValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeXHBVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeXHBVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeYValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeYValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeYVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="gradeYVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+    </entity>
+    <entity name="EFWInteriorStat" representedClassName="EFWInteriorStat" syncable="YES">
+        <attribute name="grade4Value" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade4ValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade4Volume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade4VolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade5Value" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade5ValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade5Volume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade5VolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade12Value" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade12ValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade12Volume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade12VolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade124Value" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade124ValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade124Volume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="grade124VolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalBillVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlValueHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalControlVolumeHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+    </entity>
+    <entity name="ExportUserData" representedClassName="ExportUserData" syncable="YES">
+        <attribute name="clientCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="districtCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="emailAddress" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="licenseeContact" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="telephoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="HarvestMethodCode" representedClassName="HarvestMethodCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="harvestMethodCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="harvestMethodCodeStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumHarvestMethodCode" inverseEntity="WasteStratum" syncable="YES"/>
+    </entity>
+    <entity name="InteriorCedarMaturityCode" representedClassName="InteriorCedarMaturityCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="interiorCedarCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="interiorCedarMaturityCodeBlock" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockInteriorCedarMaturityCode" inverseEntity="WasteBlock" syncable="YES"/>
+    </entity>
+    <entity name="MaterialKindCode" representedClassName="MaterialKindCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="materialKindCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="materialKindCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceMaterialKindCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="MaturityCode" representedClassName="MaturityCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="maturityCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="maturityCodeBlock" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockMaturityCode" inverseEntity="WasteBlock" syncable="YES"/>
+    </entity>
+    <entity name="MonetaryReductionFactorCode" representedClassName="MonetaryReductionFactorCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="monetaryReductionFactorCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="monetaryReductionFactorCodeTimbermark" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Timbermark" inverseName="timbermarkMonetaryReductionFactorCode" inverseEntity="Timbermark" syncable="YES"/>
+    </entity>
+    <entity name="PileShapeCode" representedClassName="PileShapeCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="pileShapeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="pileShapeCodePile" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePile" inverseName="pilePileShapeCode" inverseEntity="WastePile" syncable="YES"/>
+    </entity>
+    <entity name="PlotSizeCode" representedClassName="PlotSizeCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="plotMultipler" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="plotSizeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="plotSizeCodeStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumPlotSizeCode" inverseEntity="WasteStratum" syncable="YES"/>
+    </entity>
+    <entity name="ScaleGradeCode" representedClassName="ScaleGradeCode" syncable="YES">
+        <attribute name="areaType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="scaleGradeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="surveyType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="scaleGradeCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceScaleGradeCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="ScaleSpeciesCode" representedClassName="ScaleSpeciesCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="scaleSpeciesCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="surveyType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="scaleSpeciesCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceScaleSpeciesCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="ShapeCode" representedClassName="ShapeCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="shapeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="shapeCodePlot" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePlot" inverseName="plotShapeCode" inverseEntity="WastePlot" syncable="YES"/>
+    </entity>
+    <entity name="SiteCode" representedClassName="SiteCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="siteCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="siteCodeBlock" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockSiteCode" inverseEntity="WasteBlock" syncable="YES"/>
+    </entity>
+    <entity name="SnowCode" representedClassName="SnowCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="snowCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="snowCodeBlock" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockSnowCode" inverseEntity="WasteBlock" syncable="YES"/>
+    </entity>
+    <entity name="StratumTypeCode" representedClassName="StratumTypeCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="stratumTypeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="stratumTypeCodeStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumStratumTypeCode" inverseEntity="WasteStratum" syncable="YES"/>
+    </entity>
+    <entity name="Timbermark" representedClassName="Timbermark" syncable="YES">
+        <attribute name="allSppJWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="area" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="avoidable" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="benchmark" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="coniferPrice" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="coniferWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deciduousPrice" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deciduousWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="hembalPrice" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="hembalWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="orgAllSppJWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="orgDeciduousWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="orgHembalWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="orgWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="orgXWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="orgYWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="primaryInd" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="timbermark" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="wmrf" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="xPrice" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="xWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="yPrice" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="yWMRF" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="timbermarkBlock" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockTimbermark" inverseEntity="WasteBlock" syncable="YES"/>
+        <relationship name="timbermarkMonetaryReductionFactorCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MonetaryReductionFactorCode" inverseName="monetaryReductionFactorCodeTimbermark" inverseEntity="MonetaryReductionFactorCode" syncable="YES"/>
+    </entity>
+    <entity name="TopEndCode" representedClassName="TopEndCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="topEndCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="topEndCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceTopEndCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="WasteBlock" representedClassName="WasteBlock" syncable="YES">
+        <attribute name="blockID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="blockNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="blockStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="checkAvoidX" optional="YES" attributeType="Decimal" syncable="YES"/>
+        <attribute name="checkAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkComplete" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="checkDeciduousRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkerName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="checkHembalRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkSppJRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkXRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkYRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="cruiseArea" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="cutBlockId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cuttingPermitId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="deltaAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="entryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="exempted" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isAggregate" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="licenceNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="loggingCompleteDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="netArea" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="notation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="npNFArea" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="position" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="professional" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ratioSamplingEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="ratioSamplingLog" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="regionId" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="registrationNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="reportingUnit" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="reportingUnitId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="returnNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyDeciduousRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyHembalRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyorLicence" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="surveyorName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="surveySppJRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyXRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyYRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="userCreated" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="wasteAssessmentAreaID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="yearLoggedFrom" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="yearLoggedTo" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="blockCheckMaturityCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MaturityCode" syncable="YES"/>
+        <relationship name="blockCheckSiteCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SiteCode" syncable="YES"/>
+        <relationship name="blockCoastStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWCoastStat" syncable="YES"/>
+        <relationship name="blockInteriorCedarMaturityCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="InteriorCedarMaturityCode" inverseName="interiorCedarMaturityCodeBlock" inverseEntity="InteriorCedarMaturityCode" syncable="YES"/>
+        <relationship name="blockInteriorStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWInteriorStat" syncable="YES"/>
+        <relationship name="blockMaturityCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MaturityCode" inverseName="maturityCodeBlock" inverseEntity="MaturityCode" syncable="YES"/>
+        <relationship name="blockSiteCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SiteCode" inverseName="siteCodeBlock" inverseEntity="SiteCode" syncable="YES"/>
+        <relationship name="blockSnowCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SnowCode" inverseName="snowCodeBlock" inverseEntity="SnowCode" syncable="YES"/>
+        <relationship name="blockStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumBlock" inverseEntity="WasteStratum" syncable="YES"/>
+        <relationship name="blockTimbermark" toMany="YES" deletionRule="Nullify" destinationEntity="Timbermark" inverseName="timbermarkBlock" inverseEntity="Timbermark" syncable="YES"/>
+    </entity>
+    <entity name="WasteClassCode" representedClassName="WasteClassCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="wasteClassCode" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="wasteClassCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceWasteClassCode" inverseEntity="WastePiece" syncable="YES"/>
+    </entity>
+    <entity name="WasteLevelCode" representedClassName="WasteLevelCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="wasteLevelCode" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="wasteLevelCodeStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumWasteLevelCode" inverseEntity="WasteStratum" syncable="YES"/>
+    </entity>
+    <entity name="WastePiece" representedClassName="WastePiece" syncable="YES">
+        <attribute name="addLength" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="buttDeduction" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="buttDiameter" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="checkAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkPieceVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="densityEstimate" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="estimatedPercent" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="estimatedVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="farEnd" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="isSurvey" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="length" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="lengthDeduction" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String" maxValueString="256" syncable="YES"/>
+        <attribute name="piece" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="pieceNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pieceValue" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="pieceVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="sortNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="topDeduction" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="topDiameter" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="usercode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="volOverHa" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="pieceBorderlineCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BorderlineCode" inverseName="borderlineCodePiece" inverseEntity="BorderlineCode" syncable="YES"/>
+        <relationship name="pieceButtEndCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ButtEndCode" inverseName="buttEndCodePiece" inverseEntity="ButtEndCode" syncable="YES"/>
+        <relationship name="pieceCheckerStatusCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CheckerStatusCode" inverseName="checkerStatusCodePiece" inverseEntity="CheckerStatusCode" syncable="YES"/>
+        <relationship name="pieceCommentCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CommentCode" inverseName="commentCodePiece" inverseEntity="CommentCode" syncable="YES"/>
+        <relationship name="pieceDecayTypeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DecayTypeCode" inverseName="decayTypeCodePiece" inverseEntity="DecayTypeCode" syncable="YES"/>
+        <relationship name="pieceMaterialKindCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MaterialKindCode" inverseName="materialKindCodePiece" inverseEntity="MaterialKindCode" syncable="YES"/>
+        <relationship name="piecePlot" maxCount="1" deletionRule="Nullify" destinationEntity="WastePlot" inverseName="plotPiece" inverseEntity="WastePlot" syncable="YES"/>
+        <relationship name="pieceScaleGradeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ScaleGradeCode" inverseName="scaleGradeCodePiece" inverseEntity="ScaleGradeCode" syncable="YES"/>
+        <relationship name="pieceScaleSpeciesCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ScaleSpeciesCode" inverseName="scaleSpeciesCodePiece" inverseEntity="ScaleSpeciesCode" syncable="YES"/>
+        <relationship name="pieceTopEndCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TopEndCode" inverseName="topEndCodePiece" inverseEntity="TopEndCode" syncable="YES"/>
+        <relationship name="pieceWasteClassCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteClassCode" inverseName="wasteClassCodePiece" inverseEntity="WasteClassCode" syncable="YES"/>
+    </entity>
+    <entity name="WastePile" representedClassName="WastePile" syncable="YES">
+        <attribute name="alPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="arPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="asPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="baPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="biPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="cePercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="coPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="cyPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="fiPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="height" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="hePercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="laPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="length" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="loPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="maPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="measuredHeight" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="measuredLength" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="measuredPileArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="measuredPileVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="measuredWidth" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="otPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="pileArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="pileId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="pileNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pileVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="sampleNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="spPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="uuPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="wbPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="whPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="width" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="wiPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="yePercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="pilePileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PileShapeCode" inverseName="pileShapeCodePile" inverseEntity="PileShapeCode" syncable="YES"/>
+        <relationship name="pilePlot" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WastePlot" inverseName="plotPile" inverseEntity="WastePlot" syncable="YES"/>
+    </entity>
+    <entity name="WastePlot" representedClassName="WastePlot" syncable="YES">
+        <attribute name="aggregateCutblock" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="aggregateCuttingPermit" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="aggregateLicence" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="assistant" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="baseline" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="certificateNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="checkAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="checkerMeasurePercent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="checkNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="dryGradePercent" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="dryVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="greenGradePercent" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="greenVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="isMeasurePlot" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="isSurvey" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="plotID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="plotNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="returnNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sawlogPercent" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="strip" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyedMeasurePercent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyorName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="weather" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="plotCoastStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWCoastStat" syncable="YES"/>
+        <relationship name="plotInteriorStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWInteriorStat" syncable="YES"/>
+        <relationship name="plotPiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="piecePlot" inverseEntity="WastePiece" syncable="YES"/>
+        <relationship name="plotPile" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePile" inverseName="pilePlot" inverseEntity="WastePile" syncable="YES"/>
+        <relationship name="plotShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ShapeCode" inverseName="shapeCodePlot" inverseEntity="ShapeCode" syncable="YES"/>
+        <relationship name="plotSizeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlotSizeCode" syncable="YES"/>
+        <relationship name="plotStratum" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumPlot" inverseEntity="WasteStratum" syncable="YES"/>
+    </entity>
+    <entity name="WasteStratum" representedClassName="WasteStratum" syncable="YES">
+        <attribute name="checkAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkTotalEstimatedVolume" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="deltaAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="isPileStratum" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="isSurvey" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="measurePlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="n1sample" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="n2sample" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String" maxValueString="256" syncable="YES"/>
+        <attribute name="orgMeasurePlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="orgPredictionPlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="predictionPlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="ratioSamplingLog" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stratum" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stratumArea" optional="YES" attributeType="Decimal" defaultValueString="0" syncable="YES"/>
+        <attribute name="stratumID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="stratumSurveyArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="totalEstimatedVolume" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="stratumAssessmentMethodCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AssessmentMethodCode" inverseName="assessmentMethodCodeStratum" inverseEntity="AssessmentMethodCode" syncable="YES"/>
+        <relationship name="stratumBlock" maxCount="1" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockStratum" inverseEntity="WasteBlock" syncable="YES"/>
+        <relationship name="stratumCoastStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWCoastStat" syncable="YES"/>
+        <relationship name="stratumHarvestMethodCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="HarvestMethodCode" inverseName="harvestMethodCodeStratum" inverseEntity="HarvestMethodCode" syncable="YES"/>
+        <relationship name="stratumInteriorStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWInteriorStat" syncable="YES"/>
+        <relationship name="stratumPlot" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePlot" inverseName="plotStratum" inverseEntity="WastePlot" syncable="YES"/>
+        <relationship name="stratumPlotSizeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlotSizeCode" inverseName="plotSizeCodeStratum" inverseEntity="PlotSizeCode" syncable="YES"/>
+        <relationship name="stratumStratumTypeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StratumTypeCode" inverseName="stratumTypeCodeStratum" inverseEntity="StratumTypeCode" syncable="YES"/>
+        <relationship name="stratumWasteLevelCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteLevelCode" inverseName="wasteLevelCodeStratum" inverseEntity="WasteLevelCode" syncable="YES"/>
+        <relationship name="stratumWasteTypeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteTypeCode" inverseName="wasteTypeCodeStratum" inverseEntity="WasteTypeCode" syncable="YES"/>
+    </entity>
+    <entity name="WasteTypeCode" representedClassName="WasteTypeCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="wasteTypeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="wasteTypeCodeStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumWasteTypeCode" inverseEntity="WasteStratum" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="AssessmentMethodCode" positionX="-857" positionY="-25" width="128" height="133"/>
+        <element name="BorderlineCode" positionX="403" positionY="11" width="128" height="133"/>
+        <element name="ButtEndCode" positionX="412" positionY="155" width="128" height="135"/>
+        <element name="CheckerStatusCode" positionX="423" positionY="299" width="128" height="135"/>
+        <element name="CommentCode" positionX="-27" positionY="650" width="128" height="133"/>
+        <element name="DecayTypeCode" positionX="72" positionY="9" width="128" height="133"/>
+        <element name="EFWCoastStat" positionX="594" positionY="-252" width="128" height="405"/>
+        <element name="EFWInteriorStat" positionX="621" positionY="504" width="128" height="405"/>
+        <element name="ExportUserData" positionX="-1179" positionY="114" width="128" height="120"/>
+        <element name="HarvestMethodCode" positionX="-713" positionY="-54" width="173" height="133"/>
+        <element name="InteriorCedarMaturityCode" positionX="-1120" positionY="-157" width="128" height="135"/>
+        <element name="MaterialKindCode" positionX="-36" positionY="488" width="128" height="133"/>
+        <element name="MaturityCode" positionX="-603" positionY="648" width="128" height="135"/>
+        <element name="MonetaryReductionFactorCode" positionX="-1287" positionY="326" width="189" height="133"/>
+        <element name="PileShapeCode" positionX="-1098" positionY="-135" width="128" height="135"/>
+        <element name="PlotSizeCode" positionX="-254" positionY="567" width="128" height="150"/>
+        <element name="ScaleGradeCode" positionX="63" positionY="158" width="128" height="165"/>
+        <element name="ScaleSpeciesCode" positionX="421" positionY="446" width="128" height="148"/>
+        <element name="ShapeCode" positionX="-315" positionY="9" width="128" height="133"/>
+        <element name="SiteCode" positionX="-828" positionY="387" width="128" height="133"/>
+        <element name="SnowCode" positionX="-837" positionY="189" width="128" height="133"/>
+        <element name="StratumTypeCode" positionX="-630" positionY="378" width="128" height="133"/>
+        <element name="Timbermark" positionX="-1305" positionY="495" width="225" height="435"/>
+        <element name="TopEndCode" positionX="423" positionY="605" width="128" height="133"/>
+        <element name="WasteBlock" positionX="-1017" positionY="-45" width="153" height="1005"/>
+        <element name="WasteClassCode" positionX="180" positionY="695" width="128" height="133"/>
+        <element name="WasteLevelCode" positionX="-477" positionY="380" width="128" height="133"/>
+        <element name="WastePiece" positionX="234" positionY="9" width="137" height="660"/>
+        <element name="WastePile" positionX="-1107" positionY="-144" width="128" height="585"/>
+        <element name="WastePlot" positionX="-117" positionY="-99" width="155" height="645"/>
+        <element name="WasteStratum" positionX="-486" positionY="-288" width="153" height="553"/>
+        <element name="WasteTypeCode" positionX="-443" positionY="684" width="128" height="133"/>
+    </elements>
+</model>
