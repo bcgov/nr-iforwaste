@@ -99,6 +99,6 @@
 	<key>iForWasteVersionNumber</key>
 	<string>EForWasteBC 1.5.0 Test</string>
 	<key>iForWasteWebServiceEndPoint</key>
-	<string></string>
+	<string>https://apps.nrs.gov.bc.ca/int/wastews/</string>
 </dict>
 </plist>
