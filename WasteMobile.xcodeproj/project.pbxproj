@@ -1852,7 +1852,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3941;
+				CURRENT_PROJECT_VERSION = 3951;
 				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
@@ -1879,7 +1879,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3941;
+				CURRENT_PROJECT_VERSION = 3951;
 				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";

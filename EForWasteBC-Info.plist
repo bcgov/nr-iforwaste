@@ -40,7 +40,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string></string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
@@ -99,6 +99,6 @@
 	<key>iForWasteVersionNumber</key>
 	<string>EForWasteBC 1.5.0 Test</string>
 	<key>iForWasteWebServiceEndPoint</key>
-	<string>https://apps.nrs.gov.bc.ca/int/wastews/</string>
+	<string>http://10.10.30.120:8080/int/wastews/</string>
 </dict>
 </plist>
