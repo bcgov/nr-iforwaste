@@ -510,8 +510,8 @@
     free(propertyArray);
     
     if(isStandingTree){
-        ws.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"WasteTypeCode" code:@"S"];
-        ws.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"HarvestMethodCode" code:@"T"];
+        ws.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"wasteTypeCode" code:@"S"];
+        ws.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"harvestMethodCode" code:@"T"];
     }
     
     //copy the area to the survey area field
