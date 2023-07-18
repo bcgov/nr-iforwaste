@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class WasteBlock, Timbermark, WasteStratum, WastePlot, WastePiece, StratumPile, AggregateCutblock, WastePile, EFWCoastStat, EFWInteriorStat;
+@class WasteBlock, Timbermark, WasteStratum, WastePlot, WastePiece, EFWCoastStat, EFWInteriorStat;
 
 typedef enum MergeOutcomeCode{
     MergeSuccessful,
@@ -21,16 +21,13 @@ typedef enum MergeOutcomeCode{
 +(WasteBlock *) getWasteBlockByCutBlockId:(NSString *) cutBlockId reportingUnitId:(NSString *)reportUnitId;
 +(WasteBlock *) getWasteBlockByAssessmentAreaId:(NSString *) assessmentAreaId;
 +(WasteBlock *) getWasteBlockByRU:(NSString *) ru cutBlockId:(NSString *)cutBlockId license:(NSString*)license cutPermit:(NSString*)cutPermit;
-+(WasteBlock *) getWasteBlockByRUCheckDuplicate:(NSString *) ru cutBlockId:(NSString *)cutBlockId license:(NSString*)license cutPermit:(NSString*)cutPermit;
 +(WasteBlock *) getWasteBlockByRUButWAID:(NSString *) ru cutBlockId:(NSString *)cutBlockId license:(NSString*)license cutPermit:(NSString*)cutPermit wasteAsseID:(NSString *)wasteAsseID;
-+(WasteBlock *) createEmptyCutBlock:(int) regionId ratioSample:(BOOL)ratioSample isAggregate:(BOOL)isAggregate;
++(WasteBlock *) createEmptyCutBlock:(int) regionId ratioSample:(BOOL)ratioSample;
 +(Timbermark *) createEmptyTimbermark;
 +(WasteStratum *) createEmptyStratum;
 +(WastePlot *) createEmptyPlot;
 +(WastePiece *) createEmptyPiece;
-+(StratumPile *) createEmptyStratumPile;
-+(AggregateCutblock *) createEmptyAggregateCutblock;
-+(WastePile *) createEmptyWastePile;
+
 +(EFWCoastStat *) createEFWCoastStat;
 +(EFWInteriorStat *) createEFWInteriorStat;
 
@@ -38,10 +35,6 @@ typedef enum MergeOutcomeCode{
 +(void) deleteStratum:(WasteStratum *) targetWasteStratum usingWB:(WasteBlock *) targetWasteBlock;
 
 +(MergeOutcomeCode) mergeWasteBlock:(WasteBlock*)primary_wb WasteBlock:(WasteBlock*)secondary_wb;
-+(MergeOutcomeCode) mergeWasteBlockPileStratum:(WasteBlock*)primary_wb WasteBlock:(WasteBlock*)secondary_wb;
-+(MergeOutcomeCode) mergeWasteBlockData:(WasteBlock*)primary_wb WasteBlock:(WasteBlock*)secondary_wb;
-+(void)mergeSingleBlkPileStratum:(NSSet*)pwb_pileData swb_pileData:(NSSet*)swb_pileData;
-
 +(NSNumber *) GetNextAssessmentAreaId;
 +(BOOL) checkDuplicateWasteBlockByRU:(NSString *) ru cutBlockId:(NSString *)cutBlockId license:(NSString*)license cutPermit:(NSString*)cutPermit assessmentAreaId:(NSNumber *)assessmentAreaId;
 @end

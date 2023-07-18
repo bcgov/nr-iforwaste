@@ -284,45 +284,6 @@
 		2745696F1E5B9C9B000F3A6C /* XMLToESFMappingDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = 2745696E1E5B9C9B000F3A6C /* XMLToESFMappingDAO.m */; };
 		274569761E64DA49000F3A6C /* ExportUserData+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 274569731E64DA49000F3A6C /* ExportUserData+CoreDataClass.m */; };
 		274569771E64DA49000F3A6C /* ExportUserData+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 274569751E64DA49000F3A6C /* ExportUserData+CoreDataProperties.m */; };
-		8B1CEAD52357BDA700A98BAF /* BTSTable4.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD42357BDA700A98BAF /* BTSTable4.html */; };
-		8B1CEAD72357BE2600A98BAF /* BTSRow4.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD62357BE2600A98BAF /* BTSRow4.html */; };
-		8B1CEAD92357BE5F00A98BAF /* BTSRow5.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD82357BE5F00A98BAF /* BTSRow5.html */; };
-		8B1CEADB2357BE8B00A98BAF /* BTSRow6.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEADA2357BE8B00A98BAF /* BTSRow6.html */; };
-		8B5A9DEB22133ECA00AFD8FC /* InteriorCedarMaturityCode+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8EE9F7220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.m */; };
-		8B5A9DEC22133ECF00AFD8FC /* InteriorCedarMaturityCode+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8EE9F6220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m */; };
-		8B5A9E1E222DB12000AFD8FC /* PileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E1D222DB12000AFD8FC /* PileViewController.m */; };
-		8B5A9E21222DCC2100AFD8FC /* PileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E20222DCC2100AFD8FC /* PileHeaderView.m */; };
-		8B5A9E24222DD3C600AFD8FC /* PileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E23222DD3C600AFD8FC /* PileTableViewCell.m */; };
-		8B5A9E27222DD3DA00AFD8FC /* PileEditTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E26222DD3DA00AFD8FC /* PileEditTableViewCell.m */; };
-		8B5A9E28222DE05700AFD8FC /* PileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E1D222DB12000AFD8FC /* PileViewController.m */; };
-		8B5A9E29222DE06200AFD8FC /* PileEditTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E26222DD3DA00AFD8FC /* PileEditTableViewCell.m */; };
-		8B5A9E2A222DE06D00AFD8FC /* PileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E23222DD3C600AFD8FC /* PileTableViewCell.m */; };
-		8B5A9E2B222DE07500AFD8FC /* PileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E20222DCC2100AFD8FC /* PileHeaderView.m */; };
-		8B5A9E3822305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3622305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m */; };
-		8B5A9E3922305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3622305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m */; };
-		8B5A9E3A22305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3722305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m */; };
-		8B5A9E3B22305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3722305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m */; };
-		8B5A9E4022305D8600AFD8FC /* WastePile+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3E22305D8600AFD8FC /* WastePile+CoreDataClass.m */; };
-		8B5A9E4122305D8600AFD8FC /* WastePile+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3E22305D8600AFD8FC /* WastePile+CoreDataClass.m */; };
-		8B5A9E4222305D8600AFD8FC /* WastePile+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3F22305D8600AFD8FC /* WastePile+CoreDataProperties.m */; };
-		8B5A9E4322305D8600AFD8FC /* WastePile+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E3F22305D8600AFD8FC /* WastePile+CoreDataProperties.m */; };
-		8B5A9E46223AF57900AFD8FC /* PileValueTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E45223AF57900AFD8FC /* PileValueTableViewController.m */; };
-		8B5A9E47223AF57900AFD8FC /* PileValueTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E45223AF57900AFD8FC /* PileValueTableViewController.m */; };
-		8B5A9E4A224193F000AFD8FC /* SpeciesPercentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */; };
-		8B5A9E4B224193F000AFD8FC /* SpeciesPercentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */; };
-		8B6209482412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */; };
-		8B6209492412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */; };
-		8B62094A2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */; };
-		8B62094B2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */; };
-		8B69335F2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */; };
-		8B6933602416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */; };
-		8B6933612416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */; };
-		8B6933622416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */; };
-		8B6DA7B92407334A009F2A1E /* AggregatePileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */; };
-		8B6DA7BA2407334A009F2A1E /* AggregatePileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */; };
-		8B8EE9F8220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8EE9F6220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m */; };
-		8B8EE9F9220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8EE9F7220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.m */; };
-		961B114122720ADB0088283A /* AggregatePlotTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 961B114022720ADB0088283A /* AggregatePlotTableViewCell.m */; };
 		970D139C191D94460010B797 /* WasteBlockCellTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 970D1384191D94460010B797 /* WasteBlockCellTableViewCell.m */; };
 		970D139D191D94460010B797 /* BlockViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 970D1387191D94460010B797 /* BlockViewController.m */; };
 		970D139E191D94460010B797 /* DownloadedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 970D1389191D94460010B797 /* DownloadedTableViewController.m */; };
@@ -393,7 +354,6 @@
 		150D5DA91DCBFF77006B44A7 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		150DDC7F1B12D7C5001083E3 /* WastePlotValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WastePlotValidator.h; sourceTree = "<group>"; };
 		150DDC801B12D7C5001083E3 /* WastePlotValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WastePlotValidator.m; sourceTree = "<group>"; };
-		15213A1520C060070007B91A /* EForWasteBC-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "EForWasteBC-Info.plist"; sourceTree = "<group>"; };
 		1528F8281DB67724002FB1A1 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		1528F82A1DB6788C002FB1A1 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
 		1528F82D1DB68566002FB1A1 /* Messages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Messages.framework; path = System/Library/Frameworks/Messages.framework; sourceTree = SDKROOT; };
@@ -503,6 +463,7 @@
 		15BA2E0A199D12EC000ED0C5 /* AddPieceTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPieceTableViewController.h; sourceTree = "<group>"; };
 		15BA2E0B199D12EC000ED0C5 /* AddPieceTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPieceTableViewController.m; sourceTree = "<group>"; };
 		15BF98A31E2EDC8E004D8F12 /* EForWasteBC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EForWasteBC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		15BF98A41E2EDC90004D8F12 /* EForWasteBC-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "EForWasteBC-Info.plist"; path = "/Users/jwong/Documents/WasteMobileApps/WasteMobile/EForWasteBC-Info.plist"; sourceTree = "<absolute>"; };
 		15BF98A81E2EE423004D8F12 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = WasteMobile/en.lproj/EForWasteBC.storyboard; sourceTree = "<group>"; };
 		15BF98B11E303DB3004D8F12 /* BlockTypeSummaryReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlockTypeSummaryReport.h; path = Reports/BlockTypeSummaryReport.h; sourceTree = "<group>"; };
 		15BF98B21E303DB3004D8F12 /* BlockTypeSummaryReport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlockTypeSummaryReport.m; path = Reports/BlockTypeSummaryReport.m; sourceTree = "<group>"; };
@@ -588,50 +549,6 @@
 		274569731E64DA49000F3A6C /* ExportUserData+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ExportUserData+CoreDataClass.m"; sourceTree = "<group>"; };
 		274569741E64DA49000F3A6C /* ExportUserData+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ExportUserData+CoreDataProperties.h"; sourceTree = "<group>"; };
 		274569751E64DA49000F3A6C /* ExportUserData+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ExportUserData+CoreDataProperties.m"; sourceTree = "<group>"; };
-		8B05FADD2203853E00353A88 /* WasteDataModel v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WasteDataModel v2.xcdatamodel"; sourceTree = "<group>"; };
-		8B1CEAD32357993200A98BAF /* EForWasteBC.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EForWasteBC.entitlements; sourceTree = "<group>"; };
-		8B1CEAD42357BDA700A98BAF /* BTSTable4.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = BTSTable4.html; sourceTree = "<group>"; };
-		8B1CEAD62357BE2600A98BAF /* BTSRow4.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = BTSRow4.html; sourceTree = "<group>"; };
-		8B1CEAD82357BE5F00A98BAF /* BTSRow5.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = BTSRow5.html; sourceTree = "<group>"; };
-		8B1CEADA2357BE8B00A98BAF /* BTSRow6.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = BTSRow6.html; sourceTree = "<group>"; };
-		8B5A9E1C222DB12000AFD8FC /* PileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PileViewController.h; sourceTree = "<group>"; };
-		8B5A9E1D222DB12000AFD8FC /* PileViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PileViewController.m; sourceTree = "<group>"; };
-		8B5A9E1F222DCC2100AFD8FC /* PileHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PileHeaderView.h; sourceTree = "<group>"; };
-		8B5A9E20222DCC2100AFD8FC /* PileHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PileHeaderView.m; sourceTree = "<group>"; };
-		8B5A9E22222DD3C600AFD8FC /* PileTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PileTableViewCell.h; sourceTree = "<group>"; };
-		8B5A9E23222DD3C600AFD8FC /* PileTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PileTableViewCell.m; sourceTree = "<group>"; };
-		8B5A9E25222DD3DA00AFD8FC /* PileEditTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PileEditTableViewCell.h; sourceTree = "<group>"; };
-		8B5A9E26222DD3DA00AFD8FC /* PileEditTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PileEditTableViewCell.m; sourceTree = "<group>"; };
-		8B5A9E3422305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PileShapeCode+CoreDataProperties.h"; sourceTree = "<group>"; };
-		8B5A9E3522305C1F00AFD8FC /* PileShapeCode+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PileShapeCode+CoreDataClass.h"; sourceTree = "<group>"; };
-		8B5A9E3622305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PileShapeCode+CoreDataClass.m"; sourceTree = "<group>"; };
-		8B5A9E3722305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PileShapeCode+CoreDataProperties.m"; sourceTree = "<group>"; };
-		8B5A9E3C22305D8600AFD8FC /* WastePile+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WastePile+CoreDataProperties.h"; sourceTree = "<group>"; };
-		8B5A9E3D22305D8600AFD8FC /* WastePile+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WastePile+CoreDataClass.h"; sourceTree = "<group>"; };
-		8B5A9E3E22305D8600AFD8FC /* WastePile+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "WastePile+CoreDataClass.m"; sourceTree = "<group>"; };
-		8B5A9E3F22305D8600AFD8FC /* WastePile+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "WastePile+CoreDataProperties.m"; sourceTree = "<group>"; };
-		8B5A9E44223AF57900AFD8FC /* PileValueTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PileValueTableViewController.h; sourceTree = "<group>"; };
-		8B5A9E45223AF57900AFD8FC /* PileValueTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PileValueTableViewController.m; sourceTree = "<group>"; };
-		8B5A9E48224193F000AFD8FC /* SpeciesPercentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeciesPercentViewController.h; sourceTree = "<group>"; };
-		8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeciesPercentViewController.m; sourceTree = "<group>"; };
-		8B6209442412B7FF00AF913D /* StratumPile+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StratumPile+CoreDataProperties.h"; sourceTree = "<group>"; };
-		8B6209452412B7FF00AF913D /* StratumPile+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StratumPile+CoreDataClass.h"; sourceTree = "<group>"; };
-		8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "StratumPile+CoreDataClass.m"; sourceTree = "<group>"; };
-		8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "StratumPile+CoreDataProperties.m"; sourceTree = "<group>"; };
-		8B69335B2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AggregateCutblock+CoreDataProperties.h"; sourceTree = "<group>"; };
-		8B69335C2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AggregateCutblock+CoreDataClass.h"; sourceTree = "<group>"; };
-		8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AggregateCutblock+CoreDataClass.m"; sourceTree = "<group>"; };
-		8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AggregateCutblock+CoreDataProperties.m"; sourceTree = "<group>"; };
-		8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AggregatePileTableViewCell.m; sourceTree = "<group>"; };
-		8B6DA7BB240733C7009F2A1E /* AggregatePileTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregatePileTableViewCell.h; sourceTree = "<group>"; };
-		8B73961D23FF5FDB00D10F4C /* WasteDataModel v 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WasteDataModel v 4.xcdatamodel"; sourceTree = "<group>"; };
-		8B8EE9F4220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "InteriorCedarMaturityCode+CoreDataProperties.h"; sourceTree = "<group>"; };
-		8B8EE9F5220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "InteriorCedarMaturityCode+CoreDataClass.h"; sourceTree = "<group>"; };
-		8B8EE9F6220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "InteriorCedarMaturityCode+CoreDataClass.m"; sourceTree = "<group>"; };
-		8B8EE9F7220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "InteriorCedarMaturityCode+CoreDataProperties.m"; sourceTree = "<group>"; };
-		8BB6D7782342A2BC003528E5 /* WasteDataModel v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WasteDataModel v3.xcdatamodel"; sourceTree = "<group>"; };
-		961B114022720ADB0088283A /* AggregatePlotTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AggregatePlotTableViewCell.m; sourceTree = "<group>"; };
-		961B114222720AEB0088283A /* AggregatePlotTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregatePlotTableViewCell.h; sourceTree = "<group>"; };
 		970D1383191D94460010B797 /* WasteBlockCellTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasteBlockCellTableViewCell.h; sourceTree = "<group>"; };
 		970D1384191D94460010B797 /* WasteBlockCellTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WasteBlockCellTableViewCell.m; sourceTree = "<group>"; };
 		970D1386191D94460010B797 /* BlockViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockViewController.h; sourceTree = "<group>"; };
@@ -851,9 +768,8 @@
 		15BF98AA1E2EE43A004D8F12 /* EForWasteBC */ = {
 			isa = PBXGroup;
 			children = (
-				8B1CEAD32357993200A98BAF /* EForWasteBC.entitlements */,
-				15213A1520C060070007B91A /* EForWasteBC-Info.plist */,
 				15BF98AB1E2EEA37004D8F12 /* UI */,
+				15BF98A41E2EDC90004D8F12 /* EForWasteBC-Info.plist */,
 				15BF98A71E2EE423004D8F12 /* EForWasteBC.storyboard */,
 			);
 			name = EForWasteBC;
@@ -876,10 +792,6 @@
 				15BF98BE1E36BE7E004D8F12 /* BTSRow2.html */,
 				15BF98C01E36BEC2004D8F12 /* BTSRow3.html */,
 				15BF98C21E36C543004D8F12 /* BTSTable2.html */,
-				8B1CEAD42357BDA700A98BAF /* BTSTable4.html */,
-				8B1CEAD62357BE2600A98BAF /* BTSRow4.html */,
-				8B1CEAD82357BE5F00A98BAF /* BTSRow5.html */,
-				8B1CEADA2357BE8B00A98BAF /* BTSRow6.html */,
 			);
 			name = BlockTypeSummaryReport;
 			sourceTree = "<group>";
@@ -893,8 +805,6 @@
 				155A610919F16C70004F3E63 /* FooterStatView.m */,
 				153F6ACD1F03233600C05C97 /* EFWFooterView.h */,
 				153F6ACE1F03233600C05C97 /* EFWFooterView.m */,
-				8B5A9E1F222DCC2100AFD8FC /* PileHeaderView.h */,
-				8B5A9E20222DCC2100AFD8FC /* PileHeaderView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -967,14 +877,6 @@
 				1581CE4019BA17E000A7E94F /* TextInputTableViewCell.m */,
 				153514E71DA2DE0D00EFB958 /* CreatedTableViewCell.h */,
 				153514E81DA2DE0D00EFB958 /* CreatedTableViewCell.m */,
-				8B5A9E22222DD3C600AFD8FC /* PileTableViewCell.h */,
-				8B5A9E23222DD3C600AFD8FC /* PileTableViewCell.m */,
-				8B5A9E25222DD3DA00AFD8FC /* PileEditTableViewCell.h */,
-				8B5A9E26222DD3DA00AFD8FC /* PileEditTableViewCell.m */,
-				961B114022720ADB0088283A /* AggregatePlotTableViewCell.m */,
-				961B114222720AEB0088283A /* AggregatePlotTableViewCell.h */,
-				8B6DA7BB240733C7009F2A1E /* AggregatePileTableViewCell.h */,
-				8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */,
 			);
 			path = "Table Cells";
 			sourceTree = "<group>";
@@ -1022,12 +924,6 @@
 				1502F4DF1D9F2B86007BAD12 /* CreatedTableViewController.m */,
 				15713F461DB14CC600713EBB /* FilesTableViewController.h */,
 				15713F471DB14CC600713EBB /* FilesTableViewController.m */,
-				8B5A9E1C222DB12000AFD8FC /* PileViewController.h */,
-				8B5A9E1D222DB12000AFD8FC /* PileViewController.m */,
-				8B5A9E44223AF57900AFD8FC /* PileValueTableViewController.h */,
-				8B5A9E45223AF57900AFD8FC /* PileValueTableViewController.m */,
-				8B5A9E48224193F000AFD8FC /* SpeciesPercentViewController.h */,
-				8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -1044,26 +940,6 @@
 		97E0F091191D72080097A6A1 /* ModelManager */ = {
 			isa = PBXGroup;
 			children = (
-				8B69335B2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.h */,
-				8B69335C2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.h */,
-				8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */,
-				8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */,
-				8B6209442412B7FF00AF913D /* StratumPile+CoreDataProperties.h */,
-				8B6209452412B7FF00AF913D /* StratumPile+CoreDataClass.h */,
-				8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */,
-				8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */,
-				8B5A9E3C22305D8600AFD8FC /* WastePile+CoreDataProperties.h */,
-				8B5A9E3D22305D8600AFD8FC /* WastePile+CoreDataClass.h */,
-				8B5A9E3E22305D8600AFD8FC /* WastePile+CoreDataClass.m */,
-				8B5A9E3F22305D8600AFD8FC /* WastePile+CoreDataProperties.m */,
-				8B5A9E3422305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.h */,
-				8B5A9E3522305C1F00AFD8FC /* PileShapeCode+CoreDataClass.h */,
-				8B5A9E3622305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m */,
-				8B5A9E3722305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m */,
-				8B8EE9F4220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.h */,
-				8B8EE9F5220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.h */,
-				8B8EE9F6220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m */,
-				8B8EE9F7220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.m */,
 				153F6AD01F04147C00C05C97 /* EFWInteriorStat+CoreDataClass.h */,
 				153F6AD11F04147C00C05C97 /* EFWInteriorStat+CoreDataClass.m */,
 				153F6AD21F04147C00C05C97 /* EFWInteriorStat+CoreDataProperties.h */,
@@ -1351,37 +1227,24 @@
 		F4EECF06177C99F400778578 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Salus Systems";
 				TargetAttributes = {
 					15BF980A1E2EDC8E004D8F12 = {
 						DevelopmentTeam = TM6UEX2F65;
-						ProvisioningStyle = Automatic;
-						SystemCapabilities = {
-							com.apple.GameCenter.iOS = {
-								enabled = 0;
-							};
-							com.apple.InAppPurchase = {
-								enabled = 0;
-							};
-							com.apple.Keychain = {
-								enabled = 0;
-							};
-							com.apple.Push = {
-								enabled = 1;
-							};
-						};
 					};
 					F4EECF0D177C99F400778578 = {
 						DevelopmentTeam = TM6UEX2F65;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
 			buildConfigurationList = F4EECF09177C99F400778578 /* Build configuration list for PBXProject "WasteMobile" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = en;
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = F4EECF05177C99F400778578;
@@ -1402,7 +1265,6 @@
 			files = (
 				15BF98751E2EDC8E004D8F12 /* InfoPlist.strings in Resources */,
 				15BF98A91E2EE423004D8F12 /* EForWasteBC.storyboard in Resources */,
-				8B1CEAD92357BE5F00A98BAF /* BTSRow5.html in Resources */,
 				15BF98761E2EDC8E004D8F12 /* Images.xcassets in Resources */,
 				15BF98C61E37E230004D8F12 /* BTSTable3.html in Resources */,
 				15BF98771E2EDC8E004D8F12 /* arrow-down-icon.png in Resources */,
@@ -1424,7 +1286,6 @@
 				15BF98C91E37E238004D8F12 /* BTSRow3.html in Resources */,
 				15BF98851E2EDC8E004D8F12 /* Saved-icon.png in Resources */,
 				15BF98861E2EDC8E004D8F12 /* Default-568h@2x.png in Resources */,
-				8B1CEAD52357BDA700A98BAF /* BTSTable4.html in Resources */,
 				15BF98871E2EDC8E004D8F12 /* TABLE2_1.html in Resources */,
 				15BF98881E2EDC8E004D8F12 /* arrow.png in Resources */,
 				15BF98891E2EDC8E004D8F12 /* MainStoryboard.storyboard in Resources */,
@@ -1441,8 +1302,6 @@
 				15BF98931E2EDC8E004D8F12 /* ForestServiceLogo_Oval-colour.gif in Resources */,
 				15BF98941E2EDC8E004D8F12 /* ROW_2.html in Resources */,
 				15BF98951E2EDC8E004D8F12 /* TITLE.html in Resources */,
-				8B1CEAD72357BE2600A98BAF /* BTSRow4.html in Resources */,
-				8B1CEADB2357BE8B00A98BAF /* BTSRow6.html in Resources */,
 				15BF98961E2EDC8E004D8F12 /* menu@2x.png in Resources */,
 				15BF98971E2EDC8E004D8F12 /* TABLE1_3.html in Resources */,
 				15BF98C71E37E233004D8F12 /* BTSRow1.html in Resources */,
@@ -1562,7 +1421,6 @@
 				15BF98141E2EDC8E004D8F12 /* LoginViewController.m in Sources */,
 				274569761E64DA49000F3A6C /* ExportUserData+CoreDataClass.m in Sources */,
 				15BF98151E2EDC8E004D8F12 /* FilesTableViewController.m in Sources */,
-				8B62094B2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */,
 				157393C920222D9900B19210 /* AppPatch.m in Sources */,
 				15BF98B41E303DB3004D8F12 /* BlockTypeSummaryReport.m in Sources */,
 				15BF98161E2EDC8E004D8F12 /* WasteStratum+CoreDataProperties.m in Sources */,
@@ -1570,13 +1428,11 @@
 				15BF98181E2EDC8E004D8F12 /* WastePlotDTO.m in Sources */,
 				15BF98191E2EDC8E004D8F12 /* WasteLevelCode.m in Sources */,
 				15BF981A1E2EDC8E004D8F12 /* PlotTableViewCell.m in Sources */,
-				8B5A9E28222DE05700AFD8FC /* PileViewController.m in Sources */,
 				15BF981B1E2EDC8E004D8F12 /* PiecesHeaderView.m in Sources */,
 				15BF981C1E2EDC8E004D8F12 /* StratumTableViewCell.m in Sources */,
 				15BF981D1E2EDC8E004D8F12 /* CreatedTableViewCell.m in Sources */,
 				15B587D51E7C9CC7009E2DBB /* PlotPredictionReport.m in Sources */,
 				15BF981E1E2EDC8E004D8F12 /* main.m in Sources */,
-				8B5A9E4B224193F000AFD8FC /* SpeciesPercentViewController.m in Sources */,
 				15BF981F1E2EDC8E004D8F12 /* XMLExportGenerator.m in Sources */,
 				15BF98201E2EDC8E004D8F12 /* WasteTypeCode.m in Sources */,
 				15BF98211E2EDC8E004D8F12 /* DecayTypeCode.m in Sources */,
@@ -1585,7 +1441,6 @@
 				15B587CD1E7C42A4009E2DBB /* PlotSampleGenerator.m in Sources */,
 				15BF98241E2EDC8E004D8F12 /* CreatedTableViewController.m in Sources */,
 				15BF98251E2EDC8E004D8F12 /* GDataXMLNode.m in Sources */,
-				8B6933602416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */,
 				153F6AE11F04147D00C05C97 /* EFWInteriorStat+CoreDataProperties.m in Sources */,
 				15BF98261E2EDC8E004D8F12 /* SiteCode+CoreDataClass.m in Sources */,
 				15BF98271E2EDC8E004D8F12 /* XMLDataImporter.m in Sources */,
@@ -1601,10 +1456,8 @@
 				15BF982F1E2EDC8E004D8F12 /* AppDelegate.m in Sources */,
 				15B5D78C1E4B8194008EB5D5 /* WasteImportBlockValidator.m in Sources */,
 				15BF98301E2EDC8E004D8F12 /* SnowCode.m in Sources */,
-				8B5A9E4122305D8600AFD8FC /* WastePile+CoreDataClass.m in Sources */,
 				15BF98311E2EDC8E004D8F12 /* Constants.m in Sources */,
 				15BF98321E2EDC8E004D8F12 /* FooterStatView.m in Sources */,
-				8B6209492412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */,
 				27296B241E64EA2100E81B58 /* ExportUserDataDAO.m in Sources */,
 				15BF98331E2EDC8E004D8F12 /* WasteBlockDTOAdaptor.m in Sources */,
 				15BF98341E2EDC8E004D8F12 /* SearchResultsTableViewController.m in Sources */,
@@ -1617,8 +1470,6 @@
 				15BF983A1E2EDC8E004D8F12 /* ChecksCompletedTableViewController.m in Sources */,
 				15BF983B1E2EDC8E004D8F12 /* WastePlotValidator.m in Sources */,
 				15BF983C1E2EDC8E004D8F12 /* PieceTableViewController.m in Sources */,
-				8B5A9E3B22305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m in Sources */,
-				8B5A9DEC22133ECF00AFD8FC /* InteriorCedarMaturityCode+CoreDataClass.m in Sources */,
 				153F6AE51F04147D00C05C97 /* EFWCoastStat+CoreDataClass.m in Sources */,
 				15BF983D1E2EDC8E004D8F12 /* FS702Report.m in Sources */,
 				15BF983E1E2EDC8E004D8F12 /* FileDTO.m in Sources */,
@@ -1631,48 +1482,38 @@
 				15BF98451E2EDC8E004D8F12 /* MaterialKindCode.m in Sources */,
 				15BF98461E2EDC8E004D8F12 /* WasteCalculator.m in Sources */,
 				15BF98471E2EDC8E004D8F12 /* ReportGenerator.m in Sources */,
-				8B5A9DEB22133ECA00AFD8FC /* InteriorCedarMaturityCode+CoreDataProperties.m in Sources */,
 				15BF98481E2EDC8E004D8F12 /* CommentCode.m in Sources */,
 				153F6ACF1F03233600C05C97 /* EFWFooterView.m in Sources */,
 				15BF98491E2EDC8E004D8F12 /* TextInputTableViewCell.m in Sources */,
 				15BF984A1E2EDC8E004D8F12 /* CheckSummaryReport.m in Sources */,
 				15BF984B1E2EDC8E004D8F12 /* WasteStratum.m in Sources */,
-				8B5A9E2B222DE07500AFD8FC /* PileHeaderView.m in Sources */,
 				15BF984C1E2EDC8E004D8F12 /* WasteBlockDAO.m in Sources */,
-				8B5A9E47223AF57900AFD8FC /* PileValueTableViewController.m in Sources */,
-				8B6933622416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */,
 				15BF984D1E2EDC8E004D8F12 /* PieceValueTableViewController.m in Sources */,
 				15BF984E1E2EDC8E004D8F12 /* MonetaryReductionFactorCode.m in Sources */,
 				15BF984F1E2EDC8E004D8F12 /* WasteStratumDTOAdaptor.m in Sources */,
 				15BF98501E2EDC8E004D8F12 /* PlotViewController.m in Sources */,
 				15BF98511E2EDC8E004D8F12 /* TimbermarkTableViewCell.m in Sources */,
-				961B114122720ADB0088283A /* AggregatePlotTableViewCell.m in Sources */,
 				15BF98521E2EDC8E004D8F12 /* StratumViewController.m in Sources */,
 				15BF98531E2EDC8E004D8F12 /* SearchResultDTO.m in Sources */,
 				15BF98541E2EDC8E004D8F12 /* TimbermarkViewController.m in Sources */,
 				15BF98551E2EDC8E004D8F12 /* HarvestMethodCode.m in Sources */,
 				15BF98561E2EDC8E004D8F12 /* UIViewController+BackButtonHandler.m in Sources */,
 				15BF98571E2EDC8E004D8F12 /* PlotSizeCode.m in Sources */,
-				8B5A9E29222DE06200AFD8FC /* PileEditTableViewCell.m in Sources */,
 				15BF98581E2EDC8E004D8F12 /* CodeDAO.m in Sources */,
-				8B5A9E3922305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m in Sources */,
 				15BF98591E2EDC8E004D8F12 /* AddPieceTableViewController.m in Sources */,
 				15BF985A1E2EDC8E004D8F12 /* BlockViewController.m in Sources */,
 				15BF985B1E2EDC8E004D8F12 /* NumberInputTableViewCell.m in Sources */,
 				274569771E64DA49000F3A6C /* ExportUserData+CoreDataProperties.m in Sources */,
 				15BF985C1E2EDC8E004D8F12 /* WasteClassCode.m in Sources */,
-				8B6DA7BA2407334A009F2A1E /* AggregatePileTableViewCell.m in Sources */,
 				15BF985D1E2EDC8E004D8F12 /* AssessmentMethodCode.m in Sources */,
 				15BF985E1E2EDC8E004D8F12 /* PieceEditTableViewCell.m in Sources */,
 				15BF985F1E2EDC8E004D8F12 /* WelcomeViewController.m in Sources */,
 				15BF98601E2EDC8E004D8F12 /* StratumTypeCode.m in Sources */,
-				8B5A9E2A222DE06D00AFD8FC /* PileTableViewCell.m in Sources */,
 				15BF98611E2EDC8E004D8F12 /* WasteStratumDTO.m in Sources */,
 				15BF98621E2EDC8E004D8F12 /* SidebarViewController.m in Sources */,
 				15BF98631E2EDC8E004D8F12 /* SearchResultDTOAdaptor.m in Sources */,
 				15BF98641E2EDC8E004D8F12 /* WastePlot.m in Sources */,
 				15BF98651E2EDC8E004D8F12 /* ReportGeneratorTableViewController.m in Sources */,
-				8B5A9E4322305D8600AFD8FC /* WastePile+CoreDataProperties.m in Sources */,
 				15BF98661E2EDC8E004D8F12 /* BorderlineCode.m in Sources */,
 				15BF98671E2EDC8E004D8F12 /* ScaleGradeCode.m in Sources */,
 				15BF98681E2EDC8E004D8F12 /* PieceTableViewCell.m in Sources */,
@@ -1703,7 +1544,6 @@
 				970D13B4192138A70010B797 /* PlotTableViewCell.m in Sources */,
 				156C65751E6604AC00A75202 /* ExportUserDataDAO.m in Sources */,
 				15F8606619A7AA74005482FC /* PiecesHeaderView.m in Sources */,
-				8B5A9E3A22305C1F00AFD8FC /* PileShapeCode+CoreDataProperties.m in Sources */,
 				970D13B1192135C70010B797 /* StratumTableViewCell.m in Sources */,
 				153514E91DA2DE0D00EFB958 /* CreatedTableViewCell.m in Sources */,
 				F4EECF1E177C99F400778578 /* main.m in Sources */,
@@ -1712,10 +1552,8 @@
 				15CFC28219FB168B0079228A /* WasteTypeCode.m in Sources */,
 				15CFC25219FAF7A80079228A /* DecayTypeCode.m in Sources */,
 				15ECDF5D1DA46D190077B7F8 /* WastePiece+CoreDataProperties.m in Sources */,
-				8B62094A2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */,
 				15ECDF5E1DA46D190077B7F8 /* WastePiece.m in Sources */,
 				15B587BF1E789126009E2DBB /* PlotSelectorLog.m in Sources */,
-				8B8EE9F8220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m in Sources */,
 				1502F4E01D9F2B86007BAD12 /* CreatedTableViewController.m in Sources */,
 				15750B891DB686980052D71C /* GDataXMLNode.m in Sources */,
 				157393C820222D9900B19210 /* AppPatch.m in Sources */,
@@ -1734,7 +1572,6 @@
 				F4EECF22177C99F400778578 /* AppDelegate.m in Sources */,
 				2745696C1E5B9151000F3A6C /* WasteImportBlockValidator.m in Sources */,
 				15B587C91E7B27DE009E2DBB /* PlotSampleGenerator.m in Sources */,
-				8B5A9E46223AF57900AFD8FC /* PileValueTableViewController.m in Sources */,
 				15CFC25519FAF7A80079228A /* SnowCode.m in Sources */,
 				150D5DAA1DCBFF77006B44A7 /* Constants.m in Sources */,
 				155A610A19F16C70004F3E63 /* FooterStatView.m in Sources */,
@@ -1747,13 +1584,10 @@
 				15CFC26119FAF7A90079228A /* CheckerStatusCode.m in Sources */,
 				15F8606219A6732F005482FC /* ChecksCompletedTableViewController.m in Sources */,
 				150DDC811B12D7C5001083E3 /* WastePlotValidator.m in Sources */,
-				8B69335F2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */,
-				8B5A9E4A224193F000AFD8FC /* SpeciesPercentViewController.m in Sources */,
 				153F6ADE1F04147D00C05C97 /* EFWInteriorStat+CoreDataClass.m in Sources */,
 				15897E66199AAB9400D51B91 /* PieceTableViewController.m in Sources */,
 				1581CE4B19BA5D0000A7E94F /* FS702Report.m in Sources */,
 				15713F551DB1812E00713EBB /* FileDTO.m in Sources */,
-				8B6933612416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */,
 				970D13A1191D94460010B797 /* ReportsTableViewController.m in Sources */,
 				154464E519E498EC00E7959D /* WasteBlockDTO.m in Sources */,
 				970D13BA1925591B0010B797 /* PlotTallyCardViewController.m in Sources */,
@@ -1780,30 +1614,20 @@
 				970D13A6191D94460010B797 /* TimbermarkViewController.m in Sources */,
 				15CFC27C19FAF7AA0079228A /* HarvestMethodCode.m in Sources */,
 				155A611319F578B1004F3E63 /* UIViewController+BackButtonHandler.m in Sources */,
-				8B5A9E21222DCC2100AFD8FC /* PileHeaderView.m in Sources */,
 				15CFC24619FAF7A80079228A /* PlotSizeCode.m in Sources */,
 				1576710919CA3E2400EB6217 /* CodeDAO.m in Sources */,
 				15BA2E0C199D12EC000ED0C5 /* AddPieceTableViewController.m in Sources */,
-				8B5A9E27222DD3DA00AFD8FC /* PileEditTableViewCell.m in Sources */,
 				970D139D191D94460010B797 /* BlockViewController.m in Sources */,
 				1581CE3E19BA178B00A7E94F /* NumberInputTableViewCell.m in Sources */,
 				15CFC24019FAF7A70079228A /* WasteClassCode.m in Sources */,
-				8B5A9E4222305D8600AFD8FC /* WastePile+CoreDataProperties.m in Sources */,
-				8B5A9E3822305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m in Sources */,
 				15DFC5AF1B69937000479CCB /* AssessmentMethodCode.m in Sources */,
 				1581CE3819B7949700A7E94F /* PieceEditTableViewCell.m in Sources */,
-				8B6209482412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */,
 				970D13A7191D94460010B797 /* WelcomeViewController.m in Sources */,
 				15CFC27019FAF7AA0079228A /* StratumTypeCode.m in Sources */,
 				154464F119E5AB5700E7959D /* WasteStratumDTO.m in Sources */,
 				970D13A4191D94460010B797 /* SidebarViewController.m in Sources */,
-				8B5A9E1E222DB12000AFD8FC /* PileViewController.m in Sources */,
-				8B6DA7B92407334A009F2A1E /* AggregatePileTableViewCell.m in Sources */,
 				15A5DF9D19D389890075665E /* SearchResultDTOAdaptor.m in Sources */,
-				8B5A9E24222DD3C600AFD8FC /* PileTableViewCell.m in Sources */,
-				8B5A9E4022305D8600AFD8FC /* WastePile+CoreDataClass.m in Sources */,
 				15ECDF5C1DA46D190077B7F8 /* WastePlot.m in Sources */,
-				8B8EE9F9220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataProperties.m in Sources */,
 				1581CE4519BA377600A7E94F /* ReportGeneratorTableViewController.m in Sources */,
 				15CFC24319FAF7A70079228A /* BorderlineCode.m in Sources */,
 				15CFC23D19FAF7A70079228A /* ScaleGradeCode.m in Sources */,
@@ -1848,11 +1672,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "EForWasteBC-test";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-EForWaste";
-				CODE_SIGN_ENTITLEMENTS = EForWasteBC.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3990;
 				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
@@ -1863,7 +1684,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = EForWasteBCTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = app;
@@ -1875,11 +1695,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "EForWasteBC-test";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "LaunchImage-EForWaste";
-				CODE_SIGN_ENTITLEMENTS = EForWasteBC.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3990;
 				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
@@ -1890,7 +1707,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = EForWasteBCTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = app;
@@ -1901,24 +1717,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1942,7 +1749,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = "";
 				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_LDFLAGS[arch=*]" = "-lxml2";
@@ -1954,24 +1761,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -1987,7 +1785,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				"OTHER_LDFLAGS[arch=*]" = "-lxml2";
@@ -2001,9 +1799,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-Prod";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Govt. of The Province of BC - Ministry of Labour & Citizen's Services & Open Govt";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 654;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 691;
 				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
@@ -2011,10 +1810,11 @@
 				INFOPLIST_FILE = "WasteMobile/WasteMobile-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = iForWaste;
+				MARKETING_VERSION = 1.2.5;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SalusSystems.WasteMobile;
 				PRODUCT_NAME = WasteMobile;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = app;
@@ -2026,20 +1826,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-Prod";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 654;
-				DEVELOPMENT_TEAM = TM6UEX2F65;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Govt. of The Province of BC - Ministry of Labour & Citizen's Services & Open Govt";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Govt. of The Province of BC - Ministry of Labour & Citizen's Services & Open Govt";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 691;
+				DEVELOPMENT_TEAM = KH9MTRSDAZ;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "WasteMobile/WasteMobile-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = iForWaste;
+				MARKETING_VERSION = 1.2.5;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SalusSystems.WasteMobile;
 				PRODUCT_NAME = WasteMobile;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "iForWaste - Prod";
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = app;
@@ -2056,7 +1859,7 @@
 				15BF98A21E2EDC8E004D8F12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		F4EECF09177C99F400778578 /* Build configuration list for PBXProject "WasteMobile" */ = {
 			isa = XCConfigurationList;
@@ -2065,7 +1868,7 @@
 				F4EECF30177C99F400778578 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		F4EECF31177C99F400778578 /* Build configuration list for PBXNativeTarget "iForWaste" */ = {
 			isa = XCConfigurationList;
@@ -2074,7 +1877,7 @@
 				F4EECF33177C99F400778578 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 
@@ -2082,12 +1885,9 @@
 		97E3F8671905BA1D00EAB073 /* WasteDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				8B73961D23FF5FDB00D10F4C /* WasteDataModel v 4.xcdatamodel */,
-				8BB6D7782342A2BC003528E5 /* WasteDataModel v3.xcdatamodel */,
-				8B05FADD2203853E00353A88 /* WasteDataModel v2.xcdatamodel */,
 				97E3F8681905BA1D00EAB073 /* WasteDataModel.xcdatamodel */,
 			);
-			currentVersion = 8B73961D23FF5FDB00D10F4C /* WasteDataModel v 4.xcdatamodel */;
+			currentVersion = 97E3F8681905BA1D00EAB073 /* WasteDataModel.xcdatamodel */;
 			path = WasteDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

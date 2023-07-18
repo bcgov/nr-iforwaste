@@ -41,7 +41,6 @@
 #import "UIColor+WasteColor.h"
 #import "PlotSelectorLog.h"
 #import "PieceValueTableViewController.h"
-#import "Constants.h"
 
 @class UIAlertView;
 
@@ -70,10 +69,10 @@
 -(void) setupLists
 {
     
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"PlotSizeCode" ascending:YES];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"plotSizeCode" ascending:YES];
     self.plotSizeArray = [[[CodeDAO sharedInstance] getPlotSizeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
-    sort = [[NSSortDescriptor alloc ] initWithKey:@"ShapeCode" ascending:YES];
+    sort = [[NSSortDescriptor alloc ] initWithKey:@"shapeCode" ascending:YES];
     self.plotShapeArray = [[[CodeDAO sharedInstance] getShapeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
 }
@@ -218,8 +217,8 @@
     
     if(![self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
         //disable plot number for non-standard stratum plot
-        //[self.plotNumber setEnabled:NO];
-        //[self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.plotNumber setEnabled:NO];
+        [self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         [self.checkMeasurePerc setEnabled:NO];
         [self.checkMeasurePerc setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         [self.measurePct setEnabled:NO];
@@ -227,54 +226,18 @@
     }else{
         if([wasteBlock.ratioSamplingEnabled integerValue] ==1){
             //ratio sampling
-            /*if([wasteBlock.regionId integerValue] == InteriorRegion) {
-                [self.greenVolumeLabel setHidden:NO];
-                [self.dryVolumeLabel setHidden:NO];
-                [self.greenVolume setHidden:NO];
-                [self.dryVolume setHidden:NO];
-            }else if([wasteBlock.regionId integerValue] == CoastRegion){*/
-            //client requested Interior logic removed, Coast version is global.
-                [self.greenVolumeLabel setHidden:NO];
-                [self.greenVolumeLabel setText:@"Predicted Volume"];
-                //remove the bold and color
-                self.greenVolumeLabel.font = [UIFont fontWithName:@"System 20.0" size:20.0];
-                [self.greenVolumeLabel setTextColor:[UIColor blackColor]];
-                [self.greenVolume setHidden:NO];
-                self.greenVolume.font = [UIFont fontWithName:@"System" size:18.0];
-                [self.greenVolume setTextColor:[UIColor blackColor]];
-                [self.dryVolumeLabel setHidden:YES];
-                [self.dryVolume setHidden:YES];
-            //}
+            [self.greenVolumeLabel setHidden:NO];
+            [self.dryVolumeLabel setHidden:NO];
+            [self.greenVolume setHidden:NO];
+            [self.dryVolume setHidden:NO];
             [self.isMeasurePlot setHidden:NO];
             [self.isMeasurePlotLabel setHidden:NO];
             [self.plotNumber setEnabled:NO];
             [self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-            if([self.wastePlot.isMeasurePlot integerValue] == 1){
-                [self.measurePct setEnabled:YES];
-            }else{
-                [self.measurePct setEnabled:NO];
-                [self.measurePct setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-            }
         }
     }
 
     [self.size setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-    
-    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
-    {
-        [self.licence setHidden:NO];
-        self.licence.tag = 8;
-        [self.licenceLabel setHidden:NO];
-        [self.cuttingPermit setHidden:NO];
-        self.cuttingPermit.tag = 9;
-        [self.cuttingPermitLabel setHidden:NO];
-        [self.cutBlock setHidden:NO];
-        self.cutBlock.tag = 10;
-        [self.cutBlockLabel setHidden:NO];
-    }
-    
-    [self.dryVolume setUserInteractionEnabled:FALSE];
-    [self.greenVolume setUserInteractionEnabled:FALSE];
 
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
@@ -369,10 +332,7 @@
 
 -(void)checkIsMeasurePlot{
     BOOL isMeasurePlot = NO;
-    NSArray* pn_ary = nil;
-
-    pn_ary = [self.wastePlot.plotStratum.n1sample componentsSeparatedByString:@","];
-
+    NSArray* pn_ary = [self.wastePlot.plotStratum.n1sample componentsSeparatedByString:@","];
     for(NSString* pn in pn_ary){
         if([pn isEqualToString:self.plotNumber.text]){
             isMeasurePlot = YES;
@@ -392,7 +352,7 @@
     //self.wastePlot.plotID = [[NSNumber alloc] initWithInt:[[self.navigationItem.title substringWithRange:NSMakeRange(7, self.navigationItem.title.length-7)] integerValue]];
     
  
-    if([self.wastePlot.plotStratum.stratumBlock.ratioSamplingEnabled intValue] == 1 && [self.wastePlot.plotNumber integerValue] != [self.plotNumber.text intValue] && !([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] || [self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"] || [self.wastePlot.plotStratum.stratum isEqualToString:@"STRE"]|| [self.wastePlot.plotStratum.stratum isEqualToString:@"STRS"])){
+    if([self.wastePlot.plotStratum.stratumBlock.ratioSamplingEnabled intValue] == 1 && [self.wastePlot.plotNumber integerValue] != [self.plotNumber.text intValue]){
         [self checkIsMeasurePlot];
     }
     
@@ -452,25 +412,13 @@
     self.wastePlot.assistant = self.assistant.text;
     self.wastePlot.checkDate = [dateFormat dateFromString:self.checkSurveyDate.text];
     
-    for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
-        double  totalestimatedvolume = 0.0;
-        for(WastePlot *wp in [ws.stratumPlot allObjects]){
-            totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
-        }
-        ws.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
-        NSLog(@"Total Estimated Volume %@", ws.totalEstimatedVolume);
-    }
+    
     self.wastePlot.notes = self.notes.text;
     if ([self.wasteBlock.userCreated intValue] == 1){
-        self.wastePlot.plotEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.plotEstimatedVolume.text];
-
+        self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
     }else{
         self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
     }
-    
-    self.wastePlot.aggregateLicence = self.licence.text;
-    self.wastePlot.aggregateCuttingPermit = self.cuttingPermit.text;
-    self.wastePlot.aggregateCutblock = self.cutBlock.text;
 
     NSError *error;
     
@@ -518,7 +466,7 @@
         }
     }
     self.totalCheckPercent.text = [[NSString alloc] initWithFormat:@"%0.1f", percent];
-    if ([self.totalCheckPercent.text doubleValue] != 100.0){
+    if (percent != 100.0){
         [self.totalCheckPercent setTextColor:[UIColor redColor]];
     }else{
         [self.totalCheckPercent setTextColor:[UIColor blackColor]];
@@ -745,7 +693,7 @@
         if ( ![self validInputNumbersOnly:theString] ) {
             return NO;
         }
-    }else if(textField == self.greenVolume || textField == self.dryVolume || textField == self.totalEstimateVolume || textField == self.plotEstimatedVolume){
+    }else if(textField == self.greenVolume || textField == self.dryVolume || textField == self.totalEstimateVolume){
         
         if ( ![self validInputNumbersOnlyWithDot:theString] ) {
             return NO;
@@ -785,29 +733,21 @@
         case 7:
             return (newLength > 2) ? NO : YES;
             break;
-        case 8:
-            return (newLength > 10) ? NO : YES;
-            break;
-        case 9:
-            return (newLength > 10) ? NO : YES;
-            break;
-        case 10:
-            return (newLength > 10) ? NO : YES;
-            break;
+            
         default:
             return NO; // NOT EDITABLE
     }
 }
 
 - (void) textFieldDidEndEditing:(UITextField *)textField{
-    if (textField == self.checkMeasurePerc || textField == self.totalEstimateVolume || textField == self.measurePct || textField == self.plotEstimatedVolume){
+    if (textField == self.checkMeasurePerc || textField == self.totalEstimateVolume || textField == self.measurePct){
         
         //save the change first
         [self saveData];
         
         //if esimate volume change, need to re-calculate the check volume
         BOOL pieceDidChange = NO;
-        if (textField == self.totalEstimateVolume || textField == self.plotEstimatedVolume){
+        if (textField == self.totalEstimateVolume){
             for(WastePiece *wp in self.wastePieces){
                 //if ([wp.pieceNumber rangeOfString:@"C"].location != NSNotFound){
                     [WasteCalculator calculatePieceStat:wp wasteStratum:self.wastePlot.plotStratum];
@@ -864,10 +804,10 @@
         }
     }else if(textField == self.dryVolume){
         [self saveData];
-        wastePlot.plotStratum.ratioSamplingLog = [wastePlot.plotStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wastePlot stratum:wastePlot.plotStratum actionDec:@"Dry Volume Updated"]];
+        wastePlot.plotStratum.ratioSamplingLog = [wastePlot.plotStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wastePlot actionDec:@"Dry Volume Updated"]];
     }else if(textField == self.greenVolume){
         [self saveData];
-        wastePlot.plotStratum.ratioSamplingLog = [wastePlot.plotStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wastePlot stratum:wastePlot.plotStratum actionDec:@"Green Volume Updated"]];
+        wastePlot.plotStratum.ratioSamplingLog = [wastePlot.plotStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wastePlot actionDec:@"Green Volume Updated"]];
     }
     _activeTF = nil;
 }
@@ -954,10 +894,10 @@
 {
     
     if (pickerView.tag == 1)
-        return [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"PlotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
+        return [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"plotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
     
     else if(pickerView.tag == 2)
-        return [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"ShapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
+        return [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"shapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
     
     else
         return nil;
@@ -968,11 +908,11 @@
 {
     
     if (pickerView.tag == 1){
-        self.size.text = [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"PlotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
+        self.size.text = [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"plotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
         [self.size resignFirstResponder];
         
     }else if(pickerView.tag == 2){
-        self.shape.text = [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"ShapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
+        self.shape.text = [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"shapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
         [self.shapePicker selectRow:row inComponent:0 animated:NO];
         [self.shape resignFirstResponder];
     }
@@ -1229,6 +1169,7 @@
 
 - (void) populateFromObject{
     
+    
     NSString *title = self.wastePlot.plotNumber ? [[NSString alloc] initWithFormat:@"(IFOR 204) Plot - %@", [self.wastePlot.plotNumber stringValue]] : @"";
     
     [[self navigationItem] setTitle:title];
@@ -1276,10 +1217,8 @@
     // Check stratum to show the total estimated volume
     if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
 
-        [self.totalEstimatedVolumeLabel setHidden:YES];
-        [self.plotEstimatedVolumeLabel setHidden:NO];
-        [self.totalEstimateVolume setHidden:YES];
-        [self.plotEstimatedVolume setHidden:NO];
+        [self.totalEstimatedVolumeLabel setHidden:NO];
+        [self.totalEstimateVolume setHidden:NO];
         [self.totalCheckPercent setHidden:NO];
         [self.totalCheckPercentLabel setHidden:NO];
         
@@ -1287,8 +1226,7 @@
             [self.surveyTotalEstimateVolume setHidden:YES];
 
             self.totalCheckPercentLabel.text = @"Total Percentage";
-            //self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%@", [self.wastePlot.plotStratum.totalEstimatedVolume stringValue]];
-            self.plotEstimatedVolume.text = [self.wastePlot.plotEstimatedVolume stringValue] ? [[NSString alloc] initWithFormat:@"%@", [self.wastePlot.plotEstimatedVolume stringValue]] : @"";
+            self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%@", [self.wastePlot.plotStratum.totalEstimatedVolume stringValue]];
         }else{
             [self.surveyTotalEstimateVolume setHidden:NO];
             
@@ -1300,9 +1238,7 @@
     }else{
         //hide estimate volume and total percent
         [self.totalEstimatedVolumeLabel setHidden:YES];
-        [self.plotEstimatedVolumeLabel setHidden:YES];
         [self.totalEstimateVolume setHidden:YES];
-        [self.plotEstimatedVolume setHidden:YES];
         [self.totalCheckPercent setHidden:YES];
         [self.totalCheckPercentLabel setHidden:YES];
         [self.surveyTotalEstimateVolume setHidden:YES];
@@ -1317,10 +1253,6 @@
         [self.footerStatView setViewValue:self.wastePlot];
         [self.footerStatView setDisplayFor:self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode screenName:@"plot"];
     }
-    
-    self.licence.text = self.wastePlot.aggregateLicence;
-    self.cuttingPermit.text = self.wastePlot.aggregateCuttingPermit;
-    self.cutBlock.text = self.wastePlot.aggregateCutblock;
     
 }
 
@@ -1510,29 +1442,10 @@
             errorMessage =[NSString stringWithFormat:@"%@ Species and Grade percent estimates do not equal 100%%, please adjust values.", errorMessage];
             isfatal = YES;
         }
-        /*if([self.totalEstimateVolume.text floatValue] == 0.0){
+        if([self.totalEstimateVolume.text floatValue] == 0.0){
             errorMessage =[NSString stringWithFormat:@"%@ Total Estimate Volume is 0.", errorMessage];
             isfatal = YES;
-        }*/
-        if([self.plotEstimatedVolume.text floatValue] == 0.0){
-            errorMessage =[NSString stringWithFormat:@"%@ Plot Estimate Volume is 0.", errorMessage];
-            isfatal = YES;
         }
-    }
-    //for aggregate licence, cp and cb must be entered before navigating back
-    if([wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-        if([self.wastePlot.aggregateLicence isEqualToString:@""]){
-            isfatal = YES;
-            errorMessage = [NSString stringWithFormat:@"%@ Missing Licence field.", errorMessage];
-        }
-        if([self.wastePlot.aggregateCutblock isEqualToString:@""]){
-            isfatal = isfatal || NO;
-            errorMessage = [NSString stringWithFormat:@"%@ Missing Block field.", errorMessage];
-        }
-        /*if([self.wastePlot.aggregateCuttingPermit isEqualToString:@""]){
-            isfatal = YES;
-            errorMessage = [NSString stringWithFormat:@"%@ Missing CP field.",errorMessage];
-        }*/
     }
     
     if(![self validatePlotNumberForDuplicate]){
@@ -1685,13 +1598,13 @@
         }
         [properties addObject:@"pieceScaleGradeCode"];
     }else if([stratumTypeCode isEqualToString:@"E"]){
-        
+        /*
         [properties addObject:@"pieceScaleSpeciesCode"];
         [properties addObject:@"pieceMaterialKindCode"];
         [properties addObject:@"pieceWasteClassCode"];
         [properties addObject:@"pieceScaleGradeCode"];
         [properties addObject:@"estimatedPercent"];
-         
+         */
     }
     return properties;
 }

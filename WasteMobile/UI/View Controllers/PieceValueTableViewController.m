@@ -28,8 +28,6 @@
 #import "AssessmentMethodCode.h"
 #import "CommentCode.h"
 #import "CodeDAO.h"
-#import "WasteTypeCode.h"
-#import "Constants.h"
 
 @interface PieceValueTableViewController ()
 
@@ -68,18 +66,11 @@
     
     if (lookupValues){
         if ([self.codeName isEqualToString:@"scaleGradeCode"]){
-            if([_wasteBlock.regionId integerValue] == InteriorRegion){
             NSSortDescriptor *sort1 = [[NSSortDescriptor alloc ] initWithKey:@"areaType" ascending:YES];
             NSSortDescriptor *sort2 = [[NSSortDescriptor alloc ] initWithKey:self.codeName ascending:YES];
             NSArray *sortDes = [NSArray arrayWithObjects:sort1, sort2, nil];
             
             self.lookupValues = [self.lookupValues sortedArrayUsingDescriptors:sortDes];
-            }else if([_wasteBlock.regionId integerValue] == CoastRegion){
-                NSSortDescriptor *sort1 = [[NSSortDescriptor alloc ] initWithKey:@"areaType" ascending:YES];
-                NSSortDescriptor *sort2 = [[NSSortDescriptor alloc ] initWithKey:@"effectiveDate" ascending:YES];
-                NSArray *sortDes = [NSArray arrayWithObjects:sort1, sort2, nil];
-                self.lookupValues = [self.lookupValues sortedArrayUsingDescriptors:sortDes];
-            }
         }else if ([self.codeName isEqualToString:@"materialKindCode"]){
             NSSortDescriptor *sort1 = [[NSSortDescriptor alloc ] initWithKey:@"effectiveDate" ascending:YES];
             NSArray *sortDes = [NSArray arrayWithObjects:sort1, nil];
@@ -200,26 +191,23 @@
         self.propertyName = @"estimatedVolume";
     }else if([self.propertyName isEqualToString:@"estimatedPercent"]){
         self.title = @"(IFOR 205-21) Percent Estimate";
-        self.displayMode= DecimalNumberMode2;
+        self.displayMode= DecimalNumberMode;
         self.propertyName = @"estimatedPercent";
-    }else if([self.propertyName isEqualToString:@"usercode"]){
-        self.title = @"(IFOR 205-22) User Code (10 character limit, longer will be truncated)";
-        self.displayMode= TextMode2;
-        self.propertyName = @"usercode";
-        self.originalValue = [[self.wastePiece valueForKey:@"usercode"] isKindOfClass:[NSNull class]] ? @"" :[self.wastePiece valueForKey:@"usercode"] ;
     }
+
+
 }
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear: animated];
    
-    if (self.displayMode == NumberMode || self.displayMode == DecimalNumberMode  || self.displayMode == DecimalNumberMode2){
+    if (self.displayMode == NumberMode || self.displayMode == DecimalNumberMode){
 
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         NumberInputTableViewCell *tvc = (NumberInputTableViewCell *)[self.inputTableView cellForRowAtIndexPath:indexPath];
         [tvc.numberField becomeFirstResponder];
 
-    }else if(self.displayMode == TextMode || self.displayMode == TextMode2){
+    }else if(self.displayMode == TextMode){
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         TextInputTableViewCell *tvc = (TextInputTableViewCell *)[self.inputTableView cellForRowAtIndexPath:indexPath];
@@ -259,18 +247,8 @@
 }
 
 -(void)textUpdated{
-    if ([((WastePiece*)self.wastePiece).piecePlot.plotStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"C"] && [self.propertyName isEqualToString:@"length"]){
-        if(self.isLoopingProperty && [self.inputTextField.text length] > 2 && (!self.existingNumberValue || [self.existingNumberValue integerValue] == 0)){
-            [self doneEdit:self.inputTextField];
-        }
-    }else if([((WastePiece*)self.wastePiece).piecePlot.plotStratum.stratum isEqualToString:@"STRS"] && [self.propertyName isEqualToString:@"length"]){
-        if(self.isLoopingProperty && [self.inputTextField.text length] > 2 && (!self.existingNumberValue || [self.existingNumberValue integerValue] == 0)){
-            [self doneEdit:self.inputTextField];
-        }
-    }else {
-        if(self.isLoopingProperty && [self.inputTextField.text length] > 1 && (!self.existingNumberValue || [self.existingNumberValue integerValue] == 0)){
-            [self doneEdit:self.inputTextField];
-        }
+    if(self.isLoopingProperty && [self.inputTextField.text length] > 1 && (!self.existingNumberValue || [self.existingNumberValue integerValue] == 0)){
+        [self doneEdit:self.inputTextField];
     }
 }
 
@@ -289,19 +267,6 @@
         self.inputTextField = cell.numberField;
         
         return cell;
-    
-    }else if(self.displayMode == DecimalNumberMode2){
-        NumberInputTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NumberValueCellID" forIndexPath:indexPath];
-        cell.numberField.text = self.originalValue;
-        cell.numberField.tag = 0;
-        [cell.numberField setDelegate:self];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(textUpdated)
-                                                     name: UITextFieldTextDidChangeNotification
-                                                   object:cell.numberField];
-        self.inputTextField = cell.numberField;
-        
-        return cell;
         
     }else if(self.displayMode == TextMode){
         TextInputTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TextValueCellID" forIndexPath:indexPath];
@@ -309,14 +274,7 @@
         cell.textField.tag = 2;
         [cell.textField setDelegate:self];
         return cell;
-
-    }else if(self.displayMode == TextMode2){    // -mchu March 22, 2019: TextMode2 to support limiting of User Code input to 10 characters
-        TextInputTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TextValueCellID" forIndexPath:indexPath];
-        cell.textField.text = self.originalValue;
-        cell.textField.tag = 1;
-        [cell.textField setDelegate:self];
-        return cell;
-
+        
     }else if(self.displayMode == LookupMode){
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LookupValueCellID" forIndexPath:indexPath];
          //if ([self.codeName isEqualToString:@"commentCode"]){
@@ -358,7 +316,7 @@
    
     NSString *inputValue = @"";
     
-    if (self.displayMode == NumberMode || self.displayMode == DecimalNumberMode || self.displayMode == DecimalNumberMode2){
+    if (self.displayMode == NumberMode || self.displayMode == DecimalNumberMode){
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         NumberInputTableViewCell *tvc = (NumberInputTableViewCell *)[self.inputTableView cellForRowAtIndexPath:indexPath];
@@ -367,7 +325,7 @@
         if ([tvc.numberField.text isEqualToString:@""]){
             [self.wastePiece setValue:nil forKey:self.propertyName];
         }else{
-            if (self.displayMode == DecimalNumberMode || self.displayMode == DecimalNumberMode2){
+            if (self.displayMode == DecimalNumberMode){
                 [self.wastePiece setValue:[[NSDecimalNumber alloc] initWithString:tvc.numberField.text] forKey:self.propertyName];
             }else if (self.displayMode == NumberMode){
                 [self.wastePiece setValue:[NSNumber numberWithInt:[tvc.numberField.text intValue]] forKey:self.propertyName];
@@ -378,7 +336,7 @@
         
         inputValue = tvc.numberField.text;
         
-    }else if((self.displayMode == TextMode) || (self.displayMode == TextMode2)){    // -mchu March 22 2019 - test for Notes or User Code (changes length of input field)
+    }else if(self.displayMode == TextMode){
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         TextInputTableViewCell *tvc = (TextInputTableViewCell *)[self.inputTableView cellForRowAtIndexPath:indexPath];
@@ -388,9 +346,9 @@
         }else{
             [self.wastePiece setValue:tvc.textField.text forKey:self.propertyName];
         }
-
-        inputValue = tvc.textField.text;
-
+        
+        inputValue =tvc.textField.text;
+        
     }else if(self.displayMode == LookupMode){
         
         if (self.selectLookUpIndex >= 0 ){
@@ -516,45 +474,9 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    NSMutableString *str = [[NSMutableString alloc] initWithString:textField.text];
-    [str appendString:string];
-    NSString *theString = str;
-    // FLOAT VALUE ONLY
-    if(self.displayMode == DecimalNumberMode2)
-    {
-        NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
-        if ([string rangeOfCharacterFromSet:charSet].location != NSNotFound)
-            return NO;
-        else {
-            NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-            NSArray *arrSep = [newString componentsSeparatedByString:@"."];
-            if([arrSep count] > 2)
-                return NO;
-            else {
-                if([arrSep count] == 1) {
-                    if([[arrSep objectAtIndex:0] length] > 6)
-                        return NO;
-                    else
-                        return YES;
-                }
-                if([arrSep count] == 2) {
-                    if([[arrSep objectAtIndex:0] length] > 6)
-                        return NO;
-                    else if([[arrSep objectAtIndex:1] length] > 1)  //Set after dot(.) how many digits you want.I set after dot I want 2 digits.If it goes more than 2 return NO
-                        return NO;
-                    else {
-                        if([[arrSep objectAtIndex:0] length] >= 7) //Again I set the condition here.
-                            return NO;
-                        else
-                            return YES;
-                    }
-                }
-                return YES;
-            }
-        }
-        return YES;
-    }
+    
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
+    
     switch (textField.tag) {
         case 1:
             return (newLength > 10) ? NO : YES;

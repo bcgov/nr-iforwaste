@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:WasteMobile.xcodeproj">
+      location = "self:/Users/chrisnesmith/projects/IFW/trunk/WasteMobile.xcodeproj">
    </FileRef>
 </Workspace>

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class AssessmentMethodCode, HarvestMethodCode, PlotSizeCode, StratumTypeCode, WasteBlock, WasteLevelCode, WastePlot, WasteTypeCode, EFWInteriorStat, EFWCoastStat, StratumPile, AggregateCutblock;
+@class AssessmentMethodCode, HarvestMethodCode, PlotSizeCode, StratumTypeCode, WasteBlock, WasteLevelCode, WastePlot, WasteTypeCode, EFWInteriorStat, EFWCoastStat;
 
 NS_ASSUME_NONNULL_BEGIN
 

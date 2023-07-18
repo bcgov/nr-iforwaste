@@ -101,9 +101,6 @@
         if([wb valueForKey:@"snowCode"] != [NSNull null]){
             wbDto.snowCode = [wb valueForKey:@"snowCode"];
         }
-        if([wb valueForKey:@"interiorCedarCode"] != [NSNull null]){
-            wbDto.interiorCedarCode = [wb valueForKey:@"interiorCedarCode"];
-        }
         
         [wbAry addObject:wbDto];
     }

@@ -149,6 +149,8 @@
             NSString *messageBody = @"";
             NSArray *toRecipents = [NSArray arrayWithObject:@""];
             
+            bool test = [MFMailComposeViewController canSendMail];
+            
             MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
             mc.mailComposeDelegate = self;
             [mc setSubject:emailTitle];
@@ -375,7 +377,7 @@
 
 -(void)popupForPieceSearch{
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Search Piece by Piece Number"
-                                                                   message:@"Please enter the piece number."
+                                                                   message:@"Please enter the piece number greater zero."
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
         textField.placeholder        = NSLocalizedString(@"Piece Number", nil);
@@ -559,8 +561,6 @@
             [self showAlert:@"Import File" message:@"Fail to import file - xml error." ];
         }else if (outcome == ImportFailOnSaveWastBlock){
             [self showAlert:@"Import File" message:@"Fail to import file - save error." ];
-        }else if (outcome == ImportFailRegionIDExist){
-            [self showAlert:@"Import File" message:@"Fail to import file - region different." ];
         }
     }
 }
@@ -597,10 +597,6 @@
 -(void)mergeCutBlock{
     WasteBlock* import_wb = nil;
     XMLDataImporter *imp = [[XMLDataImporter alloc] init];
-    BOOL isOption1 = FALSE;
-    BOOL isOption2 = FALSE;
-    BOOL isOption3 = FALSE;
-    int pileCounter1 = 0; int nonPileStratum1 = 0;int pileCounter2 = 0; int nonPileStratum2 = 0;
     
     NSLog(@"importFilePath=%@, importFileURL=%@", self.importFilePath, self.importFileURL);
     ImportOutcomeCode import_outcome = ImportFailCutBlockExist;
@@ -613,7 +609,6 @@
     switch(import_outcome){
         case ImportFailLoadXML:
         case ImportFailOnSaveWastBlock:
-        case ImportFailRegionIDExist:
             import_wb = nil;
             break;
     default:
@@ -625,126 +620,39 @@
         db_wb = [WasteBlockDAO getWasteBlockByRUButWAID:[NSString stringWithFormat:@"%@",import_wb.reportingUnit] cutBlockId:import_wb.cutBlockId  license:import_wb.licenceNumber cutPermit:import_wb.cuttingPermitId wasteAsseID:[NSString stringWithFormat:@"%@", import_wb.wasteAssessmentAreaID]];
         
         if(db_wb){
-            for(WasteStratum *ws1 in db_wb.blockStratum){
-                if([ws1.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:YES] intValue]){
-                    pileCounter1++;
-                }else{
-                    nonPileStratum1++;
+            NSMutableArray *warning = [WasteImportBlockValidator compareBlockForImport:db_wb wb2:import_wb];
+            
+            if ([warning count] > 0){
+                //alert warning
+                NSString *warning_msg = [NSString stringWithFormat:@"Data does not match between cut blocks (%d found)\n", [warning count]];
+                
+                for (NSString *field in warning){
+                   warning_msg = [warning_msg stringByAppendingString:[NSString stringWithFormat:@" - %@\n", field]];
+                                                        
                 }
-            }
-            for(WasteStratum *ws2 in import_wb.blockStratum){
-                if([ws2.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:YES] intValue]){
-                    pileCounter2++;
-                }else{
-                    nonPileStratum2++;
-                }
-            }
-            if(pileCounter1 == 0 && pileCounter2 == 0){
-                if(nonPileStratum1 > 0 && nonPileStratum2 > 0){
-                    isOption1 = TRUE;
-                }
-            }else if(pileCounter1 > 0 && pileCounter2 > 0){
-                if(nonPileStratum1 == 0 && nonPileStratum2 == 0){
-                    isOption2 = TRUE;
-                }else{
-                    isOption3 = TRUE;
-                }
+                [self showAlert:@"Merge Error" message:warning_msg];
+                
+                //delete imported cut block data
+                [WasteBlockDAO deleteCutBlock:import_wb];
             }else{
-                isOption3 = TRUE;
-            }
-            if(isOption1){
-                NSMutableArray *warning = [WasteImportBlockValidator compareBlockForImport:db_wb wb2:import_wb];
-                if ([warning count] > 0){
-                    //alert warning
-                    NSString *warning_msg = [NSString stringWithFormat:@"Data does not match between cut blocks (%d found)\n", [warning count]];
-                    
-                    for (NSString *field in warning){
-                       warning_msg = [warning_msg stringByAppendingString:[NSString stringWithFormat:@" - %@\n", field]];
-                                                            
-                    }
-                    [self showAlert:@"Merge Error" message:warning_msg];
-                    
-                    //delete imported cut block data
-                    [WasteBlockDAO deleteCutBlock:import_wb];
-                }else{
-                    //merge cut block
-                    [WasteBlockDAO mergeWasteBlock:db_wb WasteBlock:import_wb];
+                //merge cut block
+                [WasteBlockDAO mergeWasteBlock:db_wb WasteBlock:import_wb];
 
-                    [WasteCalculator calculateWMRF:db_wb updateOriginal:NO];
-                    [WasteCalculator calculateRate:db_wb ];
-                    [WasteCalculator calculatePiecesValue:db_wb ];
+                [WasteCalculator calculateWMRF:db_wb updateOriginal:NO];
+                [WasteCalculator calculateRate:db_wb ];
+                [WasteCalculator calculatePiecesValue:db_wb ];
 
-                    if([db_wb.userCreated intValue] ==1){
-                        [WasteCalculator calculateEFWStat:db_wb];
-                    }
-
-                    //delete the imported block
-                    [WasteBlockDAO deleteCutBlock:import_wb];
-                    
-                    self.targetWasteBlock = db_wb;
-                    
-                    //prompt to go to cut block
-                    [self showRedirectAlert:@"Merge File" message:@"Cut block data merged successfully. Do you want to go to the cut block?" ];
+                if([db_wb.userCreated intValue] ==1){
+                    [WasteCalculator calculateEFWStat:db_wb];
                 }
-            }else if(isOption2){
-                NSMutableArray *warning = [WasteImportBlockValidator compareBlockForImportPileStratum:db_wb wb2:import_wb];
-                if ([warning count] > 0){
-                    //alert warning
-                    NSString *warning_msg = [NSString stringWithFormat:@"Data does not match between cut blocks (%d found)\n", [warning count]];
-                    
-                    for (NSString *field in warning){
-                       warning_msg = [warning_msg stringByAppendingString:[NSString stringWithFormat:@" - %@\n", field]];
-                                                            
-                    }
-                    [self showAlert:@"Merge Error" message:warning_msg];
-                    
-                    //delete imported cut block data
-                    [WasteBlockDAO deleteCutBlock:import_wb];
-                }else{
-                    //merge cut block
-                    [WasteBlockDAO mergeWasteBlockPileStratum:db_wb WasteBlock:import_wb];
-                    
-                    [WasteCalculator calculateWMRF:db_wb updateOriginal:NO];
-                    [WasteCalculator calculateRate:db_wb ];
 
-                    if([db_wb.userCreated intValue] ==1){
-                        [WasteCalculator calculateEFWStat:db_wb];
-                    }
-
-                    //delete the imported block
-                    [WasteBlockDAO deleteCutBlock:import_wb];
-                    
-                    self.targetWasteBlock = db_wb;
-                    
-                    //prompt to go to cut block
-                    [self showRedirectAlert:@"Merge File" message:@"Cut block data merged successfully. Do you want to go to the cut block?" ];
-                }
-            }else if(isOption3){
-                NSMutableArray *warning = [WasteImportBlockValidator compareBlockForImportStratum:db_wb wb2:import_wb];
-                 if ([warning count] > 0){
-                     //alert warning
-                     NSString *warning_msg = [NSString stringWithFormat:@"Data does not match between cut blocks (%d found)\n", [warning count]];
-                     for (NSString *field in warning){
-                        warning_msg = [warning_msg stringByAppendingString:[NSString stringWithFormat:@" - %@\n", field]];
-                     }
-                     [self showAlert:@"Merge Error" message:warning_msg];
-                     //delete imported cut block data
-                     [WasteBlockDAO deleteCutBlock:import_wb];
-                 }else{
-                     //merge cut block
-                     [WasteBlockDAO mergeWasteBlockData:db_wb WasteBlock:import_wb];
-                     [WasteCalculator calculateWMRF:db_wb updateOriginal:NO];
-                     [WasteCalculator calculateRate:db_wb ];
-                     [WasteCalculator calculatePiecesValue:db_wb ];
-                     if([db_wb.userCreated intValue] ==1){
-                         [WasteCalculator calculateEFWStat:db_wb];
-                     }
-                     //delete the imported block
-                     [WasteBlockDAO deleteCutBlock:import_wb];
-                     self.targetWasteBlock = db_wb;
-                     //prompt to go to cut block
-                     [self showRedirectAlert:@"Merge File" message:@"Cut block data merged successfully. Do you want to go to the cut block?" ];
-                 }
+                //delete the imported block
+                [WasteBlockDAO deleteCutBlock:import_wb];
+                
+                self.targetWasteBlock = db_wb;
+                
+                //prompt to go to cut block
+                [self showRedirectAlert:@"Merge File" message:@"Cut block data merged successfully. Do you want to go to the cut block?" ];
             }
         }else{
             //can't find cut block in databaes to merge
@@ -836,7 +744,7 @@
 -(IBAction)sortByCreatedDate:(id)sender{
     self.sortCreatedDateAscending = ! self.sortCreatedDateAscending;
     
-    NSSortDescriptor *sd = [[NSSortDescriptor alloc ] initWithKey:@"createdDateStr" ascending:self.sortCreatedDateAscending];
+    NSSortDescriptor *sd = [[NSSortDescriptor alloc ] initWithKey:@"createdDate" ascending:self.sortCreatedDateAscending];
     
     self.files = [[NSMutableArray alloc] initWithArray:[self.files sortedArrayUsingDescriptors:[NSArray arrayWithObject:sd]]];
     [self.tableView reloadData];

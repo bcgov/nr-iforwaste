@@ -15,10 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSFetchRequest<WastePlot *> *)fetchRequest;
 
-
-@property (nullable, nonatomic, copy) NSString *aggregateLicence;
-@property (nullable, nonatomic, copy) NSString *aggregateCutblock;
-@property (nullable, nonatomic, copy) NSString *aggregateCuttingPermit;
 @property (nullable, nonatomic, copy) NSString *assistant;
 @property (nullable, nonatomic, copy) NSString *baseline;
 @property (nullable, nonatomic, copy) NSString *certificateNumber;
@@ -46,16 +42,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDecimalNumber *surveyNetVal;
 @property (nullable, nonatomic, copy) NSString *surveyorName;
 @property (nullable, nonatomic, copy) NSString *weather;
-@property (nullable, nonatomic, copy) NSNumber *plotEstimatedVolume;
 @property (nullable, nonatomic, retain) NSSet<WastePiece *> *plotPiece;
 @property (nullable, nonatomic, retain) ShapeCode *plotShapeCode;
 @property (nullable, nonatomic, retain) PlotSizeCode *plotSizeCode;
 @property (nullable, nonatomic, retain) WasteStratum *plotStratum;
 @property (nullable, nonatomic, retain) EFWCoastStat *plotCoastStat;
 @property (nullable, nonatomic, retain) EFWInteriorStat *plotInteriorStat;
-@property (nullable, nonatomic, retain) NSDecimalNumber *sawlogPercent;
-@property (nullable, nonatomic, retain) NSDecimalNumber *greenGradePercent;
-@property (nullable, nonatomic, retain) NSDecimalNumber *dryGradePercent;
 
 @end
 

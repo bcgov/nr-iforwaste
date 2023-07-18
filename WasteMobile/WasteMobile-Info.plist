@@ -52,6 +52,8 @@
 	</dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>MainStoryboard</string>
 	<key>UIMainStoryboardFile</key>
 	<string>MainStoryboard</string>
 	<key>UIMainStoryboardFile~ipad</key>
@@ -93,8 +95,8 @@
 		</dict>
 	</array>
 	<key>iForWasteVersionNumber</key>
-	<string>iForWaste - Version 1.2.2 Test</string>
+	<string>iForWaste - Version 1.2.5</string>
 	<key>iForWasteWebServiceEndPoint</key>
-	<string>http://10.10.30.120:8080/int/wastews/</string>
+	<string>https://apps.nrs.gov.bc.ca/int/wastews/</string>
 </dict>
 </plist>

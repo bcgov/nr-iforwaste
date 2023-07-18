@@ -10,12 +10,7 @@
 typedef enum NewCutBlockOptions{
     InteriorSRS,
     InteriorRatio,
-    InteriorAggregate,
-    InteriorAggregateSRS,
     CoastSRS,
-    CoastRatio,
-    CoastAggregate,
-    CoastAggregateSRS,
     NotSelected
 }NewCutBlockOptions;
 

@@ -8,8 +8,6 @@
 
 #import "StratumViewController.h"
 #import "PlotTableViewCell.h"
-#import "AggregatePlotTableViewCell.h"
-#import "AggregatePileTableViewCell.h"
 #import "WasteStratum.h"
 #import "WastePlot.h"
 #import "StratumTypeCode.h"
@@ -25,7 +23,6 @@
 #import "BlockViewController.h"
 #import "WasteBlock.h"
 #import "PlotViewController.h"
-#import "PileViewController.h"
 
 #import "ShapeCode.h"
 #import "ReportGeneratorTableViewController.h"
@@ -34,10 +31,6 @@
 #import "PlotSelectorLog.h"
 #import "Constants.h"
 #import "WasteBlockDAO.h"
-#import "WastePile+CoreDataClass.h"
-#import "StratumPile+CoreDataClass.h"
-#import "AggregateCutblock+CoreDataClass.h"
-#import "WastePlotValidator.h"
 
 @class UIAlertView;
 
@@ -49,13 +42,13 @@
 
 
 @synthesize versionLabel, downArrowImage;
-@synthesize wasteBlock, wasteStratum, plotTableView, aggregatePlotTableView, aggregatePileTableView, sortColumn, sortLicense, sortCuttingPermit, sortCutblock;
+
+@synthesize wasteBlock, wasteStratum, plotTableView;
 
 static NSString *const DEFAULT_DISPERSED_PRED_PLOT = @"18";
 static NSString *const DEFAULT_DISPERSED_MEASURE_PLOT = @"6";
 static NSString *const DEFAULT_ACCU_PRED_PLOT = @"12";
 static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
-
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -77,7 +70,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
 
 -(void) setupLists
 {
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"StratumTypeCode" ascending:YES];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"stratumTypeCode" ascending:YES];
     self.stratumTypeArray = [[[CodeDAO sharedInstance] getStratumTypeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
     sort = [[NSSortDescriptor alloc ] initWithKey:@"effectiveDate" ascending:YES];
@@ -90,9 +83,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     self.wasteLevelArray =  [[[CodeDAO sharedInstance] getWasteLevelCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
 
     sort = [[NSSortDescriptor alloc ] initWithKey:@"effectiveDate" ascending:YES];
-
     self.wasteTypeArray =  [[[CodeDAO sharedInstance] getWasteTypeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-
 }
 
 
@@ -120,6 +111,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     [self setupLists];
     
 
+    
     // STRATUMTYPE PICKER
     //
     /*
@@ -200,51 +192,18 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         [self.checkAreaLabel setText:@"Area (ha)"];
         [self.surveyAreaLabel setHidden:YES];
     }
-   
-    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
-    {
-        self.plotTableView.hidden = TRUE;
-        self.aggregatePlotTableView.hidden = FALSE;
-        self.aggregatePileTableView.hidden = FALSE;
-    }
     
     // POPULATE FROM OBJECT TO VIEW
     [self populateFromObject];
+    
     
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
 }
 
--(IBAction)sortPlots:(id)sender{
-    
-    NSString *key = @"";
-    if(sender == self.sortLicense){
-        key = @"aggregateLicence";
-    }else if(sender == self.sortCuttingPermit){
-        key = @"aggregateCuttingPermit";
-    }else if(sender == self.sortCutblock){
-        key = @"aggregateCutblock";
-    }else if(sender == self.sortPlotNumber)
-    {
-        key = @"plotNumber";
-    }
-    
-    BOOL orderASC = NO;
-    if([sortColumn rangeOfString:key].location == NSNotFound){
-        sortColumn = [NSString stringWithFormat:@"%@ ASC", key];
-        orderASC = YES;
-    }else{
-        if([sortColumn rangeOfString:@"ASC"].location == NSNotFound){
-            orderASC = YES;
-            sortColumn = [NSString stringWithFormat:@"%@ ASC", key];
-        }else{
-            sortColumn = [NSString stringWithFormat:@"%@ DESC", key];
-        }
-    }
-    NSSortDescriptor *sd = [[NSSortDescriptor alloc ] initWithKey:key ascending:orderASC];
-    self.sortedPlots = [[NSMutableArray alloc] initWithArray:[self.sortedPlots sortedArrayUsingDescriptors:[NSArray arrayWithObject:sd]]];
-    [self.aggregatePlotTableView reloadData];
-}
+
+
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -258,7 +217,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     self.navigationController.toolbarHidden = NO;
     */
     
-    
+
     
     [[Timer sharedManager] setCurrentVC:self];
     
@@ -267,25 +226,10 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     
     NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"plotNumber" ascending:YES]; // is key ok ? does it actually sort according to it
     self.sortedPlots = [[[self.wasteStratum stratumPlot] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-    NSSortDescriptor *sort1 = [[NSSortDescriptor alloc ] initWithKey:@"aggregateCutblock" ascending:YES];
-    self.sortedblocks = [[[self.wasteStratum stratumAgg] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort1]];
     
-    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue] && ![self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"])
-    {
-        self.plotTableView.hidden = TRUE;
-        self.aggregatePlotTableView.hidden = FALSE;
-        self.aggregatePileTableView.hidden = TRUE;
-    }else if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"])
-    {
-        self.plotTableView.hidden = TRUE;
-        self.aggregatePlotTableView.hidden = TRUE;
-        self.aggregatePileTableView.hidden = FALSE;
-    }
     
     // UPDATE VIEW
     [self.plotTableView reloadData];
-    [self.aggregatePlotTableView reloadData];
-    [self.aggregatePileTableView reloadData];
     
     
     int row;
@@ -361,20 +305,6 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         row++;
     }
     
-    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-        if(self.wasteStratum.strPile != nil ){
-            [self.totalPile setEnabled:NO];
-            [self.continueButton setEnabled:YES];
-            [self.assesmentSize setEnabled:NO];
-        }
-    }else{
-        if([self.wasteStratum.stratumAgg count] > 0){
-            [self.assesmentSize setEnabled:NO];
-            if(![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.gradeXPercent.text isEqualToString:@""] && ![self.gradeYPercent.text isEqualToString:@""]){
-                    [self.addCutblockButton setEnabled:YES];
-            }
-        }
-    }
     [self updateTitle];
     if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
         [WasteCalculator calculateEFWStat:self.wasteBlock];
@@ -392,7 +322,8 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     [super viewWillDisappear:animated];
     self.navigationController.toolbarHidden = YES;
     */
-   
+    
+    [self saveData];
     
 }
 
@@ -403,15 +334,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     NSLog(@"SAVE STRATUM");
     
     self.wasteStratum.stratum = [self.navigationItem.title substringWithRange:NSMakeRange(21, self.navigationItem.title.length-21)];
-    WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
-    NSString *errorMessage = [wpv validatemultipleStratum:self.wasteStratum.stratum wastestratum:self.wasteBlock.blockStratum];
-
-   if (![errorMessage isEqualToString:@""]){
-       UIAlertView *validateAlert = nil;
-       validateAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:errorMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-       validateAlert.tag = ValidEnum;
-       [validateAlert show];
-   }else{
+    
     /*
     for (StratumTypeCode* stc in self.stratumTypeArray){
         if ([stc.stratumTypeCode isEqualToString:[self codeFromText:self.stratumType.text] ] ){
@@ -440,19 +363,15 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     if ([self.wasteStratum.stratumID integerValue] < 0){
         if( [[self codeFromText:self.assesmentSize.text] isEqualToString:@"S"] ||
            [[self codeFromText:self.assesmentSize.text] isEqualToString:@"E"] ||
-           [[self codeFromText:self.assesmentSize.text] isEqualToString:@"O"] ){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:[self codeFromText:self.assesmentSize.text]];
-        }else if ([self.wasteStratum.stratum isEqualToString:@"STRE"]){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"E"];
+           [[self codeFromText:self.assesmentSize.text] isEqualToString:@"O"]){
+            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"assessmentMethodCode" code:[self codeFromText:self.assesmentSize.text]];
+        }else if ([self.assesmentSize.text isEqualToString:@"R"]){
             // skip if this is a standing tree
-        }else if([self.wasteStratum.stratum isEqualToString:@"STRS"]){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"S"];
-        }else if([[self codeFromText:self.assesmentSize.text] isEqualToString:@"R"] && ! ([self.wasteStratum.stratum isEqualToString:@"STRE"] || [self.wasteStratum.stratum isEqualToString:@"STRS"])){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:[self codeFromText:self.assesmentSize.text]];
         }else{
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"P"];
+            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"assessmentMethodCode" code:@"P"];
         }
     }
+    
     for (WasteLevelCode* wlc in self.wasteLevelArray){
         if ([wlc.wasteLevelCode isEqualToString:[self codeFromText:self.wasteLevel.text]] ){
             self.wasteStratum.stratumWasteLevelCode = wlc;
@@ -494,104 +413,22 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             self.wasteStratum.orgMeasurePlot = [[NSNumber alloc] initWithInt:[self.measurePlot.text intValue]];
         }
     }
-        double  totalestimatedvolume = 0.0;
-        for(WastePlot *wp in [self.wasteStratum.stratumPlot allObjects]){
-            totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
-        }
-        self.wasteStratum.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
-        NSLog(@"Total Estimated Volume %@", self.wasteStratum.totalEstimatedVolume);
+    
     //determine strutam type
     if(self.wasteStratum.stratumWasteTypeCode && (!self.wasteStratum.stratumStratumTypeCode || ![self.wasteStratum.stratumStratumTypeCode.stratumTypeCode isEqualToString:@"S"])){
         if([self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"D"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"F"] ||
            [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"G"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"H"] ||
            [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"S"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"T"] ){
-            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"StratumTypeCode" code:@"D"];
+            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"stratumTypeCode" code:@"D"];
             
         }else if([self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"L"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"R"] ||
                  [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"W"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"C"] ||
                  [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"P"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"O"]){
-            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"StratumTypeCode" code:@"A"];
+            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"stratumTypeCode" code:@"A"];
         }
-    }
-    if([self.totalPile.text intValue] == 0){
-        //NSLog(@"self.wasteStratum.totalNumPile %@", self.wasteStratum.totalNumPile);
-        self.totalPile.text = @"";self.measureSample.text = @"";
-        self.wasteStratum.totalNumPile = [[NSNumber alloc] initWithInt:[self.totalPile.text intValue]];
-        self.wasteStratum.measureSample = [[NSNumber alloc] initWithInt:[self.measureSample.text intValue]];
-        [self.continueButton setEnabled:NO];
-    }else{
-        self.wasteStratum.totalNumPile = [[NSNumber alloc] initWithInt:[self.totalPile.text intValue]];
-        self.wasteStratum.measureSample = [[NSNumber alloc] initWithInt:[self.measureSample.text intValue]];
     }
     
-    if([self.wasteBlock.regionId intValue] == InteriorRegion){
-        if(![self.grade12Percent.text isEqualToString:@""]){
-            if([self.grade12Percent.text doubleValue] >= 0.0 && [self.grade12Percent.text doubleValue] <= 100.0 ){
-                self.wasteStratum.grade12Percent = [[NSDecimalNumber alloc] initWithString:self.grade12Percent.text];
-            }else{
-                self.wasteStratum.grade12Percent = [[NSDecimalNumber alloc] initWithString:@""];
-                self.grade12Percent.text = @"";
-            }
-        }
-        if(![self.grade4Percent.text isEqualToString:@""]){
-            if([self.grade4Percent.text doubleValue] >= 0.0 && [self.grade4Percent.text doubleValue] <= 100.0 ){
-                self.wasteStratum.grade4Percent = [[NSDecimalNumber alloc] initWithString:self.grade4Percent.text];
-            }else{
-                self.wasteStratum.grade4Percent = [[NSDecimalNumber alloc] initWithString:@""];
-                self.grade4Percent.text = @"";
-            }
-        }
-        if(![self.grade5Percent.text isEqualToString:@""]){
-            if([self.grade5Percent.text doubleValue] >= 0.0 && [self.grade5Percent.text doubleValue] <= 100.0 ){
-                self.wasteStratum.grade5Percent = [[NSDecimalNumber alloc] initWithString:self.grade5Percent.text];
-            }else{
-                self.wasteStratum.grade5Percent = [[NSDecimalNumber alloc] initWithString:@""];
-                self.grade5Percent.text = @"";
-            }
-        }
-    }else if([self.wasteBlock.regionId intValue] == CoastRegion){
-        if(![self.grade12Percent.text isEqualToString:@""]){
-            if([self.grade12Percent.text doubleValue] >= 0.0 && [self.grade12Percent.text doubleValue] <= 100.0 ){
-                self.wasteStratum.gradeJPercent = [[NSDecimalNumber alloc] initWithString:self.grade12Percent.text];
-            }else{
-                self.wasteStratum.gradeJPercent = [[NSDecimalNumber alloc] initWithString:@""];
-                self.grade12Percent.text = @"";
-            }
-        }
-        if(![self.grade5Percent.text isEqualToString:@""]){
-            if([self.grade5Percent.text doubleValue] >= 0.0 && [self.grade5Percent.text doubleValue] <= 100.0 ){
-                self.wasteStratum.gradeUPercent = [[NSDecimalNumber alloc] initWithString:self.grade5Percent.text];
-            }else{
-                self.wasteStratum.gradeUPercent = [[NSDecimalNumber alloc] initWithString:@""];
-                self.grade5Percent.text = @"";
-            }
-        }
-        if(![self.grade4Percent.text isEqualToString:@""]){
-            if([self.grade4Percent.text doubleValue] >= 0.0 && [self.grade4Percent.text doubleValue] <= 100.0 ){
-                self.wasteStratum.gradeWPercent = [[NSDecimalNumber alloc] initWithString:self.grade4Percent.text];
-            }else{
-                self.wasteStratum.gradeWPercent = [[NSDecimalNumber alloc] initWithString:@""];
-                self.grade4Percent.text = @"";
-            }
-        }
-    }
-    if(![self.gradeXPercent.text isEqualToString:@""]){
-        if([self.gradeXPercent.text doubleValue] >= 0.0 && [self.gradeXPercent.text doubleValue] <= 100.0 ){
-            self.wasteStratum.gradeXPercent = [[NSDecimalNumber alloc] initWithString:self.gradeXPercent.text];
-        }else{
-            self.wasteStratum.gradeXPercent = [[NSDecimalNumber alloc] initWithString:@""];
-            self.gradeXPercent.text = @"";
-        }
-    }
-    if(![self.gradeYPercent.text isEqualToString:@""]){
-         if([self.gradeYPercent.text doubleValue] >= 0.0 && [self.gradeYPercent.text doubleValue] <= 100.0 ){
-             self.wasteStratum.gradeYPercent = [[NSDecimalNumber alloc] initWithString:self.gradeYPercent.text];
-         }else{
-             self.wasteStratum.gradeYPercent = [[NSDecimalNumber alloc] initWithString:@""];
-             self.gradeYPercent.text = @"";
-         }
-    }
-
+    
     NSError *error;
     
     // save the whole cut block
@@ -601,7 +438,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     if( error != nil){
         NSLog(@" Error when saving waste block into Core Data: %@", error);
     }
-   }
+    
 }
 
 
@@ -640,7 +477,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
     alert.tag = ((UIButton *)sender).tag;
-    NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
+    //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
     [alert show];
 }
 - (IBAction)addRatioPlot:(id)sender{
@@ -681,8 +518,8 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         }else{
             NSString* def_mp =[self getDefaultMeasurePlot:self.wasteStratum.stratumWasteTypeCode.wasteTypeCode];
             NSString* def_pp =[self getDefaultPredictionPlot:self.wasteStratum.stratumWasteTypeCode.wasteTypeCode];
-            // check if the user enter value against the default value - don't check for aggregates
-            /*if(( ![def_mp isEqualToString:@""] && ![self.measurePlot.text isEqualToString:def_mp]) || (![def_pp isEqualToString:@""] && ![self.predictionPlot.text isEqualToString:def_pp])){
+            // check if the user enter value against the default value
+            if(( ![def_mp isEqualToString:@""] && ![self.measurePlot.text isEqualToString:def_mp]) || (![def_pp isEqualToString:@""] && ![self.predictionPlot.text isEqualToString:def_pp])){
                 isValid = NO;
                 UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:@"Non-standard Value"
                                                                                       message:@"Prediction Plot and/or Measure Plot are non-standard values, Accept?"
@@ -697,15 +534,15 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
                 [confirmAlert addAction:yesAction];
                 [confirmAlert addAction:noAction];
                 [self presentViewController:confirmAlert animated:YES completion:nil];
-            }else{*/
-
+            }else{
+                //generate sample
                 [PlotSampleGenerator generatePlotSample2:self.wasteStratum];
                 //lock down the prediction plot and measure plot fields
-                /*[self.predictionPlot setEnabled:NO];
+                [self.predictionPlot setEnabled:NO];
                 [self.predictionPlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.measurePlot setEnabled:NO];
-                [self.measurePlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];*/
-            //}
+                [self.measurePlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+            }
         }
     }
 
@@ -715,92 +552,56 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
 }
 
 -(void)promptForGreenDryVolume{
-    if([wasteBlock.regionId integerValue] == InteriorRegion){
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Ratio Sampling Stratum"
-                                                                       message:@"Please enter your estimate for:\n- Predicted Plot Volume (m3)"
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"Plot Number", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"Plot Number", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeNumberPad;
-            textField.tag                = 3;
-            textField.delegate           = self;
-        }];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"Predicted Plot Volume (m3)", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"Predicted Plot Volume (m3)", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeNumberPad;
-            textField.tag                = 3;
-            textField.delegate           = self;
-        }];
-        
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {
-                                                                  [self promptForConfirmVolume:alert];
-                                                              }];
-        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {
-                                                              }];
-        
-        
-        [alert addAction:okAction];
-        [alert addAction:cancelAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    } else if([wasteBlock.regionId integerValue] == CoastRegion){
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Ratio Sampling Stratum"
-                                                                       message:@"Please enter your estimate for:\n- Predicted Plot Volume (m3)"
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"Plot Number", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"Plot Number", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeNumberPad;
-            textField.tag                = 3;
-            textField.delegate           = self;
-        }];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"Predicted Plot Volume (m3)", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"Predicted Plot Volume (m3)", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeNumberPad;
-            textField.tag                = 3;
-            textField.delegate           = self;
-        }];
-        
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                             [self promptForConfirmVolume:alert];
-                                                         }];
-        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
-                                                             handler:^(UIAlertAction * action) {
-                                                             }];
-        
-        
-        [alert addAction:okAction];
-        [alert addAction:cancelAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    }
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Ratio Sampling Stratum"
+                                                                   message:@"Please enter your estimate for:\n- Green Volume\n- Dry Volume"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder        = NSLocalizedString(@"Plot Number", nil);
+        textField.accessibilityLabel = NSLocalizedString(@"Plot Number", nil);
+        textField.clearButtonMode    = UITextFieldViewModeAlways;
+        textField.keyboardType       = UIKeyboardTypeNumberPad;
+        textField.tag                = 3;
+        textField.delegate           = self;
+    }];
+
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder        = NSLocalizedString(@"Green Volume", nil);
+        textField.accessibilityLabel = NSLocalizedString(@"Green Volume", nil);
+        textField.clearButtonMode    = UITextFieldViewModeAlways;
+        textField.keyboardType       = UIKeyboardTypeNumberPad;
+        textField.tag                = 3;
+        textField.delegate           = self;
+    }];
+    
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder        = NSLocalizedString(@"Dry Volume", nil);
+        textField.accessibilityLabel = NSLocalizedString(@"Dry Volume", nil);
+        textField.clearButtonMode    = UITextFieldViewModeAlways;
+        textField.keyboardType       = UIKeyboardTypeNumberPad;
+        textField.tag                = 3;
+        textField.delegate           = self;
+    }];
+    
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              [self promptForConfirmVolume:alert];
+                                                          }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                          }];
+    
+    
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 // TABLE VIEW POPULATION
 //
 #pragma mark - UIAlertView
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if(alertView.tag == ValidEnum){
-        //validateion alertview
-        if (alertView.cancelButtonIndex == buttonIndex) {
-
-        }else{
-            //if the user click "continue" then let user to back to stratum screen
-            [self.navigationController popViewControllerAnimated:YES];
-        }
-    }else if (alertView.cancelButtonIndex == buttonIndex) {
+    if (alertView.cancelButtonIndex == buttonIndex) {
         //NSLog(@"Alert view clicked with the cancel button index.");
     }
     else {
@@ -823,30 +624,8 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
                 [self.footerStatView setViewValue:self.wasteStratum];
             }
             [self.plotTableView reloadData];
-            [self.aggregatePlotTableView reloadData];
             
             //NSLog(@"Delete new plot at row %ld.", (long)alertView.tag);
-        }else if ([alertView.title isEqualToString:@"Delete Aggregate Cutblock"]){
-            
-            AggregateCutblock *targetblock = [self.sortedblocks objectAtIndex:alertView.tag];
-
-            [self deleteAggregateCB:targetblock targetAggregateCB:wasteStratum];
-            
-            NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"aggregateCutblock" ascending:YES];
-            self.sortedblocks = [[[self.wasteStratum stratumAgg] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-            
-            [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
-            [WasteCalculator calculateRate:self.wasteBlock ];
-            [WasteCalculator calculatePiecesValue:self.wasteBlock];
-            if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
-                [WasteCalculator calculateEFWStat:self.wasteBlock];
-                [self.efwFooterView setStratumViewValue:self.wasteStratum];
-            }else{
-                [self.footerStatView setViewValue:self.wasteStratum];
-            }
-           
-            [self.aggregatePileTableView reloadData];
-            
         }else{
             
             NSString *message = nil;
@@ -867,20 +646,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
 #pragma mark - TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
         //NSLog(@" plotCount = %lu ",(unsigned long)[[self.wasteStratum stratumPlot] count]);
-    /*if(![self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"]){
-        NSLog(@"normal plot %lu", (unsigned long)[[self.wasteStratum stratumPlot] count]);
         return [[self.wasteStratum stratumPlot] count];
-    }else{
-        NSLog(@"agg pile %lu", (unsigned long)[[self.wasteStratum stratumPlot] count]);
-        return [[self.wasteStratum stratumAgg] count];
-    }*/
-    if(tableView == plotTableView || tableView == aggregatePlotTableView){
-        NSLog(@"normal plot %lu", (unsigned long)[[self.wasteStratum stratumPlot] count]);
-               return [[self.wasteStratum stratumPlot] count];
-    }else if(tableView ==aggregatePileTableView){
-        NSLog(@"agg pile %lu", (unsigned long)[[self.wasteStratum stratumAgg] count]);
-               return [[self.wasteStratum stratumAgg] count];
-    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -895,174 +661,56 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     */
     
     
-    //not a pile stratum
-    if([self.wasteStratum.isPileStratum intValue] == 0){
-        //non-aggregate block
-        //Note: it populates both table views regardless if one is hidden
-        if(tableView == plotTableView)
-        {
-            PlotTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PlotTableCellID"];
 
-            //NSLog(@" plots = %lu ", (unsigned long)[[self.wasteStratum stratumPlot] count]);
-            //NSLog(@" sorted plots =  %d", [self.sortedPlots count]);
-            //NSLog(@" row = %ld ",(long)indexPath.row);
+    PlotTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PlotTableCellID"];
 
-            WastePlot *pt = ([self.sortedPlots count] == 1) ? [self.sortedPlots objectAtIndex:0] : [self.sortedPlots objectAtIndex:indexPath.row];
+    //NSLog(@" plots = %lu ", (unsigned long)[[self.wasteStratum stratumPlot] count]);
+    //NSLog(@" sorted plots =  %d", [self.sortedPlots count]);
+    //NSLog(@" row = %ld ",(long)indexPath.row);
 
-            
-                /*
-                NSLog(@"PLOT_ID %@ - FILL VIEW FROM OBJ", pt.plotID);
-                NSLog(@"plotNum = %@",pt.plotNumber);
-                NSLog(@"baseline = %@",pt.baseline);
-                NSLog(@"strip = %@",pt.strip);
-                NSLog(@"measuredPercent = %@",pt.surveyedMeasurePercent);
-                NSLog(@"shapeCode = %@",pt.plotShapeCode.shapeCode);
-                */
-            
-            
-            cell.plotNumber.text = pt.plotNumber ? [NSString stringWithFormat:@"%@", pt.plotNumber] : @"";
-            if(pt.isMeasurePlot){
-                cell.plotNumber.textColor = [UIColor whiteColor];
-                if([pt.isMeasurePlot intValue] == 1){
-                    cell.plotNumber.backgroundColor = [UIColor greenColor];
-                }else{
-                    cell.plotNumber.backgroundColor = [UIColor redColor];
-                }
-            }else{
-                //reset the color
-                cell.plotNumber.backgroundColor = [UIColor whiteColor];
-                cell.plotNumber.textColor = [UIColor blackColor];
-            }
-            cell.baseline.text = pt.baseline ? pt.baseline : @"";
-            cell.strip.text = pt.strip ? [NSString stringWithFormat:@"%@", pt.strip] : @"";
-            cell.measure.text = pt.surveyedMeasurePercent ? [NSString stringWithFormat:@"%@", pt.surveyedMeasurePercent] : @"";
-            cell.shape.text = pt.plotShapeCode ? [NSString stringWithFormat:@"%@", pt.plotShapeCode.shapeCode] : @"";
-            
-            if ([pt.plotID integerValue] == 0 ){
-                // store the row number into the tag
-                cell.deleteButton.tag = indexPath.row;
-            }else{
-                cell.deleteButton.hidden = YES;
-            }
+    WastePlot *pt = ([self.sortedPlots count] == 1) ? [self.sortedPlots objectAtIndex:0] : [self.sortedPlots objectAtIndex:indexPath.row];
+
+    
         /*
-            UIFont *currentFont = cell.plotNumber.font;
-            UIFont *newFont = [UIFont fontWithName:[NSString stringWithFormat:@"%@-Bold",currentFont.fontName] size:currentFont.pointSize];
-            cell.plotNumber.font = newFont;
+        NSLog(@"PLOT_ID %@ - FILL VIEW FROM OBJ", pt.plotID);
+        NSLog(@"plotNum = %@",pt.plotNumber);
+        NSLog(@"baseline = %@",pt.baseline);
+        NSLog(@"strip = %@",pt.strip);
+        NSLog(@"measuredPercent = %@",pt.surveyedMeasurePercent);
+        NSLog(@"shapeCode = %@",pt.plotShapeCode.shapeCode);
         */
-            return cell;
-        }/*else if(tableView == aggregatePileTableView){
-            
-            AggregatePileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AggregatePileTableCellID"];
-            NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"aggregateId" ascending:YES];
-            AggregateCutblock *aggcb = [[[[self.wasteStratum stratumAgg] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]] objectAtIndex:indexPath.row];
-            cell.blockId.text = aggcb.aggregateCutblock ? [NSString stringWithFormat:@"%@", aggcb.aggregateCutblock] : @"";
-            cell.cuttingPermit.text = aggcb.aggregateCuttingPermit ? [NSString stringWithFormat:@"%@", aggcb.aggregateCuttingPermit] : @"";
-            cell.license.text = aggcb.aggregateLicense ? [NSString stringWithFormat:@"%@", aggcb.aggregateLicense] : @"";
-            cell.totalPile.text = aggcb.totalNumPile ? [NSString stringWithFormat:@"%@", aggcb.totalNumPile] : @"";
-            cell.measureSample.text = aggcb.measureSample ? [NSString stringWithFormat:@"%@", aggcb.measureSample] : @"";
-            cell.viewOrConfirmButton.hidden = NO;
-            cell.deleteButton.hidden = NO;
-        
-            return cell;
-        }*/
-        //aggregate block
-        else
-        {
-            AggregatePlotTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AggregatePlotTableCellID"];
-            
-            //NSLog(@" plots = %lu ", (unsigned long)[[self.wasteStratum stratumPlot] count]);
-            //NSLog(@" sorted plots =  %d", [self.sortedPlots count]);
-            //NSLog(@" row = %ld ",(long)indexPath.row);
-            
-            WastePlot *pt = ([self.sortedPlots count] == 1) ? [self.sortedPlots objectAtIndex:0] : [self.sortedPlots objectAtIndex:indexPath.row];
-            
-            
-            /*
-             NSLog(@"PLOT_ID %@ - FILL VIEW FROM OBJ", pt.plotID);
-             NSLog(@"plotNum = %@",pt.plotNumber);
-             NSLog(@"baseline = %@",pt.baseline);
-             NSLog(@"strip = %@",pt.strip);
-             NSLog(@"measuredPercent = %@",pt.surveyedMeasurePercent);
-             NSLog(@"shapeCode = %@",pt.plotShapeCode.shapeCode);
-             */
-            
-            
-            cell.plotNumber.text = pt.plotNumber ? [NSString stringWithFormat:@"%@", pt.plotNumber] : @"";
-            if(pt.isMeasurePlot){
-                cell.plotNumber.textColor = [UIColor whiteColor];
-                if([pt.isMeasurePlot intValue] == 1){
-                    cell.plotNumber.backgroundColor = [UIColor greenColor];
-                }else{
-                    cell.plotNumber.backgroundColor = [UIColor redColor];
-                }
-            }else{
-                //reset the color
-                cell.plotNumber.backgroundColor = [UIColor whiteColor];
-                cell.plotNumber.textColor = [UIColor blackColor];
-            }
-            cell.baseline.text = pt.baseline ? pt.baseline : @"";
-            cell.strip.text = pt.strip ? [NSString stringWithFormat:@"%@", pt.strip] : @"";
-            cell.measure.text = pt.surveyedMeasurePercent ? [NSString stringWithFormat:@"%@", pt.surveyedMeasurePercent] : @"";
-            cell.shape.text = pt.plotShapeCode ? [NSString stringWithFormat:@"%@", pt.plotShapeCode.shapeCode] : @"";
-            cell.license.text = pt.aggregateLicence ? [NSString stringWithFormat:@"%@", pt.aggregateLicence] : @"";
-            cell.blockId.text = pt.aggregateCutblock ? [NSString stringWithFormat:@"%@", pt.aggregateCutblock] : @"";
-            cell.cuttingPermit.text = pt.aggregateCuttingPermit ? [NSString stringWithFormat:@"%@", pt.aggregateCuttingPermit] : @"";
-            
-            if ([pt.plotID integerValue] == 0 ){
-                // store the row number into the tag
-                cell.deleteButton.tag = indexPath.row;
-            }else{
-                cell.deleteButton.hidden = YES;
-            }
-            /*
-             UIFont *currentFont = cell.plotNumber.font;
-             UIFont *newFont = [UIFont fontWithName:[NSString stringWithFormat:@"%@-Bold",currentFont.fontName] size:currentFont.pointSize];
-             cell.plotNumber.font = newFont;
-             */
-            return cell;
-        }
-    } else {
-       /* PlotTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PileTableCellID"];
-        
-        WastePlot *pt = ([self.sortedPlots count] == 1) ? [self.sortedPlots objectAtIndex:0] : [self.sortedPlots objectAtIndex:indexPath.row];
-        
-        cell.plotNumber.text = pt.plotNumber ? [NSString stringWithFormat:@"%@", pt.plotNumber] : @"";
-        if(pt.isMeasurePlot){
-            cell.plotNumber.textColor = [UIColor whiteColor];
-            if([pt.isMeasurePlot intValue] == 1){
-                cell.plotNumber.backgroundColor = [UIColor greenColor];
-            }else{
-                cell.plotNumber.backgroundColor = [UIColor redColor];
-            }
+    
+    
+    cell.plotNumber.text = pt.plotNumber ? [NSString stringWithFormat:@"%@", pt.plotNumber] : @"";
+    if(pt.isMeasurePlot){
+        cell.plotNumber.textColor = [UIColor whiteColor];
+        if([pt.isMeasurePlot intValue] == 1){
+            cell.plotNumber.backgroundColor = [UIColor greenColor];
         }else{
-            //reset the color
-            cell.plotNumber.backgroundColor = [UIColor whiteColor];
-            cell.plotNumber.textColor = [UIColor blackColor];
+            cell.plotNumber.backgroundColor = [UIColor redColor];
         }
-        cell.baseline.text = pt.baseline ? pt.baseline : @"";
-        cell.strip.text = pt.strip ? [NSString stringWithFormat:@"%@", pt.strip] : @"";
-        cell.measure.text = pt.surveyedMeasurePercent ? [NSString stringWithFormat:@"%@", pt.surveyedMeasurePercent] : @"";
-        cell.shape.text = pt.plotShapeCode ? [NSString stringWithFormat:@"%@", pt.plotShapeCode.shapeCode] : @"";
-        
-        cell.deleteButton.hidden = YES;
-        
-        return cell;*/
-        AggregatePileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"AggregatePileTableCellID"];
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"aggregateCutblock" ascending:YES];
-        self.sortedblocks = [[[self.wasteStratum stratumAgg] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-        AggregateCutblock *aggcb  = ([self.wasteStratum.stratumAgg count] == 1) ? [self.sortedblocks objectAtIndex:0] : [self.sortedblocks objectAtIndex:indexPath.row];
-        cell.blockId.text = aggcb.aggregateCutblock ? [NSString stringWithFormat:@"%@", aggcb.aggregateCutblock] : @"";
-        cell.cuttingPermit.text = aggcb.aggregateCuttingPermit ? [NSString stringWithFormat:@"%@", aggcb.aggregateCuttingPermit] : @"";
-        cell.license.text = aggcb.aggregateLicense ? [NSString stringWithFormat:@"%@", aggcb.aggregateLicense] : @"";
-        cell.totalPile.text = aggcb.totalNumPile ? [NSString stringWithFormat:@"%@", aggcb.totalNumPile] : @"";
-        cell.measureSample.text = aggcb.measureSample ? [NSString stringWithFormat:@"%@", aggcb.measureSample] : @"";
-        
+    }else{
+        //reset the color
+        cell.plotNumber.backgroundColor = [UIColor whiteColor];
+        cell.plotNumber.textColor = [UIColor blackColor];
+    }
+    cell.baseline.text = pt.baseline ? pt.baseline : @"";
+    cell.strip.text = pt.strip ? [NSString stringWithFormat:@"%@", pt.strip] : @"";
+    cell.measure.text = pt.surveyedMeasurePercent ? [NSString stringWithFormat:@"%@", pt.surveyedMeasurePercent] : @"";
+    cell.shape.text = pt.plotShapeCode ? [NSString stringWithFormat:@"%@", pt.plotShapeCode.shapeCode] : @"";
+    
+    if ([pt.plotID integerValue] == 0 && [self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
         // store the row number into the tag
         cell.deleteButton.tag = indexPath.row;
-        
-        cell.deleteButton.hidden = NO;
-        return cell;
+    }else{
+        cell.deleteButton.hidden = YES;
     }
+/*
+    UIFont *currentFont = cell.plotNumber.font;
+    UIFont *newFont = [UIFont fontWithName:[NSString stringWithFormat:@"%@-Bold",currentFont.fontName] size:currentFont.pointSize];
+    cell.plotNumber.font = newFont;
+*/
+    return cell;
 }
 
 
@@ -1111,6 +759,14 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     [self.view endEditing:YES];
     
 }
+
+
+
+
+
+
+
+
 
 
 // SAME ROW SELECT APPLY
@@ -1244,7 +900,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     NSString *theString = str;
     // FLOAT VALUE ONLY
     if(textField==self.areaHa ||[textField.accessibilityLabel isEqualToString:NSLocalizedString(@"Green Volume", nil)]
-       || [textField.accessibilityLabel isEqualToString:NSLocalizedString(@"Dry Volume", nil)] || [textField.accessibilityLabel isEqualToString:NSLocalizedString(@"Predicted Plot Volume (m3)", nil)] )
+       || [textField.accessibilityLabel isEqualToString:NSLocalizedString(@"Dry Volume", nil)] )
     {
         if( ![self validInputNumbersOnlyWithDot:theString] ){
             return NO;
@@ -1255,48 +911,9 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             return NO;
         }
     }
-    if( textField == self.totalPile || textField == self.measureSample){
-        if( ![self validInputNumbersOnly:theString] ){
-            return NO;
-        }
-    }
-    if( textField == self.grade12Percent || textField == self.grade4Percent || textField == self.grade5Percent || textField == self.gradeXPercent || textField == self.gradeYPercent){
-        NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
-        if ([string rangeOfCharacterFromSet:charSet].location != NSNotFound)
-            return NO;
-        else {
-            NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-            NSArray *arrSep = [newString componentsSeparatedByString:@"."];
-            if([arrSep count] > 2)
-                return NO;
-            else {
-                if([arrSep count] == 1) {
-                    if([[arrSep objectAtIndex:0] length] > 3)
-                        return NO;
-                    else
-                        return YES;
-                }
-                if([arrSep count] == 2) {
-                    if([[arrSep objectAtIndex:0] length] > 3)
-                        return NO;
-                    else if([[arrSep objectAtIndex:1] length] > 1)  //Set after dot(.) how many digits you want.I set after dot I want 2 digits.If it goes more than 2 return NO
-                        return NO;
-                    else {
-                        if([[arrSep objectAtIndex:0] length] >= 4) //Again I set the condition here.
-                            return NO;
-                        else
-                            return YES;
-                    }
-                }
-                return YES;
-            }
-        }
-        return YES;
-    }
     
     
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    NSCharacterSet *myCharSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
     switch (textField.tag) {
         case 1:
             return (newLength > 256) ? NO : YES;
@@ -1321,23 +938,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         case 6:
             return (newLength > 2) ? NO : YES;
             break;
-        
-        case 7:
-            return (newLength > 4) ? NO : YES;
-            break;
             
-        case 8:
-            return (newLength > 3) ? NO : YES;
-            break;
-        case 9:
-            for (int i = 0; i < [string length]; i++) {
-                unichar c = [string characterAtIndex:i];
-                if ([myCharSet characterIsMember:c]) {
-                    return (newLength > 3) ? NO : YES;
-                }
-            }
-            return [string isEqualToString:@""];
-            break;
         default:
             return NO; // NOT EDITABLE
     }
@@ -1368,92 +969,26 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         }else{
             [self.footerStatView setViewValue:self.wasteStratum];
         }
-    }else if(textField == self.totalPile){
-        if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-            if([self.totalPile.text integerValue] == 0){
-                self.measureSample.text = self.totalPile.text;
-                [self.continueButton setEnabled:NO];
-            }else if([self.totalPile.text integerValue] <= 10){
-                self.measureSample.text = self.totalPile.text;
-            }else if([self.totalPile.text intValue] > 10){
-                int totalpile = [self.totalPile.text intValue];
-                int excess = totalpile - 10;
-                int value = excess/5;
-                int measure = 10 + value;
-                self.measureSample.text = [[NSString alloc ] initWithFormat:@"%d", measure];
-            }
-        }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-            if([self.totalPile.text integerValue] == 0){
-            }else if([self.totalPile.text integerValue] <= 10){
-                self.measureSample.text = self.totalPile.text;
-            }else{
-                self.measureSample.text = [[NSString alloc ] initWithFormat:@"%d", 10];
-            }
-        }
-        if([self.measureSample.text intValue] > 30){
-            self.measureSample.text = [[NSString alloc] initWithFormat:@"%d", 30];
-        }
-        if([wasteBlock.regionId integerValue] == InteriorRegion){
-            if((![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.totalPile.text isEqualToString:@""] && ![self.measureSample.text isEqualToString:@""])){
-                [self.continueButton setEnabled:YES];
-            }
-        }else if([wasteBlock.regionId integerValue] == CoastRegion){
-            if((![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.gradeXPercent.text isEqualToString:@""] && ![self.gradeYPercent.text isEqualToString:@""] && ![self.totalPile.text isEqualToString:@""] && ![self.measureSample.text isEqualToString:@""])){
-                [self.continueButton setEnabled:YES];
-            }
-        }
-    }else if(textField == self.grade12Percent || textField == self.grade4Percent || textField == self.grade5Percent || self.gradeXPercent || self.gradeYPercent){
-        if([wasteBlock.regionId integerValue] == InteriorRegion){
-            if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-                if((![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.totalPile.text isEqualToString:@""] && ![self.measureSample.text isEqualToString:@""])){
-                    [self.continueButton setEnabled:YES];
-                }
-            }else{
-                if((![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""])){
-                    [self.addCutblockButton setEnabled:YES];
-                }
-                else
-                {
-                    [self.addCutblockButton setEnabled:NO];
-                }
-            }
-        }else if([wasteBlock.regionId integerValue] == CoastRegion){
-            if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-                if((![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.gradeXPercent.text isEqualToString:@""] && ![self.gradeYPercent.text isEqualToString:@""] && ![self.totalPile.text isEqualToString:@""] && ![self.measureSample.text isEqualToString:@""])){
-                    [self.continueButton setEnabled:YES];
-                }
-            }else{
-                if((![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.gradeXPercent.text isEqualToString:@""] && ![self.gradeYPercent.text isEqualToString:@""])){
-                    [self.addCutblockButton setEnabled:YES];
-                }
-                else
-                {
-                    [self.addCutblockButton setEnabled:NO];
-                }
-            }
-        }
-    }/*else if(textField == self.wasteType){
-        if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue])
-        {
-            if(![textField.text isEqualToString:@""] && [wasteBlock.ratioSamplingEnabled intValue] == 1 && (!wasteStratum.n1sample || [wasteStratum.n1sample isEqualToString:@""])){
-                if([[self codeFromText:self.wasteType.text] isEqualToString:@"S"] ||
-                   [[self codeFromText:self.wasteType.text] isEqualToString:@"D"] ||
-                   [[self codeFromText:self.wasteType.text] isEqualToString:@"G"]){
-                    //set default value for measure plot and prediction plot
-                    self.measurePlot.text = DEFAULT_DISPERSED_MEASURE_PLOT;
-                    self.predictionPlot.text = DEFAULT_DISPERSED_PRED_PLOT;
-                    
-                }else if([[self codeFromText:self.wasteType.text] isEqualToString:@"P"] ||
-                         [[self codeFromText:self.wasteType.text] isEqualToString:@"O"] ||
-                         [[self codeFromText:self.wasteType.text] isEqualToString:@"L"] ||
-                         [[self codeFromText:self.wasteType.text] isEqualToString:@"R"]){
-                    self.measurePlot.text = DEFAULT_ACCU_MEASURE_PLOT;
-                    self.predictionPlot.text = DEFAULT_ACCU_PRED_PLOT;
-                }
+    }else if(textField == self.wasteType){
+        
+        if(![textField.text isEqualToString:@""] && [wasteBlock.ratioSamplingEnabled intValue] == 1 && (!wasteStratum.n1sample || [wasteStratum.n1sample isEqualToString:@""])){
+            if([[self codeFromText:self.wasteType.text] isEqualToString:@"S"] ||
+               [[self codeFromText:self.wasteType.text] isEqualToString:@"D"] ||
+               [[self codeFromText:self.wasteType.text] isEqualToString:@"G"]){
+                //set default value for measure plot and prediction plot
+                self.measurePlot.text = DEFAULT_DISPERSED_MEASURE_PLOT;
+                self.predictionPlot.text = DEFAULT_DISPERSED_PRED_PLOT;
+                
+            }else if([[self codeFromText:self.wasteType.text] isEqualToString:@"P"] ||
+                     [[self codeFromText:self.wasteType.text] isEqualToString:@"O"] ||
+                     [[self codeFromText:self.wasteType.text] isEqualToString:@"L"] ||
+                     [[self codeFromText:self.wasteType.text] isEqualToString:@"R"]){
+                self.measurePlot.text = DEFAULT_ACCU_MEASURE_PLOT;
+                self.predictionPlot.text = DEFAULT_ACCU_PRED_PLOT;
             }
         }
         [self saveData];
-    }*/
+    }
 }
 
 #pragma mark - UITextView
@@ -1527,23 +1062,23 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     
     switch (pickerView.tag) {
         case 1:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.stratumTypeArray[row] valueForKey:@"StratumTypeCode"], [self.harvestMethodArray[row] valueForKey:@"desc"] ];
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.stratumTypeArray[row] valueForKey:@"stratumTypeCode"], [self.harvestMethodArray[row] valueForKey:@"desc"] ];
             break;
             
         case 2:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"HarvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"harvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
             break;
             
         case 3:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]]; // BUG??-plotsizecode should be the value for assessmentSizeArea
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]]; // BUG??-plotsizecode should be the value for assessmentSizeArea
             break;
             
         case 4:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"WasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"wasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
             break;
 
         case 5:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"WasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"wasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
             break;
 
         default:
@@ -1562,25 +1097,25 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             break;
             
         case 2:
-            self.harvestMethod.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"HarvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
+            self.harvestMethod.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"harvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.harvestMethod resignFirstResponder];
             break;
             
         case 3:
-            self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]];
+            self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.assesmentSize resignFirstResponder];
             break;
             
         case 4:
-            self.wasteLevel.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"WasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
+            self.wasteLevel.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"wasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.wasteLevel resignFirstResponder];
             break;
             
         case 5:
-            self.wasteType.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"WasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
+            self.wasteType.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"wasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.wasteType resignFirstResponder];
             break;
@@ -1590,59 +1125,12 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     
     if (pickerView == self.sizePicker){
         // if user picks S, E or O, system should disable/lock the picker and remove the existing plot since the plot/piece might not be valid for the new assessment method
-        if (([[self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"] isEqualToString:@"S"] ||
-            [[self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"] isEqualToString:@"E"] ||
-            [[self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"] isEqualToString:@"O"] ) ){
-            
-            self.wasteStratum.isPileStratum = [NSNumber numberWithBool:NO];
-            [self.totalPileLabel setHidden:YES];
-            [self.totalPile setHidden:YES];
-            [self.measureSampleLabel setHidden:YES];
-            [self.measureSample setHidden:YES];
-            [self.numPlotsLabel setHidden:NO];
-            [self.numOfPlots setHidden:NO];
-            [self.plotHeaderLabel setHidden:NO];
-            [self.plotHeaderLabel setText:@"Plots"];
-            [self.addCutblockButton setHidden:YES];
-            if([wasteBlock.ratioSamplingEnabled integerValue] == 1){
-                [self.predictionPlot setHidden:NO];
-                [self.predictionPlotLabel setHidden:NO];
-                [self.measurePlot setHidden:NO];
-                [self.measurePlotLabel setHidden:NO];
-                [self.addPlotButton setHidden:YES];
-                [self.addRatioPlotButton setHidden:NO];
-            }else{
-                [self.predictionPlot setHidden:YES];
-                [self.predictionPlotLabel setHidden:YES];
-                [self.measurePlot setHidden:YES];
-                [self.measurePlotLabel setHidden:YES];
-                [self.addRatioPlotButton setHidden:YES];
-                [self.addPlotButton setHidden:NO];
-            }
-            if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
-            {
-                self.plotTableView.hidden = TRUE;
-                self.aggregatePlotTableView.hidden = FALSE;
-                self.aggregatePileTableView.hidden = TRUE;
-            }else{
-                self.plotTableView.hidden = FALSE;
-                self.aggregatePlotTableView.hidden = TRUE;
-                self.aggregatePileTableView.hidden = TRUE;
-            }
-            [self.grade12Label setHidden:YES];
-            [self.grade12Percent setHidden:YES];
-            [self.grade4Label setHidden:YES];
-            [self.grade4Percent setHidden:YES];
-            [self.grade5Label setHidden:YES];
-            [self.grade5Percent setHidden:YES];
-            [self.gradeXLabel setHidden:YES];
-            [self.gradeXPercent setHidden:YES];
-            [self.gradeYLabel setHidden:YES];
-            [self.gradeYPercent setHidden:YES];
-            [self.continueButton setHidden:YES];
+        if (([[self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"] isEqualToString:@"S"] ||
+            [[self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"] isEqualToString:@"E"] ||
+            [[self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"] isEqualToString:@"O"] ) ){
             
             if(wasteStratum.stratumPlot && [wasteStratum.stratumPlot count] > 0){
-                UIAlertController *userAlert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"By changing the assessment method code, all existing plot data in this stratum will be removed. Proceed?" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *userAlert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"By changing the assessment method code, all existing plot data in this stratum will be removed. proceed?" preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *noBtn = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action){
                     self.assesmentSize.text = self.wasteStratum.stratumPlotSizeCode.plotSizeCode ? [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumPlotSizeCode.plotSizeCode, self.wasteStratum.stratumPlotSizeCode.desc] : @"";
                     // update assessment picker selected row
@@ -1666,208 +1154,12 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             }
             
 
-        }else if ([[self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"] isEqualToString:@"R"]){
-            self.wasteStratum.isPileStratum = [NSNumber numberWithBool:YES];
-            [self.totalPileLabel setHidden:NO];
-            [self.totalPile setHidden:NO];
-            [self.measureSampleLabel setHidden:NO];
-            [self.measureSample setHidden:NO];
-            [self.measureSample setEnabled:NO];
-            [self.measureSample setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-            [self.numPlotsLabel setHidden:YES];
-            [self.numOfPlots setHidden:YES];
-            [self.plotHeaderLabel setHidden:YES];
-            [self.addCutblockButton setHidden:YES];
-            if([wasteBlock.ratioSamplingEnabled integerValue] == 1){
-                [self.predictionPlot setHidden:YES];
-                [self.predictionPlotLabel setHidden:YES];
-                [self.measurePlot setHidden:YES];
-                [self.measurePlotLabel setHidden:YES];
-                [self.addRatioPlotButton setHidden:YES];
-            }
-            [self.addPlotButton setHidden:YES];
-            if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
-            {
-                [self.plotTableView setHidden:YES];
-                [self.aggregatePlotTableView setHidden:YES];
-                [self.aggregatePileTableView setHidden:NO];
-                [self.plotHeaderLabel setHidden:NO];
-                [self.plotHeaderLabel setText:@"CutBlocks"];
-                [self.addCutblockButton setHidden:NO];
-                [self.addCutblockButton setEnabled:NO];
-                [self.totalPileLabel setHidden:YES];
-                [self.totalPile setHidden:YES];
-                [self.measureSampleLabel setHidden:YES];
-                [self.measureSample setHidden:YES];
-                [self.numPlotsLabel setHidden:YES];
-                [self.numOfPlots setHidden:YES];
-            }else{
-                [self.plotTableView setHidden:YES];
-                [self.aggregatePlotTableView setHidden:YES];
-                [self.aggregatePileTableView setHidden:YES];
-            }
-            if([wasteBlock.regionId integerValue] == InteriorRegion){
-                [self.grade12Label setHidden:NO];
-                [self.grade12Percent setHidden:NO];
-                [self.grade4Label setHidden:NO];
-                [self.grade4Percent setHidden:NO];
-                [self.grade5Label setHidden:NO];
-                [self.grade5Percent setHidden:NO];
-                [self.gradeXLabel setHidden:YES];
-                [self.gradeXPercent setHidden:YES];
-                [self.gradeYLabel setHidden:YES];
-                [self.gradeYPercent setHidden:YES];
-                if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue])
-                {
-                    [self.continueButton setHidden:NO];
-                    [self.continueButton setEnabled:NO];
-                }
-            }else if([wasteBlock.regionId integerValue] == CoastRegion){
-                [self.grade12Label setHidden:NO];
-                [self.grade12Label setText:@"Grade J%"];
-                [self.grade12Percent setHidden:NO];
-                [self.grade4Label setHidden:NO];
-                [self.grade4Label setText:@"Grade W%"];
-                [self.grade4Percent setHidden:NO];
-                [self.grade5Label setHidden:NO];
-                [self.grade5Label setText:@"Grade U%"];
-                [self.grade5Percent setHidden:NO];
-                [self.gradeXLabel setHidden:NO];
-                [self.gradeXPercent setHidden:NO];
-                [self.gradeYLabel setHidden:NO];
-                [self.gradeYPercent setHidden:NO];
-                if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue])
-                {
-                    [self.continueButton setHidden:NO];
-                    [self.continueButton setEnabled:NO];
-                    
-                }
-            }
-            if(wasteStratum.stratumPlot && [wasteStratum.stratumPlot count] > 0){
-                UIAlertController *userAlert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"By changing the assessment method code, all existing plot data in this stratum will be removed. Proceed?" preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *noBtn = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action){
-                    self.assesmentSize.text = self.wasteStratum.stratumPlotSizeCode.plotSizeCode ? [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumPlotSizeCode.plotSizeCode, self.wasteStratum.stratumPlotSizeCode.desc] : @"";
-                    // update assessment picker selected row
-                    int row = 0;
-                    for (PlotSizeCode *psc in self.assessmentSizeArray) {
-                        if([ [self codeFromText:self.assesmentSize.text] isEqualToString:psc.plotSizeCode]){
-                            [self.sizePicker selectRow:row inComponent:0 animated:NO];
-                            break;
-                        }
-                        row++;
-                    }
-                    [self.assesmentSize setEnabled:YES];
-                    self.wasteStratum.isPileStratum = [NSNumber numberWithBool:NO];
-                    [self.totalPileLabel setHidden:YES];
-                    [self.totalPile setHidden:YES];
-                    [self.measureSampleLabel setHidden:YES];
-                    [self.measureSample setHidden:YES];
-                    [self.numPlotsLabel setHidden:NO];
-                    [self.numOfPlots setHidden:NO];
-                    [self.plotHeaderLabel setHidden:NO];
-                    [self.plotHeaderLabel setText:@"Plots"];
-                    [self.addCutblockButton setHidden:YES];
-                    if([self.wasteBlock.ratioSamplingEnabled integerValue] == 1){
-                       [self.predictionPlot setHidden:NO];
-                       [self.predictionPlotLabel setHidden:NO];
-                       [self.measurePlot setHidden:NO];
-                       [self.measurePlotLabel setHidden:NO];
-                       [self.addPlotButton setHidden:YES];
-                       [self.addRatioPlotButton setHidden:NO];
-                    }else{
-                       [self.predictionPlot setHidden:YES];
-                       [self.predictionPlotLabel setHidden:YES];
-                       [self.measurePlot setHidden:YES];
-                       [self.measurePlotLabel setHidden:YES];
-                       [self.addRatioPlotButton setHidden:YES];
-                       [self.addPlotButton setHidden:NO];
-                    }
-                    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
-                    {
-                       self.plotTableView.hidden = TRUE;
-                       self.aggregatePlotTableView.hidden = FALSE;
-                       self.aggregatePileTableView.hidden = TRUE;
-                    }else{
-                       self.plotTableView.hidden = FALSE;
-                       self.aggregatePlotTableView.hidden = TRUE;
-                       self.aggregatePileTableView.hidden = TRUE;
-                    }
-                    [self.grade12Label setHidden:YES];
-                    [self.grade12Percent setHidden:YES];
-                    [self.grade4Label setHidden:YES];
-                    [self.grade4Percent setHidden:YES];
-                    [self.grade5Label setHidden:YES];
-                    [self.grade5Percent setHidden:YES];
-                    [self.gradeXLabel setHidden:YES];
-                    [self.gradeXPercent setHidden:YES];
-                    [self.gradeYLabel setHidden:YES];
-                    [self.gradeYPercent setHidden:YES];
-                    [self.continueButton setHidden:YES];
-                }];
-                UIAlertAction *yesBtn = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action){
-                    for (WastePlot *wp in [self.wasteStratum.stratumPlot allObjects]){
-                        [self deletePlot:wp targetWastePlot:self.wasteStratum];
-                    }
-                    // rebind tableview
-                    [self.plotTableView reloadData];
-                    [self.aggregatePlotTableView reloadData];
-                }];
-                [userAlert addAction:yesBtn];
-                [userAlert addAction:noBtn];
-                [self presentViewController:userAlert animated:YES completion:nil];
-            }
         }else{
             //[self.sizePicker setUserInteractionEnabled:YES];
             [self.assesmentSize setEnabled:YES];
-            self.wasteStratum.isPileStratum = [NSNumber numberWithBool:NO];
-            [self.totalPileLabel setHidden:YES];
-            [self.totalPile setHidden:YES];
-            [self.measureSampleLabel setHidden:YES];
-            [self.measureSample setHidden:YES];
-            [self.numPlotsLabel setHidden:NO];
-            [self.numOfPlots setHidden:NO];
-            [self.plotHeaderLabel setHidden:NO];
-            [self.plotHeaderLabel setText:@"Plots"];
-            [self.addCutblockButton setHidden:YES];
-            if([wasteBlock.ratioSamplingEnabled integerValue] == 1){
-                [self.predictionPlot setHidden:NO];
-                [self.predictionPlotLabel setHidden:NO];
-                [self.measurePlot setHidden:NO];
-                [self.measurePlotLabel setHidden:NO];
-                [self.addPlotButton setHidden:YES];
-                [self.addRatioPlotButton setHidden:NO];
-            }else{
-                [self.predictionPlot setHidden:YES];
-                [self.predictionPlotLabel setHidden:YES];
-                [self.measurePlot setHidden:YES];
-                [self.measurePlotLabel setHidden:YES];
-                [self.addRatioPlotButton setHidden:YES];
-                [self.addPlotButton setHidden:NO];
-            }
-            if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
-            {
-                self.plotTableView.hidden = TRUE;
-                self.aggregatePlotTableView.hidden = FALSE;
-                self.aggregatePileTableView.hidden = TRUE;
-            }else{
-                self.plotTableView.hidden = FALSE;
-                self.aggregatePlotTableView.hidden = TRUE;
-                self.aggregatePileTableView.hidden = TRUE;
-            }
-            [self.grade12Label setHidden:YES];
-            [self.grade12Percent setHidden:YES];
-            [self.grade4Label setHidden:YES];
-            [self.grade4Percent setHidden:YES];
-            [self.grade5Label setHidden:YES];
-            [self.grade5Percent setHidden:YES];
-            [self.gradeXLabel setHidden:YES];
-            [self.gradeXPercent setHidden:YES];
-            [self.gradeYLabel setHidden:YES];
-            [self.gradeYPercent setHidden:YES];
-            [self.continueButton setHidden:YES];
         }
     }
-
+    
 }
 
 -(void)changeStratumType{
@@ -1931,18 +1223,12 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     [self.addPlotButton setHidden:YES];
     [self.addRatioPlotButton setHidden:YES];
     
-    if([self.wasteStratum.stratumPlotSizeCode.plotSizeCode isEqualToString:@"S"] ||
-    [self.wasteStratum.stratumPlotSizeCode.plotSizeCode isEqualToString:@"E"]){
-        [self.addPlotButton setHidden:NO];
-    }
-    
     // refresh sorted plot list
     NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"plotNumber" ascending:YES];
     self.sortedPlots = [[[self.wasteStratum stratumPlot] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
     // rebind tableview
     [self.plotTableView reloadData];
-    [self.aggregatePlotTableView reloadData];
     
     // hide ratio sample fields
     [self.predictionPlot setHidden:YES];
@@ -1995,87 +1281,11 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             }
         }
     }
-    else if (tableView == aggregatePlotTableView )
-    {
-        // get the selected row i.e. stratum - cell contains .stratum, .type, .area, ...
-        AggregatePlotTableViewCell *cell = (AggregatePlotTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
-        
-        // get all stratums for the selected row
-        NSArray *plots = [self.wasteStratum.stratumPlot allObjects];
-        
-        // pull out the stratum that we are looking for, using the selected rows stratum field
-        for (WastePlot* plot in plots) // (weak) stratum, thats why BUG in next screen ?
-        {
-            if( [[plot.plotNumber stringValue] isEqualToString:cell.plotNumber.text] )  // BUG ? - comparing strings from NSNumber
-            {
-                PlotViewController *plotVC = self.theSegue.destinationViewController;
-                plotVC.wastePlot = plot;
-                plotVC.wasteBlock = self.wasteBlock;
-                break;
-            }
-        }
-    }else if (tableView == aggregatePileTableView){
-        AggregatePileTableViewCell *cell = (AggregatePileTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
-        
-        NSArray *aggregate = [self.wasteStratum.stratumAgg allObjects];
-        for(AggregateCutblock* agg in aggregate){
-            if( [agg.aggregateCutblock isEqualToString:cell.blockId.text] )
-            {
-                PileViewController *pileVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PileViewControllerSID"];
-                pileVC.wasteStratum = self.wasteStratum;
-                pileVC.strpile = agg.aggPile;
-                pileVC.aggregatecutblock = agg;
-                pileVC.wasteBlock = self.wasteBlock;
-                [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
-                [WasteCalculator calculateRate:self.wasteBlock ];
-                [WasteCalculator calculatePiecesValue:self.wasteBlock ];
-                if([self.wasteBlock.userCreated intValue] ==1){
-                    [WasteCalculator calculateEFWStat:self.wasteBlock];
-                }
-
-                [self saveData];
-                
-                [self.navigationController pushViewController:pileVC animated:YES];
-            }
-        }
-        
-    }
+    
     
 }
 
-#pragma mark - BackButtonHandler protocol
--(BOOL) navigationShouldPopOnBackButton
-{
-    [self saveData];
-    
-    WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
-    NSString *errorMessage = [wpv validateStratum:wasteStratum];
-    BOOL isfatal = NO;
-       
-    if( [errorMessage rangeOfString:@"Error"].location != NSNotFound){
-        isfatal = YES;
-    }
 
-       if (![errorMessage isEqualToString:@""]){
-           UIAlertView *validateAlert = nil;
-           validateAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:errorMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-           //Let user to bypass the error
-           /*if (isfatal){
-               validateAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:errorMessage
-                                          delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-           }else{
-               validateAlert = [[UIAlertView alloc] initWithTitle:@"Warning" message:errorMessage
-                                          delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Continue", nil];
-           }*/
-           validateAlert.tag = ValidEnum;
-           [validateAlert show];
-           return NO;
-       }else{
-           return YES;
-       }
-    
-    //return YES;
-}
 
 /*
 #pragma mark - Navigation
@@ -2281,114 +1491,6 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             [self.measurePlotLabel setHidden:YES];
         }
     }
-    if ([self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"]){
-        self.wasteStratum.isPileStratum = [NSNumber numberWithBool:YES];
-        [self.totalPileLabel setHidden:NO];
-        [self.totalPile setHidden:NO];
-        [self.measureSampleLabel setHidden:NO];
-        [self.measureSample setHidden:NO];
-        [self.numPlotsLabel setHidden:YES];
-        [self.numOfPlots setHidden:YES];
-        [self.plotHeaderLabel setHidden:YES];
-        [self.addCutblockButton setHidden:YES];
-        if([wasteBlock.ratioSamplingEnabled integerValue] == 1){
-            [self.predictionPlot setHidden:YES];
-            [self.predictionPlotLabel setHidden:YES];
-            [self.measurePlot setHidden:YES];
-            [self.measurePlotLabel setHidden:YES];
-        }
-        if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
-        {
-            [self.plotTableView setHidden:YES];
-            [self.aggregatePlotTableView setHidden:YES];
-            [self.aggregatePileTableView setHidden:NO];
-            [self.plotHeaderLabel setHidden:NO];
-            [self.plotHeaderLabel setText:@"CutBlocks"];
-            [self.addCutblockButton setHidden:NO];
-            [self.addCutblockButton setEnabled:NO];
-            [self.totalPileLabel setHidden:YES];
-            [self.totalPile setHidden:YES];
-            [self.measureSampleLabel setHidden:YES];
-            [self.measureSample setHidden:YES];
-            [self.numPlotsLabel setHidden:YES];
-            [self.numOfPlots setHidden:YES];
-        }else{
-            [self.plotTableView setHidden:YES];
-            [self.aggregatePlotTableView setHidden:YES];
-            [self.aggregatePileTableView setHidden:YES];
-        }
-        if([wasteBlock.regionId integerValue] == InteriorRegion){
-            [self.grade12Label setHidden:NO];
-            [self.grade12Percent setHidden:NO];
-            [self.grade4Label setHidden:NO];
-            [self.grade4Percent setHidden:NO];
-            [self.grade5Label setHidden:NO];
-            [self.grade5Percent setHidden:NO];
-            [self.gradeXLabel setHidden:YES];
-            [self.gradeXPercent setHidden:YES];
-            [self.gradeYLabel setHidden:YES];
-            [self.gradeYPercent setHidden:YES];
-            self.grade12Percent.text = self.wasteStratum.grade12Percent && [self.wasteStratum.grade12Percent floatValue] >= 0.0 && [self.wasteStratum.grade12Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.grade12Percent floatValue]] : @"";
-            self.grade4Percent.text = self.wasteStratum.grade4Percent && [self.wasteStratum.grade4Percent floatValue] >= 0.0 && [self.wasteStratum.grade4Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.grade4Percent floatValue]] : @"";
-            self.grade5Percent.text = self.wasteStratum.grade5Percent && [self.wasteStratum.grade5Percent floatValue] >= 0.0 && [self.wasteStratum.grade5Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.grade5Percent floatValue]] : @"";
-            if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue])
-            {
-                [self.continueButton setHidden:NO];
-                [self.continueButton setEnabled:NO];
-            }
-        }else if([wasteBlock.regionId integerValue] == CoastRegion){
-            [self.grade12Label setHidden:NO];
-            [self.grade12Label setText:@"Grade J%"];
-            [self.grade12Percent setHidden:NO];
-            [self.grade4Label setHidden:NO];
-            [self.grade4Label setText:@"Grade W%"];
-            [self.grade4Percent setHidden:NO];
-            [self.grade5Label setHidden:NO];
-            [self.grade5Label setText:@"Grade U%"];
-            [self.grade5Percent setHidden:NO];
-            [self.gradeXLabel setHidden:NO];
-            [self.gradeXPercent setHidden:NO];
-            [self.gradeYLabel setHidden:NO];
-            [self.gradeYPercent setHidden:NO];
-            self.grade12Percent.text = self.wasteStratum.gradeJPercent && [self.wasteStratum.gradeJPercent floatValue] >= 0.0 && [self.wasteStratum.gradeJPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeJPercent floatValue]] : @"";
-            self.grade4Percent.text = self.wasteStratum.gradeWPercent && [self.wasteStratum.gradeWPercent floatValue] >= 0.0 && [self.wasteStratum.gradeWPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeWPercent floatValue]] : @"";
-            self.grade5Percent.text = self.wasteStratum.gradeUPercent && [self.wasteStratum.gradeUPercent floatValue] >= 0.0 && [self.wasteStratum.gradeUPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeUPercent floatValue]] : @"";
-            self.gradeXPercent.text = self.wasteStratum.gradeXPercent && [self.wasteStratum.gradeXPercent floatValue] >= 0.0 && [self.wasteStratum.gradeXPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeXPercent floatValue]] : @"";
-            self.gradeYPercent.text = self.wasteStratum.gradeYPercent && [self.wasteStratum.gradeYPercent floatValue] >= 0.0 && [self.wasteStratum.gradeYPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeYPercent floatValue]] : @"";
-            if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue])
-            {
-                [self.continueButton setHidden:NO];
-                [self.continueButton setEnabled:NO];
-            }
-        }
-        
-        self.totalPile.text =  self.wasteStratum.totalNumPile && [self.wasteStratum.totalNumPile intValue] > 0 ? [[NSString alloc] initWithFormat:@"%d", [self.wasteStratum.totalNumPile intValue]] : @"";
-        
-        self.measureSample.text = self.wasteStratum.measureSample && [self.wasteStratum.measureSample intValue] > 0 ? [[NSString alloc] initWithFormat:@"%d", [self.wasteStratum.measureSample intValue]] : @"";
-        [self.measureSample setEnabled:NO];
-        [self.measureSample setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-        if([wasteBlock.regionId integerValue] == InteriorRegion){
-            if([self.wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                if(![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.totalPile.text isEqualToString:@""] && ![self.measureSample.text isEqualToString:@""]){
-                    [self.continueButton setEnabled:YES];
-                }
-            }else{
-                if(![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""]){
-                    [self.addCutblockButton setEnabled:YES];
-                }
-            }
-        }else if([wasteBlock.regionId integerValue] == CoastRegion){
-            if([self.wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-                if(![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.gradeXPercent.text isEqualToString:@""] && ![self.gradeYPercent.text isEqualToString:@""] && ![self.totalPile.text isEqualToString:@""] && ![self.measureSample.text isEqualToString:@""]){
-                    [self.continueButton setEnabled:YES];
-                }
-            }else{
-                if(![self.grade12Percent.text isEqualToString:@""] && ![self.grade4Percent.text isEqualToString:@""] && ![self.grade5Percent.text isEqualToString:@""] && ![self.gradeXPercent.text isEqualToString:@""] && ![self.gradeYPercent.text isEqualToString:@""]){
-                    [self.addCutblockButton setEnabled:YES];
-                }
-            }
-        }
-    }
     
     self.wasteLevel.text = self.wasteStratum.stratumWasteLevelCode.wasteLevelCode ? [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumWasteLevelCode.wasteLevelCode, self.wasteStratum.stratumWasteLevelCode.desc] : @"";
     self.wasteType.text = self.wasteStratum.stratumWasteTypeCode.wasteTypeCode ? [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumWasteTypeCode.wasteTypeCode, self.wasteStratum.stratumWasteTypeCode.desc] : @"";
@@ -2398,10 +1500,8 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     
     self.notes.text = self.wasteStratum.notes ? [[NSString alloc] initWithFormat:@"%@", self.wasteStratum.notes] : @"";
     
-
     self.predictionPlot.text = self.wasteStratum.predictionPlot ? [[NSString alloc] initWithFormat:@"%d", [self.wasteStratum.predictionPlot intValue]]: @"";
     self.measurePlot.text = self.wasteStratum.measurePlot ?[[NSString alloc] initWithFormat:@"%d", [self.wasteStratum.measurePlot intValue]]: @"";
-
     
     if(![self.predictionPlot.text isEqualToString:@""] && ![self.measurePlot.text isEqualToString:@""] && [wasteBlock.ratioSamplingEnabled integerValue] == 1 && ![self.wasteStratum.n1sample isEqualToString:@""]){
         [self.predictionPlot setEnabled:NO];
@@ -2425,15 +1525,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         self.surveyAreaLabel.text = [NSString stringWithFormat:@"Survey Area: %.2f ha", [self.wasteStratum.stratumSurveyArea floatValue]];
         self.areaHa.text = self.wasteStratum.stratumArea && [self.wasteStratum.stratumArea floatValue] > 0 ? [[NSString alloc] initWithFormat:@"%.2f", [self.wasteStratum.stratumArea floatValue]] : @"";
     }
-    for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
-        double  totalestimatedvolume = 0.0;
-        for(WastePlot *wp in [ws.stratumPlot allObjects]){
-            totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
-        }
-        ws.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
-        NSLog(@"Total Estimated Volume %@", ws.totalEstimatedVolume);
-    }
-
+    
     
     //show the down allow image if more than 5 plots
     if ([self.wasteStratum.stratumPlot count] > 5){
@@ -2458,41 +1550,21 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     if ([self.wasteStratum.stratum isEqualToString:@"STRE"]|| [self.wasteStratum.stratum isEqualToString:@"STRS"]){
         // lock all the picker field
         [self.harvestMethod setEnabled:NO];
-        [self.harvestMethod setHidden:YES];
-        [self.harvestMethodLabel setText:@"Standing Tree"];
         [self.wasteLevel setEnabled:NO];
-        [self.wasteLevel setHidden:YES];
-        [self.wasteLevelLabel setHidden:YES];
         [self.wasteType setEnabled:NO];
-        [self.wasteType setHidden:YES];
-        [self.wasteTypeLabel setHidden:YES];
-        [self.assesmentSize setEnabled:NO];
         
         // change the assessment size text to R
-        /*[self.assesmentSize setText:@"R"];
+        [self.assesmentSize setText:@"R"];
         if ([self.wasteStratum.stratum isEqualToString:@"STRE"]){
             [self.wasteLevel setText:@"E"];
         }else if([self.wasteStratum.stratum isEqualToString:@"STRS"]){
             [self.wasteLevel setText:@"S"];
-        }*/
-        if ([self.wasteStratum.stratum isEqualToString:@"STRE"]){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"E"];
-            self.wasteStratum.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"PlotSizeCode" code:@"E"];
-            self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumPlotSizeCode.plotSizeCode, self.wasteStratum.stratumPlotSizeCode.desc];
-        }else if ([self.wasteStratum.stratum isEqualToString:@"STRS"]){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"S"];
-            self.wasteStratum.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"PlotSizeCode" code:@"S"];
-            self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumPlotSizeCode.plotSizeCode, self.wasteStratum.stratumPlotSizeCode.desc];
         }
     }
 
     [self.addPlotButton setHidden:YES];
     [self.addRatioPlotButton setHidden:YES];
     
-    if([self.wasteStratum.stratumPlotSizeCode.plotSizeCode isEqualToString:@"S"] ||
-       [self.wasteStratum.stratumPlotSizeCode.plotSizeCode isEqualToString:@"E"]){
-        [self.addPlotButton setHidden:NO];
-    }
     if([self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
         if ([self.wasteBlock.ratioSamplingEnabled integerValue] ==1){
             [self.addRatioPlotButton setHidden:NO];
@@ -2500,14 +1572,6 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             [self.addPlotButton setHidden:NO];
         }
     }
-    if ([self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"]){
-        if ([self.wasteBlock.ratioSamplingEnabled integerValue] ==1){
-            [self.addRatioPlotButton setHidden:YES];
-        }else{
-            [self.addPlotButton setHidden:YES];
-        }
-    }
-
     
     [self.footerStatView setDisplayFor:nil screenName:@"stratum"];
 
@@ -2632,172 +1696,84 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     NSString* gv_str = @"";
     NSString* dv_str = @"";
     NSString* pn_str = @"";
-    if([wasteBlock.regionId integerValue] == InteriorRegion){
-        for(UITextField* tf in alert.textFields){
-            /*
-            if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Green Volume", nil)]){
-                gv = [[NSDecimalNumber alloc] initWithString:tf.text];
-                gv_str =tf.text;
-            }
-            if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Dry Volume", nil)]){
-                dv = [[NSDecimalNumber alloc] initWithString:tf.text];
-                dv_str = tf.text;
-            }
-            if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Plot Number", nil)]){
-                pn = [[NSDecimalNumber alloc] initWithString:tf.text];
-                pn_str = tf.text;
-            }*/
-            if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Predicted Plot Volume (m3)", nil)]){
-                gv = [[NSDecimalNumber alloc] initWithString:tf.text];
-                gv_str =tf.text;
-            }
-            if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Plot Number", nil)]){
-                pn = [[NSDecimalNumber alloc] initWithString:tf.text];
-                pn_str = tf.text;
+
+    for(UITextField* tf in alert.textFields){
+        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Green Volume", nil)]){
+            gv = [[NSDecimalNumber alloc] initWithString:tf.text];
+            gv_str =tf.text;
+        }
+        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Dry Volume", nil)]){
+            dv = [[NSDecimalNumber alloc] initWithString:tf.text];
+            dv_str = tf.text;
+        }
+        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Plot Number", nil)]){
+            pn = [[NSDecimalNumber alloc] initWithString:tf.text];
+            pn_str = tf.text;
+        }
+    }
+    BOOL duplicatePlot = NO;
+    if (pn){
+        for(WastePlot* wp in wasteStratum.stratumPlot){
+            if( [wp.plotNumber integerValue] == [pn integerValue]){
+                duplicatePlot = YES;
+                break;
             }
         }
-        BOOL duplicatePlot = NO;
-        if (pn){
-            for(WastePlot* wp in wasteStratum.stratumPlot){
-                if( [wp.plotNumber integerValue] == [pn integerValue]){
-                    duplicatePlot = YES;
-                    break;
-                }
-            }
-        }
-        
-        if([pn_str isEqualToString:@""] || [gv_str isEqualToString:@""]){
-            UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
-                                                                              message:@"Please enter Plot Number, Predicted Plot Volume."
+    }
+    
+    if([pn_str isEqualToString:@""] || [gv_str isEqualToString:@""] || [dv_str isEqualToString:@""]){
+        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
+                                                                              message:@"Please enter Plot Number, Green Volume and Dry Volume."
                                                                        preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {
-                                                                  [self presentViewController:alert animated:YES completion:nil];
-                                                              }];
-            
-            [warningAlert addAction:okAction];
-            [self presentViewController:warningAlert animated:YES completion:nil];
-        }else if(duplicatePlot){
-            UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Duplicate Plot Number", nil)
-                                                                                  message:@"Duplicate plot number, Select new plot number before proceeding."
-                                                                           preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                             handler:^(UIAlertAction * action) {
-                                                                 [self presentViewController:alert animated:YES completion:nil];
-                                                             }];
-            
-            [warningAlert addAction:okAction];
-            [self presentViewController:warningAlert animated:YES completion:nil];
-        }else if([pn integerValue] > [wasteStratum.predictionPlot integerValue]){
-           UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Invalid Plot Number", nil)
-                                                                                    message:@"Plot number cannot be greater than the number of prediction plots, Select new plot number before proceeding."
-                                                                             preferredStyle:UIAlertControllerStyleAlert];
-              
-              UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action) {
-                                                                   [self presentViewController:alert animated:YES completion:nil];
-                                                               }];
-              
-              [warningAlert addAction:okAction];
-              [self presentViewController:warningAlert animated:YES completion:nil];
-        }
-        else{
-            UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Estimation", nil)
-                   message:[NSString stringWithFormat:@"Accept volume estimate? \n Plot Number %d \n Predicted Plot Volume (m3)= %.2f",[pn intValue], [gv floatValue]]
-            preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {
-                                                                  [self addRatioPlotAndNavigate:gv dryVolume:dv plotNumber:pn];
-                                                              }];
-            
-            UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
-                                                             handler:^(UIAlertAction * action) {
-                                                                 [self presentViewController:alert animated:YES completion:nil];
-                                                             }];
-            [confirmAlert addAction:yesAction];
-            [confirmAlert addAction:noAction];
-            [self presentViewController:confirmAlert animated:YES completion:nil];
-        }
-    } else if([wasteBlock.regionId integerValue] == CoastRegion){
-        for(UITextField* tf in alert.textFields){
-            if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Predicted Plot Volume (m3)", nil)]){
-                gv = [[NSDecimalNumber alloc] initWithString:tf.text];
-                gv_str =tf.text;
-            }
-            if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Plot Number", nil)]){
-                pn = [[NSDecimalNumber alloc] initWithString:tf.text];
-                pn_str = tf.text;
-            }
-        }
-        BOOL duplicatePlot = NO;
-        if (pn){
-            for(WastePlot* wp in wasteStratum.stratumPlot){
-                if( [wp.plotNumber integerValue] == [pn integerValue]){
-                    duplicatePlot = YES;
-                    break;
-                }
-            }
-        }
         
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              [self presentViewController:alert animated:YES completion:nil];
+                                                          }];
         
-        if([pn_str isEqualToString:@""] || [gv_str isEqualToString:@""]){
-            UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
-                                                                                  message:@"Please enter Plot Number, Predicted Plot Volume."
-                                                                           preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                             handler:^(UIAlertAction * action) {
-                                                                 [self presentViewController:alert animated:YES completion:nil];
-                                                             }];
-            
-            [warningAlert addAction:okAction];
-            [self presentViewController:warningAlert animated:YES completion:nil];
-        }else if(duplicatePlot){
-            UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Duplicate Plot Number", nil)
-                                                                                  message:@"Duplicate plot number, Select new plot number before proceeding."
-                                                                           preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                             handler:^(UIAlertAction * action) {
-                                                                 [self presentViewController:alert animated:YES completion:nil];
-                                                             }];
-            
-            [warningAlert addAction:okAction];
-            [self presentViewController:warningAlert animated:YES completion:nil];
-        }else if([pn integerValue] > [wasteStratum.predictionPlot integerValue]){
-           UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Invalid Plot Number", nil)
-                                                                                    message:@"Plot number cannot be greater than the number of prediction plots, Select new plot number before proceeding."
-                                                                             preferredStyle:UIAlertControllerStyleAlert];
-              
-              UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action) {
-                                                                   [self presentViewController:alert animated:YES completion:nil];
-                                                               }];
-              
-              [warningAlert addAction:okAction];
-              [self presentViewController:warningAlert animated:YES completion:nil];
-        }
-        else{
-            UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Estimation", nil)
-                                                                                  message:[NSString stringWithFormat:@"Accept volume estimate? \n Plot Number %d \n Predicted Plot Volume (m3)= %.2f",[pn intValue], [gv floatValue]]
-                                                                           preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
-                                                              handler:^(UIAlertAction * action) {
-                                                                  [self addRatioPlotAndNavigate:gv dryVolume:0 plotNumber:pn];
-                                                              }];
-            
-            UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
-                                                             handler:^(UIAlertAction * action) {
-                                                                 [self presentViewController:alert animated:YES completion:nil];
-                                                             }];
-            [confirmAlert addAction:yesAction];
-            [confirmAlert addAction:noAction];
-            [self presentViewController:confirmAlert animated:YES completion:nil];
-        }
+        [warningAlert addAction:okAction];
+        [self presentViewController:warningAlert animated:YES completion:nil];
+    }else if(duplicatePlot){
+        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Duplicate Plot Number", nil)
+                                                                              message:@"Duplicate plot number, Select new plot number before proceeding."
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             [self presentViewController:alert animated:YES completion:nil];
+                                                         }];
+        
+        [warningAlert addAction:okAction];
+        [self presentViewController:warningAlert animated:YES completion:nil];
+    }else if([pn integerValue] > [wasteStratum.predictionPlot integerValue]){
+        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Plot Number Invalid", nil)
+                                                                              message:[NSString stringWithFormat:@"Plot number exceeds acceptable range. Please select number between 1 and Prediction Plot (%ld).", [wasteStratum.predictionPlot integerValue]]
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             [self presentViewController:alert animated:YES completion:nil];
+                                                         }];
+        
+        [warningAlert addAction:okAction];
+        [self presentViewController:warningAlert animated:YES completion:nil];
+    }else{
+        UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Estimation", nil)
+                                                                              message:[NSString stringWithFormat:@"Accept volume esimates? \n Plot Number %d \n Green Volume = %.2f \n Dry Volume = %.2f",[pn intValue], [gv floatValue], [dv floatValue]]
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              [self addRatioPlotAndNavigate:gv dryVolume:dv plotNumber:pn];
+                                                          }];
+        
+        UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             [self presentViewController:alert animated:YES completion:nil];
+                                                         }];
+        [confirmAlert addAction:yesAction];
+        [confirmAlert addAction:noAction];
+        [self presentViewController:confirmAlert animated:YES completion:nil];
     }
 }
 
@@ -2809,10 +1785,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     wp.plotNumber = pn;
     
     BOOL isMeasurePlot = NO;
-    NSArray* pn_ary = nil;
-
-    pn_ary = [self.wasteStratum.n1sample componentsSeparatedByString:@","];
-
+    NSArray* pn_ary = [self.wasteStratum.n1sample componentsSeparatedByString:@","];
     for(NSString* pn in pn_ary){
         if([pn isEqualToString:[wp.plotNumber stringValue]]){
             isMeasurePlot = YES;
@@ -2827,11 +1800,11 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     plotVC.wastePlot = wp;
     plotVC.wasteBlock = self.wasteBlock;
     
-    wasteStratum.ratioSamplingLog = [wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wp stratum:wasteStratum actionDec:@"New Plot Added"]];
-    wasteBlock.ratioSamplingLog = [wasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wp stratum:wasteStratum actionDec:@"New Plot Added"]];
+    wasteStratum.ratioSamplingLog = [wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wp actionDec:@"New Plot Added"]];
+    
     //update the benchmak and calculate the numbers again
     [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
-    [WasteCalculator calculateRate:self.wasteBlock];
+    [WasteCalculator calculateRate:self.wasteBlock ];
     [WasteCalculator calculatePiecesValue:self.wasteBlock ];
     if([self.wasteBlock.userCreated intValue] ==1){
         [WasteCalculator calculateEFWStat:self.wasteBlock];
@@ -2844,37 +1817,32 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
 
 -(NSString*)getDefaultPredictionPlot:(NSString*)wasteTypeCode{
     NSString* result = @"";
-    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue])
-    {
-        if([wasteTypeCode isEqualToString:@"S"] ||
-           [wasteTypeCode isEqualToString:@"D"] ||
-           [wasteTypeCode isEqualToString:@"G"]){
-            result = DEFAULT_DISPERSED_PRED_PLOT;
-        }else if([wasteTypeCode isEqualToString:@"P"] ||
-                 [wasteTypeCode isEqualToString:@"O"] ||
-                 [wasteTypeCode isEqualToString:@"L"] ||
-                 [wasteTypeCode isEqualToString:@"R"]){
-            result = DEFAULT_ACCU_PRED_PLOT;
-        }
+
+    if([wasteTypeCode isEqualToString:@"S"] ||
+       [wasteTypeCode isEqualToString:@"D"] ||
+       [wasteTypeCode isEqualToString:@"G"]){
+        result = DEFAULT_DISPERSED_PRED_PLOT;
+    }else if([wasteTypeCode isEqualToString:@"P"] ||
+             [wasteTypeCode isEqualToString:@"O"] ||
+             [wasteTypeCode isEqualToString:@"L"] ||
+             [wasteTypeCode isEqualToString:@"R"]){
+        result = DEFAULT_ACCU_PRED_PLOT;
     }
     return result;
 }
 
 -(NSString*)getDefaultMeasurePlot:(NSString*)wasteTypeCode{
     NSString* result = @"";
-    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue])
-    {
-        if([wasteTypeCode isEqualToString:@"S"] ||
-           [wasteTypeCode isEqualToString:@"D"] ||
-           [wasteTypeCode isEqualToString:@"G"]){
-            result = DEFAULT_DISPERSED_MEASURE_PLOT;
-            
-        }else if([wasteTypeCode isEqualToString:@"P"] ||
-                 [wasteTypeCode isEqualToString:@"O"] ||
-                 [wasteTypeCode isEqualToString:@"L"] ||
-                 [wasteTypeCode isEqualToString:@"R"]){
-            result = DEFAULT_ACCU_MEASURE_PLOT;
-        }
+    if([wasteTypeCode isEqualToString:@"S"] ||
+       [wasteTypeCode isEqualToString:@"D"] ||
+       [wasteTypeCode isEqualToString:@"G"]){
+        result = DEFAULT_DISPERSED_MEASURE_PLOT;
+        
+    }else if([wasteTypeCode isEqualToString:@"P"] ||
+             [wasteTypeCode isEqualToString:@"O"] ||
+             [wasteTypeCode isEqualToString:@"L"] ||
+             [wasteTypeCode isEqualToString:@"R"]){
+        result = DEFAULT_ACCU_MEASURE_PLOT;
     }
     return result;
 }
@@ -2949,8 +1917,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
 -(void) deletePlot:(WastePlot *)targetWastePlot targetWastePlot:(WasteStratum *)targetWasteStratum{
     
     if([targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
-        wasteStratum.ratioSamplingLog = [wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:targetWastePlot stratum:targetWasteStratum actionDec:@"Delete Plot"]];
-        wasteBlock.ratioSamplingLog = [wasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:targetWastePlot stratum:targetWasteStratum actionDec:@"Delete Plot"]];
+        wasteStratum.ratioSamplingLog = [wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:targetWastePlot actionDec:@"Delete Plot"]];
     }
     
     NSManagedObjectContext *context = [self managedObjectContext];
@@ -2976,457 +1943,6 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         NSLog(@"Error when deleting a piece and save :%@", error);
     }
     
-}
--(void) deleteAggregateCB:(AggregateCutblock *)targetblock targetAggregateCB:(WasteStratum *)targetWasteStratum{
-    
-    if([targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
-        wasteStratum.ratioSamplingLog = [wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog2:targetblock stratum:targetWasteStratum actionDec:@"Delete Pile"]];
-        wasteBlock.ratioSamplingLog = [wasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog2:targetblock stratum:targetWasteStratum actionDec:@"Delete Pile"]];
-    }
-        
-    NSManagedObjectContext *context = [self managedObjectContext];
-    
-    for( NSManagedObject *wpi in targetblock.aggPile.pileData ){
-        [context deleteObject:wpi];
-    }
-
-    [context deleteObject:targetblock.aggPile];
-    NSMutableSet *tempPlot = [NSMutableSet setWithSet:targetWasteStratum.stratumAgg];
-    [tempPlot removeObject:targetblock];
-    targetWasteStratum.stratumAgg = tempPlot;
-    
-    [context deleteObject:targetblock];
-    
-    NSError *error;
-    [context save:&error];
-    //NSLog(@"remaining blocks %@", targetWasteStratum.stratumAgg);
-    if (error){
-        NSLog(@"Error when deleting aggregate cutblock and save :%@", error);
-    }
-}
-
-- (IBAction)viewandAddPile:(id)sender {
-
-    [self saveData];
-    WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
-    NSString *errorMessage = [wpv validateStratum:wasteStratum];
-    
-    if (![errorMessage isEqualToString:@""]){
-        UIAlertView *validateAlert = nil;
-        validateAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:errorMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        validateAlert.tag = ValidEnum;
-        [validateAlert show];
-    }else{
-        if([self.totalPile isEnabled]){
-        UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Values", nil)
-                                                                              message:[NSString stringWithFormat:@"\n Total # Pile = %d \n Measure Samples= %d \n ",[self.totalPile.text intValue], [self.measureSample.text intValue]]
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              [self.assesmentSize setEnabled:NO];
-                                                              [self.totalPile setEnabled:NO];
-                                                              //single block SRS
-                                                              if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-                                                                  [self singleBlockSRSPileData:[self.totalPile.text intValue] measureSamples:[self.measureSample.text intValue]];
-                                                              }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){//single block ratio
-                                                                  [self singleBlockRatioPileData:[self.totalPile.text intValue] measureSamples:[self.measureSample.text intValue]];
-                                                              }
-                                                              [self addPileAndNavigate:[self.totalPile.text intValue] measureSamples:[self.measureSample.text intValue]];
-                                                          }];
-        
-        UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                         }];
-        [confirmAlert addAction:yesAction];
-        [confirmAlert addAction:noAction];
-        [self presentViewController:confirmAlert animated:YES completion:nil];
-        }else{
-            [self addPileAndNavigate:[self.totalPile.text intValue] measureSamples:[self.measureSample.text intValue]];
-        }
-    }
-}
-
--(void)addPileAndNavigate:(int)totalPile measureSamples:(int)measureSample {
-    
-    [self saveData];
-    
-    PileViewController *pileVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PileViewControllerSID"];
-    pileVC.wasteStratum = self.wasteStratum;
-    pileVC.strpile = self.wasteStratum.strPile;
-    pileVC.wasteBlock = self.wasteBlock;
-    [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
-    [WasteCalculator calculateRate:self.wasteBlock ];
-    [WasteCalculator calculatePiecesValue:self.wasteBlock ];
-    if([self.wasteBlock.userCreated intValue] ==1){
-        [WasteCalculator calculateEFWStat:self.wasteBlock];
-    }
-
-    [self saveData];
-    
-    [self.navigationController pushViewController:pileVC animated:YES];
-    
-}
-
--(void)singleBlockSRSPileData:(int)totalPile measureSamples:(int)measureSample{
-    
-    [PlotSampleGenerator generatePlotSample2:self.wasteStratum];
-    //NSLog(@"total pile %@, measure samp %@, n1sample %@,n2sample %@", self.wasteStratum.totalNumPile,self.wasteStratum.measureSample, self.wasteStratum.n1sample, self.wasteStratum.n2sample);
-    NSManagedObjectContext *context = [self managedObjectContext];
-    int i = 0;
-    StratumPile *pile = [NSEntityDescription insertNewObjectForEntityForName:@"StratumPile" inManagedObjectContext:context];
-    pile.stratumPileId = [self.wasteStratum.stratumID stringValue];
-    
-    self.wasteStratum.strPile = pile;
-    
-    //NSLog(@"stratumpileid %@", self.wasteStratum.strPile);
-    if([wasteBlock.regionId integerValue] == CoastRegion){
-        pile.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-    }else if([wasteBlock.regionId integerValue] == InteriorRegion){
-        pile.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-    }
-    NSArray* numberOfRows = [self.wasteStratum.n1sample componentsSeparatedByString:@","];
-    NSMutableArray* rownumber = [numberOfRows mutableCopy];
-    
-    for(int j = 0; j < [numberOfRows count]; j++){
-        WastePile *newWp = [NSEntityDescription insertNewObjectForEntityForName:@"WastePile" inManagedObjectContext:context];
-        
-        newWp.pileNumber = [rownumber objectAtIndex:0];
-        newWp.pileId = [NSNumber numberWithInt:[newWp.pileNumber intValue]];
-        newWp.measuredLength = nil;
-        newWp.measuredWidth = nil;
-        newWp.measuredHeight = nil;
-        newWp.isSample = [[NSNumber alloc] initWithBool:YES];
-        [rownumber removeObjectAtIndex:0];
-        i++;
-        [self.wasteStratum.strPile addPileDataObject:newWp];
-    }
-    
-}
-
--(void)singleBlockRatioPileData:(int)totalPile measureSamples:(int)measureSample{
-    
-    [PlotSampleGenerator generatePlotSample2:self.wasteStratum];
-    //NSLog(@"total pile %@, measure samp %@, n1sample %@,n2sample %@", self.wasteStratum.totalNumPile,self.wasteStratum.measureSample, self.wasteStratum.n1sample, self.wasteStratum.n2sample);
-    
-    NSManagedObjectContext *context = [self managedObjectContext];
-
-    StratumPile *pile = [NSEntityDescription insertNewObjectForEntityForName:@"StratumPile" inManagedObjectContext:context];
-    pile.stratumPileId = [self.wasteStratum.stratumID stringValue];
-    self.wasteStratum.strPile = pile;
-    wasteStratum.ratioSamplingLog = [wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wasteStratum actionDec:@"New Pile Added"]];
-    wasteBlock.ratioSamplingLog = [wasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wasteStratum actionDec:@"New Pile Added"]];
-    if([wasteBlock.regionId integerValue] == CoastRegion){
-        pile.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-    }else if([wasteBlock.regionId integerValue] == InteriorRegion){
-        pile.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-    }
-    
-}
-- (IBAction)addCutblock:(id)sender {
-    [self saveData];
-    WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
-    NSString *errorMessage = [wpv validateStratum:wasteStratum];
-    
-    if (![errorMessage isEqualToString:@""]){
-        UIAlertView *validateAlert = nil;
-        validateAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:errorMessage delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        validateAlert.tag = ValidEnum;
-        [validateAlert show];
-    }else{
-        
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Aggregate Cutblock Details"
-                                                                       message:@"Please enter:\n- Block\n- CP \n- License \n- Total # Pile"
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"Block", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"Block", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeAlphabet;
-            textField.tag                = 3;
-            textField.delegate           = self;
-        }];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"CP", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"CP", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeAlphabet;
-            textField.tag                = 3;
-            textField.delegate           = self;
-        }];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"License", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"License", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeAlphabet;
-            textField.tag                = 3;
-            textField.delegate           = self;
-        }];
-        
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            textField.placeholder        = NSLocalizedString(@"Total # Pile", nil);
-            textField.accessibilityLabel = NSLocalizedString(@"Total # Pile", nil);
-            textField.clearButtonMode    = UITextFieldViewModeAlways;
-            textField.keyboardType       = UIKeyboardTypeNumberPad;
-            textField.tag                = 9;
-            textField.delegate           = self;
-        }];
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                           [self validateEstimate:alert];
-                                                           [self presentViewController:alert animated:YES completion:nil];
-                                                         }];
-        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
-                                                             handler:^(UIAlertAction * action) {
-                                                             }];
-        
-        
-        [alert addAction:okAction];
-        [alert addAction:cancelAction];
-        [self presentViewController:alert animated:YES completion:nil];
-    }
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
-- (BOOL)validateEstimate:(UIAlertController*)alert{
-    NSString* block = nil;
-    NSString* cp = nil;
-    NSString* license = nil;
-    NSNumber* totalpile = nil;
-    NSString* block_str = @"";
-    NSString* cp_str = @"";
-    NSString* license_str = @"";
-    NSString* totalpile_str = @"";
-    
-    for(UITextField* tf in alert.textFields){
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Block", nil)]){
-            block = tf.text;
-            block_str =tf.text;
-        }
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"CP", nil)]){
-            cp = tf.text;
-            cp_str = tf.text;
-        }
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"License", nil)]){
-            license = tf.text;
-            license_str = tf.text;
-        }
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Total # Pile", nil)]){
-            totalpile = [[NSDecimalNumber alloc] initWithString:[NSString stringWithFormat:@"%d",[tf.text intValue]]];
-            totalpile_str = tf.text;
-        }
-    }
-    BOOL duplicateCutblock = NO;
-    if (block){
-        for(AggregateCutblock* ac in self.wasteStratum.stratumAgg){
-            if( [ac.aggregateCutblock caseInsensitiveCompare:block] == NSOrderedSame&& [ac.aggregateCuttingPermit caseInsensitiveCompare:cp] == NSOrderedSame && [ac.aggregateLicense caseInsensitiveCompare:license] == NSOrderedSame){
-                duplicateCutblock = YES;
-                break;
-            }
-        }
-    }
-    
-    if([block_str isEqualToString:@""] || [license_str isEqualToString:@""] || [totalpile_str isEqualToString:@""] /*|| [measuresample_str isEqualToString:@""]*/){
-        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
-                                                                              message:@"Please enter Cutblock, License, Total # Pile."
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                             [self presentViewController:alert animated:YES completion:nil];
-                                                         }];
-        
-        [warningAlert addAction:okAction];
-        [self presentViewController:warningAlert animated:YES completion:nil];
-    }else if(duplicateCutblock){
-        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Duplicate Cutblock", nil)
-                                                                              message:@"Duplicate Cutblock."
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                             [self presentViewController:alert animated:YES completion:nil];
-                                                         }];
-        
-        [warningAlert addAction:okAction];
-        [self presentViewController:warningAlert animated:YES completion:nil];
-    }else{
-            if([totalpile integerValue] < 1 || [totalpile integerValue] > 9999) {
-                UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", nil)
-                                                                                      message:@"Total Pile should be from 1 to 9999"
-                                                                               preferredStyle:UIAlertControllerStyleAlert];
-                
-                UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                                 handler:^(UIAlertAction * action) {
-                                                                     [self presentViewController:alert animated:YES completion:nil];
-                                                                 }];
-                [warningAlert addAction:okAction];
-                [self presentViewController:warningAlert animated:YES completion:nil];
-            }
-        NSInteger measuresample = 0;
-        if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-            if([totalpile integerValue] <= 10){
-                measuresample = [totalpile integerValue];
-            }else if([totalpile integerValue] > 10){
-                     int totpile = [totalpile intValue] ;
-                     int excess = totpile - 10;
-                     int value = excess/5;
-                     int measure = 10 + value;
-                     measuresample = measure;
-            }
-         if(measuresample > 30){
-            measuresample = 30;
-         }
-        }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-            if([totalpile integerValue] < 10){
-                measuresample = [totalpile integerValue];
-            }else{
-                measuresample = 10;
-            }
-        }
-        UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Estimation", nil)
-                                                                              message:[NSString stringWithFormat:@"Accept value? \n Cutblock = %@ \n CP = %@ \n Total # Pile = %ld \n Measure Samples = %ld", block, cp, (long)[totalpile integerValue], (long)measuresample]
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-            /*NSInteger measuresample = 0;
-            if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-                if([totalpile integerValue] <= 10){
-                    measuresample = [totalpile integerValue];
-                }else if([totalpile integerValue] > 10){
-                         int totpile = (int)totalpile ;
-                         int excess = totpile - 10;
-                         int value = excess/5;
-                         int measure = 10 + value;
-                         measuresample = measure;
-                }
-             if(measuresample > 30){
-                measuresample = 30;
-             }
-            }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-                if([totalpile integerValue] < 10){
-                    measuresample = [totalpile integerValue];
-                }else{
-                    measuresample = 10;
-                }
-            }*/
-            self.currentAggCutblock = [self addAggregateCutblock:self.wasteStratum cutblock:block cp:cp license:license totalpile:[totalpile integerValue] measuresample:measuresample ];
-            [self.assesmentSize setEnabled:NO];
-            if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-                  [self aggregateSRSPileData:[totalpile intValue] measureSamples:(int)measuresample];
-            }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-                [PlotSampleGenerator generatePlotSample3:self.currentAggCutblock];
-                 //NSLog(@"total pile %@, measure samp %@, n1sample %@,n2sample %@", self.currentAggCutblock.totalNumPile,self.currentAggCutblock.measureSample, self.currentAggCutblock.n1sample, self.currentAggCutblock.n2sample);
-                 
-                 NSManagedObjectContext *context = [self managedObjectContext];
-
-                 StratumPile *pile = [NSEntityDescription insertNewObjectForEntityForName:@"StratumPile" inManagedObjectContext:context];
-                 pile.stratumPileId = [self.wasteStratum.stratumID stringValue];
-                 self.currentAggCutblock.aggPile = pile;
-                self.wasteStratum.ratioSamplingLog = [self.wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog2:self.currentAggCutblock stratum:self.wasteStratum actionDec:@"New Pile Added"]];
-                self.wasteBlock.ratioSamplingLog = [self.wasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog2:self.currentAggCutblock stratum:self.wasteStratum actionDec:@"New Pile Added"]];
-                if([self.wasteBlock.regionId integerValue] == CoastRegion){
-                    pile.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-                }else if([self.wasteBlock.regionId integerValue] == InteriorRegion){
-                    pile.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-                }
-            }
-            NSSortDescriptor *sort1 = [[NSSortDescriptor alloc ] initWithKey:@"aggregateCutblock" ascending:YES];
-            self.sortedblocks = [[[self.wasteStratum stratumAgg] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort1]];
-            [self.aggregatePileTableView reloadData];
-            NSIndexPath* ipath = [NSIndexPath indexPathForRow:[self.wasteStratum.stratumAgg count] - 1 inSection:0];
-            [self.aggregatePileTableView scrollToRowAtIndexPath:ipath atScrollPosition:UITableViewScrollPositionTop animated:YES];
-              }];
-        UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                             [self presentViewController:alert animated:YES completion:nil];
-                                                         }];
-        [confirmAlert addAction:yesAction];
-        [confirmAlert addAction:noAction];
-        [self presentViewController:confirmAlert animated:YES completion:nil];
-    }
-}
-
-
--(AggregateCutblock *) addAggregateCutblock:(WasteStratum *)targetWasteStratum cutblock:(NSString *)cutblock cp:(NSString*)cp license:(NSString*)license totalpile:(NSInteger)totalpile measuresample:(NSInteger)measuresample{
-
-    NSManagedObjectContext *context = [self managedObjectContext];
-       
-    AggregateCutblock *newAggCutblock = [NSEntityDescription insertNewObjectForEntityForName:@"AggregateCutblock" inManagedObjectContext:context];
-    
-    int i = 0;
-    NSArray *aggregate = [self.wasteStratum.stratumAgg allObjects];
-    for(AggregateCutblock *aggcb in aggregate){
-        if( [aggcb.aggregateID integerValue] > i){
-            i = [aggcb.aggregateID intValue];
-        }
-    }
-    
-    newAggCutblock.aggregateID = [NSNumber numberWithInt:(i+1)];
-    newAggCutblock.aggregateCutblock = cutblock;
-    newAggCutblock.aggregateCuttingPermit = cp ? [NSString stringWithFormat:@"%@", cp] : @"";
-    newAggCutblock.aggregateLicense = license;
-    newAggCutblock.totalNumPile = [[NSNumber alloc] initWithInteger:totalpile];
-    newAggCutblock.measureSample = [[NSNumber alloc] initWithInteger:measuresample];
-       
-    [self.wasteStratum addStratumAggObject:newAggCutblock];
-    return newAggCutblock;
-}
-
--(void)aggregateSRSPileData:(int)totalPile measureSamples:(int)measureSample{
-    
-    [PlotSampleGenerator generatePlotSample3:self.currentAggCutblock];
-    //NSLog(@"total pile %@, measure samp %@, n1sample %@,n2sample %@", self.currentAggCutblock.totalNumPile,self.currentAggCutblock.measureSample, self.currentAggCutblock.n1sample, self.currentAggCutblock.n2sample);
-    NSManagedObjectContext *context = [self managedObjectContext];
-    int i = 0;
-    StratumPile *pile = [NSEntityDescription insertNewObjectForEntityForName:@"StratumPile" inManagedObjectContext:context];
-    pile.stratumPileId = [[self.wasteStratum.stratumID stringValue] stringByAppendingFormat:@"CB%@", self.currentAggCutblock.aggregateCutblock];
-    
-    self.currentAggCutblock.aggPile = pile;
-    if([wasteBlock.regionId integerValue] == CoastRegion){
-        pile.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-    }else if([wasteBlock.regionId integerValue] == InteriorRegion){
-        pile.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-    }
-    //NSLog(@"stratumpileid %@", self.currentAggCutblock.aggPile);
-    NSArray* numberOfRows = [self.currentAggCutblock.n1sample componentsSeparatedByString:@","];
-    NSMutableArray* rownumber = [numberOfRows mutableCopy];
-    
-    for(int j = 0; j < [numberOfRows count]; j++){
-        WastePile *newWp = [NSEntityDescription insertNewObjectForEntityForName:@"WastePile" inManagedObjectContext:context];
-        
-        newWp.pileNumber = [rownumber objectAtIndex:0];
-        newWp.pileId = [NSNumber numberWithInt:[newWp.pileNumber intValue]];
-        newWp.measuredLength = nil;
-        newWp.measuredWidth = nil;
-        newWp.measuredHeight = nil;
-        newWp.isSample = [[NSNumber alloc] initWithBool:YES];
-        [rownumber removeObjectAtIndex:0];
-        i++;
-        [self.currentAggCutblock.aggPile addPileDataObject:newWp];
-    }
-
-}
-
-- (IBAction)deletePile:(id)sender {
-    
-    NSString *title = NSLocalizedString(@"Delete Aggregate Cutblock", nil);
-    NSString *message = NSLocalizedString(@"", nil);
-    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-    NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
-    alert.tag = ((UIButton *)sender).tag;
-    NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
-    [alert show];
 }
 
 @end

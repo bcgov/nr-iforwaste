@@ -29,8 +29,6 @@
 @synthesize cellWastePiece;
 @synthesize displayObjectDictionary;
 
-
-
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -84,11 +82,10 @@
         [labelArray addObject:@";farEnd;o;43;b;15"];
         [labelArray addObject:@";addLength;o;43;b;16"];
         [labelArray addObject:@";pieceCommentCode;w;43;b;17"];
-        [labelArray addObject:@";usercode;w;44;b;22"];  //mchu
         [labelArray addObject:@";notes;w;44;b;18"];
         if (userCreatedBlock){
             // show current volume for user created block
-              [labelArray addObject:@";pieceVolume;r;100;l;"];
+            [labelArray addObject:@";pieceVolume;r;130;l;"];
         }else{
             [labelArray addObject:@";;r;65;l;"];
             [labelArray addObject:@";pieceVolume;r;65;l;"];
@@ -113,11 +110,10 @@
         [labelArray addObject:@"17;buttDeduction;b;50;b;13"];
         [labelArray addObject:@"S;pieceDecayTypeCode;b;50;b;14"];
         [labelArray addObject:@"IN;pieceCommentCode;w;50;b;17"];
-        [labelArray addObject:@"#;usercode;w;50;b;22"];  // mchu
         [labelArray addObject:@"*;notes;w;50;b;18"];
 
         if (userCreatedBlock){
-            [labelArray addObject:@"0.000;pieceVolume;r;99;l"];
+            [labelArray addObject:@"0.000;pieceVolume;r;143;l"];
         }else{
             [labelArray addObject:@"9.999;;r;71;l"];
             [labelArray addObject:@"0.000;pieceVolume;r;73;l"];
@@ -126,16 +122,15 @@
     }else if ([assessmentMethodCode isEqualToString:@"E"]){
         
         [labelArray addObject:@";pieceNumber;w;44;l;"];
-        [labelArray addObject:@";pieceScaleSpeciesCode;w;110;b;2"];
-        [labelArray addObject:@";pieceMaterialKindCode;w;110;b;3"];
-        [labelArray addObject:@";pieceWasteClassCode;w;110;b;4"];
-        [labelArray addObject:@";pieceScaleGradeCode;w;110;b;10"];
-        [labelArray addObject:@"#;usercode;w;110;b;22"];  // mchu
-        [labelArray addObject:@"*;notes;w;110;b;18"];
-        [labelArray addObject:@";estimatedPercent;w;110;b;21"];
+        [labelArray addObject:@";pieceScaleSpeciesCode;w;120;b;2"];
+        [labelArray addObject:@";pieceMaterialKindCode;w;120;b;3"];
+        [labelArray addObject:@";pieceWasteClassCode;w;120;b;4"];
+        [labelArray addObject:@";pieceScaleGradeCode;w;120;b;10"];
+        [labelArray addObject:@";notes;w;120;b;18"];
+        [labelArray addObject:@";estimatedPercent;w;120;b;21"];
         
         if (userCreatedBlock){
-            [labelArray addObject:@";pieceVolume;r;139;l;"];
+            [labelArray addObject:@";pieceVolume;r;180;l;"];
         }else{
             [labelArray addObject:@";;r;90;l;"];
             [labelArray addObject:@";pieceVolume;r;90;l;"];
@@ -152,7 +147,7 @@
         [labelArray addObject:@";estimatedVolume;w;100;b;20"];
         
         if (userCreatedBlock){
-            [labelArray addObject:@";pieceVolume;r;150;l;"];
+            [labelArray addObject:@";pieceVolume;r;200;l;"];
         }else{
             [labelArray addObject:@";;r;100;l;"];
             [labelArray addObject:@";pieceVolume;r;100;l;"];
@@ -219,17 +214,8 @@
             
             if (![[lbStrAry objectAtIndex:1] isEqualToString: @""]){
                 // for now, it only work when the property is string
-                // If a Usercode exists, insert a "*" as and indicator
-
-                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"usercode"]){
-                    if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
-                        [btn setTitle: @"*" forState:UIControlStateNormal];
-                    }else{
-                        [btn setTitle: @"" forState:UIControlStateNormal];
-                    }
-                }else{
                 
-                 if ([[lbStrAry objectAtIndex:1] isEqualToString:@"notes"]){
+                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"notes"]){
                     if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
                         [btn setTitle: @"*" forState:UIControlStateNormal];
                     }else{
@@ -271,7 +257,6 @@
                     }
                 }
             
-                }
             }
             
             
@@ -383,9 +368,6 @@
             break;
         case 21:
             pvc.propertyName = @"estimatedPercent";
-            break;
-        case 22:
-            pvc.propertyName = @"usercode";
             break;
         default:
             break;

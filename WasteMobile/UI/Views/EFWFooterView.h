@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class WasteBlock, WasteStratum, WastePlot, StratumPile;
+@class WasteBlock, WasteStratum, WastePlot;
 
 
 @interface EFWFooterView : UIView
@@ -24,12 +24,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *row2ValLabel;
 @property (weak, nonatomic) IBOutlet UILabel *row2VolPerHaLabel;
 @property (weak, nonatomic) IBOutlet UILabel *row2VolLabel;
-
-@property (weak, nonatomic) IBOutlet UILabel *row3CTitleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *row3CValPerHaLabel;
-@property (weak, nonatomic) IBOutlet UILabel *row3CValLabel;
-@property (weak, nonatomic) IBOutlet UILabel *row3CVolPerHaLabel;
-@property (weak, nonatomic) IBOutlet UILabel *row3CVolLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *row3TitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *row3ValPerHaLabel;
@@ -63,6 +57,5 @@
 -(void) setBlockViewValue:(WasteBlock *) wb;
 -(void) setStratumViewValue:(WasteStratum *) wb;
 -(void) setPlotViewValue:(WastePlot *) wb;
--(void) setPileViewValue:(StratumPile *) sp;
 
 @end
