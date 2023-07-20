@@ -32,7 +32,6 @@
 @property NSString *maturityCode;
 @property NSString *siteCode;
 @property NSString *snowCode;
-@property NSString *interiorCedarCode;
 
 @property NSNumber *wasteAssessmentAreaID;
 

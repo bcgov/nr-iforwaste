@@ -13,7 +13,6 @@
 #import "TimbermarkViewController.h"
 #import "StratumViewController.h"
 #import "PlotViewController.h"
-#import "PileViewController.h"
 
 
 @implementation Timer
@@ -71,11 +70,6 @@
     else if( [self.currentVC isKindOfClass:[TimbermarkViewController class]] && [self.currentVC conformsToProtocol:@protocol(CanAutoSave)] ){
         TimbermarkViewController *tvc = ((TimbermarkViewController*)self.currentVC);
         [tvc saveData];
-        
-    }
-    else if( [self.currentVC isKindOfClass:[PileViewController class]] && [self.currentVC conformsToProtocol:@protocol(CanAutoSave)] ){
-        PileViewController *pvc = ((PileViewController*)self.currentVC);
-        [pvc saveData];
         
     }
     else{

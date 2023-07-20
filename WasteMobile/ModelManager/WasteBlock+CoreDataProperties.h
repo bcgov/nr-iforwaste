@@ -15,8 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSFetchRequest<WasteBlock *> *)fetchRequest;
 
-@property (nullable, nonatomic, copy) NSNumber *isAggregate;
-
 @property (nullable, nonatomic, copy) NSNumber *blockID;
 @property (nullable, nonatomic, copy) NSString *blockNumber;
 @property (nullable, nonatomic, copy) NSString *blockStatus;
@@ -44,7 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDecimalNumber *netArea;
 @property (nullable, nonatomic, copy) NSString *notation;
 @property (nullable, nonatomic, copy) NSString *notes;
-@property (nullable, nonatomic, copy) NSString *usercode;        
 @property (nullable, nonatomic, copy) NSDecimalNumber *npNFArea;
 @property (nullable, nonatomic, copy) NSString *position;
 @property (nullable, nonatomic, copy) NSString *professional;
@@ -80,7 +77,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSSet<Timbermark *> *blockTimbermark;
 @property (nullable, nonatomic, retain) EFWCoastStat *blockCoastStat;
 @property (nullable, nonatomic, retain) EFWInteriorStat *blockInteriorStat;
-@property (nullable, nonatomic, retain) InteriorCedarMaturityCode *blockInteriorCedarMaturityCode;
 
 @end
 

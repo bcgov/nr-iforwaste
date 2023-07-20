@@ -20,7 +20,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reporting Unit ID:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bOp-c2-VXf">
-                                <rect key="frame" x="300" y="351" width="172" height="14"/>
+                                <rect key="frame" x="300" y="356" width="172" height="4"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="172" id="Tba-RC-32H"/>
                                 </constraints>
@@ -1712,7 +1712,7 @@
             <objects>
                 <tableViewController id="PDx-YD-EvN" customClass="ReportGeneratorTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="mPX-h0-nF8">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="700"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="748"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" id="Ev1-xb-sx6">
@@ -1829,7 +1829,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="1024" height="700"/>
+                    <size key="freeformSize" width="1024" height="748"/>
                     <connections>
                         <outlet property="checkSummarySwitch" destination="48Z-db-rzq" id="t5e-ET-KqT"/>
                         <outlet property="fs702Switch" destination="Q1O-35-DDZ" id="qAE-V6-l1S"/>
@@ -1840,7 +1840,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2lb-K9-7pZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7047.65625" y="1729.6875"/>
+            <point key="canvasLocation" x="6953.90625" y="1729.6875"/>
         </scene>
         <!--Stratum-->
         <scene sceneID="tWR-Xg-vhU">
@@ -3628,13 +3628,13 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IXZ-0e-BYg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5837.5" y="867.7734375"/>
+            <point key="canvasLocation" x="5645" y="1258"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="IeM-N2-dmH"/>
         <segue reference="YxV-HK-G4H"/>
-        <segue reference="MQ1-sc-9Nq"/>
+        <segue reference="rsi-Jo-9f6"/>
         <segue reference="GQ1-Xd-ei5"/>
     </inferredMetricsTieBreakers>
     <resources>

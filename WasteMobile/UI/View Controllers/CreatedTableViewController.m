@@ -323,7 +323,7 @@
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"WasteBlock"
                                               inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
-    //this stuff should probably be done in the DAO...refactor later?
+
     NSPredicate *predicate = [NSPredicate predicateWithFormat: @"userCreated = YES"];
     
     [fetchRequest setPredicate:predicate];

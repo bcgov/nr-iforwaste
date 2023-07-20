@@ -15,8 +15,6 @@
 #import "WasteLevelCode.h"
 #import "WastePlot.h"
 #import "WasteTypeCode.h"
-#import "StratumPile+CoreDataClass.h"
-#import "AggregateCutblock+CoreDataClass.h"
 
 @implementation WasteStratum
 

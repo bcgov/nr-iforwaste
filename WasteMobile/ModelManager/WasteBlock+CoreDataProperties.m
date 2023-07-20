@@ -14,8 +14,6 @@
 	return [[NSFetchRequest alloc] initWithEntityName:@"WasteBlock"];
 }
 
-@dynamic isAggregate;
-
 @dynamic blockID;
 @dynamic blockNumber;
 @dynamic blockStatus;
@@ -43,7 +41,6 @@
 @dynamic netArea;
 @dynamic notation;
 @dynamic notes;
-@dynamic usercode;   
 @dynamic npNFArea;
 @dynamic position;
 @dynamic professional;
@@ -79,6 +76,5 @@
 @dynamic blockTimbermark;
 @dynamic blockCoastStat;
 @dynamic blockInteriorStat;
-@dynamic blockInteriorCedarMaturityCode;
 
 @end

@@ -73,7 +73,6 @@
     [labelArray addObject:@" Butt (R);b;50;86"];
     [labelArray addObject:@" Decay;b;50;86"];
     [labelArray addObject:@" Comment Code;w;50;86"];
-    [labelArray addObject:@" User Code;w;50;86"];       // mchu Mar 12, 2019 - To support Industry collection
     [labelArray addObject:@" Note;w;50;86"];
     
     //width for each column is 47
@@ -110,7 +109,7 @@
     }
     if(userCreated){
         // create last two column with width 70
-        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(876, 61, 140, 100)];   
+        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(849, 38, 140, 146)];
         lblSurvey.text = @" Survey (m\u00B3) ";
         lblSurvey.backgroundColor = [UIColor piecesHeaderRed];
         lblSurvey.textColor = [UIColor blackColor];
@@ -218,14 +217,12 @@
     [labelArray addObject:@" \n\n\n\nKind;w;n"];
     [labelArray addObject:@" \n\n\n\nClass;w;n"];
     [labelArray addObject:@" \n\n\n\nGrade;w;n"];
-    [labelArray addObject:@" \n\n\n\nUser Code;w;n"];
     [labelArray addObject:@" \n\n\n\nNote;w;n"];
     [labelArray addObject:@" \n\n\nPercent Estimate;w;n"];
     
     //width for each column is 47
     int locationCounter = -48;
     int locaitonCounter2 = 87;
-
     //int alterCounter = 0;
     for (NSString *lbStr in labelArray){
         NSArray *lbStrAry = [lbStr componentsSeparatedByString:@";"];
@@ -239,11 +236,11 @@
             
             locationCounter = locationCounter + 43;
         }else{
-            lbl = [[UILabel alloc] initWithFrame:CGRectMake(locaitonCounter2, 41, 110, 140)];
+            lbl = [[UILabel alloc] initWithFrame:CGRectMake(locaitonCounter2, 41, 120, 140)];
             lbl.textAlignment = NSTextAlignmentCenter;
             lbl.numberOfLines = 6;
             lbl.contentMode = UIViewContentModeBottom;
-            locaitonCounter2 = locaitonCounter2 + 110;
+            locaitonCounter2 = locaitonCounter2 + 120;
         }
         
         lbl.text = [lbStrAry objectAtIndex:0];
@@ -269,7 +266,7 @@
     }
     if(userCreated){
         // create last two column with width 70
-        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(856, 41, 140, 140)];
+        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(827, 21, 140, 180)];
         lblSurvey.text = @" Survey (m\u00B3) ";
         lblSurvey.backgroundColor = [UIColor piecesHeaderRed];
         lblSurvey.textColor = [UIColor blackColor];
@@ -353,10 +350,9 @@
      locationCounter = locationCounter + 43;
      }
      */
-
-    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(856, 0, 140, 42)];
-
-    lblPieceVolumn.text = @"Estimate Volume";
+    
+    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(806, 0, 180, 42)];
+    lblPieceVolumn.text = @" Estimate Volume ";
     lblPieceVolumn.backgroundColor = [UIColor piecesHeaderRed];
     
     lblPieceVolumn.textColor = [UIColor blackColor];
@@ -394,7 +390,6 @@
     [labelArray addObject:@" Far End;o"];
     [labelArray addObject:@" Add Length;o"];
     [labelArray addObject:@" Comment Code;w"];
-    [labelArray addObject:@" User Code;w"];
     [labelArray addObject:@" Note;w"];
     
     //width for each column is 47
@@ -433,8 +428,8 @@
     if(userCreated){
         
         // create last two column with width 70
-        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(885, 61, 140, 100)];  
-        lblSurvey.text = @" Survey (m\u00B3)";
+        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(856, 45, 140, 130)];
+        lblSurvey.text = @" Survey (m\u00B3) ";
         lblSurvey.backgroundColor = [UIColor piecesHeaderRed];
         lblSurvey.textColor = [UIColor blackColor];
         lblSurvey.highlightedTextColor = [UIColor blackColor];
@@ -516,7 +511,6 @@
         locationCounter = locationCounter + 43;
     }
     
-
     
     UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(862, 0, 130, 41)];  //mchu March 12, 2019
     lblPieceVolumn.text = @"Piece Vol ";

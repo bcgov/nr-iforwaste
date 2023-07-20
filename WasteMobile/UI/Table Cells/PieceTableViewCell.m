@@ -153,18 +153,7 @@
                     if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
                         lbl.text = @"*";
                     }
-                }else
-                
-                // Insert placeholder of "*" if something exists in UserCode column
-                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"usercode"]){
-                    if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
-                        lbl.text = @"*";
-                    }
-                }
-                
-                
-                
-                else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]){
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]){
                     //for non-changed piece, show blank in the check piece valume
                     if([((CheckerStatusCode *)[wastePiece valueForKey:@"pieceCheckerStatusCode"]).checkerStatusCode isEqualToString:@"4"]){
                         lbl.text = @"";

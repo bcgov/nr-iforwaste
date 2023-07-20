@@ -40,13 +40,6 @@ typedef enum PlotAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UITextField *strip;
 @property (weak, nonatomic) IBOutlet UITextField *certificationNumber;
 
-@property (weak, nonatomic) IBOutlet UITextField *licence;
-@property (weak, nonatomic) IBOutlet UITextField *cuttingPermit;
-@property (weak, nonatomic) IBOutlet UITextField *cutBlock;
-@property (weak, nonatomic) IBOutlet UILabel *licenceLabel;
-@property (weak, nonatomic) IBOutlet UILabel *cuttingPermitLabel;
-@property (weak, nonatomic) IBOutlet UILabel *cutBlockLabel;
-
 @property (weak, nonatomic) IBOutlet UITextField *residueSurveyor;
 @property (weak, nonatomic) IBOutlet UITextField *weather;
 @property (weak, nonatomic) IBOutlet UITextField *surveyDate;
@@ -65,8 +58,6 @@ typedef enum PlotAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UITextField *plotArea;
 
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
-@property (weak, nonatomic) IBOutlet UILabel *plotEstimatedVolumeLabel;
-@property (weak, nonatomic) IBOutlet UITextField *plotEstimatedVolume;
 
 @property (weak, nonatomic) IBOutlet UILabel *totalEstimatedVolumeLabel;
 @property (weak, nonatomic) IBOutlet UITextField *totalEstimateVolume;

@@ -19,7 +19,5 @@
 - (NSArray *) getWastePlotMapping;
 -(NSArray *) getWastePieceMapping:(NSString*) assessmnetMethodCode;
 - (NSArray *) getTimberMarkMapping;
--(NSArray *) getStratumPileMapping;
--(NSArray *) getWastePileMapping;
 
 @end

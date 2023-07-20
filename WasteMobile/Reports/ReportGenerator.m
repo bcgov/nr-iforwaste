@@ -71,13 +71,10 @@
     [fileStrAry addObject:@"BTSTable1"];
     [fileStrAry addObject:@"BTSTable2"];
     [fileStrAry addObject:@"BTSTable3"];
-    [fileStrAry addObject:@"BTSTable4"];
     [fileStrAry addObject:@"BTSRow1"];
     [fileStrAry addObject:@"BTSRow2"];
     [fileStrAry addObject:@"BTSRow3"];
-    [fileStrAry addObject:@"BTSRow4"];
-    [fileStrAry addObject:@"BTSRow5"];
-    [fileStrAry addObject:@"BTSRow6"];
+    
     
     for (NSString *fileStr in fileStrAry){
         
