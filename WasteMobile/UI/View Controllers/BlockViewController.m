@@ -45,6 +45,13 @@
 #import "ExportUserDataDAO.h"
 #import "ExportUserData+CoreDataClass.h"
 #import "WastePlotValidator.h"
+#import "InteriorCedarMaturityCode+CoreDataClass.h"
+#import "PlotSampleGenerator.h"
+#import "WastePiece.h"
+#import "ScaleSpeciesCode.h"
+#import "ScaleGradeCode.h"
+#import "WasteClassCode.h"
+#import "MaterialKindCode.h"
 
 @class UIAlertView;
 
@@ -52,6 +59,8 @@
 
 //@property (strong, nonatomic) IBOutlet UIPickerView *surveyReasonPicker;
 //@property (strong, nonatomic) IBOutlet UIPickerView *snowPicker;
+
+@property (weak) NSMutableArray *targetBlocks;
 
 @end
 
@@ -63,6 +72,7 @@
 @synthesize wasteBlock;
 @synthesize searchResult;
 @synthesize versionLabel;
+
 
 static NSString *const ADD_STRATIM_TITLE = @"Add New Stratum";
 static NSString *const STANDING_TREE_TYPE_TITLE = @"Standing Tree";
@@ -87,10 +97,12 @@ UITextField *activeTextField;
     NSSortDescriptor *sortSnow = [[NSSortDescriptor alloc ] initWithKey:@"snowCode" ascending:YES];
     NSSortDescriptor *sortMaturity = [[NSSortDescriptor alloc ] initWithKey:@"maturityCode" ascending:YES];
     NSSortDescriptor *sortSite = [[NSSortDescriptor alloc ] initWithKey:@"siteCode" ascending:YES];
+    NSSortDescriptor *sortInteriorCedarMaturity = [[NSSortDescriptor alloc ] initWithKey:@"interiorCedarCode" ascending:NO];
     
     self.snowCodeArray = [[[CodeDAO sharedInstance] getSnowCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortSnow]];
     self.maturityCodeArray = [[[CodeDAO sharedInstance] getMaturityCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortMaturity]];
     self.siteCodeArray = [[[CodeDAO sharedInstance] getSiteCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortSite]];
+    self.interiorCedarMaturityCodeArray = [[[CodeDAO sharedInstance] getInteriorCedarMaturityList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortInteriorCedarMaturity]];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil{
@@ -154,9 +166,12 @@ UITextField *activeTextField;
     
     }else if([self.wasteBlock.regionId intValue] == CoastRegion){
 
-        [self.timbermarkVolumeLabel setText:[NSString stringWithFormat:@"Vol/ha (m%@/ha) Avoid X or BTR",@"\u00B3"]];
+        [self.timbermarkVolumeLabel setText:[NSString stringWithFormat:@"Vol/ha (m%@/ha) Avoid Gr X or BTR",@"\u00B3"]];
         [self.maturityLabel setText:@"Maturity Code"];
         [self.checkMaturityLabel setText:@"Check Maturity Code"];
+        [self.interiorCedarMaturityLabel setText:@"Benchmark"];
+        [self.interiorCedarMaturity setHidden:YES];
+        [self.benchmarkField setHidden:NO];
     }
 
     
@@ -176,7 +191,20 @@ UITextField *activeTextField;
     
     self.maturity.inputView = self.checkMaturityPicker;
     [self.maturity setDelegate:self];
-
+    
+    if ([self.wasteBlock.regionId intValue] == InteriorRegion ){
+        self.interiorCedarMaturityPicker = [[UIPickerView alloc] init];
+        self.interiorCedarMaturityPicker.delegate = self;
+        self.interiorCedarMaturityPicker.tag = 3;
+        self.interiorCedarMaturity.inputView = self.interiorCedarMaturityPicker;
+        
+        UITapGestureRecognizer *gr3 = [[UITapGestureRecognizer alloc]
+                                       initWithTarget:self
+                                       action:@selector(interiorCedarMaturityRecognizer:)];
+        [self.interiorCedarMaturityPicker addGestureRecognizer:gr3];
+        gr3.delegate = self;
+        [self.interiorCedarMaturity setDelegate:self];
+    }
     // COMPLETE DATE PICKER
     self.datePicker = [[UIDatePicker alloc] initWithFrame:CGRectZero];
     self.datePicker.datePickerMode = UIDatePickerModeDate;
@@ -197,6 +225,15 @@ UITextField *activeTextField;
     //Set the title of the nagivation view controller
     
     NSString *tmp  = [[NSString alloc] initWithFormat:@"(IFOR 202) Cut Block - %@", self.wasteBlock.cutBlockId && ![self.wasteBlock.cutBlockId isEqualToString:@"" ]  ? self.wasteBlock.cutBlockId : @"New Block" ];
+    if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
+        tmp = [tmp stringByAppendingString:@" Aggregate Ratio Sampling"];
+    }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
+        tmp = [tmp stringByAppendingString:@" Aggregate SRS Survey"];
+    }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
+        tmp = [tmp stringByAppendingString:@" Single Block SRS Survey"];
+    }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
+        tmp = [tmp stringByAppendingString:@" Single Block Ratio Sampling"];
+    }
     [[self navigationItem] setTitle:tmp];
     
     // KEYBOARD DISMISALL
@@ -206,19 +243,47 @@ UITextField *activeTextField;
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
     
+    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
+    {
+        self.cuttingPermit.hidden = TRUE;
+        self.cutBlock.hidden = TRUE;
+        self.cpCutblockLabel.hidden = TRUE;
+        self.licence.hidden = TRUE;
+        self.licenceLabel.hidden = TRUE;
+        self.location.hidden = TRUE;
+        self.locationLabel.hidden = TRUE;
+        self.loggedFrom.hidden = TRUE;
+        self.loggedFromLabel.hidden = TRUE;
+        self.loggedTo.hidden = TRUE;
+        self.loggedToLabel.hidden = TRUE;
+        self.loggingCompleteTextField.hidden = TRUE;
+        self.loggingCompleteLabel.hidden = TRUE;
+        [self.generateXMLButton setEnabled:NO];
+        //self.editTimbermarkButton.hidden = TRUE;
+    }
+    if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
+        [self.generateXMLButton setEnabled:NO];
+    }
+    /*if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
+        if([wasteBlock.blockStratum count] > 0){
+            for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
+                if([ws.isPileStratum intValue] == 1){
+                    [self.generateXMLButton setEnabled:NO];
+                }else{
+                    [self.generateXMLButton setEnabled:YES];
+                }
+            }
+        }
+    }*/
     // LOAD VIEW WITH OBJECT DATA
     [self populateFromObject];
 
     //NSLog([NSString stringWithFormat:@"User Created: %@", self.wasteBlock.userCreated]);
-    
-    
-    
+
     [self toggleUI:self.wasteBlock.userCreated];
     
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
-    
-
 }
 
 
@@ -252,6 +317,23 @@ UITextField *activeTextField;
     }
 }
 
+- (void)interiorCedarMaturityRecognizer:(UITapGestureRecognizer*)gestureRecognizer
+{
+    CGPoint touchPoint = [gestureRecognizer locationInView:gestureRecognizer.view.superview];
+    CGRect frame_interior = self.interiorCedarMaturityPicker.frame;
+    CGRect selectorFrame_interior = CGRectInset( frame_interior, 0.0, self.interiorCedarMaturityPicker.bounds.size.height * 0.85 / 2.0 );
+    if( CGRectContainsPoint( selectorFrame_interior, touchPoint) )
+    {
+        if (activeTextField == self.interiorCedarMaturity){
+            if ([self.wasteBlock.regionId intValue] == InteriorRegion){
+                InteriorCedarMaturityCode *icm = [self.interiorCedarMaturityCodeArray objectAtIndex:[self.interiorCedarMaturityPicker selectedRowInComponent:0]];
+                activeTextField.text = [[NSString alloc] initWithFormat:@"%@ - %@", icm.interiorCedarCode, icm.desc];
+                [activeTextField resignFirstResponder];
+            }
+        }
+    }
+}
+
 // enable multiple gesture recognizers, otherwise same row select wont detect taps
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -277,7 +359,13 @@ UITextField *activeTextField;
     [self.timbermarkTableView reloadData];
     
     [self checkStratum];
-    
+    /*if([wasteBlock.blockStratum count] > 0){
+        for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
+            if([ws.isPileStratum intValue] == 1){
+                [self.generateXMLButton setEnabled:NO];
+            }
+        }
+    }*/
     
     
     // update shape picker selected row
@@ -326,10 +414,10 @@ UITextField *activeTextField;
     
     if (self.wasteBlock) {
     
-        self.wasteBlock.cuttingPermitId = self.cuttingPermit.text;
-        self.wasteBlock.cutBlockId = self.cutBlock.text;
-        self.wasteBlock.blockNumber= self.cutBlock.text;
-        self.wasteBlock.licenceNumber = self.licence.text;
+        self.wasteBlock.cuttingPermitId = [self.cuttingPermit.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        self.wasteBlock.cutBlockId = [self.cutBlock.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        self.wasteBlock.blockNumber= [self.cutBlock.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        self.wasteBlock.licenceNumber = [self.licence.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         self.wasteBlock.location = self.location.text;
         self.wasteBlock.yearLoggedFrom = [[NSDecimalNumber alloc] initWithString:self.loggedFrom.text];
         self.wasteBlock.yearLoggedTo = [[NSDecimalNumber alloc] initWithString:self.loggedTo.text];
@@ -359,6 +447,12 @@ UITextField *activeTextField;
                     break;
                 }
             }
+            for (InteriorCedarMaturityCode* sc in self.interiorCedarMaturityCodeArray){
+                if ([sc.interiorCedarCode isEqualToString: [self codeFromText:self.interiorCedarMaturity.text]] ){
+                    self.wasteBlock.blockInteriorCedarMaturityCode = sc;
+                    break;
+                }
+            }
         }else if([self.wasteBlock.regionId intValue] == CoastRegion){
             for (MaturityCode* mc in self.maturityCodeArray){
                 if ([mc.maturityCode isEqualToString: [self codeFromText:self.maturity.text]] ){
@@ -374,7 +468,7 @@ UITextField *activeTextField;
             }
         }
 
-        self.wasteBlock.returnNumber = [[NSDecimalNumber alloc] initWithString:self.returnNumber.text];
+        self.wasteBlock.returnNumber = [NSNumber numberWithInt:[self.returnNumber.text intValue]];//[[NSDecimalNumber alloc] initWithString:self.returnNumber.text]; This would hold a value −2,147,483,648 but won't be displayed on screen,when try to merge causes issue
         self.wasteBlock.surveyorLicence = self.surveyorLicence.text;
         self.wasteBlock.professional = self.professionalDesignation.text;
         self.wasteBlock.registrationNumber = self.registrationNumber.text;
@@ -393,7 +487,102 @@ UITextField *activeTextField;
         }else{
             self.wasteBlock.checkerName = self.wasteCheckerName.text;
         }
-        
+        if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]) {
+            if([wasteBlock.blockStratum count] == 0 ){
+                if( (wasteBlock.ratioSamplingLog == nil || [wasteBlock.ratioSamplingLog isEqualToString:@""])){
+                wasteBlock.ratioSamplingLog = @"";
+                }
+            }else if([wasteBlock.blockStratum count] > 0) {// this is done here so that when old efw files are imported to eforwaste wasteblock.ratiosamplinglog will be blank for ratio survey and wastestratum.ratiosamplinglog contain data. So when they try to generate the plot prediction report blank report comes up.
+                if( (wasteBlock.ratioSamplingLog == nil || [wasteBlock.ratioSamplingLog isEqualToString:@""])){
+                    wasteBlock.ratioSamplingLog = @"";
+                    for (WasteStratum *stm in [wasteBlock.blockStratum allObjects]){
+                        wasteBlock.ratioSamplingLog = [wasteBlock.ratioSamplingLog stringByAppendingString:stm.ratioSamplingLog];
+                    }
+                }
+            }
+        }
+        if([self.wasteBlock.regionId intValue] == InteriorRegion){
+            if([wasteBlock.blockTimbermark count] >0 ){
+                if(self.wasteBlock.blockSiteCode.siteCode != nil){
+                    for (Timbermark *tm in  [wasteBlock.blockTimbermark allObjects]) {
+                        if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"DB"]){
+                            tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"4"];
+                        }else if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"TZ"]){
+                            tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"10"];
+                        }else if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"WB"]){
+                            tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"20"];
+                        }
+                        [WasteCalculator calculateWMRF:self.wasteBlock  updateOriginal:YES];
+                        [WasteCalculator calculateRate:self.wasteBlock];
+                        [WasteCalculator calculatePiecesValue:self.wasteBlock];
+                        [WasteCalculator calculateEFWStat:self.wasteBlock];
+                    }
+                }
+            }
+        }
+        //since in coast region benchmark is user entered in cutblock screen. Logic to handle for new and already existing timbermark
+        if([self.wasteBlock.regionId intValue] == CoastRegion){
+            if(![self.benchmarkField.text isEqualToString:@""]){
+            if([self.benchmarkField.text integerValue] >= 0 && [self.benchmarkField.text integerValue] <= 99){
+                //to remove value after the decimal point
+                CGFloat floatingPointNumber = [self.benchmarkField.text floatValue];
+                NSInteger integerNumber = floatingPointNumber;
+                self.benchmarkField.text = [[NSString alloc ] initWithFormat:@"%ld", (long)integerNumber];
+                
+                NSArray *timbermark = [wasteBlock.blockTimbermark allObjects];
+                if(timbermark == nil || [timbermark count] == 0){
+                    NSManagedObjectContext *context = [self managedObjectContext];
+                    Timbermark *tm = [NSEntityDescription insertNewObjectForEntityForName:@"Timbermark" inManagedObjectContext:context];
+                    tm.primaryInd = [[NSNumber alloc] initWithInt:1];
+                    tm.area = [[NSDecimalNumber alloc] initWithFloat:0.0];
+                    tm.surveyArea = [[NSDecimalNumber alloc] initWithFloat:0.0];
+                    tm.orgWMRF =[[NSDecimalNumber alloc] initWithFloat:0.0];
+                    tm.timbermark = @" ";
+                    tm.avoidable = [[NSDecimalNumber alloc] initWithFloat:0.0];
+                    tm.timbermarkMonetaryReductionFactorCode = (MonetaryReductionFactorCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"monetaryReductionFactorCode" code:@"A"];;
+                    tm.benchmark = [[NSDecimalNumber alloc] initWithString:self.benchmarkField.text];
+                    tm.coniferWMRF = [[NSDecimalNumber alloc] initWithFloat:0.0];
+                    tm.xPrice = [[NSDecimalNumber alloc] initWithFloat:0.25];
+                    tm.yPrice = [[NSDecimalNumber alloc] initWithFloat:0.25];
+                    tm.hembalPrice = [[NSDecimalNumber alloc] initWithFloat:0.25];
+                    tm.deciduousPrice = [[NSDecimalNumber alloc] initWithFloat:1.0];
+                    
+                    [self.wasteBlock addBlockTimbermarkObject:tm];
+                    
+                    [WasteCalculator calculateWMRF:self.wasteBlock  updateOriginal:YES];
+                    [WasteCalculator calculateRate:self.wasteBlock];
+                    [WasteCalculator calculatePiecesValue:self.wasteBlock];
+                    [WasteCalculator calculateEFWStat:self.wasteBlock];
+                    NSError *error;
+                    [context save:&error];
+                    
+                    if( error != nil){
+                        NSLog(@" Error when saving  into Core Data: %@", error);
+                    }
+                    [self.timbermarkTableView reloadData];
+                }else {
+                    for (Timbermark *tm in  [wasteBlock.blockTimbermark allObjects]) {
+                        if(!(tm.benchmark == [[NSDecimalNumber alloc] initWithString:self.benchmarkField.text])){
+                            tm.benchmark = [[NSDecimalNumber alloc] initWithString:self.benchmarkField.text];
+                            if([tm.primaryInd intValue] == 2){
+                                tm.benchmark = [[NSDecimalNumber alloc] initWithString:self.benchmarkField.text];
+                            }
+                            [WasteCalculator calculateWMRF:self.wasteBlock  updateOriginal:YES];
+                            [WasteCalculator calculateRate:self.wasteBlock];
+                            [WasteCalculator calculatePiecesValue:self.wasteBlock];
+                            [WasteCalculator calculateEFWStat:self.wasteBlock];
+                            
+                        }
+                    }[self populateFromObject];
+                }
+            }else{
+                UIAlertController *userAlert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Please enter benchmark value between 0 and 99" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *okBtn = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+                [userAlert addAction:okBtn];
+                [self presentViewController:userAlert animated:YES completion:nil];
+            }
+        }
+        }
         NSError *error;
         
         // save the whole cut block
@@ -476,46 +665,106 @@ UITextField *activeTextField;
 }
 
 - (IBAction)deleteStratum:(id)sender{
-    NSString *title = NSLocalizedString(@"Delete New Stratum", nil);
-    NSString *message = NSLocalizedString(@"", nil);
-    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-    NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
-    alert.tag = ((UIButton *)sender).tag;
-    //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
-    [alert show];
+        NSString *title = NSLocalizedString(@"Delete New Stratum", nil);
+        NSString *message = NSLocalizedString(@"", nil);
+        NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+        NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
+        alert.tag = ((UIButton *)sender).tag;
+        //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
+        [alert show];
 }
 
 - (IBAction)deleteBlock:(id)sender{
-    NSString *title = NSLocalizedString(@"Delete Cut Block", nil);
-    NSString *message = nil;
     
-    if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"iForWaste"] ){
-        message = NSLocalizedString(@"Warning - Deleteing a cut block will remove the survey data and the check data in the application. Are you sure to delete?", nil);
-    }else if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
-        message = NSLocalizedString(@"Warning - Deleting a block will remove the block from the application. Do you want to delete the block?", nil);
+        NSString *title = NSLocalizedString(@"Delete Cut Block", nil);
+        NSString *message = nil;
+        
+        if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"iFORWASTE"] ){
+            message = NSLocalizedString(@"Warning - Deleteing a cut block will remove the survey data and the check data in the application. Are you sure to delete?", nil);
+        }else if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
+
+            message = NSLocalizedString(@"Warning - Deleting a block will remove the block from the application. Do you want to delete the block?", nil);
+
+        }
+        NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+        NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
+        alert.tag = ((UIButton *)sender).tag;
+        //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
+        [alert show];
+}
+
+- (void) confirmPredictionPlots:(UIAlertController*)alert sender:(UIButton*) sender{
+    NSString* pp_str = nil;
+    NSNumber* pp = nil;
+    
+    for(UITextField* tf in alert.textFields){
+        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Prediction Plots", nil)]){
+            pp_str = tf.text;
+        }
     }
-    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-    NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
-    alert.tag = ((UIButton *)sender).tag;
-    //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
-    [alert show];}
+    NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+    f.numberStyle = NSNumberFormatterDecimalStyle;
+    pp = [f numberFromString:pp_str];
+    if([pp_str isEqualToString:@""]){
+        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
+                                                                              message:@"Please enter number of Prediction Plots."
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             [self presentViewController:alert animated:YES completion:nil];
+                                                         }];
+        
+        [warningAlert addAction:okAction];
+        [self presentViewController:warningAlert animated:YES completion:nil];
+    }
+    else if(pp == nil || [pp doubleValue] < 0)
+    {
+        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Invalid Data", nil)
+                                                                              message:@"Number of Prediction Plots must be zero or greater."
+                                                                       preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+                                                             [self presentViewController:alert animated:YES completion:nil];
+                                                         }];
+        
+        [warningAlert addAction:okAction];
+        [self presentViewController:warningAlert animated:YES completion:nil];
+    }
+}
 
 - (void) addStratum:(id)sender{
-    
-    NSString *title = NSLocalizedString(ADD_STRATIM_TITLE, nil);
-    NSString *message = NSLocalizedString(@"Please select a Stratum Type.", nil);
-    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-    NSString *otherButtonTitleOne = NSLocalizedString(STANDARD_STRATUM, nil);
-    NSString *otherButtonTitleTwo = NSLocalizedString(STANDING_TREE, nil);
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, otherButtonTitleTwo, nil];
-    alert.tag = ((UIButton *)sender).tag;
-    //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
-    [alert show];
+    if([self.wasteBlock.regionId intValue] == CoastRegion && [self.benchmarkField.text isEqualToString:@""]){
+        UIAlertView *validateAlert;
+        validateAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Please enter benchmark value."
+                                                 delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [validateAlert show];
+    }else if([self.wasteBlock.regionId intValue] == InteriorRegion && self.wasteBlock.blockSiteCode.siteCode == nil){
+        UIAlertView *validateAlert;
+        validateAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Please enter site code."
+                                                  delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [validateAlert show];
+    } else {
+    [self addStratumType:(UIButton *)sender];
+    }
+}
+
+- (void) addStratumType:(UIButton* )sender{
+        NSString *title = NSLocalizedString(ADD_STRATIM_TITLE, nil);
+        NSString *message = NSLocalizedString(@"Please select a Stratum Type.", nil);
+        NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+        NSString *otherButtonTitleOne = NSLocalizedString(STANDARD_STRATUM, nil);
+        NSString *otherButtonTitleTwo = NSLocalizedString(STANDING_TREE, nil);
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, otherButtonTitleTwo, nil];
+        alert.tag = sender.tag;
+        //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
+        [alert show];
 }
 
 - (IBAction)doneClicked:(id)sender {
@@ -566,14 +815,30 @@ UITextField *activeTextField;
     WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
     [error appendString:[wpv validateBlock:self.wasteBlock]];
     [error appendString:[self validateCutBlock:sender]];
-    
+    [error appendString:[self mandatoryFieldsForXML:sender]];
     if(![error isEqualToString:@""]) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:error preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
         
     } else {
-        [self promptForExportUserData:sender];
+        if([self.wasteBlock.cutBlockId isEqualToString:@""]){
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Cutblock id missing" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [self promptForExportUserData:sender];
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];            
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action){
+                //Dismiss
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            
+            [alert addAction:ok];
+            [alert addAction:cancel];
+            [self presentViewController:alert animated:YES completion:nil];
+        }else{
+            [self promptForExportUserData:sender];
+        }
     }
 }
 
@@ -583,7 +848,15 @@ UITextField *activeTextField;
     NSString *title = NSLocalizedString(@"Export Cut Block", nil);
     NSString *cancelButtonTitle = NSLocalizedString(@"OK", nil);
     NSString *message = @"";
-    
+    //Quick fix for pre existing efw files with wrong total estimated volume, when xml file is generated to display the correct total estimated volume.
+    for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
+        double  totalestimatedvolume = 0.0;
+        for(WastePlot *wp in [ws.stratumPlot allObjects]){
+            totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
+        }
+        ws.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
+        NSLog(@"Total Estimated Volume %@", ws.totalEstimatedVolume);
+    }
     switch([xmlGen generateCutBlockXMLExport:self.wasteBlock replace:YES type:XML] ){
         case ExportSuccessful:
             message = NSLocalizedString(@"XML file has generated successfully for this cut block", nil);
@@ -600,7 +873,79 @@ UITextField *activeTextField;
 
 - (IBAction)generateEFW:(id)sender {
     XMLExportGenerator *xmlGen = [[XMLExportGenerator alloc] init];
-    
+    BOOL present = FALSE;
+    if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
+        if([wasteBlock.blockStratum count] > 0){
+            for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
+                if([ws.isPileStratum intValue] == 1){
+                    present = TRUE;
+                    break;
+                }else{
+                    present = FALSE;
+                }
+            }
+        }
+    }
+    if(present){
+        WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
+        NSString *errorMessage = [wpv validPile:self.wasteBlock];
+        if(![errorMessage isEqualToString:@""]){
+            UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Pile Data Missing", nil)
+                                                                                  message:[NSString stringWithFormat:@"%@ OK to proceed?",errorMessage]
+                                                                           preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {NSString *message = @"";
+                                                                  NSString *okTitle = NSLocalizedString(@"OK", nil);
+                                                                  
+                                                                  switch([xmlGen generateCutBlockXMLExport:self.wasteBlock replace:YES type:EFW]) {
+                                                                      case ExportSuccessful:
+                                                                          message = NSLocalizedString(@"EFW file has generated successfully for this cut block", nil);
+                                                                          break;
+                                                                      default:
+                                                                          message = NSLocalizedString(@"EFW file cannot be generated for this cut block", nil);
+                                                                          break;
+                                                                  }
+                                                                  
+                                                                  UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Export Cut Block" message:message preferredStyle:UIAlertControllerStyleAlert];
+                                                                  
+                                                                  UIAlertAction *ok = [UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                                                                      [alert dismissViewControllerAnimated:YES completion:nil];
+                                                                  }];
+                                                                  
+                                                                  [alert addAction:ok];
+                                                                  [self presentViewController:alert animated:YES completion:nil]; }];
+            
+            UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action) {
+                                                                 [self dismissViewControllerAnimated:YES completion:nil ];
+                                                             }];
+            [warningAlert addAction:yesAction];
+            [warningAlert addAction:noAction];
+            [self presentViewController:warningAlert animated:YES completion:nil];
+        }else{
+            NSString *message = @"";
+            NSString *okTitle = NSLocalizedString(@"OK", nil);
+            
+            switch([xmlGen generateCutBlockXMLExport:self.wasteBlock replace:YES type:EFW]) {
+                case ExportSuccessful:
+                    message = NSLocalizedString(@"EFW file has generated successfully for this cut block", nil);
+                    break;
+                default:
+                    message = NSLocalizedString(@"EFW file cannot be generated for this cut block", nil);
+                    break;
+            }
+            
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Export Cut Block" message:message preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *ok = [UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            
+            [alert addAction:ok];
+            [self presentViewController:alert animated:YES completion:nil];
+            }
+    }else{
     NSString *message = @"";
     NSString *okTitle = NSLocalizedString(@"OK", nil);
     
@@ -621,6 +966,7 @@ UITextField *activeTextField;
     
     [alert addAction:ok];
     [self presentViewController:alert animated:YES completion:nil];
+    }
 }
 
 - (void) promptForExportUserData:(id) sender {
@@ -747,7 +1093,7 @@ UITextField *activeTextField;
             return NO;
         }
     } else if (textField == self.telephoneNumber || [textField.accessibilityLabel isEqualToString:NSLocalizedString(@"Prediction Plot", nil)]
-               ||[textField.accessibilityLabel isEqualToString:NSLocalizedString(@"Measure Plot", nil)]) {
+               ||[textField.accessibilityLabel isEqualToString:NSLocalizedString(@"Measure Plot", nil)] || textField == self.benchmarkField ) {
         if (![self validInputNumbersOnly:theString]) {
             return NO;
         }
@@ -758,7 +1104,7 @@ UITextField *activeTextField;
             return NO;
         }
     }
-    
+
     
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
     switch (textField.tag) {
@@ -846,6 +1192,25 @@ UITextField *activeTextField;
         
         //validate stratum area
         [self checkStratum];
+    }else if(textField == self.benchmarkField){
+        //save the change first
+        [self saveData];
+        [WasteCalculator calculateWMRF:self.wasteBlock  updateOriginal:YES];
+        [WasteCalculator calculateRate:self.wasteBlock];
+        [WasteCalculator calculatePiecesValue:self.wasteBlock];
+        
+        if([self.wasteBlock.userCreated intValue] ==1){
+            [WasteCalculator calculateEFWStat:self.wasteBlock];
+        }
+        
+        //save the calculated value
+        [self saveData];
+        
+        //refresh other section
+        [self.timbermarkTableView reloadData];
+        
+        //validate stratum area
+        [self checkStratum];
     }else if(textField == self.loggingCompleteTextField || textField == self.surveyDate){
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"MMM-dd-yyyy"];
@@ -892,6 +1257,15 @@ UITextField *activeTextField;
                 }
                 row++;
             }
+        }
+    }else if(textField == self.interiorCedarMaturity){
+        int row = 0;
+        for (InteriorCedarMaturityCode *sc in self.interiorCedarMaturityCodeArray) {
+            if( [sc.interiorCedarCode isEqualToString:[self codeFromText:textField.text]] ){
+                [self.interiorCedarMaturityPicker selectRow:row inComponent:0 animated:NO];
+                break;
+            }
+            row++;
         }
     }
     
@@ -951,7 +1325,11 @@ UITextField *activeTextField;
     [space formUnionWithCharacterSet:characterSet];
     
     characterSet = space;
+    NSMutableCharacterSet *period = [NSMutableCharacterSet characterSetWithCharactersInString:@"."];
     
+    [period formUnionWithCharacterSet:characterSet];
+    
+    characterSet = period;
     
     
     for (int i = 0; i < [theString length]; i++) {
@@ -1007,9 +1385,17 @@ UITextField *activeTextField;
 
 - (NSString *) validateCutBlock:(id)sender {
     NSMutableString *error = [[NSMutableString alloc] initWithString:@""];
-    NSArray *mandatoryFields = [NSArray arrayWithObjects:   @[@"Reporting Unit No", self.wasteBlock.reportingUnit],
-                                                            @[@"Cutblock", self.wasteBlock.cutBlockId],
-                                                            @[@"Licence", self.wasteBlock.licenceNumber], nil];
+    
+    NSArray *mandatoryFields;
+    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
+    {
+        mandatoryFields = [NSArray arrayWithObjects: @[@"Reporting Unit No", self.wasteBlock.reportingUnit], nil];
+    }
+    else
+    {
+        mandatoryFields = [NSArray arrayWithObjects:   @[@"Reporting Unit No", self.wasteBlock.reportingUnit],
+                           @[@"Licence", self.wasteBlock.licenceNumber], nil];
+    }
     
     for (NSArray *elem in mandatoryFields) {
         if ([elem[1] isKindOfClass:[NSString class]] && [elem[1] length] == 0) {
@@ -1022,7 +1408,77 @@ UITextField *activeTextField;
     }
     return error;
 }
-                              
+-(NSString *) mandatoryFieldsForXML:(id)sender{
+
+    NSString * errorMessage = @"";
+    
+    if([self.wasteBlock.regionId intValue] == InteriorRegion && self.wasteBlock.blockSiteCode.siteCode == nil){
+        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Site Code \n"];
+    }
+    if([self.wasteBlock.regionId intValue] == CoastRegion && self.wasteBlock.blockMaturityCode.maturityCode == nil){
+        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Maturity Code \n"];
+    }
+    if([self.wasteBlock.surveyorLicence isEqualToString:@""] || self.wasteBlock.surveyorLicence == nil){
+        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Surveyor Licence \n"];
+    }
+    if(self.wasteBlock.surveyDate == nil){
+        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Survey Date \n"];
+    }
+    if([self.wasteBlock.blockTimbermark count] == 0 ){
+        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Timber Mark \n"];
+    }else if([self.wasteBlock.blockTimbermark count] > 0){
+        for (Timbermark *tm in self.wasteBlock.blockTimbermark){
+            if(tm.timbermark == nil || [tm.timbermark isEqualToString:@""]){
+                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Timber Mark \n"];
+            }
+        }
+    }
+    if([self.wasteBlock.blockStratum count] == 0){
+        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Stratum data\n"];
+    }else if([self.wasteBlock.blockStratum count] > 0){
+        for(WasteStratum *ws in self.wasteBlock.blockStratum){
+            if(ws.stratumStratumTypeCode.stratumTypeCode == nil){
+                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Stratum Type\n"];
+            }
+            if(ws.stratumAssessmentMethodCode.assessmentMethodCode == nil){
+                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Assessment/Size\n"];
+            }
+            if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
+                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Stratum Area \n"];
+            }
+            if([ws.stratumPlot count] == 0 && ws.strPile == nil ) {
+                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Plot data\n"];
+            }else if([ws.stratumPlot count] > 0) {
+                for (WastePlot *wp in ws.stratumPlot){
+                    if(wp.plotNumber == nil){
+                        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Plot Number\n"];
+                    }
+                    if(wp.surveyedMeasurePercent == nil || [wp.surveyedMeasurePercent doubleValue] == 0){
+                        errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Measure Factor\n"];
+                    }
+                    if([wp.plotPiece count] > 0){
+                        for(WastePiece* piece in wp.plotPiece){
+                            if(piece.pieceScaleSpeciesCode.scaleSpeciesCode == nil){
+                                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Species Code\n"];
+                            }
+                            if(piece.pieceMaterialKindCode.materialKindCode == nil){
+                                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Kind Code\n"];
+                            }
+                            if(piece.pieceWasteClassCode.wasteClassCode == nil){
+                                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Class Code\n"];
+                            }
+                            if(piece.pieceScaleGradeCode.scaleGradeCode == nil){
+                                errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Grade\n"];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return errorMessage;
+}
 
 #pragma mark PickerView DataSource
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -1038,6 +1494,8 @@ UITextField *activeTextField;
         }else if([self.wasteBlock.regionId intValue] == CoastRegion){
             return [self.maturityCodeArray count];
         }
+    }else if(pickerView == self.interiorCedarMaturityPicker){
+        return [self.interiorCedarMaturityCodeArray count];
     }
     return 0;
 }
@@ -1051,6 +1509,8 @@ UITextField *activeTextField;
         }else if([self.wasteBlock.regionId intValue] == CoastRegion){
             return [[NSString alloc] initWithFormat:@"%@ - %@",[self.maturityCodeArray[row] valueForKey:@"maturityCode"] , [self.maturityCodeArray[row] valueForKey:@"desc"]] ;
         }
+    }else if(pickerView == self.interiorCedarMaturityPicker){
+        return [[NSString alloc] initWithFormat:@"%@ - %@",[self.interiorCedarMaturityCodeArray[row] valueForKey:@"interiorCedarCode"] , [self.interiorCedarMaturityCodeArray[row] valueForKey:@"desc"]] ;
     }
     return nil;
 }
@@ -1075,6 +1535,22 @@ UITextField *activeTextField;
             targetTxt.text = [[NSString alloc] initWithFormat:@"%@ - %@",[self.maturityCodeArray[row] valueForKey:@"maturityCode"], [self.maturityCodeArray[row] valueForKey:@"desc"] ];
             
             //self.checkMaturityLabel.text = [ [self codeFromText:self.checkMaturity.text] isEqualToString:@"M"] ? @"less than 8R" : @"Top Greater than 5R, top less than 5R";
+        }
+        
+        [targetTxt resignFirstResponder];
+    }
+    if(pickerView == self.interiorCedarMaturityPicker){
+        
+        UITextField *targetTxt = nil;
+       /* if ([self.wasteBlock.userCreated intValue] == 1){
+            targetTxt = self.maturity;
+        }else{
+            targetTxt = self.checkMaturity;
+        }*/
+        targetTxt = self.interiorCedarMaturity;
+        if([self.wasteBlock.regionId intValue] == InteriorRegion) {
+            targetTxt.text = [[NSString alloc] initWithFormat:@"%@ - %@",[self.interiorCedarMaturityCodeArray[row] valueForKey:@"interiorCedarCode"], [self.interiorCedarMaturityCodeArray[row] valueForKey:@"desc"] ];
+            NSLog(@" interior cedar maturity code : %@", self.interiorCedarMaturity.text);
         }
         
         [targetTxt resignFirstResponder];
@@ -1173,13 +1649,12 @@ UITextField *activeTextField;
         //NSLog(@"Alert view clicked with the cancel button index.");
     }else {
         if([alertView.title isEqualToString:@"Delete Cut Block"]){
-            //delete cut block here
+            
             [WasteBlockDAO deleteCutBlock:self.wasteBlock];
-            self.wasteBlock = nil;
             
             //reload the downloaded cut block screen
             NSInteger numberOfViewControllers = self.navigationController.viewControllers.count;
-            
+            //this navigation VIA number of view controllers is....really weird and not a good idea imo - I would not copy this implementation for future work. Maybe this was the only way to implement earlier in Objective-C/XCode days? -Chris Nesmith
             if (numberOfViewControllers == 1) {
                 //delete cut block from "create new"
                 UIStoryboard* sb = [UIStoryboard storyboardWithName:@"EForWasteBC" bundle:nil];
@@ -1206,21 +1681,21 @@ UITextField *activeTextField;
                 [self.navigationController popViewControllerAnimated:YES];
 
             }else if( numberOfViewControllers == 4){
-                
+
                 DownloadedTableViewController *downloadVC =  [self.navigationController.viewControllers objectAtIndex:numberOfViewControllers - 2];
                 [downloadVC.tableView reloadData];
                 
                 //navigate back to the downloaded cut block screen
                 [self.navigationController popViewControllerAnimated:YES];
             }
-            
-            
+            self.wasteBlock = nil;
             
         }else if([alertView.title isEqualToString:@"Delete New Stratum"]){
             //NSLog(@"Delete new Stratum at row %ld.", (long)alertView.tag);
             WasteStratum *targetStratum = [self.sortedStratums objectAtIndex:alertView.tag];
             
             [WasteBlockDAO deleteStratum:targetStratum usingWB:wasteBlock];
+            
             
             NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"stratum" ascending:YES]; // is key ok ? does it actually sort according to it
             NSSortDescriptor *sort2 = [[NSSortDescriptor alloc ] initWithKey:@"stratumID" ascending:YES];
@@ -1238,8 +1713,9 @@ UITextField *activeTextField;
                 [self.footerStatView setViewValue:self.wasteBlock];
             }
             
+            [self saveData];
             [self.stratumTableView reloadData];
-            
+            [self viewDidLoad];
             [self checkStratum];
             
         }else if([alertView.title isEqualToString:ADD_STRATIM_TITLE]){
@@ -1505,10 +1981,6 @@ UITextField *activeTextField;
         [self saveData];
     }
     
-    
-    
-    
-    
 }
 
 - (void) populateFromObject{
@@ -1541,11 +2013,17 @@ UITextField *activeTextField;
     if ([self.wasteBlock.regionId intValue] == InteriorRegion ){
         self.maturity.text = wasteBlock.blockSiteCode ? [[NSString alloc] initWithFormat:@"%@ - %@", wasteBlock.blockSiteCode.siteCode, wasteBlock.blockSiteCode.desc] : @"";
         self.checkMaturity.text = wasteBlock.blockCheckSiteCode ? [[NSString alloc] initWithFormat:@"%@ - %@", wasteBlock.blockCheckSiteCode.siteCode, wasteBlock.blockCheckSiteCode.desc] : @"";
+        InteriorCedarMaturityCode *icm = [self.interiorCedarMaturityCodeArray objectAtIndex:[self.interiorCedarMaturityPicker selectedRowInComponent:0]];
+        self.interiorCedarMaturity.text = [[NSString alloc] initWithFormat:@"%@ - %@", icm.interiorCedarCode, icm.desc];
+        self.interiorCedarMaturity.text = wasteBlock.blockInteriorCedarMaturityCode ? [[NSString alloc] initWithFormat:@"%@ - %@", wasteBlock.blockInteriorCedarMaturityCode.interiorCedarCode, wasteBlock.blockInteriorCedarMaturityCode.desc] : self.interiorCedarMaturity.text;
     }else if([self.wasteBlock.regionId intValue] == CoastRegion){
         self.maturity.text = wasteBlock.blockMaturityCode ? [[NSString alloc] initWithFormat:@"%@ - %@", wasteBlock.blockMaturityCode.maturityCode, wasteBlock.blockMaturityCode.desc] : @"";
         self.checkMaturity.text = wasteBlock.blockCheckMaturityCode ? [[NSString alloc] initWithFormat:@"%@ - %@", wasteBlock.blockCheckMaturityCode.maturityCode, wasteBlock.blockCheckMaturityCode.desc] : @"";
+         for (Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
+             self.benchmarkField.text = tm.benchmark && [tm.benchmark floatValue] >= 0 && [tm.benchmark floatValue] <= 99 ? [[NSString alloc ] initWithFormat:@"%ld",(long)[tm.benchmark floatValue]] : @"";
+         }
     }
-    
+
     //self.checkMaturityLabel.text = [ [self codeFromText:self.checkMaturity.text] isEqualToString:@"M"] ? @"Greater than 8R" : @"Top greater than 5R";
     self.returnNumber.text = wasteBlock.returnNumber && [wasteBlock.returnNumber intValue] > 0 ? [wasteBlock.returnNumber stringValue] : @"";
     self.surveyorLicence.text = wasteBlock.surveyorLicence ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.surveyorLicence] : @"";
@@ -1589,11 +2067,11 @@ UITextField *activeTextField;
     
     for( WasteStratum *st in [self.wasteBlock.blockStratum allObjects]){
         if([self.wasteBlock.userCreated intValue] == 1){
-            if(!isnan([st.stratumSurveyArea doubleValue])){
+            if(st.stratumSurveyArea){
                 stratum_total = [stratum_total decimalNumberByAdding:st.stratumSurveyArea];
             }
         }else{
-            if(!isnan([st.stratumArea doubleValue])){
+            if(st.stratumArea){
                 stratum_total = [stratum_total decimalNumberByAdding:st.stratumArea];
             }
         }
@@ -1604,16 +2082,16 @@ UITextField *activeTextField;
     
     NSDecimalNumber *blockArea = [[NSDecimalNumber alloc] initWithInt:0];
     if ([self.wasteBlock.userCreated intValue] == 1){
-        if(!isnan([self.wasteBlock.surveyArea doubleValue])){
-            blockArea =  [[NSDecimalNumber alloc] initWithDouble:[self.wasteBlock.surveyArea doubleValue]];
+        if(self.wasteBlock.surveyArea){
+            blockArea =  [[NSDecimalNumber alloc] initWithDecimal: [self.wasteBlock.surveyArea decimalValue]];
         }
     }else{
-        if(!isnan([self.wasteBlock.netArea doubleValue])){
-            blockArea =  [[NSDecimalNumber alloc] initWithDouble:[self.wasteBlock.netArea doubleValue]];
+        if(self.wasteBlock.netArea){
+            blockArea =  [[NSDecimalNumber alloc] initWithDecimal:[self.wasteBlock.netArea decimalValue]];
         }
     }
     
-    if ([stratum_total doubleValue] != [blockArea doubleValue]){
+    if ([stratum_total compare:blockArea] != NSOrderedSame){
         [self.warningStratumArea setHidden:NO];
     }else{
         [self.warningStratumArea setHidden:YES];
@@ -1624,7 +2102,6 @@ UITextField *activeTextField;
     }else{
         [self.warningStratumInvalid setHidden:YES];
     }
-    
 }
 
 - (void) setupStaticData{
@@ -1958,7 +2435,7 @@ UITextField *activeTextField;
     
     // save data
     [self saveData];
-    
+    [self viewDidLoad];
     
     [self.navigationController pushViewController:stratumVC animated:YES];
 }
