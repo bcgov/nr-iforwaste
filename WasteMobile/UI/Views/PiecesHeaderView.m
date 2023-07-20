@@ -192,7 +192,7 @@
     }
     
     
-    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(896, 0, 100, 42)];  
+    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(896, 0, 100, 42)];
     lblPieceVolumn.text = @" Piece Vol ";
     lblPieceVolumn.backgroundColor = [UIColor piecesHeaderRed];
     
@@ -518,7 +518,7 @@
     
 
     
-    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(905, 0, 100, 41)];  //mchu March 12, 2019
+    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(862, 0, 130, 41)];  //mchu March 12, 2019
     lblPieceVolumn.text = @"Piece Vol ";
     lblPieceVolumn.backgroundColor = [UIColor piecesHeaderRed];
     

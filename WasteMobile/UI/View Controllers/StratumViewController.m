@@ -77,7 +77,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
 
 -(void) setupLists
 {
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"StratumTypeCode" ascending:YES];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"stratumTypeCode" ascending:YES];
     self.stratumTypeArray = [[[CodeDAO sharedInstance] getStratumTypeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
     sort = [[NSSortDescriptor alloc ] initWithKey:@"effectiveDate" ascending:YES];
@@ -505,12 +505,12 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         if([self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"D"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"F"] ||
            [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"G"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"H"] ||
            [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"S"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"T"] ){
-            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"StratumTypeCode" code:@"D"];
+            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"stratumTypeCode" code:@"D"];
             
         }else if([self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"L"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"R"] ||
                  [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"W"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"C"] ||
                  [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"P"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"O"]){
-            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"StratumTypeCode" code:@"A"];
+            self.wasteStratum.stratumStratumTypeCode = (StratumTypeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"stratumTypeCode" code:@"A"];
         }
     }
     if([self.totalPile.text intValue] == 0){
@@ -1531,19 +1531,19 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             break;
             
         case 2:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"HarvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"harvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
             break;
             
         case 3:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]]; // BUG??-plotsizecode should be the value for assessmentSizeArea
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]]; // BUG??-plotsizecode should be the value for assessmentSizeArea
             break;
             
         case 4:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"WasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"wasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
             break;
 
         case 5:
-            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"WasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
+            return [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"wasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
             break;
 
         default:
@@ -1562,25 +1562,25 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             break;
             
         case 2:
-            self.harvestMethod.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"HarvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
+            self.harvestMethod.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.harvestMethodArray[row] valueForKey:@"harvestMethodCode"], [self.harvestMethodArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.harvestMethod resignFirstResponder];
             break;
             
         case 3:
-            self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]];
+            self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"], [self.assessmentSizeArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.assesmentSize resignFirstResponder];
             break;
             
         case 4:
-            self.wasteLevel.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"WasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
+            self.wasteLevel.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteLevelArray[row] valueForKey:@"wasteLevelCode"], [self.wasteLevelArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.wasteLevel resignFirstResponder];
             break;
             
         case 5:
-            self.wasteType.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"WasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
+            self.wasteType.text = [[NSString alloc] initWithFormat:@"%@ - %@", [self.wasteTypeArray[row] valueForKey:@"wasteTypeCode"], [self.wasteTypeArray[row] valueForKey:@"desc"]];
             [self updateTitle];
             [self.wasteType resignFirstResponder];
             break;
@@ -1590,9 +1590,9 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
     
     if (pickerView == self.sizePicker){
         // if user picks S, E or O, system should disable/lock the picker and remove the existing plot since the plot/piece might not be valid for the new assessment method
-        if (([[self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"] isEqualToString:@"S"] ||
-            [[self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"] isEqualToString:@"E"] ||
-            [[self.assessmentSizeArray[row] valueForKey:@"PlotSizeCode"] isEqualToString:@"O"] ) ){
+        if (([[self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"] isEqualToString:@"S"] ||
+            [[self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"] isEqualToString:@"E"] ||
+            [[self.assessmentSizeArray[row] valueForKey:@"plotSizeCode"] isEqualToString:@"O"] ) ){
             
             self.wasteStratum.isPileStratum = [NSNumber numberWithBool:NO];
             [self.totalPileLabel setHidden:YES];
@@ -2476,12 +2476,12 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             [self.wasteLevel setText:@"S"];
         }*/
         if ([self.wasteStratum.stratum isEqualToString:@"STRE"]){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"E"];
-            self.wasteStratum.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"PlotSizeCode" code:@"E"];
+            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"assessmentMethodCode" code:@"E"];
+            self.wasteStratum.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"plotSizeCode" code:@"E"];
             self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumPlotSizeCode.plotSizeCode, self.wasteStratum.stratumPlotSizeCode.desc];
         }else if ([self.wasteStratum.stratum isEqualToString:@"STRS"]){
-            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"S"];
-            self.wasteStratum.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"PlotSizeCode" code:@"S"];
+            self.wasteStratum.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"assessmentMethodCode" code:@"S"];
+            self.wasteStratum.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"plotSizeCode" code:@"S"];
             self.assesmentSize.text = [[NSString alloc] initWithFormat:@"%@ - %@", self.wasteStratum.stratumPlotSizeCode.plotSizeCode, self.wasteStratum.stratumPlotSizeCode.desc];
         }
     }

@@ -366,6 +366,11 @@
 		9B93DB9219EF1532006ACD16 /* Timer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B93DB9119EF1532006ACD16 /* Timer.m */; };
 		C3CE377318E1F48600E7400E /* Search-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C3CE377218E1F48600E7400E /* Search-icon.png */; };
 		C3CE377518E1F9EF00E7400E /* Saved-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C3CE377418E1F9EF00E7400E /* Saved-icon.png */; };
+		CA0577CD29240581002F2959 /* BTSTable4.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD42357BDA700A98BAF /* BTSTable4.html */; };
+		CA0577CE29240581002F2959 /* BTSRow4.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD62357BE2600A98BAF /* BTSRow4.html */; };
+		CA0577CF29240581002F2959 /* BTSRow5.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD82357BE5F00A98BAF /* BTSRow5.html */; };
+		CA0577D029240581002F2959 /* BTSRow6.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEADA2357BE8B00A98BAF /* BTSRow6.html */; };
+		CA23CC5528E744A100293E33 /* WasteMobile-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4EECF19177C99F400778578 /* WasteMobile-Info.plist */; };
 		F4EECF12177C99F400778578 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF11177C99F400778578 /* UIKit.framework */; };
 		F4EECF14177C99F400778578 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF13177C99F400778578 /* Foundation.framework */; };
 		F4EECF16177C99F400778578 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF15177C99F400778578 /* CoreGraphics.framework */; };
@@ -1374,6 +1379,7 @@
 					};
 					F4EECF0D177C99F400778578 = {
 						DevelopmentTeam = TM6UEX2F65;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -1461,6 +1467,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA0577CD29240581002F2959 /* BTSTable4.html in Resources */,
+				CA0577CE29240581002F2959 /* BTSRow4.html in Resources */,
+				CA0577CF29240581002F2959 /* BTSRow5.html in Resources */,
+				CA0577D029240581002F2959 /* BTSRow6.html in Resources */,
 				F4EECF1C177C99F400778578 /* InfoPlist.strings in Resources */,
 				15C09386199BEDBF005F2D89 /* Images.xcassets in Resources */,
 				15D2FD4D1A83D572006CCB8B /* arrow-down-icon.png in Resources */,
@@ -1493,6 +1503,7 @@
 				9B4A2F4219CA009700AD9F19 /* TABLE1_2.html in Resources */,
 				156898921A3B783200CBEFEE /* enable_bg_image.png in Resources */,
 				9B4A2F4619CA012100AD9F19 /* ROW1_2.html in Resources */,
+				CA23CC5528E744A100293E33 /* WasteMobile-Info.plist in Resources */,
 				15C5324719898BA6001BEC89 /* Logo_BC.jpg in Resources */,
 				F4EECF6A177F4C0200778578 /* menu.png in Resources */,
 				156898901A3B711F00CBEFEE /* disable_bg_image.png in Resources */,
@@ -1541,7 +1552,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${PROJECT_DIR}/Tools/bump_build_number.sh \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+			shellScript = "
+";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1999,22 +2011,24 @@
 		F4EECF32177C99F400778578 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-Prod";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-test";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 654;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 862;
 				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "WasteMobile/WasteMobile-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = IFW;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = iForWaste;
+				MARKETING_VERSION = 1.2.6;
+				PRODUCT_BUNDLE_IDENTIFIER = iForWasteTest;
 				PRODUCT_NAME = WasteMobile;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = app;
@@ -2026,20 +2040,25 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-Prod";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 654;
-				DEVELOPMENT_TEAM = TM6UEX2F65;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 862;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = KH9MTRSDAZ;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				INFOPLIST_FILE = "WasteMobile/WasteMobile-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = IFW;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = iForWaste;
+				MARKETING_VERSION = 1.2.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SalusSystems.WasteMobile;
 				PRODUCT_NAME = WasteMobile;
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "iForWaste - In House";
 				TARGETED_DEVICE_FAMILY = 2;
 				VERSIONING_SYSTEM = "";
 				WRAPPER_EXTENSION = app;

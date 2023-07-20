@@ -70,10 +70,10 @@
 -(void) setupLists
 {
     
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"PlotSizeCode" ascending:YES];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"plotSizeCode" ascending:YES];
     self.plotSizeArray = [[[CodeDAO sharedInstance] getPlotSizeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
-    sort = [[NSSortDescriptor alloc ] initWithKey:@"ShapeCode" ascending:YES];
+    sort = [[NSSortDescriptor alloc ] initWithKey:@"shapeCode" ascending:YES];
     self.plotShapeArray = [[[CodeDAO sharedInstance] getShapeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
 }
@@ -954,10 +954,10 @@
 {
     
     if (pickerView.tag == 1)
-        return [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"PlotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
+        return [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"plotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
     
     else if(pickerView.tag == 2)
-        return [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"ShapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
+        return [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"shapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
     
     else
         return nil;
@@ -968,11 +968,11 @@
 {
     
     if (pickerView.tag == 1){
-        self.size.text = [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"PlotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
+        self.size.text = [NSString stringWithFormat:@"%@ - %@",[self.plotSizeArray[row] valueForKey:@"plotSizeCode"], [self.plotSizeArray[row] valueForKey:@"desc"]];
         [self.size resignFirstResponder];
         
     }else if(pickerView.tag == 2){
-        self.shape.text = [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"ShapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
+        self.shape.text = [NSString stringWithFormat:@"%@ - %@",[self.plotShapeArray[row] valueForKey:@"shapeCode"],[self.plotShapeArray[row] valueForKey:@"desc"]];
         [self.shapePicker selectRow:row inComponent:0 animated:NO];
         [self.shape resignFirstResponder];
     }

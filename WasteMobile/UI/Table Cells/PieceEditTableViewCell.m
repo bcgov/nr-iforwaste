@@ -85,7 +85,7 @@
         [labelArray addObject:@";addLength;o;43;b;16"];
         [labelArray addObject:@";pieceCommentCode;w;43;b;17"];
         [labelArray addObject:@";usercode;w;44;b;22"];  //mchu
-        [labelArray addObject:@";notes;w;44;b;18"];
+        //[labelArray addObject:@";notes;w;44;b;18"];
         if (userCreatedBlock){
             // show current volume for user created block
               [labelArray addObject:@";pieceVolume;r;100;l;"];
@@ -114,7 +114,7 @@
         [labelArray addObject:@"S;pieceDecayTypeCode;b;50;b;14"];
         [labelArray addObject:@"IN;pieceCommentCode;w;50;b;17"];
         [labelArray addObject:@"#;usercode;w;50;b;22"];  // mchu
-        [labelArray addObject:@"*;notes;w;50;b;18"];
+        //[labelArray addObject:@"*;notes;w;50;b;18"];
 
         if (userCreatedBlock){
             [labelArray addObject:@"0.000;pieceVolume;r;99;l"];
@@ -131,7 +131,7 @@
         [labelArray addObject:@";pieceWasteClassCode;w;110;b;4"];
         [labelArray addObject:@";pieceScaleGradeCode;w;110;b;10"];
         [labelArray addObject:@"#;usercode;w;110;b;22"];  // mchu
-        [labelArray addObject:@"*;notes;w;110;b;18"];
+        //[labelArray addObject:@"*;notes;w;110;b;18"];
         [labelArray addObject:@";estimatedPercent;w;110;b;21"];
         
         if (userCreatedBlock){
@@ -147,7 +147,7 @@
         [labelArray addObject:@";pieceMaterialKindCode;w;100;b;3"];
         [labelArray addObject:@";pieceWasteClassCode;w;100;b;4"];
         [labelArray addObject:@";pieceScaleGradeCode;w;100;b;10"];
-        [labelArray addObject:@";notes;w;100;b;18"];
+        //[labelArray addObject:@";notes;w;100;b;18"];
         [labelArray addObject:@";densityEstimate;w;100;b;19"];
         [labelArray addObject:@";estimatedVolume;w;100;b;20"];
         

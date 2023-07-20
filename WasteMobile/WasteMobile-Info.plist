@@ -38,12 +38,14 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>1.2.6</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
@@ -93,8 +95,8 @@
 		</dict>
 	</array>
 	<key>iForWasteVersionNumber</key>
-	<string>iForWaste - Version 1.2.2 Test</string>
+	<string>iForWaste - Version 1.2.6 Test</string>
 	<key>iForWasteWebServiceEndPoint</key>
-	<string>http://10.10.30.120:8080/int/wastews/</string>
+	<string>http://apps.nrs.gov.bc.ca/int/wastews/</string>
 </dict>
 </plist>

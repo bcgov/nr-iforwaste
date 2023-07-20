@@ -1505,9 +1505,9 @@ UITextField *activeTextField;
     if(pickerView == self.checkMaturityPicker){
 
         if([self.wasteBlock.regionId intValue] == InteriorRegion) {
-            return [[NSString alloc] initWithFormat:@"%@ - %@",[self.siteCodeArray[row] valueForKey:@"SiteCode"] , [self.siteCodeArray[row] valueForKey:@"desc"]] ;
+            return [[NSString alloc] initWithFormat:@"%@ - %@",[self.siteCodeArray[row] valueForKey:@"siteCode"] , [self.siteCodeArray[row] valueForKey:@"desc"]] ;
         }else if([self.wasteBlock.regionId intValue] == CoastRegion){
-            return [[NSString alloc] initWithFormat:@"%@ - %@",[self.maturityCodeArray[row] valueForKey:@"MaturityCode"] , [self.maturityCodeArray[row] valueForKey:@"desc"]] ;
+            return [[NSString alloc] initWithFormat:@"%@ - %@",[self.maturityCodeArray[row] valueForKey:@"maturityCode"] , [self.maturityCodeArray[row] valueForKey:@"desc"]] ;
         }
     }else if(pickerView == self.interiorCedarMaturityPicker){
         return [[NSString alloc] initWithFormat:@"%@ - %@",[self.interiorCedarMaturityCodeArray[row] valueForKey:@"interiorCedarCode"] , [self.interiorCedarMaturityCodeArray[row] valueForKey:@"desc"]] ;
@@ -1528,11 +1528,11 @@ UITextField *activeTextField;
         }
         
         if([self.wasteBlock.regionId intValue] == InteriorRegion) {
-            targetTxt.text = [[NSString alloc] initWithFormat:@"%@ - %@",[self.siteCodeArray[row] valueForKey:@"SiteCode"], [self.siteCodeArray[row] valueForKey:@"desc"] ];
+            targetTxt.text = [[NSString alloc] initWithFormat:@"%@ - %@",[self.siteCodeArray[row] valueForKey:@"siteCode"], [self.siteCodeArray[row] valueForKey:@"desc"] ];
             NSLog(@" site code : %@", self.checkMaturity.text);
             
         }else if([self.wasteBlock.regionId intValue] == CoastRegion){
-            targetTxt.text = [[NSString alloc] initWithFormat:@"%@ - %@",[self.maturityCodeArray[row] valueForKey:@"MaturityCode"], [self.maturityCodeArray[row] valueForKey:@"desc"] ];
+            targetTxt.text = [[NSString alloc] initWithFormat:@"%@ - %@",[self.maturityCodeArray[row] valueForKey:@"maturityCode"], [self.maturityCodeArray[row] valueForKey:@"desc"] ];
             
             //self.checkMaturityLabel.text = [ [self codeFromText:self.checkMaturity.text] isEqualToString:@"M"] ? @"less than 8R" : @"Top Greater than 5R, top less than 5R";
         }
@@ -2389,29 +2389,29 @@ UITextField *activeTextField;
 
     if ([stratumType isEqualToString:@"STRS"]){
         stm.stratum = @"STRS";
-        stm.stratumStratumTypeCode = (StratumTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"StratumTypeCode" code:@"S"];
-        stm.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"HarvestMethodCode" code:@"T"];
-        stm.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"PlotSizeCode" code:@"S"];
-        stm.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"S"];
-        stm.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"WasteTypeCode" code:@"S"];
+        stm.stratumStratumTypeCode = (StratumTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"stratumTypeCode" code:@"S"];
+        stm.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"harvestMethodCode" code:@"T"];
+        stm.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"plotSizeCode" code:@"S"];
+        stm.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"assessmentMethodCode" code:@"S"];
+        stm.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"wasteTypeCode" code:@"S"];
         
         [stm addStratumPlotObject:[self createEmptyPlot:self.wasteBlock]];
         
     }else if([stratumType isEqualToString:@"STRE"]){
         stm.stratum = @"STRE";
-        stm.stratumStratumTypeCode = (StratumTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"StratumTypeCode" code:@"S"];;
-        stm.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"HarvestMethodCode" code:@"T"];
-        stm.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"PlotSizeCode" code:@"E"];
-        stm.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"E"];
-        stm.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"WasteTypeCode" code:@"S"];
+        stm.stratumStratumTypeCode = (StratumTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"stratumTypeCode" code:@"S"];;
+        stm.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"harvestMethodCode" code:@"T"];
+        stm.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"plotSizeCode" code:@"E"];
+        stm.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"assessmentMethodCode" code:@"E"];
+        stm.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"wasteTypeCode" code:@"S"];
 
         [stm addStratumPlotObject:[self createEmptyPlot:self.wasteBlock]];
     }else{
         stm.stratum = @"";
         stm.stratumStratumTypeCode = nil;
         stm.stratumHarvestMethodCode = nil;
-        stm.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"PlotSizeCode" code:@"0"];
-        stm.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"AssessmentMethodCode" code:@"P"];
+        stm.stratumPlotSizeCode = (PlotSizeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"plotSizeCode" code:@"0"];
+        stm.stratumAssessmentMethodCode = (AssessmentMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"assessmentMethodCode" code:@"P"];
     }
     
     [self.wasteBlock addBlockStratumObject:stm];

@@ -750,7 +750,8 @@
         [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;P;Plot;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;S;100 Percent Scale;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;R;Packing Ratio;1/9/2014;;1/9/2014;"];
-
+        [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;C;Compiled;1/9/2014;;1/9/2014;"];
+        
         //plot size code
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;O;Ocular Estimate;6/9/2014;;1/9/2014;;"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;E;Estimate Percent;4/9/2014;;1/9/2014;;"];
