@@ -131,7 +131,7 @@
         [labelArray addObject:@";pieceWasteClassCode;w;110;b;4"];
         [labelArray addObject:@";pieceScaleGradeCode;w;110;b;10"];
         [labelArray addObject:@"#;usercode;w;110;b;22"];  // mchu
-        //[labelArray addObject:@"*;notes;w;110;b;18"];
+        [labelArray addObject:@"*;notes;w;110;b;18"];
         [labelArray addObject:@";estimatedPercent;w;110;b;21"];
         
         if (userCreatedBlock){

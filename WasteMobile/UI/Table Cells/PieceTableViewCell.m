@@ -101,12 +101,13 @@
     }else if ([assessmentMethodCode isEqualToString:@"E"]){
     
         [labelArray addObject:@";pieceNumber;w;44;l;"];
-        [labelArray addObject:@";pieceScaleSpeciesCode;w;120;b;2"];
-        [labelArray addObject:@";pieceMaterialKindCode;w;120;b;3"];
-        [labelArray addObject:@";pieceWasteClassCode;w;120;b;4"];
-        [labelArray addObject:@";pieceScaleGradeCode;w;120;b;10"];
-        [labelArray addObject:@";notes;w;120;b;18"];
-        [labelArray addObject:@";estimatedPercent;w;120;b;21"];
+        [labelArray addObject:@";pieceScaleSpeciesCode;w;110;b;2"];
+        [labelArray addObject:@";pieceMaterialKindCode;w;110;b;3"];
+        [labelArray addObject:@";pieceWasteClassCode;w;110;b;4"];
+        [labelArray addObject:@";pieceScaleGradeCode;w;110;b;10"];
+        [labelArray addObject:@";usercode;w;110;b;18"];
+        [labelArray addObject:@";notes;w;110;b;18"];
+        [labelArray addObject:@";estimatedPercent;w;110;b;21"];
         [labelArray addObject:@";pieceVolume;r;90;l;"];
         [labelArray addObject:@";checkPieceVolume;r;90;l;"];
         
