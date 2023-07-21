@@ -75,7 +75,7 @@
         [wasteAssessmentMappingAry addObject:@"WasteBlock:surveyorLicence:0:N:wasteSurveyorLicence:string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:yearLoggedFrom:2:N:yearLoggedFrom:string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:yearLoggedTo:2:N:yearLoggedTo:string:"];
-        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockSiteCode:SiteCode:Y:wasteSiteTypeCode:string:"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockSiteCode:siteCode:Y:wasteSiteTypeCode:string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:ratioSamplingLog:0:Y::string:"];
 
         //extra fields for check values
@@ -95,7 +95,7 @@
         [wasteAssessmentMappingAry addObject:@"WasteBlock:netArea:1:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:reportingUnit:2:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:location:0:Y::string:"];
-        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckSiteCode:SiteCode:Y::string:"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckSiteCode:siteCode:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckMaturityCode:MaturityCode:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:entryDate:3:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:npNFArea:1:Y::sting:"];
@@ -106,18 +106,18 @@
         //xml fields
         [wasteStratumMappingAry addObject:@"WasteStratum:stratumArea:1:N:stratumArea:decimal:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:totalEstimatedVolume:2:N:totalEstimatedVolume:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumAssessmentMethodCode:AssessmentMethodCode:N:wasteAssessmentMethodCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumHarvestMethodCode:HarvestMethodCode:N:wasteHarvestMethodCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteLevelCode:WasteLevelCode:N:wasteLevelCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumPlotSizeCode:PlotSizeCode:N:wastePlotSizeCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteTypeCode:WasteTypeCode:N:wasteTypeCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumAssessmentMethodCode:assessmentMethodCode:N:wasteAssessmentMethodCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumHarvestMethodCode:harvestMethodCode:N:wasteHarvestMethodCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteLevelCode:wasteLevelCode:N:wasteLevelCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumPlotSizeCode:plotSizeCode:N:wastePlotSizeCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteTypeCode:wasteTypeCode:N:wasteTypeCode:string:"];
         
         //extra check fields
         [wasteStratumMappingAry addObject:@"WasteStratum:isSurvey:2:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:notes:0:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:checkTotalEstimatedVolume:2:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:stratumID:2:Y::string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumStratumTypeCode:StratumTypeCode:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumStratumTypeCode:stratumTypeCode:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:stratumSurveyArea:1:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:checkTotalEstimatedVolume:2:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:stratum:0:Y::string:"];
@@ -159,7 +159,7 @@
         [wastePlotMappingAry addObject:@"WastePlot:surveyorName:0:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:weather:0:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:plotShapeCode:ShapeCode:Y::string:"];
-        [wastePlotMappingAry addObject:@"WastePlot:plotSizeCode:PlotSizeCode:Y::string:"];
+        [wastePlotMappingAry addObject:@"WastePlot:plotSizeCode:plotSizeCode:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:isSurvey:2:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:greenVolume:1:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:dryVolume:1:Y::string:"];
@@ -173,28 +173,28 @@
         //xml fiels
         [wastePieceMappingAry addObject:@"WastePiece:buttDeduction:2:N:buttDeduction:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:buttDiameter:2:N::buttDiameter:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceButtEndCode:ButtEndCode:N:buttEndCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceButtEndCode:buttEndCode:N:buttEndCode:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:densityEstimate:1:N:estimatedDensity:decimal:"];
         [wastePieceMappingAry addObject:@"WastePiece:estimatedPercent:1:N:estimatedPercent:decimal:"];
         [wastePieceMappingAry addObject:@"WastePiece:estimatedVolume:1:N:estimatedVolume:decimal:"];
         [wastePieceMappingAry addObject:@"WastePiece:length:2:N:length:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:lengthDeduction:2:N:lengthDeduction:decimal:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleGradeCode:ScaleGradeCode:N:scaleGradeCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleSpeciesCode:ScaleSpeciesCode:N:scaleSpeciesCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleGradeCode:scaleGradeCode:N:scaleGradeCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleSpeciesCode:scaleSpeciesCode:N:scaleSpeciesCode:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:topDeduction:2:N:topDeduction:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:topDiameter:2:N:topDiameter:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceTopEndCode:TopEndCode:N:topEndCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceBorderlineCode:BorderlineCode:N:wasteBorderlineCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceWasteClassCode:WasteClassCode:N:wasteClassCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceCommentCode:CommentCode:N:wasteCommentCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceDecayTypeCode:DecayTypeCode:N:wasteDecayTypeCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceMaterialKindCode:MaterialKindCode:N:wasteMaterialKindCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceTopEndCode:topEndCode:N:topEndCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceBorderlineCode:borderlineCode:N:wasteBorderlineCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceWasteClassCode:wasteClassCode:N:wasteClassCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceCommentCode:commentCode:N:wasteCommentCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceDecayTypeCode:decayTypeCode:N:wasteDecayTypeCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceMaterialKindCode:materialKindCode:N:wasteMaterialKindCode:string:"];
 
         //extra check fields
         [wastePieceMappingAry addObject:@"WastePiece:pieceNumber:0:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:checkPieceVolume:1:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:pieceVolume:1:Y::"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceCheckerStatusCode:CheckerStatusCode:Y::"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceCheckerStatusCode:checkerStatusCode:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:volOverHa:1:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:isSurvey:2:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:sortNumber:2:Y::"];
@@ -214,7 +214,7 @@
         [TimberMarkMappingAry addObject:@"Timebermark:area:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:timbermark:0:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:surveyArea:1:Y::"];
-        [TimberMarkMappingAry addObject:@"Timebermark:timbermarkMonetaryReductionFactorCode:MonetaryReductionFactorCode:Y::"];
+        [TimberMarkMappingAry addObject:@"Timebermark:timbermarkMonetaryReductionFactorCode:monetaryReductionFactorCode:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:orgWMRF:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:coniferWMRF:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:xPrice:1:Y::"];
