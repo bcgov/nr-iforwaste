@@ -1314,6 +1314,9 @@
         [WasteCalculator calculateEFWStat:self.wasteBlock];
         [self.efwFooterView setPlotViewValue:self.wastePlot];
     }else{
+        for(WastePiece *wp in self.wastePieces){
+                [WasteCalculator calculatePieceStat:wp wasteStratum:self.wastePlot.plotStratum];
+        }
         [self.footerStatView setViewValue:self.wastePlot];
         [self.footerStatView setDisplayFor:self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode screenName:@"plot"];
     }

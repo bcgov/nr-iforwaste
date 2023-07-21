@@ -147,7 +147,7 @@
         [labelArray addObject:@";pieceMaterialKindCode;w;100;b;3"];
         [labelArray addObject:@";pieceWasteClassCode;w;100;b;4"];
         [labelArray addObject:@";pieceScaleGradeCode;w;100;b;10"];
-        //[labelArray addObject:@";notes;w;100;b;18"];
+        [labelArray addObject:@";notes;w;100;b;18"];
         [labelArray addObject:@";densityEstimate;w;100;b;19"];
         [labelArray addObject:@";estimatedVolume;w;100;b;20"];
         

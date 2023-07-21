@@ -59,7 +59,7 @@
             //volume =(((t - td) *(t - td)) + ((b - bd) * (b - bd))) * ((l - ld)/10.0) * k;
         }
     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
-        //volume = [wastePiece.estimatedVolume floatValue];
+        volume = [wastePiece.estimatedVolume floatValue];
         
     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
         float totalEstimate = 0;
