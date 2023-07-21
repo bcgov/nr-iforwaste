@@ -452,18 +452,18 @@
     self.wastePlot.assistant = self.assistant.text;
     self.wastePlot.checkDate = [dateFormat dateFromString:self.checkSurveyDate.text];
     
-    for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
+    /*for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
         double  totalestimatedvolume = 0.0;
         for(WastePlot *wp in [ws.stratumPlot allObjects]){
             totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
         }
         ws.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
         NSLog(@"Total Estimated Volume %@", ws.totalEstimatedVolume);
-    }
+    }*/
     self.wastePlot.notes = self.notes.text;
     if ([self.wasteBlock.userCreated intValue] == 1){
-        self.wastePlot.plotEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.plotEstimatedVolume.text];
-
+        //self.wastePlot.plotEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.plotEstimatedVolume.text];
+        self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
     }else{
         self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
     }
@@ -1285,15 +1285,17 @@
         
         if ([self.wasteBlock.userCreated intValue] == 1){
             [self.surveyTotalEstimateVolume setHidden:YES];
-
+            [self.surveyTotalEstimateVolumeText setHidden:YES];
             self.totalCheckPercentLabel.text = @"Total Percentage";
             //self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%@", [self.wastePlot.plotStratum.totalEstimatedVolume stringValue]];
             self.plotEstimatedVolume.text = [self.wastePlot.plotEstimatedVolume stringValue] ? [[NSString alloc] initWithFormat:@"%@", [self.wastePlot.plotEstimatedVolume stringValue]] : @"";
         }else{
             [self.surveyTotalEstimateVolume setHidden:NO];
-            
+            [self.surveyTotalEstimateVolumeText setHidden:NO];
             self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
-            self.surveyTotalEstimateVolume.text = [[NSString alloc] initWithFormat:@"[Survey Volume : %@]", [self.wastePlot.plotStratum.totalEstimatedVolume stringValue]];
+            self.surveyTotalEstimateVolume.text = [[NSString alloc] initWithFormat:@"Survey Volume"];
+            self.surveyTotalEstimateVolumeText.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue]];
+            NSLog(@" surveyTotalEstimateVolume:%f %@, checkvolume %f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue],[self.wastePlot.plotStratum.totalEstimatedVolume stringValue],[self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]);
         }
         [self updateCheckTotalPercent];
         
@@ -1306,6 +1308,7 @@
         [self.totalCheckPercent setHidden:YES];
         [self.totalCheckPercentLabel setHidden:YES];
         [self.surveyTotalEstimateVolume setHidden:YES];
+        [self.surveyTotalEstimateVolumeText setHidden:YES];
     }
     
     self.wastePieces = [self.wastePlot.plotPiece allObjects];

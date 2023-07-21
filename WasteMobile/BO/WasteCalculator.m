@@ -67,8 +67,8 @@
         if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
             totalEstimate = [ws.checkTotalEstimatedVolume floatValue];
         }else{
-            //totalEstimate = [ws.totalEstimatedVolume floatValue];
-            totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
+            totalEstimate = [ws.totalEstimatedVolume floatValue];
+            //totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
             //we need to calculate the check estimated volume for original waste piece object
             wastePiece.checkPieceVolume =[[[NSDecimalNumber alloc] initWithFloat:([ws.checkTotalEstimatedVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
         }
