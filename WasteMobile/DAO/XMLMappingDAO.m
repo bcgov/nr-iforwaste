@@ -70,7 +70,7 @@
         [wasteAssessmentMappingAry addObject:@"WasteBlock:returnNumber:2:N:returnNumber:string::"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:surveyDate:3:N:surveyDate:date::"];
         [wasteAssessmentMappingAry addObject:@"Timbermark:timbermark:0:N:timberMark:string::"];
-        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockMaturityCode:MaturityCode:N:wasteMaturityTypeCode:string::"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockMaturityCode:maturityCode:N:wasteMaturityTypeCode:string::"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:surveyArea:1:N:wasteNetArea:decimal::"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:surveyorLicence:0:N:wasteSurveyorLicence:string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:yearLoggedFrom:2:N:yearLoggedFrom:string:"];
@@ -96,7 +96,7 @@
         [wasteAssessmentMappingAry addObject:@"WasteBlock:reportingUnit:2:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:location:0:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckSiteCode:siteCode:Y::string:"];
-        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckMaturityCode:MaturityCode:Y::string:"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckMaturityCode:maturityCode:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:entryDate:3:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:npNFArea:1:Y::sting:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:isAggregate:2:Y::string:"];

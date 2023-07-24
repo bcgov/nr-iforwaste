@@ -466,6 +466,9 @@
         self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
     }else{
         self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
+        if(![self.surveyTotalEstimateVolumeText.text isEqualToString:@"0.0"]){
+        self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
+        }
     }
     
     self.wastePlot.aggregateLicence = self.licence.text;
