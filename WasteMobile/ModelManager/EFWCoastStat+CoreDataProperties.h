@@ -23,6 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeUHBValueHa;
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeUHBVolume;
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeUHBVolumeHa;
+@property (nullable, nonatomic, copy) NSDecimalNumber *gradeUValue;
+@property (nullable, nonatomic, copy) NSDecimalNumber *gradeUValueHa;
+@property (nullable, nonatomic, copy) NSDecimalNumber *gradeUVolume;
+@property (nullable, nonatomic, copy) NSDecimalNumber *gradeUVolumeHa;
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeXHBValue;
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeXHBValueHa;
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeXHBVolume;

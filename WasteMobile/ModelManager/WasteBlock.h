@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class MaturityCode, SnowCode, Timbermark, WasteStratum, SiteCode, EFWCoastStat, EFWInteriorStat;
+@class MaturityCode, SnowCode, Timbermark, WasteStratum, SiteCode, EFWCoastStat, EFWInteriorStat, InteriorCedarMaturityCode;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -40,7 +40,7 @@ static float checkVolumeValue;
         subffix = [NSString stringWithFormat:@"_%@", [subffix stringByReplacingOccurrencesOfString:@" " withString:@"_"]];
     }
     
-    NSString *zippedName = [NSString stringWithFormat: @"%@_%@_%@_PlotTallyReport%@.rtf",[super getReportFilePrefix:wastBlock], wastPlot.plotStratum.stratum, wastPlot.plotNumber, subffix];
+    NSString *zippedName = [NSString stringWithFormat: @"%@_%@_%@_PlotTallyReport%@.pdf",[super getReportFilePrefix:wastBlock], wastPlot.plotStratum.stratum, wastPlot.plotNumber, subffix];
     NSString *zippedPath = [documentsDirectory stringByAppendingPathComponent:zippedName];
     
     
@@ -180,12 +180,33 @@ static float checkVolumeValue;
     //
     // END OF TEST
     //
+    //Saving as PDF file
+    CGRect pageFrame = {{0.0 , 0.0 } , {612.0 , 792.0}};
     
+    UIPrintPageRenderer *printPageRenderer = [[UIPrintPageRenderer alloc] init];
+    [printPageRenderer setValue:[NSValue valueWithCGRect:pageFrame] forKey:@"paperRect"];
+    [printPageRenderer setValue:[NSValue valueWithCGRect:pageFrame] forKey:@"printableRect"];
+    NSString *strHtml = [NSString stringWithContentsOfURL:htmlInput encoding:NSUTF8StringEncoding error:nil];
+    UIPrintFormatter *printFormatter = [[UIMarkupTextPrintFormatter alloc] initWithMarkupText:strHtml];
     
+    [printPageRenderer addPrintFormatter:printFormatter startingAtPageAtIndex:0];
     
+    NSLog(@"numberOfPages :%ld", (long)printPageRenderer.numberOfPages);
+    NSMutableData *pdfData = [[NSMutableData alloc] init];
+    UIGraphicsBeginPDFContextToData(pdfData, CGRectZero, nil);
+    CGRect bounds = UIGraphicsGetPDFContextBounds();
+    
+    for(int i=0; i< printPageRenderer.numberOfPages; i++){
+        UIGraphicsBeginPDFPage();
+        [printPageRenderer drawPageAtIndex:(i) inRect:bounds];
+    }
+    UIGraphicsEndPDFContext();
+    
+    [pdfData writeToFile:zippedPath atomically:YES];
+    NSLog(@"%@", zippedPath);
     
     // Export to data buffer
-    UIEdgeInsets margin = {.left = 110, .right = 72, .top = 30, .bottom = 30};
+   /* UIEdgeInsets margin = {.left = 110, .right = 72, .top = 30, .bottom = 30};
     
     NSData *data = [str dataFromRange:(NSRange){0, [str length]}
                    documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFTextDocumentType,
@@ -194,10 +215,6 @@ static float checkVolumeValue;
                                         NSViewModeDocumentAttribute: [NSNumber numberWithInt:0] }
                                 error:&error
                     ];
-    
-    
-    
-    
     
     if(error != nil)
     {
@@ -210,7 +227,7 @@ static float checkVolumeValue;
     if (data == nil) abort();
     
     // Write to disk
-    [data writeToFile:zippedPath atomically:YES];
+    [data writeToFile:zippedPath atomically:YES];*/
     
     NSLog(@"Plot tally report is generated");
 
@@ -230,7 +247,7 @@ static float checkVolumeValue;
     
     
     // just 20, because the first one td0 is alternatively O/C for each of these
-    NSString *td1, *td2, *td3, *td4, *td5, *td6, *td7, *td8, *td9, *td10, *td11, *td12, *td13, *td14, *td15, *td16, *td17, *td18, *td19, *td20 = [[NSString alloc] init];
+    NSString *td1, *td2, *td3, *td4, *td5, *td6, *td7, *td8, *td9, *td10, *td11, *td12, *td13, *td14, *td15, *td16, *td17, *td18, *td19, *td20, *td21 = [[NSString alloc] init];
    
     //NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pieceNumber" ascending:YES];
     
@@ -272,6 +289,7 @@ static float checkVolumeValue;
             td18 = @"";
             td19 = @"";
             td20 = @"";
+            td21 = @"";
         }
         else{
             td1 = piece.pieceNumber ? piece.pieceNumber : @"";
@@ -293,21 +311,22 @@ static float checkVolumeValue;
             td16 = [piece.farEnd stringValue] ? [piece.farEnd stringValue] : @"";
             td17 = [piece.addLength stringValue] ? [piece.addLength stringValue] : @"";
             td18 = piece.pieceCommentCode.commentCode ? piece.pieceCommentCode.commentCode : @"";
-            td19 = piece.notes ? @"*" : @"";
-            td20 = [piece.pieceVolume stringValue];
+            td19 = piece.usercode ? piece.usercode : @"";
+            td20 = piece.notes ? @"*" : @"";
+            td21 = [piece.pieceVolume stringValue];
         }
         
         //NSLog(@"PIECE NUMBER = %@",td1);
         
         
-        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14, td15, td16, td17, td18, td19, td20, nil];
+        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14, td15, td16, td17, td18, td19, td20, td21, nil];
         
         
         // allways create 2 rows for the same piece
         // if the piece is change (has a 'c') then replace the previous duplicate with changed one
         if( [self stringHasC:td1] ){
             td1 = [td1 substringToIndex:td1.length-1];
-            row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14, td15, td16, td17, td18, td19, td20, nil];
+            row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14, td15, td16, td17, td18, td19, td20, td21, nil];
             
             [rows replaceObjectAtIndex:numberOfRows-1 withObject:row]; // BUG index out of range (probably 0-1= -1 and objAtIndex:-1 is wrong
         }
@@ -348,7 +367,7 @@ static float checkVolumeValue;
     //
     NSMutableString* ROWS = [[NSMutableString alloc] init];
     NSString* ROW = [[NSString alloc] init];
-    NSString *td1, *td2, *td3, *td4, *td5, *td6, *td7, *td8, *td9, *td10, *td11, *td12, *td13, *td14, *td15, *td16, *td17, *td18, *td19, *td20, *td21 = [[NSString alloc] init];
+    NSString *td1, *td2, *td3, *td4, *td5, *td6, *td7, *td8, *td9, *td10, *td11, *td12, *td13, *td14, *td15, *td16, *td17, *td18, *td19, *td20, *td21, *td22 = [[NSString alloc] init];
     
     
     // data is an Array containing Arrays[td1,td2,...]
@@ -384,19 +403,24 @@ static float checkVolumeValue;
         td18 = [((NSArray*)[data objectAtIndex:rowID]) objectAtIndex:16];
         td19 = [((NSArray*)[data objectAtIndex:rowID]) objectAtIndex:17];
         td20 = [((NSArray*)[data objectAtIndex:rowID]) objectAtIndex:18];
+//        td21 = [((NSArray*)[data objectAtIndex:rowID]) objectAtIndex:19];
+        //< mchu March 20, 2019 >
         td21 = [((NSArray*)[data objectAtIndex:rowID]) objectAtIndex:19];
-        
+        td22 = [((NSArray*)[data objectAtIndex:rowID]) objectAtIndex:20];
+// </mchu March 20>
         
         if([td1 isEqualToString:@"C"]){
-            checkVolumeValue += [td21 floatValue];
+    // mchu March 20 2019       checkVolumeValue += [td21 floatValue];
+            checkVolumeValue += [td22 floatValue];
         }
         else{
-            originalVolumeValue += [td21 floatValue];
+// mchu March 20 2019            originalVolumeValue += [td21 floatValue];
+            originalVolumeValue += [td22 floatValue];
         }
         
         
         // actual HTML row with inserted values
-        ROW = [NSString stringWithFormat:rowHTML, cellColoring, td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14, td15, td16, td17, td18, td19, td20, td21];
+        ROW = [NSString stringWithFormat:rowHTML, cellColoring, td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11, td12, td13, td14, td15, td16, td17, td18, td19, td20, td21, td22];
         
         // all the rows with values put together
         [ROWS appendString:ROW];
@@ -427,7 +451,7 @@ static float checkVolumeValue;
                 [NOTES appendString:htmlNote];
             }
         }
-        
+
         //NSLog(@"<p>%@. %@</p>",piece.pieceNumber, piece.notes);
     }
     

@@ -15,7 +15,8 @@ typedef enum ImportOutcomeCode{
     ImportSuccessful,
     ImportFailCutBlockExist,
     ImportFailLoadXML,
-    ImportFailOnSaveWastBlock
+    ImportFailOnSaveWastBlock,
+    ImportFailRegionIDExist
 }ImportOutcomeCode;
 
 @interface XMLDataImporter : NSObject

@@ -59,6 +59,8 @@
 @property (weak, nonatomic) IBOutlet EFWFooterView *efwFooterView;
 
 @property (strong, nonatomic) NSArray *sortedStratums;
+@property (weak, nonatomic) IBOutlet UILabel *interiorCedarMaturityLabel;
+@property (weak, nonatomic) IBOutlet UITextField *interiorCedarMaturity;
 
 
 @property (strong, nonatomic) IBOutlet UIView *pickerViewContainer;
@@ -67,7 +69,7 @@
 @property (strong, nonatomic) UIPickerView *surveyReasonPicker;
 @property (strong, nonatomic) UIPickerView *checkMaturityPicker;
 @property (strong, nonatomic) UIDatePicker *datePicker;
-
+@property (strong, nonatomic) UIPickerView *interiorCedarMaturityPicker;
 
 @property (weak, nonatomic) IBOutlet UITextField *surveyReasonCode;
 
@@ -75,6 +77,7 @@
 @property (strong, retain) NSArray *surveyReasonCodeArray;
 @property (strong, retain) NSArray *maturityCodeArray;
 @property (strong, retain) NSArray *siteCodeArray;
+@property (strong, retain) NSArray *interiorCedarMaturityCodeArray;
 
 @property (strong, nonatomic) IBOutlet UITableView *stratumTableView;
 @property (strong, nonatomic) IBOutlet UITableView *timbermarkTableView;
@@ -100,6 +103,10 @@
 // Export User Data Prompt Fields
 @property (weak, nonatomic) IBOutlet UITextField *telephoneNumber;
 
+@property (strong, nonatomic) IBOutlet UIButton *addStratumButton;
+@property (weak, nonatomic) IBOutlet UITextField *benchmarkField;
+
+
 // Footer Bar Buttons
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *deleteCutBlockButton;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *generateXMLButton;
@@ -109,7 +116,14 @@
 @property (strong, nonatomic) UIStoryboardSegue *theSegue;
 @property (strong, nonatomic) WasteBlock *wasteBlock;
 
+@property (strong, nonatomic) IBOutlet UILabel *cpCutblockLabel;
+@property (strong, nonatomic) IBOutlet UILabel *licenceLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
+@property (strong, nonatomic) IBOutlet UILabel *loggedFromLabel;
+@property (strong, nonatomic) IBOutlet UILabel *loggedToLabel;
+@property (strong, nonatomic) IBOutlet UILabel *loggingCompleteLabel;
 
+@property (weak, nonatomic) IBOutlet UIButton *editTimbermarkButton;
 
 - (IBAction)doneClicked:(id)sender;
 - (IBAction)showPicker:(id)sender;

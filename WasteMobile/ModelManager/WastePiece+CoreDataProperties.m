@@ -30,6 +30,7 @@
 @dynamic length;
 @dynamic lengthDeduction;
 @dynamic notes;
+@dynamic usercode; 
 @dynamic piece;
 @dynamic pieceNumber;
 @dynamic pieceValue;

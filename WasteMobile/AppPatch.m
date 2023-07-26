@@ -17,6 +17,8 @@
 #import "PlotSizeCode.h"
 #import "HarvestMethodCode.h"
 #import "WasteTypeCode.h"
+#import "ScaleGradeCode.h"
+#import "ScaleSpeciesCode.h"
 
 @implementation AppPatch
 
@@ -73,6 +75,44 @@
             break;
         }
     }
+    //order scale grade code
+    for(ScaleGradeCode *sgc in [[CodeDAO sharedInstance] getScaleGradeCodeList:1]){
+        NSDateComponents* comps = [[NSDateComponents alloc]init];
+        NSCalendar* calendar = [NSCalendar currentCalendar];
+        if([sgc.scaleGradeCode isEqualToString:@"J"]){
+            comps.day = 1;
+        }else if([sgc.scaleGradeCode isEqualToString:@"W"]){
+            comps.day = 2;
+        }else if([sgc.scaleGradeCode isEqualToString:@"U"]){
+            comps.day = 3;
+        }else if([sgc.scaleGradeCode isEqualToString:@"X"]){
+            comps.day = 4;
+        }else if([sgc.scaleGradeCode isEqualToString:@"Y"]){
+            comps.day = 5;
+        }else if([sgc.scaleGradeCode isEqualToString:@"Z"]){
+            comps.day = 6;
+        }
+        sgc.effectiveDate  = [calendar dateByAddingComponents:comps toDate:sgc.effectiveDate options:0];
+        
+    }
+    for(ScaleSpeciesCode *sc in [[CodeDAO sharedInstance] getScaleSpeciesCodeList]){
+        if([sc.scaleSpeciesCode isEqualToString:@"OT"]){
+            NSMutableArray *targetPieces = [[NSMutableArray alloc] init];
+            for(WastePiece *wp in sc.scaleSpeciesCodePiece){
+                [targetPieces addObject:wp];
+            }
+            for(WastePiece *wp in targetPieces){
+                wp.pieceScaleSpeciesCode = (ScaleSpeciesCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"ScaleSpeciesCode" code:@" "];
+            }
+            NSError *error;
+            [[self managedObjectContext] save:&error];
+            if (error) {
+                NSLog(@"patch 120 : Error when saving deletion of TopEndCode: %@", error);
+            }
+            [[self managedObjectContext] deleteObject:sc];
+            break;
+        }
+    }
     
     if(!patchApplied){
         for(TopEndCode *tc in [[CodeDAO sharedInstance] getTopEndCodeList]){
@@ -109,6 +149,25 @@
                     NSLog(@"patch 120 : Error when saving deletion of BorderlineCode: %@", error);
                 }
                 [[self managedObjectContext] deleteObject:bc];
+            }
+        }
+        for(ScaleGradeCode *sg in [[CodeDAO sharedInstance] getScaleGradeCodeList:1]){
+            if([sg.scaleGradeCode isEqualToString:@"B"] || [sg.scaleGradeCode isEqualToString:@"C"] || [sg.scaleGradeCode isEqualToString:@"D"] || [sg.scaleGradeCode isEqualToString:@"F"] || [sg.scaleGradeCode isEqualToString:@"H"] ||
+                 [sg.scaleGradeCode isEqualToString:@"I"] || [sg.scaleGradeCode isEqualToString:@"K"] || [sg.scaleGradeCode isEqualToString:@"L"] || [sg.scaleGradeCode isEqualToString:@"M"]){
+                NSMutableArray *targetPieces = [[NSMutableArray alloc] init];
+                for(WastePiece *wp in sg.scaleGradeCodePiece){
+                    [targetPieces addObject:wp];
+                }
+                for(WastePiece *wp in targetPieces){
+                    wp.pieceScaleGradeCode = (ScaleGradeCode*)[[CodeDAO sharedInstance] getCodeByNameCode:@"ScaleGradeCode" code:@" "];
+                }
+                NSError *error;
+                [[self managedObjectContext] save:&error];
+                if (error) {
+                    NSLog(@"patch 120 : Error when saving deletion of ScaleGradeCode: %@", error);
+                }
+                [[self managedObjectContext] deleteObject:sg];
+                break;
             }
         }
         //order material kind code

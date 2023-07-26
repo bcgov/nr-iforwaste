@@ -305,7 +305,7 @@
                     
                     responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
                     
-                    if (error != nil){
+                   if (error != nil){
                         NSLog(@"Error when getting Piece: %@", error);
                         
                     }
@@ -343,7 +343,7 @@
         
             NSManagedObjectContext *context = [self managedObjectContext];
             
-            if (error == nil){
+          if (error == nil){
                 
                 [WasteCalculator calculateWMRF:wb  updateOriginal:YES];
                 
@@ -649,6 +649,7 @@
         //[last4numbers replaceCharactersInRange:NSMakeRange(1, 1) withString:tmp];
         
         // replace 3rd number of title
+        NSString *testVariable = ws.stratumAssessmentMethodCode.assessmentMethodCode;
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] ){
             [stratumName replaceCharactersInRange:NSMakeRange(2, 1) withString:ws.stratumAssessmentMethodCode.assessmentMethodCode ];
         }

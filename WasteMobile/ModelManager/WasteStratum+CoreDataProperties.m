@@ -48,5 +48,18 @@
 @dynamic stratumWasteTypeCode;
 @dynamic stratumCoastStat;
 @dynamic stratumInteriorStat;
+@dynamic isPileStratum;
+@dynamic stratumAgg;
+@dynamic grade12Percent;
+@dynamic grade4Percent;
+@dynamic grade5Percent;
+@dynamic gradeJPercent;
+@dynamic gradeUPercent;
+@dynamic gradeYPercent;
+@dynamic gradeXPercent;
+@dynamic gradeWPercent;
+@dynamic measureSample;
+@dynamic totalNumPile;
+@dynamic strPile;
 
 @end

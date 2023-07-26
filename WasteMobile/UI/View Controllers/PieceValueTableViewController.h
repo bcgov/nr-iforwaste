@@ -17,7 +17,9 @@ typedef enum {
     LookupMode,
     NumberMode,
     DecimalNumberMode,
-    TextMode
+    DecimalNumberMode2,
+    TextMode,
+    TextMode2
 }DisplayMode;
 
 @interface PieceValueTableViewController : UITableViewController <UIAlertViewDelegate, UITextFieldDelegate>

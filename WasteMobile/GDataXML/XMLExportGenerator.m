@@ -38,6 +38,10 @@
 #import "Constants.h"
 #import "ExportUserData+CoreDataClass.h"
 #import "ExportUserDataDAO.h"
+#import "PileShapeCode+CoreDataClass.h"
+#import "WastePile+CoreDataClass.h"
+#import "StratumPile+CoreDataClass.h"
+#import "AggregateCutblock+CoreDataClass.h"
 
 @implementation XMLExportGenerator
 
@@ -191,7 +195,7 @@
             valueObj = [wasteBlock valueForKey:entityFieldName];
             
         } else if (type == XML) {
-            
+           
             //Workaround for conditional objects
             if ([entityFieldName isEqualToString:@"submitToDistrict"]) {
 
@@ -279,6 +283,7 @@
         BOOL isOcular = NO;
         BOOL isScale = NO;
         BOOL assessingWithACCorDIS = NO;
+        BOOL test = NO;
         
         for(NSString * ele in [mappingDAO getWasteStratumMapping]){
             
@@ -291,6 +296,22 @@
             
             if (valueObj){
                 valueStr = [self getObjectValue:valueObj];
+                if([ws.stratumPlotSizeCode.plotSizeCode isEqualToString:@"R"])
+                {
+                    if([entityFieldName isEqualToString:@"measureSample"])
+                    {
+                        test = YES;
+                    }
+                    if([entityFieldName isEqualToString:@"totalPile"])
+                    {
+                        test = YES;
+                    }
+                    if([entityFieldName isEqualToString:@"totalNumPile"])
+                    {
+                        test = YES;
+                    }
+                }
+                
                 
                 if (type == XML) {
                     if([entityFieldName isEqualToString:@"stratumStratumTypeCode"]){
@@ -313,6 +334,8 @@
                             isOcular = YES;
                         }else if([valueStr isEqualToString:@"S"]){
                             isScale = YES;
+                        }else if([valueStr isEqualToString:@"R"]){
+                            valueStr = @"C";
                         }
                         
                     } else if ([entityFieldName isEqualToString:@"totalEstimatedVolume"] && !estimatingVolume) {
@@ -339,14 +362,24 @@
         }
         
         // add Plot
-        if(isScale || isOcular || estimatingVolume) {
-            WastePlot* firstPlot =[ws.stratumPlot allObjects][0];
-            if( [firstPlot.plotPiece count] >0 ){
-                [self addPiecesFrom:firstPlot toElement:&wsElement withMapping:mappingDAO];
+        if(isScale || isOcular) {
+            for (WastePlot *wp in [ws.stratumPlot allObjects]){
+                if( [wp.plotPiece count] >0 ){
+                    [self addPiecesFrom:wp toElement:&wsElement withMapping:mappingDAO];
+                }
             }
+        }else if (estimatingVolume){
+            //this call is made inorder to do the calculation for percent estimate in xml.
+            [self addPiece:ws toElement:&wsElement withMapping:mappingDAO];
         }else{
            if( [ws.stratumPlot count] > 0){
                [self addPlotFrom:ws.stratumPlot toElement:&wsElement withMapping:mappingDAO forType:type];
+           }
+           if(ws.strPile != nil){
+               [self addStratumPileFrom:ws.strPile toElement:&wsElement withMapping:mappingDAO forType:type];
+           }
+           if([ws.stratumAgg count] > 0){
+               [self addAggregateCBFrom:ws.stratumAgg toElement:&wsElement withMapping:mappingDAO forType:type];
             }
         }
         [*waElement addChild:wsElement];
@@ -363,6 +396,138 @@
             [*waElement addChild:tmElement];
         }
         
+    }
+}
+
+- (void) addPiece:(WasteStratum *) stratum toElement:(GDataXMLElement **)wsElement withMapping:(id) mappingDAO{
+    NSDecimalNumber *sumofpercent = [[NSDecimalNumber alloc] initWithFloat:0];
+    long totalNumberOfPieces = 0;
+    int counter = 0;
+    //this loop is just to get the total number of pieces in a stratum, so that when adding the last piece if the sum of estimatedpercent is above or below 100 do the adjustment.
+    for(WastePlot *wplot in stratum.stratumPlot){
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"sortNumber" ascending:YES];
+        NSArray* stored_piece = [wplot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+        totalNumberOfPieces = totalNumberOfPieces + [stored_piece count];
+    }
+    for(WastePlot *wplot in stratum.stratumPlot){
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"sortNumber" ascending:YES];
+        NSArray* stored_piece = [wplot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+        double percentage = 0;
+        NSString *valueStr1 = @"";
+        NSDecimalNumber *valueofpercent = 0;
+        NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+        for (WastePiece *wp in stored_piece){
+            counter ++;
+            NSObject *valueObj1 = [wp valueForKey:@"estimatedVolume"];
+            valueStr1 = [self getObjectValue:valueObj1];
+            if( ![valueStr1 isEqualToString:@""]){
+                percentage = [valueStr1 doubleValue]/ [stratum.totalEstimatedVolume doubleValue]* 100.0;
+                valueofpercent = [[[NSDecimalNumber alloc] initWithFloat:percentage] decimalNumberByRoundingAccordingToBehavior:behavior];
+                sumofpercent = [sumofpercent decimalNumberByAdding:valueofpercent];
+                //NSLog(@"valuePercent %@ %@", valueofpercent,sumofpercent);
+            }
+            GDataXMLElement *wpieceElement = [GDataXMLNode elementWithName:@"WastePiece"];
+            [self addChildren:&wpieceElement usingChildren:[mappingDAO getWastePieceMapping:wplot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode] andEntity: wp andPlotEntity:wplot totalestimatedvolume:stratum.totalEstimatedVolume sumofpercent:sumofpercent counter:counter totalNumberOfPieces:totalNumberOfPieces];
+            
+            [*wsElement addChild:wpieceElement];
+        }
+    }
+}
+- (void) addChildren:(GDataXMLElement **) parent usingChildren:(NSArray *) items andEntity:(id) blockEntity andPlotEntity:plotEntity totalestimatedvolume:totalestimatedvolume sumofpercent:(NSDecimalNumber *)sumofpercent counter:(int)counter
+ totalNumberOfPieces:(long)totalNumberOfPieces{
+    
+    for(NSString * ele in items){
+        
+        NSArray *strAry = [ele componentsSeparatedByString:@":"];
+        NSString *entityFieldName = strAry[1];
+        NSString *valueStr = @"";
+        NSString *valueStr1 = @"";
+        NSObject *valueObj =[blockEntity valueForKey:entityFieldName];
+        NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+        double percentage = 0;
+        NSDecimalNumber *valueofpercent = 0;
+        double tempvalue = 0;
+        //NSLog(@"counter %d, totalnumberofpiece %ld", counter, totalNumberOfPieces);
+        if(counter == totalNumberOfPieces){
+            if([sumofpercent doubleValue] == 100.0){
+            if([entityFieldName isEqualToString:@"estimatedPercent"]){
+                NSObject *valueObj1 = [blockEntity valueForKey:@"estimatedVolume"];
+                valueStr1 = [self getObjectValue:valueObj1];
+                if( ![valueStr1 isEqualToString:@""]){
+                    percentage = [valueStr1 doubleValue]/ [totalestimatedvolume doubleValue]* 100.0;
+                    valueofpercent = [[[NSDecimalNumber alloc] initWithFloat:percentage] decimalNumberByRoundingAccordingToBehavior:behavior];
+                    valueStr = [valueofpercent stringValue];
+                    GDataXMLElement * subEle = [GDataXMLNode elementWithName: ([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4]) stringValue:valueStr];
+                    if(subEle){
+                        [*parent addChild:subEle];
+                    }
+                }
+                continue;
+            }
+            }else if([sumofpercent doubleValue] > 100.0){
+                if([entityFieldName isEqualToString:@"estimatedPercent"]){
+                    NSObject *valueObj1 = [blockEntity valueForKey:@"estimatedVolume"];
+                    valueStr1 = [self getObjectValue:valueObj1];
+                    if( ![valueStr1 isEqualToString:@""]){
+                        percentage = [valueStr1 doubleValue]/ [totalestimatedvolume doubleValue] * 100.0;
+                        valueofpercent = [[[NSDecimalNumber alloc] initWithFloat:percentage] decimalNumberByRoundingAccordingToBehavior:behavior];
+                        tempvalue = [valueofpercent doubleValue];
+                        double diff = [sumofpercent doubleValue] - 100.0;
+                        double currentValue = tempvalue - diff;
+                        valueofpercent = [[[NSDecimalNumber alloc] initWithDouble:currentValue] decimalNumberByRoundingAccordingToBehavior:behavior];
+                        valueStr = [valueofpercent stringValue];
+                        GDataXMLElement * subEle = [GDataXMLNode elementWithName: ([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4]) stringValue:valueStr];
+                        if(subEle){
+                            [*parent addChild:subEle];
+                        }
+                    }
+                    continue;
+                }
+            }else if([sumofpercent doubleValue] < 100.0){
+                if([entityFieldName isEqualToString:@"estimatedPercent"]){
+                    NSObject *valueObj1 = [blockEntity valueForKey:@"estimatedVolume"];
+                    valueStr1 = [self getObjectValue:valueObj1];
+                    if( ![valueStr1 isEqualToString:@""]){
+                        percentage = [valueStr1 doubleValue]/ [totalestimatedvolume doubleValue] * 100.0;
+                        valueofpercent = [[[NSDecimalNumber alloc] initWithFloat:percentage] decimalNumberByRoundingAccordingToBehavior:behavior];
+                        tempvalue = [valueofpercent doubleValue];
+                        double diff = 100.0 - [sumofpercent doubleValue];
+                        double currentValue = tempvalue + diff;
+                        valueofpercent = [[[NSDecimalNumber alloc] initWithDouble:currentValue] decimalNumberByRoundingAccordingToBehavior:behavior];
+                        valueStr = [valueofpercent stringValue];
+                        GDataXMLElement * subEle = [GDataXMLNode elementWithName: ([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4]) stringValue:valueStr];
+                        if(subEle){
+                            [*parent addChild:subEle];
+                        }
+                    }
+                    continue;
+                }
+            }
+        }else{
+            if([entityFieldName isEqualToString:@"estimatedPercent"]){
+                NSObject *valueObj1 = [blockEntity valueForKey:@"estimatedVolume"];
+                valueStr1 = [self getObjectValue:valueObj1];
+                 if( ![valueStr1 isEqualToString:@""]){
+                     percentage = [valueStr1 doubleValue]/ [totalestimatedvolume doubleValue]* 100.0;
+                     valueofpercent = [[[NSDecimalNumber alloc] initWithFloat:percentage] decimalNumberByRoundingAccordingToBehavior:behavior];
+                     valueStr = [valueofpercent stringValue];
+                     GDataXMLElement * subEle = [GDataXMLNode elementWithName: ([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4]) stringValue:valueStr];
+                     if(subEle){
+                         [*parent addChild:subEle];
+                     }
+                 }
+                continue;
+            }
+        }
+        if(valueObj){
+            valueStr = [self getObjectValue:valueObj];
+            if( ![valueStr isEqualToString:@""]){
+                GDataXMLElement * subEle = [GDataXMLNode elementWithName: ([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4]) stringValue:valueStr];
+                if(subEle){
+                    [*parent addChild:subEle];
+                }
+            }
+        }
     }
 }
 
@@ -397,6 +562,46 @@
         [self addChildrenTo:&wpieceElement usingChildren:[mappingDAO getWastePieceMapping:wplot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode] andEntity: wp];
 
         [*wplotElement addChild:wpieceElement];
+    }
+}
+
+- (void) addAggregateCBFrom:(NSSet<AggregateCutblock *> *) stratumAggregateCB toElement:(GDataXMLElement **)wsElement withMapping:(id) mappingDAO forType:(ExportTypeCode) type{
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"aggregateCutblock" ascending:YES];
+    NSArray* stored_aggCB = [[stratumAggregateCB allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+    
+    for(AggregateCutblock *aggCB in stored_aggCB){
+        
+        GDataXMLElement *aggCBElement = [GDataXMLNode elementWithName:@"AggregateCutblock"];
+        [self addChildrenTo:&aggCBElement usingChildren:[mappingDAO getAggregateCutblockMapping] andEntity: aggCB];
+        
+        if( aggCB.aggPile != nil ){
+            [self addStratumPileFrom:aggCB.aggPile toElement:&aggCBElement withMapping:mappingDAO forType:type];
+        }
+        [*wsElement addChild:aggCBElement];
+    }
+    
+}
+
+- (void) addStratumPileFrom:(StratumPile *)stratumPile toElement:(GDataXMLElement **)wsElement withMapping:(id) mappingDAO forType:(ExportTypeCode) type{
+    
+    GDataXMLElement *spileElement = [GDataXMLNode elementWithName:@"StratumPile"];
+    [self addChildrenTo:&spileElement usingChildren:[mappingDAO getStratumPileMapping] andEntity:stratumPile];
+    
+    if([stratumPile.pileData count] > 0){
+        [self addPileFrom:stratumPile toElement:&spileElement withMapping:mappingDAO];
+    }
+    [*wsElement addChild:spileElement];
+}
+
+- (void) addPileFrom:(StratumPile *)strPile toElement:(GDataXMLElement **)spileElement withMapping:(id) mappingDAO {
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"pileId" ascending:YES];
+    NSArray* stored_pile = [strPile.pileData sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+    
+    for (WastePile *wp in stored_pile){
+        GDataXMLElement *wpileElement = [GDataXMLNode elementWithName:@"WastePile"];
+        [self addChildrenTo:&wpileElement usingChildren:[mappingDAO getWastePileMapping] andEntity:wp];
+        
+        [*spileElement addChild:wpileElement];
     }
 }
 
@@ -478,6 +683,8 @@
             valueStr = [(ShapeCode *) valueObj shapeCode];
         }else if([valueObj isKindOfClass:[MonetaryReductionFactorCode class]]) {
             valueStr = [(MonetaryReductionFactorCode *) valueObj monetaryReductionFactorCode];
+        }else if([valueObj isKindOfClass:[PileShapeCode class]]) {
+            valueStr = [(PileShapeCode *) valueObj pileShapeCode];
         }
     }
     return [valueStr stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];

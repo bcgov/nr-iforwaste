@@ -22,6 +22,10 @@
 @dynamic gradeUHBValueHa;
 @dynamic gradeUHBVolume;
 @dynamic gradeUHBVolumeHa;
+@dynamic gradeUValue;
+@dynamic gradeUValueHa;
+@dynamic gradeUVolume;
+@dynamic gradeUVolumeHa;
 @dynamic gradeXHBValue;
 @dynamic gradeXHBValueHa;
 @dynamic gradeXHBVolume;

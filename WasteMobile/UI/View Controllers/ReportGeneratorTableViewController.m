@@ -65,6 +65,7 @@ NSString *const FeedbackNotAvailable = @" report not available.";
     self.loadingWheel.hidesWhenStopped = YES;
     [self.loadingWheel stopAnimating];
     [self.loadingWheel setHidden:YES];
+    
     // TEST
     
     //NSLog(@"tally switch = %hhd", self.plotTallySwitch.isEnabled);
@@ -92,18 +93,6 @@ NSString *const FeedbackNotAvailable = @" report not available.";
     //validate plots data first
     WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
     
-    //CGRect viewBounds = self.view.bounds;
-    //CGRect frame = self.view.frame;
-    UITableView *test = self.tableView;
-    CGRect viewBounds = test.bounds;
-    CGRect frame = test.bounds;
-    NSInteger height = viewBounds.size.height;
-    NSInteger width = viewBounds.size.width;
-    NSInteger height1 = frame.size.height;
-    NSInteger width1 = frame.size.width;
-    viewBounds.size.height = 700;
-    viewBounds.size.width = 1024;
-    self.view.bounds = viewBounds;
     
     NSString *error = [wpv validateBlock:self.wasteBlock];
     
@@ -389,9 +378,55 @@ NSString *const FeedbackNotAvailable = @" report not available.";
             
             if([fs702Switch isOn]){
                 FS702Report *rg = [[FS702Report alloc] init];
-                
+                NSDecimalNumber *timbermark_total = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                BOOL validationErrorExist = NO;
                 for (Timbermark *tm in [self.wasteBlock.blockTimbermark allObjects])
                 {
+                    if([tm.primaryInd intValue] == 1){
+                        timbermark_total = [timbermark_total decimalNumberByAdding:tm.area];
+                    }
+                    if([tm.primaryInd intValue] == 2){
+                        timbermark_total = [timbermark_total decimalNumberByAdding:tm.area];
+                    }
+                }
+                if([timbermark_total doubleValue] != 0 && ![timbermark_total isEqual:self.wasteBlock.surveyArea]){
+                    feedback = [feedback stringByAppendingString:@"Sum of all Timber Mark areas must be equal to Net Area of the CB\n"];
+                    validationErrorExist = YES;
+                }
+                if([self.wasteBlock.blockTimbermark count] == 0){
+                    feedback = [feedback stringByAppendingString:@"Sum of all Timber Mark areas must be equal to Net Area of the CB\n"];
+                    validationErrorExist = YES;
+                }
+                for (Timbermark *tm in [self.wasteBlock.blockTimbermark allObjects])
+                {
+                    NSDecimalNumber *stratum_total = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    //validation for net area and stratum area to be greater than 0.00ha
+                    if([self.wasteBlock.surveyArea doubleValue]  == 0 || isnan([self.wasteBlock.surveyArea doubleValue])){
+                        feedback = [feedback stringByAppendingString:@"CB Net Area must be > 0.00 ha\n"];
+                        validationErrorExist = YES;
+                        break;
+                    }
+                    for(WasteStratum *ws in self.wasteBlock.blockStratum){
+                        if([ws.stratumSurveyArea doubleValue] == 0){
+                            feedback = [feedback stringByAppendingString:@"Stratum Area must be >0.00 ha\n"];
+                            validationErrorExist = YES;
+                            break;
+                        }
+                        if(ws.stratumSurveyArea){
+                            stratum_total = [stratum_total decimalNumberByAdding:ws.stratumSurveyArea];
+                        }
+                    }
+                    if([stratum_total doubleValue] != 0 && ![stratum_total isEqual:self.wasteBlock.surveyArea]){
+                        feedback = [feedback stringByAppendingString:@"Sum of all stratum areas must be equal to Net Area of the CB\n"];
+                        validationErrorExist = YES;
+                        break;
+                    }
+                    if([self.wasteBlock.blockStratum count] == 0){
+                        feedback = [feedback stringByAppendingString:@"Sum of all stratum areas must be equal to Net Area of the CB\n"];
+                        validationErrorExist = YES;
+                        break;
+                    }
+                    if(!validationErrorExist){
                     feedback = [feedback stringByAppendingString:[NSString stringWithFormat:@"FS 702 Report - %@ : ", tm.timbermark]];
                     switch ([rg generateReport:self.wasteBlock withTimbermark:tm suffix:self.suffix.text replace:NO]){
                         case Successful:
@@ -406,10 +441,57 @@ NSString *const FeedbackNotAvailable = @" report not available.";
                             break;
                     }
                     feedback = [feedback stringByAppendingString:@"\n"];
+                    }
                 }
             }
             
             if([blockTypeSummarySwitch isOn]){
+                NSDecimalNumber *stratum_total = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                NSDecimalNumber *timbermark_total = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                BOOL validationErrorExist = NO;
+                //validation for net area and stratum area to be greater than 0.00ha
+                if([self.wasteBlock.surveyArea doubleValue]  == 0 || isnan([self.wasteBlock.surveyArea doubleValue])){
+                    feedback = [feedback stringByAppendingString:@"CB Net Area must be > 0.00 ha\n"];
+                    validationErrorExist = YES;
+                }
+                for(WasteStratum *ws in self.wasteBlock.blockStratum){
+                    if([ws.stratumSurveyArea doubleValue] == 0){
+                        feedback = [feedback stringByAppendingString:@"Stratum Area must be >0.00 ha\n"];
+                        validationErrorExist = YES;
+                        break;
+                    }
+                    if(ws.stratumSurveyArea){
+                        stratum_total = [stratum_total decimalNumberByAdding:ws.stratumSurveyArea];
+                    }
+                }
+                if([self.wasteBlock.blockStratum count] == 0){
+                    feedback = [feedback stringByAppendingString:@"Sum of all stratum areas must be equal to Net Area of the CB\n"];
+                    validationErrorExist = YES;
+                }
+                if([stratum_total doubleValue] != 0){
+                    if(![stratum_total isEqual:self.wasteBlock.surveyArea]){
+                        feedback = [feedback stringByAppendingString:@"Sum of all stratum areas must be equal to Net Area of the CB\n"];
+                        validationErrorExist = YES;
+                    }
+                }
+                for (Timbermark *tm in [self.wasteBlock.blockTimbermark allObjects])
+                {
+                    if([tm.primaryInd intValue] == 1){
+                        timbermark_total = [timbermark_total decimalNumberByAdding:tm.area];
+                    }
+                    if([tm.primaryInd intValue] == 2){
+                        timbermark_total = [timbermark_total decimalNumberByAdding:tm.area];
+                    }
+                }
+                if([timbermark_total doubleValue] != 0 && ![timbermark_total isEqual:self.wasteBlock.surveyArea]){
+                    feedback = [feedback stringByAppendingString:@"Sum of all Timber Mark areas must be equal to Net Area of the CB\n"];
+                    validationErrorExist = YES;
+                }
+                if([self.wasteBlock.blockTimbermark count] == 0){
+                    feedback = [feedback stringByAppendingString:@"Sum of all Timber Mark areas must be equal to Net Area of the CB\n"];
+                    validationErrorExist = YES;
+                }
+                if(!validationErrorExist){
                 BlockTypeSummaryReport *rg = [[BlockTypeSummaryReport alloc] init];
                 feedback = [feedback stringByAppendingString:@"Block Type Summary Report : "];
                 switch ([rg generateReport:self.wasteBlock suffix:self.suffix.text replace:NO]){
@@ -425,6 +507,7 @@ NSString *const FeedbackNotAvailable = @" report not available.";
                         break;
                 }
                 feedback = [feedback stringByAppendingString:@"\n"];
+                }
             }
 
             if([self.plotPredictionSwitch isOn]){

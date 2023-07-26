@@ -198,6 +198,13 @@
     },
     {
       "idiom" : "watch",
+      "role" : "appLauncher",
+      "scale" : "2x",
+      "size" : "54x54",
+      "subtype" : "49mm"
+    },
+    {
+      "idiom" : "watch",
       "role" : "quickLook",
       "scale" : "2x",
       "size" : "86x86",
@@ -225,16 +232,16 @@
       "subtype" : "45mm"
     },
     {
+      "idiom" : "watch",
+      "role" : "quickLook",
+      "scale" : "2x",
+      "size" : "129x129",
+      "subtype" : "49mm"
+    },
+    {
       "idiom" : "watch-marketing",
       "scale" : "1x",
       "size" : "1024x1024"
-    },
-    {
-      "idiom" : "watch",
-      "role" : "longLook",
-      "scale" : "2x",
-      "size" : "44x44",
-      "subtype" : "42mm"
     }
   ],
   "info" : {

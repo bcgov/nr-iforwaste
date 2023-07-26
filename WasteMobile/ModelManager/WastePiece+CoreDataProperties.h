@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *length;
 @property (nullable, nonatomic, retain) NSNumber *lengthDeduction;
 @property (nullable, nonatomic, retain) NSString *notes;
+@property (nullable, nonatomic, retain) NSString *usercode;  
 @property (nullable, nonatomic, retain) NSNumber *piece;
 @property (nullable, nonatomic, retain) NSString *pieceNumber;
 @property (nullable, nonatomic, retain) NSDecimalNumber *pieceValue;

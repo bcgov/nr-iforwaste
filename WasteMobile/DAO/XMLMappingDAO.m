@@ -16,6 +16,9 @@
     NSMutableArray *wastePlotMappingAry;
     NSMutableArray *wastePieceMappingAry;
     NSMutableArray *TimberMarkMappingAry;
+    NSMutableArray *aggregateCutblockMappingAry;
+    NSMutableArray *stratumPileMappingAry;
+    NSMutableArray *wastePileMappingAry;
 }
 
 +(XMLMappingDAO *)sharedInstance{
@@ -67,12 +70,13 @@
         [wasteAssessmentMappingAry addObject:@"WasteBlock:returnNumber:2:N:returnNumber:string::"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:surveyDate:3:N:surveyDate:date::"];
         [wasteAssessmentMappingAry addObject:@"Timbermark:timbermark:0:N:timberMark:string::"];
-        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockMaturityCode:MaturityCode:N:WasteMaturityTypeCode:string::"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockMaturityCode:MaturityCode:N:wasteMaturityTypeCode:string::"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:surveyArea:1:N:wasteNetArea:decimal::"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:surveyorLicence:0:N:wasteSurveyorLicence:string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:yearLoggedFrom:2:N:yearLoggedFrom:string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:yearLoggedTo:2:N:yearLoggedTo:string:"];
-        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockSiteCode:SiteCode:Y:wasteSiteTypeCode:string:"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockSiteCode:siteCode:Y:wasteSiteTypeCode:string:"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:ratioSamplingLog:0:Y::string:"];
 
         //extra fields for check values
         [wasteAssessmentMappingAry addObject:@"WasteBlock:wasteAssessmentAreaID:2:Y::string:"];
@@ -91,28 +95,29 @@
         [wasteAssessmentMappingAry addObject:@"WasteBlock:netArea:1:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:reportingUnit:2:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:location:0:Y::string:"];
-        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckSiteCode:SiteCode:Y::string:"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckSiteCode:siteCode:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:blockCheckMaturityCode:MaturityCode:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:entryDate:3:Y::string:"];
         [wasteAssessmentMappingAry addObject:@"WasteBlock:npNFArea:1:Y::sting:"];
+        [wasteAssessmentMappingAry addObject:@"WasteBlock:isAggregate:2:Y::string:"];
         
         
         wasteStratumMappingAry = [[NSMutableArray alloc] init];
         //xml fields
         [wasteStratumMappingAry addObject:@"WasteStratum:stratumArea:1:N:stratumArea:decimal:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:totalEstimatedVolume:2:N:totalEstimatedVolume:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumAssessmentMethodCode:AssessmentMethodCode:N:wasteAssessmentMethodCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumHarvestMethodCode:HarvestMethodCode:N:wasteHarvestMethodCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteLevelCode:WasteLevelCode:N:wasteLevelCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumPlotSizeCode:PlotSizeCode:N:wastePlotSizeCode:string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteTypeCode:WasteTypeCode:N:wasteTypeCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumAssessmentMethodCode:assessmentMethodCode:N:wasteAssessmentMethodCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumHarvestMethodCode:harvestMethodCode:N:wasteHarvestMethodCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteLevelCode:wasteLevelCode:N:wasteLevelCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumPlotSizeCode:plotSizeCode:N:wastePlotSizeCode:string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumWasteTypeCode:wasteTypeCode:N:wasteTypeCode:string:"];
         
         //extra check fields
         [wasteStratumMappingAry addObject:@"WasteStratum:isSurvey:2:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:notes:0:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:checkTotalEstimatedVolume:2:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:stratumID:2:Y::string:"];
-        [wasteStratumMappingAry addObject:@"WasteStratum:stratumStratumTypeCode:StratumTypeCode:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:stratumStratumTypeCode:stratumTypeCode:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:stratumSurveyArea:1:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:checkTotalEstimatedVolume:2:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:stratum:0:Y::string:"];
@@ -123,6 +128,17 @@
         [wasteStratumMappingAry addObject:@"WasteStratum:n1sample:0:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:n2sample:0:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:ratioSamplingLog:0:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:isPileStratum:2:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:totalNumPile:2:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:measureSample:2:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:grade12Percent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:grade4Percent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:grade5Percent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:gradeJPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:gradeUPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:gradeWPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:gradeXPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:gradeYPercent:1:Y::string:"];
         
 
         wastePlotMappingAry = [[NSMutableArray alloc] init];
@@ -143,45 +159,51 @@
         [wastePlotMappingAry addObject:@"WastePlot:surveyorName:0:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:weather:0:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:plotShapeCode:ShapeCode:Y::string:"];
-        [wastePlotMappingAry addObject:@"WastePlot:plotSizeCode:PlotSizeCode:Y::string:"];
+        [wastePlotMappingAry addObject:@"WastePlot:plotSizeCode:plotSizeCode:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:isSurvey:2:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:greenVolume:1:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:dryVolume:1:Y::string:"];
         [wastePlotMappingAry addObject:@"WastePlot:isMeasurePlot:2:Y::string:"];
-
+        [wastePlotMappingAry addObject:@"WastePlot:aggregateLicence:0:Y::string:"];
+        [wastePlotMappingAry addObject:@"WastePlot:aggregateCutblock:0:Y::string:"];
+        [wastePlotMappingAry addObject:@"WastePlot:aggregateCuttingPermit:0:Y::string:"];
+        [wastePlotMappingAry addObject:@"WastePlot:plotEstimatedVolume:2:N:plotEstimatedVolume:string:"];
         
         wastePieceMappingAry = [[NSMutableArray alloc] init];
         //xml fiels
         [wastePieceMappingAry addObject:@"WastePiece:buttDeduction:2:N:buttDeduction:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:buttDiameter:2:N::buttDiameter:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceButtEndCode:ButtEndCode:N:buttEndCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceButtEndCode:buttEndCode:N:buttEndCode:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:densityEstimate:1:N:estimatedDensity:decimal:"];
         [wastePieceMappingAry addObject:@"WastePiece:estimatedPercent:1:N:estimatedPercent:decimal:"];
         [wastePieceMappingAry addObject:@"WastePiece:estimatedVolume:1:N:estimatedVolume:decimal:"];
         [wastePieceMappingAry addObject:@"WastePiece:length:2:N:length:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:lengthDeduction:2:N:lengthDeduction:decimal:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleGradeCode:ScaleGradeCode:N:scaleGradeCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleSpeciesCode:ScaleSpeciesCode:N:scaleSpeciesCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleGradeCode:scaleGradeCode:N:scaleGradeCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceScaleSpeciesCode:scaleSpeciesCode:N:scaleSpeciesCode:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:topDeduction:2:N:topDeduction:string:"];
         [wastePieceMappingAry addObject:@"WastePiece:topDiameter:2:N:topDiameter:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceTopEndCode:TopEndCode:N:topEndCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceBorderlineCode:BorderlineCode:N:wasteBorderlineCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceWasteClassCode:WasteClassCode:N:wasteClassCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceCommentCode:CommentCode:N:wasteCommentCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceDecayTypeCode:DecayTypeCode:N:wasteDecayTypeCode:string:"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceMaterialKindCode:MaterialKindCode:N:wasteMaterialKindCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceTopEndCode:topEndCode:N:topEndCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceBorderlineCode:borderlineCode:N:wasteBorderlineCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceWasteClassCode:wasteClassCode:N:wasteClassCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceCommentCode:commentCode:N:wasteCommentCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceDecayTypeCode:decayTypeCode:N:wasteDecayTypeCode:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceMaterialKindCode:materialKindCode:N:wasteMaterialKindCode:string:"];
 
         //extra check fields
         [wastePieceMappingAry addObject:@"WastePiece:pieceNumber:0:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:checkPieceVolume:1:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:pieceVolume:1:Y::"];
-        [wastePieceMappingAry addObject:@"WastePiece:pieceCheckerStatusCode:CheckerStatusCode:Y::"];
+        [wastePieceMappingAry addObject:@"WastePiece:pieceCheckerStatusCode:checkerStatusCode:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:volOverHa:1:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:isSurvey:2:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:sortNumber:2:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:piece:2:Y::"];
         [wastePieceMappingAry addObject:@"WastePiece:notes:0:Y::"];
-
+        [wastePieceMappingAry addObject:@"WastePiece:usercode:0:Y::"];
+        [wastePieceMappingAry addObject:@"WastePiece:addLength:2:N:addLength:string:"];
+        [wastePieceMappingAry addObject:@"WastePiece:farEnd:2:N:farEnd:string:"];
+        
         //Extra entity
 
         //Timber Mark
@@ -192,14 +214,66 @@
         [TimberMarkMappingAry addObject:@"Timebermark:area:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:timbermark:0:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:surveyArea:1:Y::"];
-        [TimberMarkMappingAry addObject:@"Timebermark:timbermarkMonetaryReductionFactorCode:MonetaryReductionFactorCode:Y::"];
+        [TimberMarkMappingAry addObject:@"Timebermark:timbermarkMonetaryReductionFactorCode:monetaryReductionFactorCode:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:orgWMRF:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:coniferWMRF:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:xPrice:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:yPrice:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:hembalPrice:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:deciduousPrice:1:Y::"];
+        [TimberMarkMappingAry addObject:@"Timebermark:benchmark:1:N:benchmarkVolume:string::"];
         
+        stratumPileMappingAry = [[NSMutableArray alloc] init];
+        [stratumPileMappingAry addObject:@"StratumPile:stratumPileId:0:Y::string:"];
+        [stratumPileMappingAry addObject:@"StratumPile:surveyorName:0:Y::string:"];
+        [stratumPileMappingAry addObject:@"StratumPile:notes:0:Y::string:"];
+        [stratumPileMappingAry addObject:@"StratumPile:surveyDate:3:Y::string:"];
+        
+        wastePileMappingAry = [[NSMutableArray alloc] init];
+        [wastePileMappingAry addObject:@"WastePile:pileId:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:pileNumber:0:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:length:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:width:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:height:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:pilePileShapeCode:PileShapeCode:Y::"];
+        [wastePileMappingAry addObject:@"WastePile:isSample:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:pileArea:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:pileVolume:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:measuredLength:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:measuredWidth:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:measuredHeight:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:measuredPileArea:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:measuredPileVolume:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:alPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:arPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:asPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:baPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:biPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:cePercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:coPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:cyPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:fiPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:hePercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:laPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:loPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:maPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:spPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:uuPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:wbPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:whPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:wiPercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:yePercent:2:Y::string:"];
+        [wastePileMappingAry addObject:@"WastePile:comment:0:Y::string:"];
+        
+        aggregateCutblockMappingAry = [[NSMutableArray alloc] init];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:aggregateCutblock:0:Y::string:"];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:aggregateCuttingPermit:0:Y::string:"];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:aggregateLicense:0:Y::string:"];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:aggregateID:2:Y::string:"];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:totalNumPile:2:Y::string:"];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:measureSample:2:Y::string:"];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:n1sample:0:Y::string:"];
+        [aggregateCutblockMappingAry addObject:@"AggregateCutblock:n2sample:0:Y::string:"];
     }
 }
 
@@ -217,6 +291,15 @@
 }
 -(NSArray *) getTimberMarkMapping{
     return [TimberMarkMappingAry copy];
+}
+-(NSArray *) getAggregateCutblockMapping{
+    return [aggregateCutblockMappingAry copy];
+}
+-(NSArray *) getStratumPileMapping{
+    return [stratumPileMappingAry copy];
+}
+-(NSArray *) getWastePileMapping{
+    return [wastePileMappingAry copy];
 }
 
 @end

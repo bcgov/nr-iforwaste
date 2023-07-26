@@ -73,7 +73,8 @@
         
         NSLog(@"File %d: %@", (count + 1), [directoryContent objectAtIndex:count]);
         if ([[directoryContent objectAtIndex:count] rangeOfString:@".rtf"].location != NSNotFound ||
-            [[directoryContent objectAtIndex:count] rangeOfString:@".csv"].location != NSNotFound){
+            [[directoryContent objectAtIndex:count] rangeOfString:@".csv"].location != NSNotFound ||
+            [[directoryContent objectAtIndex:count] rangeOfString:@".pdf"].location != NSNotFound){
             [self.reports addObject:[directoryContent objectAtIndex:count]];
         }
     }
@@ -274,6 +275,8 @@
                     mimeType = @"application/rtf";
                 }else if([[[filePath pathExtension] lowercaseString] isEqualToString:@"csv"]){
                     mimeType = @"application/csv";
+                }else if([[[filePath pathExtension] lowercaseString] isEqualToString:@"pdf"]){
+                    mimeType = @"application/pdf";
                 }
                 
                 // Add attachment

@@ -12,6 +12,7 @@
 #import "Timbermark.h"
 #import "WasteStratum.h"
 #import "SiteCode+CoreDataClass.h"
+#import "InteriorCedarMaturityCode+CoreDataClass.h"
 
 @implementation WasteBlock
 

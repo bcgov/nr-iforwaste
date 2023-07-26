@@ -74,7 +74,8 @@
     self.wasteLevelPicker = [[UIPickerView alloc] init];
     self.wasteLevelPicker.dataSource = self;
     self.wasteLevelPicker.delegate = self;
-    self.wasteLevelPicker.tag = 1;    self.primaryWasteMonetaryReduction.inputView = self.wasteLevelPicker;
+    self.wasteLevelPicker.tag = 1;
+    self.primaryWasteMonetaryReduction.inputView = self.wasteLevelPicker;
     UITapGestureRecognizer *gr1 = [[UITapGestureRecognizer alloc]
                                    initWithTarget:self
                                    action:@selector(monetaryFactorRecognizer:)];
@@ -115,13 +116,14 @@
     //set the background color for disabled field
     [self.primaryLoggingDate setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     [self.secondaryLoggingDate setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-    [self.primaryHembal   setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    /*[self.primaryHembal   setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     [self.primaryXgrade setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-    [self.primaryYgrade setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     [self.secondaryHembal setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-    [self.secondaryXgrade setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-    [self.secondaryYgrade setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-    
+    [self.secondaryXgrade setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];*/
+    if([self.wasteBlock.regionId intValue] == InteriorRegion){
+        [self.primaryYgrade setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.secondaryYgrade setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    }
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
 }
@@ -137,7 +139,6 @@
 - (void)setUpViewInterior{
     self.primaryTMA.text = @"A = Avoidable (Gr 2 or better) (m\u00B3/ha)";
     self.secondaryTMA.text = @"A = Avoidable (Gr 2 or better) (m\u00B3/ha)";
-    
     [self.primaryHembal setHidden:YES];
     [self.primaryBillingHembal setHidden:YES];
     [self.primaryLabelHembal setHidden:YES];
@@ -173,12 +174,14 @@
     if([self.secondaryDeciduous.text isEqualToString:@""]){
         self.secondaryDeciduous.text = @"0.50";
     }
+    if([self.primaryYgrade.text isEqualToString:@""]){
+        self.primaryYgrade.text = @"0.25";
+    }
 }
 
 - (void)setUpViewCoast{
-    self.primaryTMA.text = @"A = Avoidable (x or better) (m\u00B3/ha)";
-    self.secondaryTMA.text = @"A = Avoidable (x or better) (m\u00B3/ha)";
-    
+    self.primaryTMA.text = @"A = Avoidable (X or better) (m\u00B3/ha)";
+    self.secondaryTMA.text = @"A = Avoidable (X or better) (m\u00B3/ha)";
     [self.primaryHembal setHidden:NO];
     [self.primaryBillingHembal setHidden:NO];
     [self.primaryLabelHembal setHidden:NO];
@@ -202,18 +205,44 @@
     [self setFrameY:(UIControl *)self.secondaryLabelYgrade y:743];
     [self setFrameY:(UIControl *)self.secondaryBillingYgrade y:743];
     [self setFrameY:(UIControl *)self.secondaryYgrade y:743];
-
-    [self.primaryDeciduous setEnabled:NO];
-    [self.primaryDeciduous setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-    [self.secondaryDeciduous setEnabled:NO];
-    [self.secondaryDeciduous setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-
+//Edit Stumpage Rate Fields for coast
+    [self.primaryDeciduous setEnabled:YES];
+    [self.primaryDeciduous setBackgroundColor:[UIColor whiteColor]];
+    [self.secondaryDeciduous setEnabled:YES];
+    [self.secondaryDeciduous setBackgroundColor:[UIColor whiteColor]];
+    [self.primaryHembal setEnabled:YES];
+    self.primaryHembal.tag = 3;
+    [self.primaryHembal setBackgroundColor:[UIColor whiteColor]];
+    [self.secondaryHembal setEnabled:YES];
+    self.secondaryHembal.tag = 3;
+    [self.secondaryHembal setBackgroundColor:[UIColor whiteColor]];
+    [self.primaryXgrade setEnabled:YES];
+    self.primaryXgrade.tag = 3;
+    [self.primaryXgrade setBackgroundColor:[UIColor whiteColor]];
+    [self.secondaryXgrade setEnabled:YES];
+    self.secondaryXgrade.tag = 3;
+    [self.secondaryXgrade setBackgroundColor:[UIColor whiteColor]];
+    [self.primaryYgrade setEnabled:YES];
+    self.primaryYgrade.tag = 3;
+    [self.primaryYgrade setBackgroundColor:[UIColor whiteColor]];
+    [self.secondaryYgrade setEnabled:YES];
+    self.secondaryYgrade.tag = 3;
+    [self.secondaryYgrade setBackgroundColor:[UIColor whiteColor]];
 
     if([self.primaryDeciduous.text isEqualToString:@""]){
         self.primaryDeciduous.text = @"1.00";
     }
     if([self.secondaryDeciduous.text isEqualToString:@""]){
         self.secondaryDeciduous.text = @"1.00";
+    }
+    if([self.primaryHembal.text isEqualToString:@""]){
+        self.primaryHembal.text = @"0.25";
+    }
+    if([self.primaryXgrade.text isEqualToString:@""]){
+        self.primaryXgrade.text = @"0.25";
+    }
+    if([self.primaryYgrade.text isEqualToString:@""]){
+        self.primaryYgrade.text = @"0.25";
     }
 }
 
@@ -504,14 +533,14 @@
         tm.timbermarkMonetaryReductionFactorCode = (MonetaryReductionFactorCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"monetaryReductionFactorCode" code:@"A"];
         
         //set benchmark based on cut block maturity
-        if ([self.wasteBlock.blockMaturityCode.maturityCode isEqualToString:@"I"]){
+        /*if ([self.wasteBlock.blockMaturityCode.maturityCode isEqualToString:@"I"]){
             //for immature
             tm.benchmark = [[NSDecimalNumber alloc] initWithFloat:10.0];
         }else{
             // for mature
             tm.benchmark = [[NSDecimalNumber alloc] initWithFloat:35.0];
-        }
-        
+        }*/
+
         //default the master rate to zero
         tm.coniferWMRF = [[NSDecimalNumber alloc] initWithFloat:0.0];
         
@@ -633,6 +662,9 @@
             
             tm.coniferWMRF = [self.primaryConifer.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryConifer.text];
             tm.deciduousPrice = [self.primaryDeciduous.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryDeciduous.text];
+            tm.xPrice = [self.primaryXgrade.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryXgrade.text];
+            tm.yPrice = [self.primaryYgrade.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryYgrade.text];
+            tm.hembalPrice = [self.primaryHembal.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryHembal.text];
         }
         
         // SECONDARY TIMBERMARK
@@ -652,7 +684,9 @@
             
             tm.coniferWMRF = [self.secondaryConifer.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.secondaryConifer.text];
             tm.deciduousPrice = [self.secondaryDeciduous.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.secondaryDeciduous.text];
-            
+            tm.xPrice = [self.secondaryXgrade.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.secondaryXgrade.text];
+            tm.yPrice = [self.secondaryYgrade.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.secondaryYgrade.text];
+            tm.hembalPrice = [self.secondaryHembal.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.secondaryHembal.text];
             // TEST
             /*
             NSLog(@" SECONDARY TIMBERMARK ");
@@ -770,7 +804,8 @@
     [self.navigationController.navigationBar setUserInteractionEnabled:YES]; // test
     
     if (textField == self.primaryConifer || textField == self.secondaryConifer || textField == self.primaryArea || textField == self.secondaryArea ||
-            textField == self.primaryWasteMonetaryReduction || textField == self.secondaryWasteMonetaryReduction || textField == self.primaryDeciduous || textField == self.secondaryDeciduous){
+            textField == self.primaryWasteMonetaryReduction || textField == self.secondaryWasteMonetaryReduction || textField == self.primaryDeciduous || textField == self.secondaryDeciduous ||
+        textField == self.primaryHembal || textField == self.secondaryHembal || textField == self.primaryXgrade || textField == self.secondaryXgrade || textField == self.primaryYgrade || textField == self.secondaryYgrade){
         
         [self saveData];
 
@@ -869,7 +904,7 @@
     // FLOAT VALUE ONLY
     if(textField==self.primaryArea || textField==self.secondaryArea ||
        textField==self.primaryConifer || textField==self.secondaryConifer ||
-       textField == self.primaryDeciduous || textField == self.secondaryDeciduous)
+       textField == self.primaryDeciduous || textField == self.secondaryDeciduous || textField == self.primaryHembal || textField == self.secondaryHembal || textField == self.primaryXgrade || textField == self.secondaryXgrade || textField == self.primaryYgrade || textField == self.secondaryYgrade)
     {
         if( ![self validInputNumbersOnlyWithDot:theString] ){
             return NO;
@@ -1004,7 +1039,13 @@
             }
             
             self.primaryAvoidableALabel.text = tm.avoidable ? [NSString stringWithFormat:@"%.4f", [tm.avoidable floatValue]] : @"";
-            self.primaryBenchmarkLabel.text = tm.benchmark ? [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]] : @"";
+            //benchmark value for Interior and coast logic
+            if([self.wasteBlock.regionId intValue] == InteriorRegion){
+                self.primaryBenchmarkLabel.text = tm.benchmark ? [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]] : @"";
+            }else if([self.wasteBlock.regionId intValue] == CoastRegion){
+               self.primaryBenchmarkLabel.text = tm.benchmark ? [[NSString alloc ] initWithFormat:@"%0.4f",[tm.benchmark floatValue]] : @"";
+            }
+            
             self.primaryWMRFLabel.text = tm.wmrf ? [NSString stringWithFormat:@"%.4f", [tm.wmrf floatValue]] : @"";
             
             // stumpage rate column
@@ -1064,7 +1105,13 @@
             }
             
             self.secondaryAvoidableALabel.text = tm.avoidable ? [NSString stringWithFormat:@"%.4f", [tm.avoidable floatValue]] : @"";
-            self.secondaryBenchmarkLabel.text = tm.benchmark ? [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]] : @"";
+            
+            //benchmark value for Interior and coast logic
+            if([self.wasteBlock.regionId intValue] == InteriorRegion){
+               self.secondaryBenchmarkLabel.text = tm.benchmark ? [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]] : @"";
+            }else if([self.wasteBlock.regionId intValue] == CoastRegion){
+                self.secondaryBenchmarkLabel.text = tm.benchmark ? [[NSString alloc ] initWithFormat:@"%0.4f",[tm.benchmark floatValue]] : @"";
+            }
             self.secondaryWMRFLabel.text = tm.wmrf ? [NSString stringWithFormat:@"%.4f", [tm.wmrf floatValue]] : @"";
             
             // stumpage rate column
@@ -1121,6 +1168,20 @@
     
 }
 
+// INPUT VALIDATION
+-(BOOL) validInputNumbersOnly:(NSString *)theString {
+    NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+    unichar c;
+    
+    for (int i = 0; i < [theString length]; i++) {
+        c = [theString characterAtIndex:i];
+        if (![charSet characterIsMember:c]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 -(BOOL) validateArea{
     BOOL result = YES;
     NSDecimalNumber *total_tm_area = [[NSDecimalNumber alloc] initWithInt:0];
@@ -1136,10 +1197,13 @@
     return result;
 }
 
+
+
 #pragma mark - Navigation
 -(BOOL) navigationShouldPopOnBackButton
 {
     [self saveData];
+    
     if([self validateArea]){
         return YES;
     }else{

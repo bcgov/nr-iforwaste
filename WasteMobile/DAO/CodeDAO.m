@@ -13,6 +13,7 @@
 #import "DecayTypeCode.h"
 #import "Constants.h"
 #import "ScaleGradeCode.h"
+#import "PlotSizeCode.h"
 /*
 #import "ScaleSpeciesCode.h"
 #import "ScaleGradeCode.h"
@@ -75,11 +76,97 @@
                     NSLog(@"Error when initializing the code table data: %@", error);
                 }
             }else{
+                [self addNewCode];
+                //[self initCommentCode];fix for EFORWASTE-75
+                [self initNewCodeTable];
+                [self initPileShapeCodeTable];
                 [self initCodeDictionary];
             }
         }
     }
     return self;
+}
+
+-(void)addNewCode{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSMutableArray *codeAry = [[NSMutableArray alloc] init];
+    NSError *error;
+    BOOL present = false;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"PlotSizeCode"
+                                              inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    for(PlotSizeCode *psc in fetchedObjects){
+        if([psc.plotSizeCode isEqualToString:@"R"]){
+            present = true;
+            break;
+        }else{
+            present = false;
+        }
+    }
+    if(!present){
+        [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;R;Packing Ratio;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"PlotSizeCode;plotSizeCode;R;Packing Ratio;5/9/2014;;1/9/2014;;"];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"d/L/yyyy"];
+        NSString *codeName = @"";
+        
+        NSMutableArray *singleCodeAry = nil;
+        NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
+        NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
+        for (NSString *codeEntry in codeAry){
+            NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
+            
+            if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
+                if(![codeName isEqualToString:@""]){
+                    //put the code name and the array for single code to the special array
+                    //the arrays to create the distionary later
+                    [codeNameKey addObject:codeName];
+                    [store2DCodeAry addObject:singleCodeAry];
+                }
+                
+                codeName = [codeDetailAry objectAtIndex:0];
+                singleCodeAry = [[NSMutableArray alloc] init];
+            }
+            
+            NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
+            
+            [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
+            [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
+            if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
+                [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
+            }
+            if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
+                [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
+            }
+            if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
+                [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
+            }
+            if ([codeDetailAry count] >7){
+                if(![[codeDetailAry objectAtIndex:7] isEqualToString:@""]){
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:7] forKey:@"surveyType"];
+                }
+            }
+            if([codeDetailAry count] > 8){
+                if([codeName isEqualToString:@"PlotSizeCode"]){
+                    if(![[codeDetailAry objectAtIndex:8] isEqualToString:@""]){
+                        NSDecimalNumber *pm = [[NSDecimalNumber alloc] initWithFloat:10000.0f/[[codeDetailAry objectAtIndex:8] floatValue]];
+                        [codeObject  setValue:pm forKey:@"plotMultipler"];
+                    }
+                }
+            }
+            
+            [singleCodeAry addObject: codeObject];
+        }
+        
+        [codeNameKey addObject:codeName];
+        [store2DCodeAry addObject:singleCodeAry];
+        
+        codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+        
+        [context save:&error];
+    }
 }
 
 - (NSManagedObjectContext *) managedObjectContext {
@@ -107,6 +194,302 @@
     return nil;
 }
 
+-(void)initCommentCode{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"CommentCode"
+                                              inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    
+    if(error != nil){
+        NSLog(@"Error when checking the existence of code table: %@", error);
+    }else{
+        //NSLog(@"fetchedobjeject count %lu", (unsigned long)[fetchedObjects count]);
+        if([fetchedObjects count] == 48){
+            for (NSManagedObject *managedObject in fetchedObjects) {
+                [context deleteObject:managedObject];
+            }
+            [context save:&error];
+             if (codeDictionary == nil){
+                NSMutableArray *codeAry = [[NSMutableArray alloc] init];
+                 [codeAry addObject:@"CommentCode;commentCode; ;None ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;BK;Breakage ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;BN;Bunch knots ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;BR;Buried ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;CA;Candlelabra ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;CC;Creek cleaning ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;CF;Catface ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;CK;Crook ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;CL;Culvert log ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;CP;Company piece ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;CR;Severe Crook ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;DP;Dead potential ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;DU;Dead useless ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;FC;Frostcrack ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;FK;Fork ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;FL;Fluted Butt (NOT IN XML) ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;FP;Fence post ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;FW;Firewood ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;GL;Guyline stump ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;HK;Hooked ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;HN;Heavy knots ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;HP;Helipad ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;HS;Holding stump ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;IN;Inaccessable ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;KN;Knots ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;LB;Long butt ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;LN;Large knots ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;MB;Machine breakage ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;MP;Multiple part piece ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;MW;Missing wood ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;NP;Nil plot ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;OB;Obstructed ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;ON;Oversize knots ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;PR;Pocket rot ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;RE;Reconstructed ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;S1;Segment 1 ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;S2;Segment 2 ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;S3;Segment 3 ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;SA;Sapling ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;SB;Shake block ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;SH;Shatter ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;SL;Slab ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;ST;Standing tree ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;SW;Sweep ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;TR;Whole tree ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;US;Unsafe ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;WD;Coarse woody debris ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;WF;Windfall ;1/9/2014;;1/9/2014;"];
+                 [codeAry addObject:@"CommentCode;commentCode;WS;Windshear;1/9/2014;;1/9/2014;"];
+                
+                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+                [dateFormat setDateFormat:@"d/L/yyyy"];
+                
+                NSManagedObjectContext *context = [self managedObjectContext];
+                NSString *codeName = @"";
+                
+                NSMutableArray *singleCodeAry = nil;
+                NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
+                NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
+                
+                for (NSString *codeEntry in codeAry){
+                    NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
+                    
+                    if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
+                        if(![codeName isEqualToString:@""]){
+                            //put the code name and the array for single code to the special array
+                            //the arrays to create the distionary later
+                            [codeNameKey addObject:codeName];
+                            [store2DCodeAry addObject:singleCodeAry];
+                        }
+                        
+                        codeName = [codeDetailAry objectAtIndex:0];
+                        singleCodeAry = [[NSMutableArray alloc] init];
+                    }
+                    
+                    NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
+                    
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
+                    if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
+                    }
+                    if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
+                    }
+                    if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
+                    }
+                    if ([codeDetailAry count] >7){
+                        if(![[codeDetailAry objectAtIndex:7] isEqualToString:@""]){
+                            [codeObject  setValue:[codeDetailAry objectAtIndex:7] forKey:@"surveyType"];
+                        }
+                    }
+                    
+                    [singleCodeAry addObject: codeObject];
+                }
+                
+                [codeNameKey addObject:codeName];
+                [store2DCodeAry addObject:singleCodeAry];
+                
+                codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+                
+            }
+            
+        }
+    }
+}
+
+- (void)initNewCodeTable{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"InteriorCedarMaturityCode"
+                                              inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    
+    NSLog(@"Initial code table in core data");
+    
+    if(error != nil){
+        NSLog(@"Error when checking the existence of code table: %@", error);
+    }else{
+        if([fetchedObjects count] == 0){
+            //add the code table there
+            //[[CodeDAO sharedInstance] initCodeTable:&error];
+            
+            if (codeDictionary == nil){
+                NSMutableArray *codeAry = [[NSMutableArray alloc] init];
+                //interior Cedar maturity code
+                [codeAry addObject:@"InteriorCedarMaturityCode;interiorCedarCode;L;Less than 141 years;1/9/2014;;1/9/2014;"];
+                [codeAry addObject:@"InteriorCedarMaturityCode;interiorCedarCode;G;Greater than 141 years;2/9/2014;;1/9/2014;"];
+                
+                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+                [dateFormat setDateFormat:@"d/L/yyyy"];
+                
+                NSManagedObjectContext *context = [self managedObjectContext];
+                NSString *codeName = @"";
+                
+                NSMutableArray *singleCodeAry = nil;
+                NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
+                NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
+                
+                for (NSString *codeEntry in codeAry){
+                    NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
+                    
+                    if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
+                        if(![codeName isEqualToString:@""]){
+                            //put the code name and the array for single code to the special array
+                            //the arrays to create the distionary later
+                            [codeNameKey addObject:codeName];
+                            [store2DCodeAry addObject:singleCodeAry];
+                        }
+                        
+                        codeName = [codeDetailAry objectAtIndex:0];
+                        singleCodeAry = [[NSMutableArray alloc] init];
+                    }
+                    
+                    NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
+                    
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
+                    if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
+                    }
+                    if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
+                    }
+                    if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
+                    }
+                    if ([codeDetailAry count] >7){
+                        if(![[codeDetailAry objectAtIndex:7] isEqualToString:@""]){
+                            [codeObject  setValue:[codeDetailAry objectAtIndex:7] forKey:@"surveyType"];
+                        }
+                    }
+                    
+                    [singleCodeAry addObject: codeObject];
+                }
+                
+                [codeNameKey addObject:codeName];
+                [store2DCodeAry addObject:singleCodeAry];
+                
+                codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+                
+            }                
+                if ( error != nil){
+                    NSLog(@"Error when initializing the code table data: %@", error);
+                }
+            }
+        else{
+        }
+        }
+    }
+
+- (void)initPileShapeCodeTable{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"PileShapeCode"
+                                              inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    NSLog(@"Initial code table in core data");
+    
+    if(error != nil){
+        NSLog(@"Error when checking the existence of code table: %@", error);
+    }else{
+        if([fetchedObjects count] == 0){
+            //add the code table there
+            //[[CodeDAO sharedInstance] initCodeTable:&error];
+            
+            //if (codeDictionary == nil){
+                NSMutableArray *codeAry = [[NSMutableArray alloc] init];
+                //pile shape code
+                [codeAry addObject:@"PileShapeCode;pileShapeCode;CN;Cone;1/9/2014;;1/9/2014;"];
+                [codeAry addObject:@"PileShapeCode;pileShapeCode;PR;Half Paraboloid;1/9/2014;;1/9/2014;"];
+                [codeAry addObject:@"PileShapeCode;pileShapeCode;CY;Half Cylinder;1/9/2014;;1/9/2014;"];
+                [codeAry addObject:@"PileShapeCode;pileShapeCode;EL;Half Ellipsoid;1/9/2014;;1/9/2014;"];
+                [codeAry addObject:@"PileShapeCode;pileShapeCode;RT;Rectangle;1/9/2014;;1/9/2014;"];
+                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+                [dateFormat setDateFormat:@"d/L/yyyy"];
+                
+                NSManagedObjectContext *context = [self managedObjectContext];
+                NSString *codeName = @"";
+                
+                NSMutableArray *singleCodeAry = nil;
+                NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
+                NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
+                
+                for (NSString *codeEntry in codeAry){
+                    NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
+                    
+                    if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
+                        if(![codeName isEqualToString:@""]){
+                            //put the code name and the array for single code to the special array
+                            //the arrays to create the distionary later
+                            [codeNameKey addObject:codeName];
+                            [store2DCodeAry addObject:singleCodeAry];
+                        }
+                        
+                        codeName = [codeDetailAry objectAtIndex:0];
+                        singleCodeAry = [[NSMutableArray alloc] init];
+                    }
+                    
+                    NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
+                    
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
+                    if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
+                    }
+                    if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
+                    }
+                    if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
+                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
+                    }
+                    
+                    [singleCodeAry addObject: codeObject];
+                }
+                
+                [codeNameKey addObject:codeName];
+                [store2DCodeAry addObject:singleCodeAry];
+                
+                codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+                
+            }
+            if ( error != nil){
+                NSLog(@"Error when initializing the code table data: %@", error);
+            }
+        }
+    //}
+}
 
 -(void) initCodeDictionary{
     if (codeDictionary == nil){
@@ -132,8 +515,8 @@
         [codeNameAry addObject:@"MonetaryReductionFactorCode"];
         [codeNameAry addObject:@"AssessmentMethodCode"];
         [codeNameAry addObject:@"SiteCode"];
-    
-    
+        [codeNameAry addObject:@"InteriorCedarMaturityCode"];
+        [codeNameAry addObject:@"PileShapeCode"];
         NSManagedObjectContext *context = [self managedObjectContext];
         NSError *error;
         
@@ -141,7 +524,7 @@
         NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
         
         for (NSString *code in codeNameAry){
-        
+            //NSLog(@"code %@", code);
             NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
             NSEntityDescription *entity = [NSEntityDescription entityForName:code
                                                   inManagedObjectContext:context];
@@ -226,6 +609,7 @@
         [codeAry addObject:@"CommentCode;commentCode;LN;Large knots ;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"CommentCode;commentCode;MB;Machine breakage ;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"CommentCode;commentCode;MP;Multiple part piece ;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"CommentCode;commentCode;MW;Missing wood ;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"CommentCode;commentCode;NP;Nil plot ;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"CommentCode;commentCode;OB;Obstructed ;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"CommentCode;commentCode;ON;Oversize knots ;1/9/2014;;1/9/2014;"];
@@ -270,7 +654,7 @@
         [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;LA;Larch;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;LO;Lodgepole Pine;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;MA;Maple;1/9/2014;;1/9/2014;"];
-        [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;OT;Other (Cherry);1/9/2014;;1/9/2014;"];
+        //[codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;OT;Other (Cherry);1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;SP;Spruce;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;WB;Whitebark Pine;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;WH;White Pine;1/9/2014;;1/9/2014;"];
@@ -279,18 +663,18 @@
         [codeAry addObject:@"ScaleSpeciesCode;scaleSpeciesCode;YE;Yellow Pine;1/9/2014;;1/9/2014;"];
         
         //scale grade code
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;B;Peeler;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;C;Peeler;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;D;Lumber;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;F;Lumber;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;H;Sawlog;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;I;Sawlog;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;B;Peeler;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;C;Peeler;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;D;Lumber;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;F;Lumber;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;H;Sawlog;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;I;Sawlog;1/9/2014;;1/9/2014;;C"];
         [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;J;Gang Sawlog;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;K;Cedar Shingle;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;L;Cedar Shingle;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;M;Cedar Shingle;1/9/2014;;1/9/2014;;C"];
-        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;U;Utility Sawlog;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;K;Cedar Shingle;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;L;Cedar Shingle;1/9/2014;;1/9/2014;;C"];
+        //[codeAry addObject:@"ScaleGradeCode;scaleGradeCode;M;Cedar Shingle;1/9/2014;;1/9/2014;;C"];
         [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;W;Deciduous Sawlog;1/9/2014;;1/9/2014;;C"];
+        [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;U;Utility Sawlog;1/9/2014;;1/9/2014;;C"];
         [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;X;Chipper;1/9/2014;;1/9/2014;;C"];
         [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;Y;Lumber reject;1/9/2014;;1/9/2014;;C"];
         [codeAry addObject:@"ScaleGradeCode;scaleGradeCode;Z;Firmwood reject;1/9/2014;;1/9/2014;;C"];
@@ -372,6 +756,7 @@
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;O;Ocular Estimate;6/9/2014;;1/9/2014;;"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;E;Estimate Percent;4/9/2014;;1/9/2014;;"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;S;100% Scale;5/9/2014;;1/9/2014;;"];
+        [codeAry addObject:@"PlotSizeCode;plotSizeCode;R;Packing Ratio;5/9/2014;;1/9/2014;;"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;0;50 m\u00B2;2/9/2014;;1/9/2014;;50"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;1;100 m\u00B2;7/9/2014;;1/9/2014;;100"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;2;200 m\u00B2;1/9/2014;;1/9/2014;;200"];
@@ -408,10 +793,20 @@
         [codeAry addObject:@"SiteCode;siteCode;DB;Dry Belt;3/9/2014;;1/9/2014;"];
         [codeAry addObject:@"SiteCode;siteCode;TZ;Transition Zone;4/9/2014;;1/9/2014;"];
         [codeAry addObject:@"SiteCode;siteCode;WB;Wet Belt;5/9/2014;;1/9/2014;"];
-
+        
+        //interior Cedar maturity code
+        [codeAry addObject:@"InteriorCedarMaturityCode;interiorCedarCode;L;Less than 141 years;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"InteriorCedarMaturityCode;interiorCedarCode;G;Greater than 141 years;2/9/2014;;1/9/2014;"];
+        
         //monetary reducton factor code
         [codeAry addObject:@"MonetaryReductionFactorCode;monetaryReductionFactorCode;A;Benchmark Applied;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"MonetaryReductionFactorCode;monetaryReductionFactorCode;B;Benchmark Not Applied;1/9/2014;;1/9/2014;"];
+        
+        [codeAry addObject:@"PileShapeCode;pileShapeCode;CN;Cone;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"PileShapeCode;pileShapeCode;PR;Half Paraboloid;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"PileShapeCode;pileShapeCode;CY;Half Cylinder;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"PileShapeCode;pileShapeCode;EL;Half Ellipsoid;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"PileShapeCode;pileShapeCode;RT;Rectangle;1/9/2014;;1/9/2014;"];
         
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"d/L/yyyy"];
@@ -562,7 +957,9 @@
     NSMutableArray *tmpGradeCodes = [[NSMutableArray alloc] init];
     for(ScaleGradeCode *sgc in [codeDictionary objectForKey:@"ScaleGradeCode"]){
         if(regionId== CoastRegion && [sgc.areaType isEqualToString:@"C"]){
+            if(([sgc.scaleGradeCode isEqualToString:@"J"] || [sgc.scaleGradeCode isEqualToString:@"U"] || [sgc.scaleGradeCode isEqualToString:@"X"] || [sgc.scaleGradeCode isEqualToString:@"Y"] || [sgc.scaleGradeCode isEqualToString:@"Z"] || [sgc.scaleGradeCode isEqualToString:@"W"])){
             [tmpGradeCodes addObject:sgc];
+            }
         }else if(regionId == InteriorRegion && [sgc.areaType isEqualToString:@"I"]){
             [tmpGradeCodes addObject:sgc];
         }
@@ -582,6 +979,12 @@
     return [codeDictionary objectForKey:@"SiteCode"];
 }
 
+-(NSArray *) getInteriorCedarMaturityList{
+    return [codeDictionary objectForKey:@"InteriorCedarMaturityCode"];
+}
 
+-(NSArray *) getPileShapeCodeList{
+    return [codeDictionary objectForKey:@"PileShapeCode"];
+}
 
 @end

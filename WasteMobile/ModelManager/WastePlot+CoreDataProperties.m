@@ -14,6 +14,9 @@
 	return [[NSFetchRequest alloc] initWithEntityName:@"WastePlot"];
 }
 
+@dynamic aggregateLicence;
+@dynamic aggregateCutblock;
+@dynamic aggregateCuttingPermit;
 @dynamic assistant;
 @dynamic baseline;
 @dynamic certificateNumber;
@@ -47,5 +50,9 @@
 @dynamic plotStratum;
 @dynamic plotCoastStat;
 @dynamic plotInteriorStat;
+@dynamic sawlogPercent;
+@dynamic greenGradePercent;
+@dynamic dryGradePercent;
+@dynamic plotEstimatedVolume;
 
 @end

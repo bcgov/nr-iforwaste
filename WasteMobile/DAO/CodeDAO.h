@@ -30,6 +30,7 @@
 @class MaterialKindCode;
 @class ReasonCode;
 @class RoleTypeCode;
+@class PileShapeCode;
 
 @interface CodeDAO : NSObject {
     //@private NSManagedObjectContext *context;
@@ -61,6 +62,8 @@
 -(NSArray *) getScaleGradeCodeList:(int)regionId;
 -(NSArray *) getAssessmentMethodCodeList;
 -(NSArray *) getSiteCodeList;
+-(NSArray *) getInteriorCedarMaturityList;
+-(NSArray *) getPileShapeCodeList;
 
 -(NSManagedObject *) getCodeByNameCode:(NSString *)codeName code:(NSString *)code;
 

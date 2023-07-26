@@ -12,5 +12,6 @@
 @interface WasteImportBlockValidator : NSObject
 
 +(NSMutableArray *) compareBlockForImport:(WasteBlock *)wb1 wb2:(WasteBlock *)wb2;
-
++(NSMutableArray *) compareBlockForImportPileStratum:(WasteBlock *)wb1 wb2:(WasteBlock *)wb2;
++(NSMutableArray *) compareBlockForImportStratum:(WasteBlock *)wb1 wb2:(WasteBlock *)wb2;
 @end
