@@ -494,12 +494,12 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
             self.wasteStratum.orgMeasurePlot = [[NSNumber alloc] initWithInt:[self.measurePlot.text intValue]];
         }
     }
-        double  totalestimatedvolume = 0.0;
+        /*double  totalestimatedvolume = 0.0;
         for(WastePlot *wp in [self.wasteStratum.stratumPlot allObjects]){
             totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
         }
         self.wasteStratum.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
-        NSLog(@"Total Estimated Volume %@", self.wasteStratum.totalEstimatedVolume);
+        NSLog(@"Total Estimated Volume %@", self.wasteStratum.totalEstimatedVolume);*/
     //determine strutam type
     if(self.wasteStratum.stratumWasteTypeCode && (!self.wasteStratum.stratumStratumTypeCode || ![self.wasteStratum.stratumStratumTypeCode.stratumTypeCode isEqualToString:@"S"])){
         if([self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"D"] || [self.wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"F"] ||
@@ -2425,14 +2425,14 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         self.surveyAreaLabel.text = [NSString stringWithFormat:@"Survey Area: %.2f ha", [self.wasteStratum.stratumSurveyArea floatValue]];
         self.areaHa.text = self.wasteStratum.stratumArea && [self.wasteStratum.stratumArea floatValue] > 0 ? [[NSString alloc] initWithFormat:@"%.2f", [self.wasteStratum.stratumArea floatValue]] : @"";
     }
-    for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
+    /*for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
         double  totalestimatedvolume = 0.0;
         for(WastePlot *wp in [ws.stratumPlot allObjects]){
             totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
         }
         ws.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
         NSLog(@"Total Estimated Volume %@", ws.totalEstimatedVolume);
-    }
+    }*/
 
     
     //show the down allow image if more than 5 plots

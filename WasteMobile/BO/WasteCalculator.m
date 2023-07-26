@@ -59,7 +59,7 @@
             //volume =(((t - td) *(t - td)) + ((b - bd) * (b - bd))) * ((l - ld)/10.0) * k;
         }
     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
-        //volume = [wastePiece.estimatedVolume floatValue];
+        volume = [wastePiece.estimatedVolume floatValue];
         
     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
         float totalEstimate = 0;
@@ -67,8 +67,8 @@
         if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
             totalEstimate = [ws.checkTotalEstimatedVolume floatValue];
         }else{
-            //totalEstimate = [ws.totalEstimatedVolume floatValue];
-            totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
+            totalEstimate = [ws.totalEstimatedVolume floatValue];
+            //totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
             //we need to calculate the check estimated volume for original waste piece object
             wastePiece.checkPieceVolume =[[[NSDecimalNumber alloc] initWithFloat:([ws.checkTotalEstimatedVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
         }
@@ -269,13 +269,13 @@
             }
         
             //update the benchmark
-           /* if (wasteBlock.blockMaturityCode){
+            if (wasteBlock.blockMaturityCode){
                 if ( [wasteBlock.blockMaturityCode.maturityCode isEqualToString:@"I"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"10"];
                 }else if ([wasteBlock.blockMaturityCode.maturityCode isEqualToString:@"M"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"35"];
                 }
-            }else*/ if(wasteBlock.blockSiteCode){
+            }else if(wasteBlock.blockSiteCode){
                 if ([wasteBlock.blockSiteCode.siteCode isEqualToString:@"DB"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"4"];
                 }else if ([wasteBlock.blockSiteCode.siteCode isEqualToString:@"TZ"]){
@@ -291,13 +291,13 @@
                 tm.avoidable = [[[NSDecimalNumber alloc] initWithDouble:(blockBenchmark / ([wasteBlock.netArea doubleValue] - ignoreExtraStratumArea))] decimalNumberByRoundingAccordingToBehavior:behavior];
             }
             //update the benchmark
-            /*if (wasteBlock.blockCheckMaturityCode){
+            if (wasteBlock.blockCheckMaturityCode){
                 if ( [wasteBlock.blockCheckMaturityCode.maturityCode isEqualToString:@"I"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"10"];
                 }else if ([wasteBlock.blockCheckMaturityCode.maturityCode isEqualToString:@"M"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"35"];
                 }
-            }else */if(wasteBlock.blockCheckSiteCode){
+            }else if(wasteBlock.blockCheckSiteCode){
                 if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"DB"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"4"];
                 }else if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"TZ"]){
@@ -422,7 +422,7 @@
                                     isSurvey = YES;
                                 }
                             
-                            }else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
+                            }else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
                                 // with status Not Check (1), Approve (2), or Edit (4) with "C" in the piece number
                                 isCheck = YES;
                                 isSurvey = YES;
@@ -436,6 +436,9 @@
                                 }
                             }else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"]){
                                 isSurvey = YES;
+                            }else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
+                                isCheck = NO;
+                                isSurvey = NO;
                             }
                             
                             if(isSurvey){

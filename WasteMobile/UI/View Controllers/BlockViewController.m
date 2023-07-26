@@ -1875,8 +1875,8 @@ UITextField *activeTextField;
             cell.reductionFactor.text = @"";
         }
         cell.aValue.text = tm.avoidable ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.avoidable floatValue]] : @"";
-        cell.bValue.text = tm.benchmark ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.benchmark floatValue]] : @"";
-        cell.wmrf.text =  tm.wmrf ? [[NSString alloc] initWithFormat:@"%0.4f",[tm.wmrf floatValue]] : @"";
+        cell.bValue.text = isnan([tm.benchmark floatValue])? @"0.00" : [[NSString alloc] initWithFormat:@"%0.2f",[tm.benchmark floatValue]];
+        cell.wmrf.text =  isnan([tm.wmrf floatValue]) ? @"0.00" : [[NSString alloc] initWithFormat:@"%0.4f",[tm.wmrf floatValue]];
         cell.area.text = tm.area ? [NSString stringWithFormat:@"%0.2f", [tm.area floatValue] ] : @"";
         
         /*
