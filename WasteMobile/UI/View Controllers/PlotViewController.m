@@ -465,9 +465,11 @@
         //self.wastePlot.plotEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.plotEstimatedVolume.text];
         self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
     }else{
-        self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
+        //self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
+        self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
         if(![self.surveyTotalEstimateVolumeText.text isEqualToString:@"0.0"]){
-            self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
+            //self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
+            self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
         }else{
             //self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
         }
@@ -1297,9 +1299,10 @@
         }else{
             [self.surveyTotalEstimateVolume setHidden:NO];
             [self.surveyTotalEstimateVolumeText setHidden:NO];
-            self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
+            //self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
+            self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue]];
             self.surveyTotalEstimateVolume.text = [[NSString alloc] initWithFormat:@"Survey Volume"];
-            self.surveyTotalEstimateVolumeText.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue]];
+            self.surveyTotalEstimateVolumeText.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
             NSLog(@" surveyTotalEstimateVolume:%f %@, checkvolume %f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue],[self.wastePlot.plotStratum.totalEstimatedVolume stringValue],[self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]);
             /*if([self.surveyTotalEstimateVolumeText.text isEqualToString:@"0.0"]){
                 self.surveyTotalEstimateVolumeText.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
@@ -1521,18 +1524,18 @@
     
     if([wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
         //check if the estimate percentage, it needs to be 100%
-        if([self.totalCheckPercent.text floatValue] != 100.0){
+        /*if([self.totalCheckPercent.text floatValue] != 100.0){
             errorMessage =[NSString stringWithFormat:@"%@ Species and Grade percent estimates do not equal 100%%, please adjust values.", errorMessage];
             isfatal = YES;
-        }
+        }*/
         /*if([self.totalEstimateVolume.text floatValue] == 0.0){
             errorMessage =[NSString stringWithFormat:@"%@ Total Estimate Volume is 0.", errorMessage];
             isfatal = YES;
         }*/
-        if([self.plotEstimatedVolume.text floatValue] == 0.0){
+        /*if([self.plotEstimatedVolume.text floatValue] == 0.0){
             errorMessage =[NSString stringWithFormat:@"%@ Plot Estimate Volume is 0.", errorMessage];
             isfatal = YES;
-        }
+        }*/
     }
     //for aggregate licence, cp and cb must be entered before navigating back
     if([wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){

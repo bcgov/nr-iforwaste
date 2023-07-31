@@ -368,7 +368,7 @@
     for (WasteStratum *ws in [wasteBlock.blockStratum allObjects]){
         NSLog(@" stratum  = %@, assessment method code = %@", ws.stratum, ws.stratumAssessmentMethodCode.assessmentMethodCode);
         
-        if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
+        //if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
         
             double stratumCheckBillTotalVol = 0.0;
             double stratumCheckCutControlTotalVol = 0.0;
@@ -744,7 +744,7 @@
             //NSLog(@" block bill volume = %0.4f", ([ws.surveyAvoidY doubleValue] * [ws.stratumSurveyArea doubleValue]));
             //NSLog(@" block cut control volume = %0.4f", ([ws.surveyAvoidX doubleValue] * [ws.stratumSurveyArea doubleValue]));
             //}
-        }
+        //}
 
     }
     
