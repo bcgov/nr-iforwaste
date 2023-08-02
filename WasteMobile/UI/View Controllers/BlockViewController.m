@@ -2050,6 +2050,7 @@ UITextField *activeTextField;
         [WasteCalculator calculateEFWStat:self.wasteBlock];
         [self.efwFooterView setBlockViewValue:self.wasteBlock];
     }else{
+        [WasteCalculator calculatePiecesValue:self.wasteBlock ];
         [self.footerStatView setViewValue:self.wasteBlock];
     }
     

@@ -2414,6 +2414,7 @@ static NSString *const DEFAULT_ACCU_MEASURE_PLOT = @"4";
         [WasteCalculator calculateEFWStat:self.wasteBlock];
         [self.efwFooterView setStratumViewValue:self.wasteStratum];
     }else{
+        [WasteCalculator calculatePiecesValue:self.wasteBlock ];
         [self.footerStatView setViewValue:self.wasteStratum];
     }
     

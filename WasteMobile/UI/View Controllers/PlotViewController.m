@@ -212,6 +212,7 @@
         self.returnNumber.enabled = YES;
         [self.measurePct setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         [self.surveyDate setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.totalEstimateVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         [self.plotNumber setEnabled:NO];
         [self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     }
@@ -465,9 +466,11 @@
         //self.wastePlot.plotEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.plotEstimatedVolume.text];
         self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
     }else{
-        self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
+        //self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
+        self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
         if(![self.surveyTotalEstimateVolumeText.text isEqualToString:@"0.0"]){
-            self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
+            //self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
+            self.wastePlot.plotStratum.checkTotalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
         }else{
             //self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
         }
@@ -1281,9 +1284,9 @@
     // Check stratum to show the total estimated volume
     if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
 
-        [self.totalEstimatedVolumeLabel setHidden:YES];
+        [self.totalEstimatedVolumeLabel setHidden:NO];
         [self.plotEstimatedVolumeLabel setHidden:NO];
-        [self.totalEstimateVolume setHidden:YES];
+        [self.totalEstimateVolume setHidden:NO];
         [self.plotEstimatedVolume setHidden:NO];
         [self.totalCheckPercent setHidden:NO];
         [self.totalCheckPercentLabel setHidden:NO];
@@ -1297,13 +1300,16 @@
         }else{
             [self.surveyTotalEstimateVolume setHidden:NO];
             [self.surveyTotalEstimateVolumeText setHidden:NO];
-            self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
-            self.surveyTotalEstimateVolume.text = [[NSString alloc] initWithFormat:@"Survey Volume"];
-            self.surveyTotalEstimateVolumeText.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue]];
+            //self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
+            //self.totalEstimatedVolumeLabel.text = [[NSString alloc] initWithFormat:@"Survey Volume"];
+            self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue]];
+            //self.surveyTotalEstimateVolume.text = [[NSString alloc] initWithFormat:@"Check Volume"];
+            self.surveyTotalEstimateVolumeText.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
+            [self.totalEstimateVolume setEnabled:NO];
             NSLog(@" surveyTotalEstimateVolume:%f %@, checkvolume %f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue],[self.wastePlot.plotStratum.totalEstimatedVolume stringValue],[self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]);
-            /*if([self.surveyTotalEstimateVolumeText.text isEqualToString:@"0.0"]){
-                self.surveyTotalEstimateVolumeText.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
-                self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.surveyTotalEstimateVolumeText.text];
+           /* if([self.totalEstimateVolume.text isEqualToString:@"0.0"]){
+                self.totalEstimateVolume.text = [[NSString alloc] initWithFormat:@"%0.1f", [self.wastePlot.plotStratum.checkTotalEstimatedVolume floatValue]];
+                self.wastePlot.plotStratum.totalEstimatedVolume = [NSDecimalNumber decimalNumberWithString:self.totalEstimateVolume.text];
             }*/
         }
         [self updateCheckTotalPercent];
@@ -1329,6 +1335,7 @@
         for(WastePiece *wp in self.wastePieces){
                 [WasteCalculator calculatePieceStat:wp wasteStratum:self.wastePlot.plotStratum];
         }
+        [WasteCalculator calculatePiecesValue:self.wasteBlock ];
         [self.footerStatView setViewValue:self.wastePlot];
         [self.footerStatView setDisplayFor:self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode screenName:@"plot"];
     }
@@ -1529,10 +1536,10 @@
             errorMessage =[NSString stringWithFormat:@"%@ Total Estimate Volume is 0.", errorMessage];
             isfatal = YES;
         }*/
-        if([self.plotEstimatedVolume.text floatValue] == 0.0){
+        /*if([self.plotEstimatedVolume.text floatValue] == 0.0){
             errorMessage =[NSString stringWithFormat:@"%@ Plot Estimate Volume is 0.", errorMessage];
             isfatal = YES;
-        }
+        }*/
     }
     //for aggregate licence, cp and cb must be entered before navigating back
     if([wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
