@@ -839,7 +839,7 @@
             }else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound){
                 rate =tm.orgHembalWMRF ;
 
-            }else if ([key rangeOfString:@"_6_"].location != NSNotFound){
+            }else if ([key rangeOfString:@"_6_"].location != NSNotFound || [key rangeOfString:@"_Z_"].location != NSNotFound){
                 rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
             
             }else{
@@ -862,7 +862,7 @@
             }else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound){
                 rate = tm.hembalWMRF ;
                 
-            }else if ([key rangeOfString:@"_6_"].location != NSNotFound){
+            }else if ([key rangeOfString:@"_6_"].location != NSNotFound || [key rangeOfString:@"_Z_"].location != NSNotFound){
                 rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
 
             }else{
