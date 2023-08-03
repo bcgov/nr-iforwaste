@@ -479,7 +479,15 @@
     self.wastePlot.aggregateLicence = self.licence.text;
     self.wastePlot.aggregateCuttingPermit = self.cuttingPermit.text;
     self.wastePlot.aggregateCutblock = self.cutBlock.text;
+ 
+    for(WastePiece *wp in self.wastePieces){
+            [WasteCalculator calculatePieceStat:wp wasteStratum:self.wastePlot.plotStratum];
+    }
+    [WasteCalculator calculatePiecesValue:self.wasteBlock ];
+    [self.footerStatView setViewValue:self.wastePlot];
+    [self.footerStatView setDisplayFor:self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode screenName:@"plot"];
 
+    [self.pieceTableView reloadData];
     NSError *error;
     
     // save the whole cut block
