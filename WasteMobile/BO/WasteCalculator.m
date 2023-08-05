@@ -560,7 +560,8 @@
                     //for total value at plot level, only use primary TM
                     for(Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
                         if ([tm.primaryInd integerValue] == 1){
-                            //NSLog(@"orginal rate = %f, plot multipler = %f, mp = %ld",[self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES], [ws.stratumPlotSizeCode.plotMultipler doubleValue], (long)[wplot.surveyedMeasurePercent integerValue]);
+                            NSLog(@"orginal rate = %f, plot multipler = %f, mp = %ld",[self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES], [ws.stratumPlotSizeCode.plotMultipler doubleValue], (long)[wplot.surveyedMeasurePercent integerValue]);
+                            NSLog(@"check rate = %f, plot multipler = %f, mp = %ld",[self getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO], [ws.stratumPlotSizeCode.plotMultipler doubleValue], (long)[wplot.checkerMeasurePercent integerValue]);
                             
                             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
                                 
