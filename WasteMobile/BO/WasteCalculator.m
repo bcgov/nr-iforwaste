@@ -414,7 +414,7 @@
                         if (wpiece.pieceNumber && wpiece.pieceScaleGradeCode && wpiece.pieceScaleSpeciesCode){
                             
                             NSString *key = [NSString stringWithFormat:@"%@_%@_%@",wpiece.pieceNumber, wpiece.pieceScaleGradeCode.scaleGradeCode, wpiece.pieceScaleSpeciesCode.scaleSpeciesCode];
-                            NSLog(@"checkerStatusCode = %@",wpiece.pieceCheckerStatusCode.checkerStatusCode);
+
                             if (! wpiece.pieceCheckerStatusCode ){
                                 // no status at all - new piece
                                 isCheck = YES;
@@ -649,10 +649,7 @@
                         stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + (ws.stratumArea == 0 || [wplot.checkAvoidX doubleValue] == 0.0 ? 0.0 : ([wplot.checkAvoidX doubleValue]/[ws.stratumArea doubleValue]));
                     }
                     for (WastePiece *wpiece in [wplot.plotPiece allObjects]){
-                        NSLog(@"checkerStatusCode = %@",wpiece.pieceCheckerStatusCode.checkerStatusCode);
-                        NSLog(@"wpiece = %@",wpiece);
-                        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] && [wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound) || wpiece.pieceCheckerStatusCode == nil){
-                        //if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
+                        if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
                             stratumCheckCounter = stratumCheckCounter + 1;
                             break;
                         }
@@ -671,8 +668,7 @@
                             stratumSurveyCutControlTotalVol = stratumSurveyCutControlTotalVol + (ws.stratumSurveyArea == 0 || [wplot.surveyAvoidX doubleValue] == 0.0 ? 0.0 :([wplot.surveyAvoidX doubleValue]/[ws.stratumSurveyArea doubleValue]));
                         }
                         for (WastePiece *wpiece in [wplot.plotPiece allObjects]){
-                            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] && [wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound)){
-                            //if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
+                            if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
                                 stratumSurveyCounter = stratumSurveyCounter + 1;
                                 break;
                             }
