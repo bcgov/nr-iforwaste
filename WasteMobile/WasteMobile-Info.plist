@@ -95,7 +95,7 @@
 		</dict>
 	</array>
 	<key>iForWasteVersionNumber</key>
-	<string>iForWaste - Version 1.2.7 Test</string>
+	<string>iForWaste - Version 1.2.7</string>
 	<key>iForWasteWebServiceEndPoint</key>
 	<string>http://apps.nrs.gov.bc.ca/int/wastews/</string>
 </dict>
