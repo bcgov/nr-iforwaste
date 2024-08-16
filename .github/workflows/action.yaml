@@ -63,14 +63,12 @@ jobs:
           
       - name: Build For Release
         run: |
-          xcodebuild \         
-          -scheme $SCHEME \
-          -configuration Release \
-          -sdk iphoneos \
-          -derivedDataPath $DATA_DIR \
+          xcodebuild -scheme $SCHEME \
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
+          -sdk iphoneos \
+          -configuration Debug \
           -destination generic/platform=iOS \
-          clean archive  
+          clean archive           
           
       - name: Export Archive 
         run: |
