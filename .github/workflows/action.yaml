@@ -10,8 +10,8 @@ jobs:
     runs-on: macos-latest
 
     env:
-      PROJECT: ${{ 'iForWasteApp.xcworkspace' }}
-      SCHEME: ${{ 'iForWasteApp' }}
+      PROJECT: ${{ 'WasteMobile.xcworkspace' }}
+      SCHEME: ${{ 'iForWaste' }}
       DATA_DIR: ${{ 'xcbuild' }}
       ARCHIVE_NAME:  ${{ 'iForWaste.xcarchive' }}
       EXPORT_DIR: ${{ 'export' }}
