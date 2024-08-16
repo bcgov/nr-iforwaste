@@ -50,25 +50,4 @@ jobs:
 
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles          
-
-
-      - name: Build For Release
-        run: |
-          xcodebuild \
-          -workspace $PROJECT \
-          -scheme $SCHEME \
-          -configuration Release \
-          -sdk iphoneos \
-          -derivedDataPath $DATA_DIR \
-          -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
-          clean archive          
-
-      - name: Export Archive 
-        run: |
-          xcodebuild \
-          -exportArchive \
-          -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
-          -exportPath $EXPORT_DIR \
-          -exportOptionsPlist exportOptions.plist \
-          -verbose
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles 
