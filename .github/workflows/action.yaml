@@ -68,6 +68,7 @@ jobs:
           -sdk iphoneos \
           -configuration Debug \
           -destination generic/platform=iOS \
+          -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES
           clean archive           
           
       - name: Export Archive 
