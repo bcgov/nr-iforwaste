@@ -71,7 +71,7 @@ jobs:
           -sdk iphoneos \
           -configuration Release \
           -derivedDataPath $DATA_DIR \
-          -allowProvisioningUpdates
+          -allowProvisioningUpdates \
           clean archive           
           
       - name: Export Archive 
