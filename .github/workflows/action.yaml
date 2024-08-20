@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
 
     env:
-      PROJECT: ${{ 'iForWasteBC.xcworkspace' }}
+      PROJECT: ${{ 'WasteMobile.xcworkspace' }}
       SCHEME: ${{ 'iForWaste' }}
       DATA_DIR: ${{ 'xcbuild' }}
       ARCHIVE_NAME:  ${{ 'iForWaste.xcarchive' }}
@@ -34,6 +34,9 @@ jobs:
       - name: Display XCode Path for debug
         run: |
           xcode-select -p 
+
+      - name: CocoaPod Install
+        run: pod install 
 
       - name: Install the Apple certificate and provisioning profile
         env:
