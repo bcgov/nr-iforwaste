@@ -69,7 +69,7 @@ jobs:
           -scheme $SCHEME \
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
           -sdk iphoneos \
-          -configuration Release \
+          -configuration Debug  \
           -derivedDataPath $DATA_DIR \
           clean archive           
           
