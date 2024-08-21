@@ -14,7 +14,7 @@ jobs:
       SCHEME: ${{ 'iForWaste' }}
       DATA_DIR: ${{ 'xcbuild' }}
       ARCHIVE_NAME:  ${{ 'iForWaste.xcarchive' }}
-      EXPORT_DIR: ${{ 'WasteMobile' }}
+      EXPORT_DIR: ${{ 'export' }}
       IPA_NAME: ${{ 'iForWasteApp.ipa' }}
       
     steps:
@@ -75,7 +75,11 @@ jobs:
           CODE_SIGN_IDENTITY=- \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGN_STYLE=Automatic \
-          clean archive           
+          clean archive          
+
+      - name: Open Directory
+        run: |
+          ls -la          
           
       - name: Export Archive 
         run: |
