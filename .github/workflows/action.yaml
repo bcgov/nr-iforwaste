@@ -73,6 +73,7 @@ jobs:
           -configuration Release  \
           -derivedDataPath $DATA_DIR \
           CODE_SIGN_IDENTITY=- \
+          AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGN_STYLE=Manual \
           PROVISIONING_PROFILE=$RUNNER_TEMP/build_pp.mobileprovision \
           clean archive          
