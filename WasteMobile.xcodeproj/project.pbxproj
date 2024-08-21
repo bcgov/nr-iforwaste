@@ -1361,7 +1361,7 @@
 				TargetAttributes = {
 					15BF980A1E2EDC8E004D8F12 = {
 						DevelopmentTeam = TM6UEX2F65;
-						
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.GameCenter.iOS = {
 								enabled = 0;
@@ -1379,7 +1379,7 @@
 					};
 					F4EECF0D177C99F400778578 = {
 						DevelopmentTeam = KH9MTRSDAZ;
-						
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
