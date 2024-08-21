@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
 
     env:
-      PROJECT: ${{ 'WasteMobile.xcworkspace' }}
+      PROJECT: ${{ 'project.xcworkspace' }}
       SCHEME: ${{ 'iForWaste' }}
       DATA_DIR: ${{ 'xcbuild' }}
       ARCHIVE_NAME:  ${{ 'iForWaste.xcarchive' }}
@@ -67,6 +67,7 @@ jobs:
       - name: Build For Release
         run: |
           xcodebuild \
+          -workspace $PROJECT \
           -scheme $SCHEME \
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
           -sdk iphoneos \
