@@ -80,7 +80,7 @@ jobs:
 
       - name: Open Directory
         run: |
-          ls -ltrh ${DATA_DIR}          
+          find ${DATA_DIR}          
           
       - name: Export Archive 
         run: |
