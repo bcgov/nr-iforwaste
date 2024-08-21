@@ -75,7 +75,7 @@ jobs:
           CODE_SIGN_IDENTITY=- \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGN_STYLE=Manual \
-          PROVISIONING_PROFILE=$RUNNER_TEMP/build_pp.mobileprovision \
+          DEVELOPMENT_TEAM=KH9MTRSDAZ \
           clean archive          
 
       - name: Open Directory
