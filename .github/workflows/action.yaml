@@ -66,7 +66,7 @@ jobs:
           
       - name: Build For Release
         run: |
-          xcodebuild \          
+          xcodebuild \
           -scheme $SCHEME \
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
           -sdk iphoneos \
