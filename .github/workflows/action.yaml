@@ -79,7 +79,7 @@ jobs:
 
       - name: Open Directory
         run: |
-          ls -la          
+          find WasteMobile          
           
       - name: Export Archive 
         run: |
