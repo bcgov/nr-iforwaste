@@ -72,6 +72,8 @@ jobs:
           -sdk iphoneos \
           -configuration Debug  \
           -destination generic/platform=iOS \
+          CODE_SIGN_STYLE=Manual \
+          PROVISION_PROFILE=$PP_PATH \
           clean archive           
           
       - name: Export Archive 
