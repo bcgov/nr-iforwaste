@@ -73,6 +73,7 @@ jobs:
           -configuration Debug  \
           -destination generic/platform=iOS \
           CODE_SIGN_STYLE=Manual \
+          CODE_SIGN_IDENTITY="iPhone Distribution: "$CERTIFICATE_PATH \
           PROVISION_PROFILE=$PP_PATH \
           clean archive           
           
