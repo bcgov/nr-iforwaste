@@ -88,10 +88,6 @@ jobs:
       - name: Open xbuild directory
         run: |
           ls -l
-
-      - name: Open export directory
-        run: |
-          find ${EXPORT_DIR}
           
       - name: Export Archive 
         run: |
@@ -99,4 +95,4 @@ jobs:
           -exportArchive \
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
           -exportPath ${DATA_DIR} \
-          -exportOptionsPlist ExportOptions.plist
+          -exportOptionsPlist exportOptions.plist
