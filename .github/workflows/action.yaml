@@ -78,9 +78,17 @@ jobs:
           DEVELOPMENT_TEAM=KH9MTRSDAZ \
           clean archive
 
-      - name: Open Directory
+      - name: Open xbuild directory
         run: |
-          find ${DATA_DIR}          
+          find ${DATA_DIR}    
+
+      - name: Open xcbuild/iForWaste.xcarchive/Info.plist
+        run: |
+          cat ${DATA_DIR}/iForWaste.xcarchive/Info.plist
+
+      - name: Open xcbuild/info.plist
+        run: |
+          cat ${DATA_DIR}/info.plist
           
       - name: Export Archive 
         run: |
