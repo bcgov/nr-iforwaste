@@ -71,11 +71,11 @@ jobs:
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
           -sdk iphoneos \
           -configuration Release  \
-          -derivedDataPath $DATA_DIR \
+          -destination generic/platform=iOS \
           CODE_SIGN_IDENTITY=- \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGN_STYLE=Automatic \
-          DEVELOPMENT_TEAM=- \
+          DEVELOPMENT_TEAM=KH9MTRSDAZ \
           clean archive
 
       - name: Open Directory
