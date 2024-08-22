@@ -75,24 +75,33 @@ jobs:
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
           -sdk iphoneos \
           -configuration Debug  \
-          -destination generic/platform=iOS \
+          -derivedDataPath $DATA_DIR \
           CODE_SIGN_IDENTITY=- \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGN_STYLE=Automatic \
           clean archive
-
-      - name: UUID
-        run: |
-          security cms -D -i $RUNNER_TEMP/build_pp.mobileprovision
-
-      - name: Open xbuild directory
-        run: |
-          ls -l
           
       - name: Export Archive 
         run: |
           xcodebuild \
           -exportArchive \
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
-          -exportPath ${DATA_DIR} \
-          -exportOptionsPlist exportOptions.plist
+          -exportPath $EXPORT_DIR \
+          -exportOptionsPlist exportOptions.plist \
+          -verbose
+
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        with:
+          disable-job-summary: true
+        env: 
+          JF_PROJECT: ${{ vars.ARTIFACTORY_PROJECT }}
+          JF_URL: ${{ vars.ARTIFACTORY_URL }}
+          JF_USER: ${{ secrets.ARTIFACTORY_SERVICE_ACCOUNT_USER  }}
+          JF_PASSWORD: ${{ secrets.ARTIFACTORY_SERVICE_ACCOUNT_PWD }}
+
+     
+      - name: Push Build to Artifactory
+        run: |
+          export JFROG_CLI_LOG_LEVEL=DEBUG
+          jf rt upload "$EXPORT_DIR/*" ${{ vars.ARTIFACTORY_REPO_NAME }}
