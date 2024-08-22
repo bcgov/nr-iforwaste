@@ -78,7 +78,7 @@ jobs:
           -destination generic/platform=iOS \
           CODE_SIGN_IDENTITY=- \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
-          CODE_SIGN_STYLE=Automatic \         
+          CODE_SIGN_STYLE=Automatic \
           clean archive
 
       - name: UUID
