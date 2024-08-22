@@ -87,7 +87,7 @@ jobs:
 
       - name: Open xbuild directory
         run: |
-          find ${DATA_DIR}
+          ls -l
 
       - name: Open export directory
         run: |
