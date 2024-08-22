@@ -75,7 +75,7 @@ jobs:
           CODE_SIGN_IDENTITY=- \
           AD_HOC_CODE_SIGNING_ALLOWED=YES \
           CODE_SIGN_STYLE=Automatic \
-          DEVELOPMENT_TEAM=ZZZZZZZZZZ \
+          DEVELOPMENT_TEAM=- \
           clean archive
 
       - name: Open Directory
