@@ -102,18 +102,17 @@ jobs:
           -exportOptionsPlist exportOptions.plist \
           -verbose
 
-      # - name: Setup JFrog CLI
-      #   uses: jfrog/setup-jfrog-cli@v4
-      #   with:
-      #     disable-job-summary: true
-      #   env: 
-      #     JF_PROJECT: ${{ vars.ARTIFACTORY_PROJECT }}
-      #     JF_URL: ${{ vars.ARTIFACTORY_URL }}
-      #     JF_USER: ${{ secrets.ARTIFACTORY_SERVICE_ACCOUNT_USER  }}
-      #     JF_PASSWORD: ${{ secrets.ARTIFACTORY_SERVICE_ACCOUNT_PWD }}
-
-     
-      # - name: Push Build to Artifactory
-      #   run: |
-      #     export JFROG_CLI_LOG_LEVEL=DEBUG
-      #     jf rt upload "$EXPORT_DIR/*" ${{ vars.ARTIFACTORY_REPO_NAME }}
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        with:
+          disable-job-summary: true
+        env: 
+          JF_PROJECT: ${{ vars.ARTIFACTORY_PROJECT }}
+          JF_URL: ${{ vars.ARTIFACTORY_URL }}
+          JF_USER: ${{ secrets.ARTIFACTORY_SERVICE_ACCOUNT_USER  }}
+          JF_PASSWORD: ${{ secrets.ARTIFACTORY_SERVICE_ACCOUNT_PWD }}
+          
+      - name: Push Build to Artifactory
+        run: |
+           export JFROG_CLI_LOG_LEVEL=DEBUG
+           jf rt upload "$EXPORT_DIR/*" ${{ vars.ARTIFACTORY_REPO_NAME }}
