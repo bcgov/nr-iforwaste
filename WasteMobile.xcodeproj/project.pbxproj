@@ -1361,7 +1361,7 @@
 				TargetAttributes = {
 					15BF980A1E2EDC8E004D8F12 = {
 						DevelopmentTeam = TM6UEX2F65;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.GameCenter.iOS = {
 								enabled = 0;
@@ -1378,8 +1378,8 @@
 						};
 					};
 					F4EECF0D177C99F400778578 = {
-						DevelopmentTeam = KH9MTRSDAZ;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = TM6UEX2F65;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -2016,7 +2016,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = KH9MTRSDAZ;
+				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
@@ -2043,7 +2043,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = KH9MTRSDAZ;
+				DEVELOPMENT_TEAM = TM6UEX2F65;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
