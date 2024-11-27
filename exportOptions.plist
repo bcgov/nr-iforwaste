@@ -5,7 +5,7 @@
     <key>teamID</key>
     <string>KH9MTRSDAZ</string>
     <key>method</key>
-    <string>app-store</string>
+    <string>enterprise</string>
     <key>signingStyle</key>
     <string>manual</string>
     <key>stripSwiftSymbols</key>
@@ -16,7 +16,7 @@
     <true/>
     <key>provisioningProfiles</key>
     <dict>
-        <key>ca.bc.gov.YOUR_APP</key>
+        <key>com.SalusSystems.WasteMobile</key>
         <string>c7ab87e1-1cb4-402f-966b-568a54a7a9ae</string>
     </dict>
 </dict>

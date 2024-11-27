@@ -85,12 +85,9 @@ jobs:
           xcodebuild \
           -scheme $SCHEME \
           -archivePath ${DATA_DIR}/${ARCHIVE_NAME} \
-          -sdk iphoneos \
+          -destination 'generic/platform=iOS' \
           -configuration Release  \
           -derivedDataPath $DATA_DIR \
-          CODE_SIGN_IDENTITY=- \
-          AD_HOC_CODE_SIGNING_ALLOWED=YES \
-          CODE_SIGN_STYLE=Automatic \
           clean archive
           
       - name: Export Archive 
