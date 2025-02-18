@@ -77,6 +77,12 @@
         self.displayMode = LookupMode;
         self.propertyName = @"pilePileShapeCode";
         self.codeName = @"pileShapeCode";
+    }else if([self.propertyName isEqualToString:@"pileMeasuredPileShapeCode"]){
+        self.title = @"(IFOR 205-4) Measured Pile Shape Code";
+        self.lookupValues = [[CodeDAO sharedInstance] getMeasuredPileShapeCodeList];
+        self.displayMode = LookupMode;
+        self.propertyName = @"pileMeasuredPileShapeCode";
+        self.codeName = @"measuredPileShapeCode";
     }else if([self.propertyName isEqualToString:@"comment"]){
         self.title = @"(IFOR 205-5) Comment";
         self.displayMode= TextMode;
@@ -122,8 +128,12 @@
 }
 
 -(void)textUpdated{
+    NSString *inputText = self.inputTextField.text;
+    
+    NSArray *components = [inputText componentsSeparatedByString:@"."];
+    BOOL isValidDecimalValue = (components.count == 2 && [components[1] length] > 0);
 
-    if(self.isLoopingProperty && [self.inputTextField.text length] > 3 && (!self.existingNumberValue || [self.existingNumberValue integerValue] == 0)){
+    if(self.isLoopingProperty && isValidDecimalValue && (!self.existingNumberValue || [self.existingNumberValue integerValue] == 0)){
         [self doneEdit:self.inputTextField];
     }
 }
@@ -225,17 +235,7 @@
     
     //calculate the piece stat
     WasteStratum *stratum =[self.wastePile valueForKey:@"pileStratum"];
-   /* [WasteCalculator calculatePieceStat:(WastePiece *)self.wastePiece wasteStratum:plot.plotStratum];
-    
-    //NSLog(@"waste block : %@", ((WastePiece *)self.wastePiece ).piecePlot.plotStratum.stratumBlock);
-    [WasteCalculator calculateWMRF:((WastePiece *)self.wastePiece ).piecePlot.plotStratum.stratumBlock updateOriginal:NO];
-    [WasteCalculator calculateRate:((WastePiece *)self.wastePiece ).piecePlot.plotStratum.stratumBlock ];
-    [WasteCalculator calculatePiecesValue:((WastePiece *)self.wastePiece ).piecePlot.plotStratum.stratumBlock];
-    if([((WastePiece *)self.wastePiece ).piecePlot.plotStratum.stratumBlock.userCreated intValue] ==1){
-        [WasteCalculator calculateEFWStat:((WastePiece*)self.wastePiece).piecePlot.plotStratum.stratumBlock];
-    }*/
-     //[WasteCalculator calculateEFWStat:((WastePile*)self.wastePile).pileStratum.stratumBlock];
-    //udpate the current editing piece on plot viewcontroller
+    //update the current editing piece on plot viewcontroller
     [self.pileVC updateCurrentPileProperty:(WastePile*)self.wastePile property:self.propertyName];
     if(self.isLoopingProperty){
         [self.navigationController popViewControllerAnimated:NO];
@@ -246,45 +246,83 @@
 
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    
-    NSMutableString *str = [[NSMutableString alloc] initWithString:textField.text];
-       [str appendString:string];
-       NSString *theString = str;
-       // FLOAT VALUE ONLY
-       if(self.displayMode == DecimalNumberMode)
-       {
-           NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
-           if ([string rangeOfCharacterFromSet:charSet].location != NSNotFound)
-               return NO;
-           else {
-               NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-               NSArray *arrSep = [newString componentsSeparatedByString:@"."];
-               if([arrSep count] > 2)
-                   return NO;
-               else {
-                   if([arrSep count] == 1) {
-                       if([[arrSep objectAtIndex:0] length] > 3)
-                           return NO;
-                       else
-                           return YES;
-                   }
-                   if([arrSep count] == 2) {
-                       if([[arrSep objectAtIndex:0] length] > 3)
-                           return NO;
-                       else if([[arrSep objectAtIndex:1] length] > 1)  //Set after dot(.) how many digits you want.I set after dot I want 2 digits.If it goes more than 2 return NO
-                           return NO;
-                       else {
-                           if([[arrSep objectAtIndex:0] length] >= 4) //Again I set the condition here.
-                               return NO;
-                           else
-                               return YES;
-                       }
-                   }
-                   return YES;
-               }
-           }
-           return YES;
-       }
+    NSString *propertyName = self.propertyName;
+    NSLog(@"%@", propertyName);
+    if(self.displayMode == DecimalNumberMode)
+    {
+        if ([string isEqualToString:@""]) {
+            // Allow empty string (blank value)
+            return YES;
+        }
+            
+        if ([string isEqualToString:@"."]) {
+            if ([textField.text rangeOfString:@"."].location != NSNotFound) {
+                // Another decimal point already exists
+                return NO;
+            }
+        }
+        
+        if ([propertyName isEqualToString:@"measuredHeight"]) {
+            // Limit the value to the range 0.1 - 99.9
+            NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
+            
+            if ([string rangeOfCharacterFromSet:charSet].location != NSNotFound) {
+                return NO;
+            }
+            
+            NSMutableString *newString = [NSMutableString stringWithString:[textField.text stringByReplacingCharactersInRange:range withString:string]];
+            
+            
+            if ([newString isEqualToString:@"."]) {
+                return NO;
+            }
+            
+            if ([newString isEqualToString:@"0.0"]) {
+                return NO;
+            }
+            
+            // Limit to one decimal place
+            NSRange dotRange = [newString rangeOfString:@"."];
+            if (dotRange.location != NSNotFound && newString.length - dotRange.location > 2) {
+                return NO;
+            }
+            
+            CGFloat floatValue = [newString floatValue];
+            if (floatValue < 0.01 || floatValue > 99.99) {
+                return NO;
+            }
+        } else {
+            // Limit the value to the range 0.1 - 9999.9
+            NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
+            
+            if ([string rangeOfCharacterFromSet:charSet].location != NSNotFound) {
+                return NO;
+            }
+            
+            NSMutableString *newString = [NSMutableString stringWithString:[textField.text stringByReplacingCharactersInRange:range withString:string]];
+            
+            if ([newString isEqualToString:@"."]) {
+                return NO;
+            }
+            
+            if ([newString isEqualToString:@"0.0"]) {
+                return NO;
+            }
+            
+            // Limit to one decimal place
+            NSRange dotRange = [newString rangeOfString:@"."];
+            if (dotRange.location != NSNotFound && newString.length - dotRange.location > 2) {
+                return NO;
+            }
+            
+            CGFloat floatValue = [newString floatValue];
+            if (floatValue < 0 || floatValue > 9999.99) {
+                return NO;
+            }
+        }
+        
+        return YES;
+    }
     
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
     

@@ -219,7 +219,6 @@
     [labelArray addObject:@" \n\n\n\nClass;w;n"];
     [labelArray addObject:@" \n\n\n\nGrade;w;n"];
     [labelArray addObject:@" \n\n\n\nUser Code;w;n"];
-    [labelArray addObject:@" \n\n\n\nNote;w;n"];
     [labelArray addObject:@" \n\n\nPercent Estimate;w;n"];
     
     //width for each column is 47
@@ -239,11 +238,11 @@
             
             locationCounter = locationCounter + 43;
         }else{
-            lbl = [[UILabel alloc] initWithFrame:CGRectMake(locaitonCounter2, 41, 110, 140)];
+            lbl = [[UILabel alloc] initWithFrame:CGRectMake(locaitonCounter2, 41, 120, 140)];
             lbl.textAlignment = NSTextAlignmentCenter;
             lbl.numberOfLines = 6;
             lbl.contentMode = UIViewContentModeBottom;
-            locaitonCounter2 = locaitonCounter2 + 110;
+            locaitonCounter2 = locaitonCounter2 + 120;
         }
         
         lbl.text = [lbStrAry objectAtIndex:0];
@@ -285,7 +284,7 @@
        
     }else{
         // create last two column with width 70
-        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(832, 66, 140, 90)];
+        UILabel *lblSurvey = [[UILabel alloc] initWithFrame:CGRectMake(782, 66, 140, 90)];
         lblSurvey.text = @" Survey (m\u00B3) ";
         lblSurvey.backgroundColor = [UIColor piecesHeaderRed];
         lblSurvey.textColor = [UIColor blackColor];
@@ -299,7 +298,7 @@
         
         [self addSubview:lblSurvey];
         
-        UILabel *lblCheck = [[UILabel alloc] initWithFrame:CGRectMake(922, 66, 140, 90)];
+        UILabel *lblCheck = [[UILabel alloc] initWithFrame:CGRectMake(872, 66, 140, 90)];
         lblCheck.text = @" Check (m\u00B3) ";
         lblCheck.backgroundColor = [UIColor piecesHeaderRed];
         lblCheck.textColor = [UIColor blackColor];
@@ -354,7 +353,7 @@
      }
      */
 
-    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(856, 0, 165, 42)];
+    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(806, 0, 181, 42)];
 
     lblPieceVolumn.text = @"Estimate Volume";
     lblPieceVolumn.backgroundColor = [UIColor piecesHeaderRed];
@@ -518,7 +517,7 @@
     
 
     
-    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(905, 0, 100, 41)];  //mchu March 12, 2019
+    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(860, 0, 132, 41)];  //mchu March 12, 2019
     lblPieceVolumn.text = @"Piece Vol ";
     lblPieceVolumn.backgroundColor = [UIColor piecesHeaderRed];
     

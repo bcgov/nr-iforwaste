@@ -10,14 +10,13 @@
 #import <CoreLocation/CoreLocation.h>
 #import "WastePlot.h"
 #import "WasteStratum.h"
-#import "AggregateCutblock+CoreDataClass.h"
+#import "WastePile+CoreDataClass.h"
 
 @interface PlotSelectorLog : NSObject <CLLocationManagerDelegate>
 
 @property (nonatomic, strong) CLLocationManager *locationManager;
 
++(NSString *) getPileSelectorLog:(WastePile*)wp stratum:(WasteStratum*)ws actionDec:(NSString*)actionDec;
 +(NSString *) getPlotSelectorLog:(WastePlot*)wp stratum:(WasteStratum*)ws actionDec:(NSString*)actionDec;
 +(NSString *) getPlotSelectorLog:(WasteStratum*)ws actionDec:(NSString*)actionDec;
-+(NSString *) getPlotSelectorLog2:(AggregateCutblock*)aggCB stratum:(WasteStratum*)ws actionDec:(NSString*)actionDec;
-
 @end

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class WasteBlock, Timbermark, WasteStratum, WastePlot, WastePiece, StratumPile, AggregateCutblock, WastePile, EFWCoastStat, EFWInteriorStat;
+@class WasteBlock, Timbermark, WasteStratum, WastePlot, WastePiece, WastePile, EFWCoastStat, EFWInteriorStat;
 
 typedef enum MergeOutcomeCode{
     MergeSuccessful,
@@ -28,8 +28,6 @@ typedef enum MergeOutcomeCode{
 +(WasteStratum *) createEmptyStratum;
 +(WastePlot *) createEmptyPlot;
 +(WastePiece *) createEmptyPiece;
-+(StratumPile *) createEmptyStratumPile;
-+(AggregateCutblock *) createEmptyAggregateCutblock;
 +(WastePile *) createEmptyWastePile;
 +(EFWCoastStat *) createEFWCoastStat;
 +(EFWInteriorStat *) createEFWInteriorStat;

@@ -11,12 +11,12 @@
 
 @class WasteStratum;
 @class WasteBlock;
-@class AggregateCutblock;
 
 @interface PlotSampleGenerator : NSObject
 
 +(void)generatePlotSample2:(WasteStratum*) ws;
-+(void)generatePlotSample3:(AggregateCutblock*) aggCB;
 +(void)TestingRandomess:(int)sampleSize predictionPlot:(int)predictionPlot measurePlot:(int)measurePlot;
++(void)addPlot2:(WasteStratum*)ws plotNumber:(int)plotNumber;
++(void)deletePlot2:(WasteStratum*)ws plotNumber:(int)plotNumber;
 
 @end

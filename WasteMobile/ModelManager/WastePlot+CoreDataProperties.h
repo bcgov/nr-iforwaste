@@ -51,11 +51,21 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) ShapeCode *plotShapeCode;
 @property (nullable, nonatomic, retain) PlotSizeCode *plotSizeCode;
 @property (nullable, nonatomic, retain) WasteStratum *plotStratum;
+@property (nullable, nonatomic, retain) WasteStratum *deletePlotStratum;
 @property (nullable, nonatomic, retain) EFWCoastStat *plotCoastStat;
 @property (nullable, nonatomic, retain) EFWInteriorStat *plotInteriorStat;
 @property (nullable, nonatomic, retain) NSDecimalNumber *sawlogPercent;
 @property (nullable, nonatomic, retain) NSDecimalNumber *greenGradePercent;
 @property (nullable, nonatomic, retain) NSDecimalNumber *dryGradePercent;
+
+//Data change variables
+@property (nullable, nonatomic, copy) NSString *dcSurveyorName;
+@property (nullable, nonatomic, copy) NSString *dcDesignation;
+@property (nullable, nonatomic, copy) NSString *dcLicenseNumber;
+@property (nullable, nonatomic, copy) UIImage *dcSignature;
+@property (nullable, nonatomic, copy) NSString *dcRationale;
+
+@property (nullable, nonatomic, copy) NSNumber *measurePctEdited;
 
 @end
 

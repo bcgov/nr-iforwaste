@@ -31,6 +31,7 @@
 @class ReasonCode;
 @class RoleTypeCode;
 @class PileShapeCode;
+@class MeasuredPileShapeCode;
 
 @interface CodeDAO : NSObject {
     //@private NSManagedObjectContext *context;
@@ -64,6 +65,7 @@
 -(NSArray *) getSiteCodeList;
 -(NSArray *) getInteriorCedarMaturityList;
 -(NSArray *) getPileShapeCodeList;
+-(NSArray *) getMeasuredPileShapeCodeList;
 
 -(NSManagedObject *) getCodeByNameCode:(NSString *)codeName code:(NSString *)code;
 

@@ -14,7 +14,6 @@
 #import "WastePlot.h"
 #import "WastePiece.h"
 #import "WastePile+CoreDataClass.h"
-#import "StratumPile+CoreDataClass.h"
 #import "BorderlineCode.h"
 #import "ScaleSpeciesCode.h"
 #import "MaterialKindCode.h"
@@ -253,6 +252,36 @@
                     [self addToCoastDataset:cb_dataset datarow:p_dr];
                 }
             }
+        }
+        
+        if([st.stratumBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue])
+        {
+              NSSet<ReportDataRow*> *p_drs = [self getPileDataRows:wastBlock wasteStr:st];
+              for(ReportDataRow *p_dr in p_drs)
+              {
+                  if([wastBlock.regionId intValue] == InteriorRegion){
+                         [self addToDataset:str_dataset datarow:p_dr];
+                         [self addToDataset:cb_dataset datarow:p_dr];
+                     } else if([wastBlock.regionId intValue] == CoastRegion){
+                         [self addToCoastDataset:str_dataset datarow:p_dr];
+                         [self addToCoastDataset:cb_dataset datarow:p_dr];
+                     }
+              }
+              //NSLog(@"Stratum:%@ Plot:%@ key:%@ v1:%@ v2:%@ v3:%@ v4:%@ v5:%@", st.stratum, pt.plotNumber, p_dr.key, p_dr.value1, p_dr.value2, p_dr.value3, p_dr.value4, p_dr.value5);
+        }
+        else
+        {
+                NSMutableSet<ReportDataRow*> *p_drs = [self getPileDataRows:wastBlock wasteStr:st];
+                  for(ReportDataRow *p_dr in p_drs)
+                  {
+                      if([wastBlock.regionId intValue] == InteriorRegion){
+                             [self addToDataset:str_dataset datarow:p_dr];
+                             [self addToDataset:cb_dataset datarow:p_dr];
+                         } else if([wastBlock.regionId intValue] == CoastRegion){
+                             [self addToCoastDataset:str_dataset datarow:p_dr];
+                             [self addToCoastDataset:cb_dataset datarow:p_dr];
+                         }
+                  }
         }
         
         NSString *str_area = st.stratumSurveyArea && [st.stratumSurveyArea floatValue] > 0.0 ? [[NSString alloc] initWithFormat:@"%.02f", st.stratumSurveyArea.floatValue] : @"";
@@ -600,62 +629,370 @@
     return piece_dr;
 }
 
--(ReportDataRow*) getPileDataRow:(WastePile *)pile wasteBlock:(WasteBlock *)wasteBlock wasteStr:(WasteStratum*)wasteStr strPile:(StratumPile*)strPile pileSpecies:(NSString*)pileSpecies pileGrade:(NSString*)pileGrade speciesPercent:(NSDecimalNumber*)speciesPercent gradePercent:(NSDecimalNumber*)gradePercent{
-    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
-    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", pileSpecies, @"A", @"L"];
-    [pile_dr setKey:key];
-        pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
-        pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+-(NSMutableSet<ReportDataRow*>*) getPileDataRows:(WasteBlock *)wasteBlock wasteStr:(WasteStratum*)wasteStr {
+    NSMutableSet<ReportDataRow*> *rowSet = [[NSMutableSet alloc] init];
+    NSArray<NSString*> *speciesArray = [NSArray arrayWithObjects:@"AL", @"AR", @"AS", @"BA", @"BI", @"CE", @"CO", @"CY", @"FI", @"HE", @"LA", @"LO", @"MA", @"SP", @"UU", @"WB", @"WH", @"WI", @"YE",  nil];
+    
+    NSDecimalNumber *summ2estsample = nil;NSDecimalNumber *summ2meassample = nil;NSDecimalNumber *totalestm2 = nil;NSDecimalNumber *totalPredPileVolume = nil;
+    NSDecimalNumber *sumPredVol = nil;NSDecimalNumber *sumMeasVolume = nil;NSDecimalNumber *summ2estsamplewoHB = nil;NSDecimalNumber *sumPredVolwoHB = nil;
+    NSDecimalNumber *summ2meassamplewoHB = nil;NSDecimalNumber *totalestm2woHB = nil; NSDecimalNumber *totalPredPileVolumewoHB = nil;NSDecimalNumber *sumMeasVolumewoHB = nil;
+    NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
+    NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
+    NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
+    NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
+    NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
+    NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
+    NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
+    NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
+    NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
+    NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
+    
+    for(WastePile* pile in wasteStr.stratumPile){
+        if([pile.isSample intValue] == [[[NSNumber alloc] initWithBool:TRUE]intValue]){
+            summ2estsample = [[NSDecimalNumber alloc] initWithDouble:[summ2estsample doubleValue] + [pile.pileArea doubleValue]] ;
+            sumPredVol = [[NSDecimalNumber alloc] initWithDouble:[sumPredVol doubleValue] + [pile.pileVolume doubleValue]] ;
+//            if(pile.hePercent == 0 || pile.baPercent == 0){
+                summ2estsamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2estsamplewoHB doubleValue] + [pile.measuredPileArea doubleValue]];
+                sumPredVolwoHB = [[NSDecimalNumber alloc] initWithDouble:[sumPredVolwoHB doubleValue] + [pile.measuredPileVolume doubleValue]];
+                summ2meassamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2meassamplewoHB doubleValue] + [pile.measuredPileArea doubleValue]] ;
+                totalestm2woHB = [[NSDecimalNumber alloc] initWithDouble:[totalestm2woHB doubleValue] + [pile.pileArea doubleValue]] ;
+                totalPredPileVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolumewoHB doubleValue] + [pile.pileVolume doubleValue]] ;
+                sumMeasVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolumewoHB doubleValue] + [pile.measuredPileVolume doubleValue]] ;
+//            }
+            //for avg species calculation
+//            if(pile.alPercent != 0 ){
+//               alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.arPercent != 0 ){
+//               arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.asPercent != 0 ){
+//               asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.baPercent != 0 ){
+//               baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.biPercent != 0 ){
+//               biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.cePercent != 0 ){
+//               ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.coPercent != 0 ){
+//               coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.cyPercent != 0 ){
+//               cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.fiPercent != 0 ){
+//               fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.hePercent != 0 ){
+//               heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.laPercent != 0 ){
+//               laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.loPercent != 0 ){
+//               loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.maPercent != 0 ){
+//               maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.spPercent != 0 ){
+//                spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.uuPercent != 0 ){
+//               uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.wbPercent != 0 ){
+//               wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.whPercent != 0 ){
+//               whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.wiPercent != 0 ){
+//               wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+//            if(pile.yePercent != 0 ){
+//               yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
+//            }
+        }
+        summ2meassample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] + [pile.measuredPileArea doubleValue]] ;
+        totalestm2 = [[NSDecimalNumber alloc] initWithDouble:[totalestm2 doubleValue] + [pile.pileArea doubleValue]] ;
+        totalPredPileVolume = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolume doubleValue] + [pile.pileVolume doubleValue]] ;
+        sumMeasVolume = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] + [pile.measuredPileVolume doubleValue]] ;
+    }
+    
+    avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+    
+    NSArray<NSDecimalNumber*> *speciesPercentArray = [NSArray arrayWithObjects:(avgAlSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgAlSpecies),
+                                                      (avgArSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgArSpecies),
+                                                      (avgAsSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgAsSpecies),
+                                                      (avgBaSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgBaSpecies),
+                                                      (avgBiSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgBiSpecies),
+                                                      (avgCeSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgCeSpecies),
+                                                      (avgCoSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgCoSpecies),
+                                                      (avgCySpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgCySpecies),
+                                                      (avgFiSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgFiSpecies),
+                                                      (avgHeSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgHeSpecies),
+                                                      (avgLaSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgLaSpecies),
+                                                      (avgLoSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgLoSpecies),
+                                                      (avgMaSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgMaSpecies),
+                                                      (avgSpSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgSpSpecies),
+                                                      (avgUuSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgUuSpecies),
+                                                      (avgWbSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgWbSpecies),
+                                                      (avgWhSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgWhSpecies),
+                                                      (avgWiSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgWiSpecies),
+                                                      (avgYeSpecies == nil ? [[NSDecimalNumber alloc] initWithInt:0] : avgYeSpecies), nil];
+    NSDecimalNumber *ratioSample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] / [summ2estsample doubleValue]] ;
+    NSDecimalNumber *avgPileArea = nil;
+    if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue])
+    {
+        avgPileArea = [[NSDecimalNumber alloc] initWithDouble:([ratioSample doubleValue] * [totalestm2 doubleValue])/10000] ;
+    }
+    else
+    {
+        avgPileArea = [[NSDecimalNumber alloc] initWithDouble:([totalestm2 doubleValue]/10000)];
+    }
+    NSDecimalNumber *ratio = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] / [sumPredVol doubleValue]] ;
+    NSDecimalNumber *totalPileVolume = nil;
+    if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue])
+    {
+        totalPileVolume = [[NSDecimalNumber alloc] initWithDouble:[ratio doubleValue] * [totalPredPileVolume doubleValue]] ;
+    }
+    else
+    {
+        totalPileVolume = sumMeasVolume;
+    }
         
-        if([wasteBlock.regionId intValue]== InteriorRegion){
-            if([pileGrade isEqualToString:@"1"] || [pileGrade isEqualToString:@"2"]){
-                pile_dr.value7 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value2 = [pile_dr.value7 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else if([pileGrade isEqualToString:@"4"]){
-                pile_dr.value8 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value3 = [pile_dr.value8 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else if([pileGrade isEqualToString:@"5"]){
-                pile_dr.value9 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value4 = [pile_dr.value9 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else {
-                pile_dr.value10 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value5 = [pile_dr.value10 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }
-        }else if([wasteBlock.regionId intValue] == CoastRegion ){
-            if([pileGrade isEqualToString:@"Y"]){
-                pile_dr.value7 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value1 = [pile_dr.value7 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else if([pileGrade isEqualToString:@"U"]){
-                pile_dr.value8 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value2 = [pile_dr.value8 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else if([pileGrade isEqualToString:@"W"]){
-                pile_dr.value9 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value3 = [pile_dr.value9 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else if([pileGrade isEqualToString:@"X"]){
-                pile_dr.value10 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value4 = [pile_dr.value10 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else if([pileGrade isEqualToString:@"Z"]){
-                pile_dr.value11 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value5 = [pile_dr.value11 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-            }else {
-                pile_dr.value12 = [[pile.measuredPileVolume decimalNumberByMultiplyingBy:speciesPercent] decimalNumberByMultiplyingBy:gradePercent];
-                pile_dr.value6 = [pile_dr.value12 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
+    for(int i = 0; i< speciesArray.count; i++)
+    {
+        NSString *thisSpecies = speciesArray[i];
+        NSDecimalNumber *thisSpeciesPercent = [[NSDecimalNumber alloc] initWithDouble:([speciesPercentArray[i] doubleValue]/100)];
+        if(thisSpeciesPercent != nil && ![thisSpeciesPercent isEqualToNumber:[NSNumber numberWithInt:0]])
+        {
+            if([wasteBlock.regionId intValue]== InteriorRegion)
+            {
+                if(wasteStr.grade12Percent != nil && ![wasteStr.grade12Percent isEqualToNumber:[NSNumber numberWithInt:0]])
+                {
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value2 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.grade12Percent doubleValue]/100)]];
+                    pile_dr.value7 = [pile_dr.value2 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                    
+                }if(wasteStr.grade4Percent != nil && ![wasteStr.grade4Percent isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value3 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.grade4Percent doubleValue]/100)]];
+                    pile_dr.value8 = [pile_dr.value3 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                }if(wasteStr.grade5Percent != nil && ![wasteStr.grade5Percent isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value4 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.grade5Percent doubleValue]/100)]];
+                    pile_dr.value9 = [pile_dr.value9 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                }
+            }else if([wasteBlock.regionId intValue] == CoastRegion ){
+                if(wasteStr.gradeJPercent != nil && ![wasteStr.gradeJPercent isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value1 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.gradeJPercent doubleValue]/100)]];
+                    pile_dr.value7 = [pile_dr.value1 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                }if(wasteStr.gradeWPercent != nil && ![wasteStr.gradeWPercent isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value3 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.gradeWPercent doubleValue]/100)]];
+                    pile_dr.value9 = [pile_dr.value3 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                }if(wasteStr.gradeUPercent != nil && ![wasteStr.gradeUPercent isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value2 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.gradeUPercent doubleValue]/100)]];
+                    pile_dr.value8 = [pile_dr.value2 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                }if(wasteStr.gradeXPercent != nil && ![wasteStr.gradeXPercent isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value4 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.gradeXPercent doubleValue]/100)]];
+                    pile_dr.value10 = [pile_dr.value4 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                }if(wasteStr.gradeYPercent != nil && ![wasteStr.gradeYPercent isEqualToNumber:[NSNumber numberWithInt:0]]){
+                    ReportDataRow *pile_dr = [[ReportDataRow alloc] init];
+                    NSString *key = [NSString stringWithFormat:@"%@_%@_%@", thisSpecies, @"A", @"L"];
+                    [pile_dr setKey:key];
+                    pile_dr.value1 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value2 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value3 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value4 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value5 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value6 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value7 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value8 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value9 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value11 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    pile_dr.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
+                    
+                    pile_dr.value5 = [[totalPileVolume decimalNumberByMultiplyingBy:[NSDecimalNumber decimalNumberWithDecimal:[thisSpeciesPercent decimalValue]]] decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithDouble:([wasteStr.gradeYPercent doubleValue]/100)]];
+                    pile_dr.value11 = [pile_dr.value5 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+                    
+                    pile_dr.speices = thisSpecies;
+                    pile_dr.class = @"Avoid";
+                    pile_dr.kind = @"X";
+                    [rowSet addObject:pile_dr];
+                }
             }
         }
-        pile_dr.speices = pileSpecies;
-        pile_dr.class = @"Avoid";
-        pile_dr.kind = @"L";
-    return pile_dr;
+    }
+    return rowSet;
 }
 -(ReportDataRow*) getNewDataRow:(NSString *) key gvalue1:(NSDecimalNumber *)gvalue1 gvalue2:(NSDecimalNumber *)gvalue2 gvalue3:(NSDecimalNumber *)gvalue3 gvalue4:(NSDecimalNumber *)gvalue4 gvalue5:(NSDecimalNumber *)gvalue5 wasteStr:(WasteStratum*)wasteStr wastePlot:(WastePlot*)wastePlot{
     ReportDataRow *new_row = [[ReportDataRow alloc] init];
@@ -707,11 +1044,11 @@
         new_row.value10 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
     }
     
-    new_row.value1 = [new_row.value6 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value2 = [new_row.value7 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value3 = [new_row.value8 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value4 = [new_row.value9 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value5 = [new_row.value10 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
+    new_row.value1 = [new_row.value6 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value2 = [new_row.value7 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value3 = [new_row.value8 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value4 = [new_row.value9 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value5 = [new_row.value10 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
     
     //NSLog(@"<- key:%@ v1:%@ v2:%@ v3:%@ v4:%@ v5:%@", key, new_row.value1, new_row.value2, new_row.value3, new_row.value4, new_row.value5);
     
@@ -943,12 +1280,12 @@
         new_row.value12 = [NSDecimalNumber decimalNumberWithString:@"0.0"];
     }
     
-    new_row.value1 = [new_row.value7 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value2 = [new_row.value8 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value3 = [new_row.value9 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value4 = [new_row.value10 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value5 = [new_row.value11 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
-    new_row.value6 = [new_row.value12 decimalNumberByMultiplyingBy:wasteStr.stratumSurveyArea];
+    new_row.value1 = [new_row.value7 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value2 = [new_row.value8 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value3 = [new_row.value9 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value4 = [new_row.value10 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value5 = [new_row.value11 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
+    new_row.value6 = [new_row.value12 decimalNumberByDividingBy:wasteStr.stratumSurveyArea];
     //NSLog(@"<- key:%@ v1:%@ v2:%@ v3:%@ v4:%@ v5:%@ v6:%@", key, new_row.value1, new_row.value2, new_row.value3, new_row.value4, new_row.value5, new_row.value6);
     
     return new_row;

@@ -144,6 +144,7 @@
         [wastePileMappingAry addObject:@"WastePile:width:1:Y:::"];
         [wastePileMappingAry addObject:@"WastePile:height:1:Y:::"];
         [wastePileMappingAry addObject:@"WastePile:pilePileShapeCode:PileShapeCode:Y::"];
+        [wastePileMappingAry addObject:@"WastePile:pileMeasuredPileShapeCode:MeasuredPileShapeCode:Y::"];
         [wastePileMappingAry addObject:@"WastePile:isSample:2:Y::string:"];
         [wastePileMappingAry addObject:@"WastePile:pileArea:1:Y:::"];
         [wastePileMappingAry addObject:@"WastePile:pileVolume:1:Y:::"];
@@ -152,25 +153,6 @@
         [wastePileMappingAry addObject:@"WastePile:measuredHeight:1:Y:::"];
         [wastePileMappingAry addObject:@"WastePile:measuredPileArea:1:Y:::"];
         [wastePileMappingAry addObject:@"WastePile:measuredPileVolume:1:Y:::"];
-        [wastePileMappingAry addObject:@"WastePile:alPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:arPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:asPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:baPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:biPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:cePercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:coPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:cyPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:fiPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:hePercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:laPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:loPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:maPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:spPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:uuPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:wbPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:whPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:wiPercent:2:Y::string:"];
-        [wastePileMappingAry addObject:@"WastePile:yePercent:2:Y::string:"];
         [wastePileMappingAry addObject:@"WastePile:comment:0:Y::string:"];
     }
 }

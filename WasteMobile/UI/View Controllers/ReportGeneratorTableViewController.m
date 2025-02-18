@@ -13,6 +13,7 @@
 #import "PlotTallyReport.h"
 #import "BlockTypeSummaryReport.h"
 #import "PlotPredictionReport.h"
+#import "PlotSizeCode.h"
 #import "WastePlot.h"
 #import "WastePiece.h"
 
@@ -31,6 +32,7 @@
 #import "WasteStratum.h"
 #import "Timbermark.h"
 #import "WastePlotValidator.h"
+#import "PlotSizeCode.h"
 
 NSString *const FeedbackSuccessful = @" generated successfully.";
 NSString *const FeedbackReplaceSuccessful = @" replaced successfully";
@@ -90,11 +92,19 @@ NSString *const FeedbackNotAvailable = @" report not available.";
         [self.plotPredictionTVC setHidden:YES];
     }
     
+    // If a packing ratio stratum exists, disable the Plot Tally Report switch
+    for (WasteStratum *wasteStratum in self.wasteBlock.blockStratum) {
+        PlotSizeCode *plotSizeCode = wasteStratum.stratumPlotSizeCode;
+        if ([plotSizeCode.plotSizeCode isEqualToString:@"R"]) {
+            [self.plotTallySwitch setEnabled:NO];
+        }
+    }
+    
     //validate plots data first
     WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
     
     
-    NSString *error = [wpv validateBlock:self.wasteBlock];
+    NSString *error = [wpv validateBlock:self.wasteBlock checkPlot:NO];
     
     if (![error isEqualToString:@""]){
         NSString *message = NSLocalizedString(error, nil);
@@ -122,8 +132,6 @@ NSString *const FeedbackNotAvailable = @" report not available.";
             [self presentViewController:warningAlert animated:YES completion:nil];
         }
     }
-        
-
 }
 
 - (void)didReceiveMemoryWarning
@@ -212,7 +220,6 @@ NSString *const FeedbackNotAvailable = @" report not available.";
 }
 
 - (void) generateSelectedReport:(BOOL)replace{
-
         NSString *feedback = @"";
         if (replace){
             for( int i = 0; i < (int)[ self.replaceReports count]; i++) {
@@ -375,7 +382,7 @@ NSString *const FeedbackNotAvailable = @" report not available.";
                 }
                 feedback = [feedback stringByAppendingString:@"\n"];
             }
-            
+            NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
             if([fs702Switch isOn]){
                 FS702Report *rg = [[FS702Report alloc] init];
                 NSDecimalNumber *timbermark_total = [NSDecimalNumber decimalNumberWithString:@"0.0"];
@@ -416,7 +423,8 @@ NSString *const FeedbackNotAvailable = @" report not available.";
                             stratum_total = [stratum_total decimalNumberByAdding:ws.stratumSurveyArea];
                         }
                     }
-                    if([stratum_total doubleValue] != 0 && ![stratum_total isEqual:self.wasteBlock.surveyArea]){
+                    
+                    if([stratum_total decimalNumberByRoundingAccordingToBehavior:behavior] != 0 && ![[stratum_total decimalNumberByRoundingAccordingToBehavior:behavior] isEqual:[self.wasteBlock.surveyArea decimalNumberByRoundingAccordingToBehavior:behavior]]){
                         feedback = [feedback stringByAppendingString:@"Sum of all stratum areas must be equal to Net Area of the CB\n"];
                         validationErrorExist = YES;
                         break;
@@ -469,7 +477,7 @@ NSString *const FeedbackNotAvailable = @" report not available.";
                     validationErrorExist = YES;
                 }
                 if([stratum_total doubleValue] != 0){
-                    if(![stratum_total isEqual:self.wasteBlock.surveyArea]){
+                    if(![[stratum_total decimalNumberByRoundingAccordingToBehavior:behavior] isEqual:[self.wasteBlock.surveyArea decimalNumberByRoundingAccordingToBehavior:behavior]]){
                         feedback = [feedback stringByAppendingString:@"Sum of all stratum areas must be equal to Net Area of the CB\n"];
                         validationErrorExist = YES;
                     }

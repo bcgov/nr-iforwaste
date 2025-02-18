@@ -14,6 +14,8 @@
 #import "Constants.h"
 #import "ScaleGradeCode.h"
 #import "PlotSizeCode.h"
+#import "PileShapeCode+CoreDataProperties.h"
+#import "MeasuredPileShapeCode+CoreDataProperties.h"
 /*
 #import "ScaleSpeciesCode.h"
 #import "ScaleGradeCode.h"
@@ -78,13 +80,104 @@
             }else{
                 [self addNewCode];
                 //[self initCommentCode];fix for EFORWASTE-75
+                //[self removePackingRatio];
                 [self initNewCodeTable];
                 [self initPileShapeCodeTable];
+                [self initMeasuredPileShapeCodeTable];
                 [self initCodeDictionary];
+                //[self refreshCodeTable];
+                if ( error != nil){
+                    NSLog(@"Error when initializing the code table data: %@", error);
+                }
             }
         }
     }
     return self;
+}
+
+-(void)removePackingRatio
+{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSMutableArray *codeAry = [[NSMutableArray alloc] init];
+    NSError *error;
+    BOOL present = false;
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"PlotSizeCode"
+                                              inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    for(PlotSizeCode *psc in fetchedObjects){
+        if([psc.plotSizeCode isEqualToString:@"R"]){
+            present = true;
+            break;
+        }else{
+            present = false;
+        }
+    }
+    /*
+    if(present)
+    {
+        //[codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;R;Packing Ratio;1/9/2014;;1/9/2014;"];
+        //[codeAry addObject:@"PlotSizeCode;plotSizeCode;R;Packing Ratio;5/9/2014;;1/9/2014;;"];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat:@"d/L/yyyy"];
+        NSString *codeName = @"";
+        
+        NSMutableArray *singleCodeAry = nil;
+        NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
+        NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
+        for (NSString *codeEntry in codeAry){
+            NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
+            
+            if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
+                if(![codeName isEqualToString:@""]){
+                    //put the code name and the array for single code to the special array
+                    //the arrays to create the distionary later
+                    [codeNameKey addObject:codeName];
+                    [store2DCodeAry addObject:singleCodeAry];
+                }
+                
+                codeName = [codeDetailAry objectAtIndex:0];
+                singleCodeAry = [[NSMutableArray alloc] init];
+            }
+            
+            NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
+            
+            [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
+            [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
+            if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
+                [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
+            }
+            if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
+                [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
+            }
+            if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
+                [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
+            }
+            if ([codeDetailAry count] >7){
+                if(![[codeDetailAry objectAtIndex:7] isEqualToString:@""]){
+                    [codeObject  setValue:[codeDetailAry objectAtIndex:7] forKey:@"surveyType"];
+                }
+            }
+            if([codeDetailAry count] > 8){
+                if([codeName isEqualToString:@"PlotSizeCode"]){
+                    if(![[codeDetailAry objectAtIndex:8] isEqualToString:@""]){
+                        NSDecimalNumber *pm = [[NSDecimalNumber alloc] initWithFloat:10000.0f/[[codeDetailAry objectAtIndex:8] floatValue]];
+                        [codeObject  setValue:pm forKey:@"plotMultipler"];
+                    }
+                }
+            }
+            
+            [singleCodeAry addObject: codeObject];
+        }
+        
+        [codeNameKey addObject:codeName];
+        [store2DCodeAry addObject:singleCodeAry];
+        
+        codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+        
+        [context save:&error];
+    }*/
 }
 
 -(void)addNewCode{
@@ -105,6 +198,7 @@
             present = false;
         }
     }
+    
     if(!present){
         [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;R;Packing Ratio;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;R;Packing Ratio;5/9/2014;;1/9/2014;;"];
@@ -421,6 +515,21 @@
     NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
     NSLog(@"Initial code table in core data");
     
+    //force refresh ----- DON'T DO THIS, it blanks out the codes attached to the packing ratios
+    /*
+    for(NSManagedObject *object in fetchedObjects)
+    {
+        [context deleteObject:object];
+    }
+    fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];*/
+
+    // trim out RT and EL shape codes from cache
+    for(PileShapeCode *psc in fetchedObjects){
+        if ([psc.pileShapeCode isEqualToString:@"RT"] || [psc.pileShapeCode isEqualToString:@"EL"]) {
+            [context deleteObject:psc];
+        }
+    }
+    
     if(error != nil){
         NSLog(@"Error when checking the existence of code table: %@", error);
     }else{
@@ -428,67 +537,138 @@
             //add the code table there
             //[[CodeDAO sharedInstance] initCodeTable:&error];
             
-            //if (codeDictionary == nil){
-                NSMutableArray *codeAry = [[NSMutableArray alloc] init];
-                //pile shape code
-                [codeAry addObject:@"PileShapeCode;pileShapeCode;CN;Cone;1/9/2014;;1/9/2014;"];
-                [codeAry addObject:@"PileShapeCode;pileShapeCode;PR;Half Paraboloid;1/9/2014;;1/9/2014;"];
-                [codeAry addObject:@"PileShapeCode;pileShapeCode;CY;Half Cylinder;1/9/2014;;1/9/2014;"];
-                [codeAry addObject:@"PileShapeCode;pileShapeCode;EL;Half Ellipsoid;1/9/2014;;1/9/2014;"];
-                [codeAry addObject:@"PileShapeCode;pileShapeCode;RT;Rectangle;1/9/2014;;1/9/2014;"];
-                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-                [dateFormat setDateFormat:@"d/L/yyyy"];
+            NSMutableArray *codeAry = [[NSMutableArray alloc] init];
+            //pile shape code
+            [codeAry addObject:@"PileShapeCode;pileShapeCode;CN;Cone;1/9/2014;;1/9/2014;"];
+            [codeAry addObject:@"PileShapeCode;pileShapeCode;PR;Half Paraboloid;1/9/2014;;1/9/2014;"];
+            [codeAry addObject:@"PileShapeCode;pileShapeCode;CY;Half Cylinder;1/9/2014;;1/9/2014;"];
+        
+            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+            [dateFormat setDateFormat:@"d/L/yyyy"];
+            
+            NSManagedObjectContext *context = [self managedObjectContext];
+            NSString *codeName = @"";
+            
+            NSMutableArray *singleCodeAry = nil;
+            NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
+            NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
+            
+            for (NSString *codeEntry in codeAry){
+                NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
                 
-                NSManagedObjectContext *context = [self managedObjectContext];
-                NSString *codeName = @"";
-                
-                NSMutableArray *singleCodeAry = nil;
-                NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
-                NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
-                
-                for (NSString *codeEntry in codeAry){
-                    NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
-                    
-                    if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
-                        if(![codeName isEqualToString:@""]){
-                            //put the code name and the array for single code to the special array
-                            //the arrays to create the distionary later
-                            [codeNameKey addObject:codeName];
-                            [store2DCodeAry addObject:singleCodeAry];
-                        }
-                        
-                        codeName = [codeDetailAry objectAtIndex:0];
-                        singleCodeAry = [[NSMutableArray alloc] init];
+                if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
+                    if(![codeName isEqualToString:@""]){
+                        //put the code name and the array for single code to the special array
+                        //the arrays to create the distionary later
+                        [codeNameKey addObject:codeName];
+                        [store2DCodeAry addObject:singleCodeAry];
                     }
                     
-                    NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
-                    
-                    [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
-                    [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
-                    if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
-                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
-                    }
-                    if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
-                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
-                    }
-                    if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
-                        [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
-                    }
-                    
-                    [singleCodeAry addObject: codeObject];
+                    codeName = [codeDetailAry objectAtIndex:0];
+                    singleCodeAry = [[NSMutableArray alloc] init];
                 }
                 
-                [codeNameKey addObject:codeName];
-                [store2DCodeAry addObject:singleCodeAry];
+                NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
                 
-                codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+                [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
+                [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
+                if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
+                    [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
+                }
+                if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
+                    [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
+                }
+                if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
+                    [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
+                }
                 
+                [singleCodeAry addObject: codeObject];
             }
-            if ( error != nil){
-                NSLog(@"Error when initializing the code table data: %@", error);
-            }
+            
+            [codeNameKey addObject:codeName];
+            [store2DCodeAry addObject:singleCodeAry];
+            
+            codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+            
         }
-    //}
+        if ( error != nil){
+            NSLog(@"Error when initializing the code table data: %@", error);
+        }
+    }
+}
+
+- (void)initMeasuredPileShapeCodeTable{
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"MeasuredPileShapeCode"
+                                              inManagedObjectContext:context];
+    [fetchRequest setEntity:entity];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    
+    if(error != nil){
+        NSLog(@"Error when checking the existence of code table: %@", error);
+    }else{
+        if([fetchedObjects count] == 0){
+            NSMutableArray *codeAry = [[NSMutableArray alloc] init];
+            // measured pile shape code
+            [codeAry addObject:@"MeasuredPileShapeCode;measuredPileShapeCode;CN;Cone;1/9/2014;;1/9/2014;"];
+            [codeAry addObject:@"MeasuredPileShapeCode;measuredPileShapeCode;PR;Half Paraboloid;1/9/2014;;1/9/2014;"];
+            [codeAry addObject:@"MeasuredPileShapeCode;measuredPileShapeCode;CY;Half Cylinder;1/9/2014;;1/9/2014;"];
+        
+            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+            [dateFormat setDateFormat:@"d/L/yyyy"];
+            
+            NSManagedObjectContext *context = [self managedObjectContext];
+            NSString *codeName = @"";
+            
+            NSMutableArray *singleCodeAry = nil;
+            NSMutableArray *codeNameKey = [[NSMutableArray alloc] init];
+            NSMutableArray *store2DCodeAry = [[NSMutableArray alloc] init];
+            
+            for (NSString *codeEntry in codeAry){
+                NSArray *codeDetailAry = [codeEntry componentsSeparatedByString:@";"];
+                
+                if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
+                    if(![codeName isEqualToString:@""]){
+                        //put the code name and the array for single code to the special array
+                        //the arrays to create the distionary later
+                        [codeNameKey addObject:codeName];
+                        [store2DCodeAry addObject:singleCodeAry];
+                    }
+                    
+                    codeName = [codeDetailAry objectAtIndex:0];
+                    singleCodeAry = [[NSMutableArray alloc] init];
+                }
+                
+                NSManagedObject *codeObject =[NSEntityDescription insertNewObjectForEntityForName:[codeDetailAry objectAtIndex:0] inManagedObjectContext:context];
+                
+                [codeObject  setValue:[codeDetailAry objectAtIndex:2] forKey:[codeDetailAry objectAtIndex:1]];
+                [codeObject  setValue:[codeDetailAry objectAtIndex:3] forKey:@"desc"];
+                if(![[codeDetailAry objectAtIndex:4] isEqualToString:@""]){
+                    [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:4]] forKey:@"effectiveDate"];
+                }
+                if(![[codeDetailAry objectAtIndex:5] isEqualToString:@""]){
+                    [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:5]] forKey:@"expiryDate"];
+                }
+                if(![[codeDetailAry objectAtIndex:6] isEqualToString:@""]){
+                    [codeObject  setValue:[dateFormat dateFromString:[codeDetailAry objectAtIndex:6]] forKey:@"updateTimestamp"];
+                }
+                
+                [singleCodeAry addObject: codeObject];
+            }
+            
+            [codeNameKey addObject:codeName];
+            [store2DCodeAry addObject:singleCodeAry];
+            
+            codeDictionary = [[NSDictionary alloc] initWithObjects:store2DCodeAry forKeys:codeNameKey];
+            
+        }
+        if ( error != nil){
+            NSLog(@"Error when initializing the code table data: %@", error);
+        }
+    }
 }
 
 -(void) initCodeDictionary{
@@ -517,6 +697,7 @@
         [codeNameAry addObject:@"SiteCode"];
         [codeNameAry addObject:@"InteriorCedarMaturityCode"];
         [codeNameAry addObject:@"PileShapeCode"];
+        [codeNameAry addObject:@"MeasuredPileShapeCode"];
         NSManagedObjectContext *context = [self managedObjectContext];
         NSError *error;
         
@@ -537,6 +718,16 @@
             }else{
                 if([fetchedObjects count] != 0){
                     for( NSManagedObject *obj in fetchedObjects){
+                        //hack to remove Packing Ratio if it exists
+                        //How these code tables are created on start really should be refactored.
+                       /* if([code isEqualToString:@"PlotSizeCode"])
+                        {
+                            PlotSizeCode *thisCode = (PlotSizeCode *)obj;
+                            if([thisCode.plotSizeCode isEqualToString:@"R"])
+                            {
+                                continue;
+                            }
+                        }*/
                         [singleCodeAry addObject:obj];
                     }
                     [store2DCodeAry addObject:singleCodeAry];
@@ -750,8 +941,7 @@
         [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;P;Plot;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;S;100 Percent Scale;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;R;Packing Ratio;1/9/2014;;1/9/2014;"];
-        [codeAry addObject:@"AssessmentMethodCode;assessmentMethodCode;C;Compiled;1/9/2014;;1/9/2014;"];
-        
+
         //plot size code
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;O;Ocular Estimate;6/9/2014;;1/9/2014;;"];
         [codeAry addObject:@"PlotSizeCode;plotSizeCode;E;Estimate Percent;4/9/2014;;1/9/2014;;"];
@@ -802,11 +992,16 @@
         [codeAry addObject:@"MonetaryReductionFactorCode;monetaryReductionFactorCode;A;Benchmark Applied;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"MonetaryReductionFactorCode;monetaryReductionFactorCode;B;Benchmark Not Applied;1/9/2014;;1/9/2014;"];
         
+        // Pile Shape Code
         [codeAry addObject:@"PileShapeCode;pileShapeCode;CN;Cone;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"PileShapeCode;pileShapeCode;PR;Half Paraboloid;1/9/2014;;1/9/2014;"];
         [codeAry addObject:@"PileShapeCode;pileShapeCode;CY;Half Cylinder;1/9/2014;;1/9/2014;"];
-        [codeAry addObject:@"PileShapeCode;pileShapeCode;EL;Half Ellipsoid;1/9/2014;;1/9/2014;"];
-        [codeAry addObject:@"PileShapeCode;pileShapeCode;RT;Rectangle;1/9/2014;;1/9/2014;"];
+
+        // Measured Pile Shape Code
+        [codeAry addObject:@"MeasuredPileShapeCode;measuredPileShapeCode;CN;Cone;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"MeasuredPileShapeCode;measuredPileShapeCode;PR;Half Paraboloid;1/9/2014;;1/9/2014;"];
+        [codeAry addObject:@"MeasuredPileShapeCode;measuredPileShapeCode;CY;Half Cylinder;1/9/2014;;1/9/2014;"];;
+    
         
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         [dateFormat setDateFormat:@"d/L/yyyy"];
@@ -824,7 +1019,7 @@
             if (![[codeDetailAry objectAtIndex:0] isEqualToString:codeName]){
                 if(![codeName isEqualToString:@""]){
                     //put the code name and the array for single code to the special array
-                    //the arrays to create the distionary later
+                    //the arrays to create the dictionary later
                     [codeNameKey addObject:codeName];
                     [store2DCodeAry addObject:singleCodeAry];
                 }
@@ -985,6 +1180,10 @@
 
 -(NSArray *) getPileShapeCodeList{
     return [codeDictionary objectForKey:@"PileShapeCode"];
+}
+
+-(NSArray *) getMeasuredPileShapeCodeList{
+    return [codeDictionary objectForKey:@"MeasuredPileShapeCode"];
 }
 
 @end

@@ -64,5 +64,6 @@
 -(void) setStratumViewValue:(WasteStratum *) wb;
 -(void) setPlotViewValue:(WastePlot *) wb;
 -(void) setPileViewValue:(StratumPile *) sp;
+-(void) setPileViewValue2:(WasteStratum *) ws;
 
 @end

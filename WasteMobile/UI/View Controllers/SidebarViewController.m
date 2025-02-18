@@ -287,7 +287,7 @@
     [alert addAction:cancelAction];
     [self presentViewController:alert animated:YES completion:nil];*/
     
-   /* UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
                                                                    message:@"Please select a region."
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
@@ -319,7 +319,7 @@
     [alert addAction:interiorAction];
     [alert addAction:coastAction];
     [alert addAction:cancelAction];
-    [self presentViewController:alert animated:YES completion:nil];*/
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 -(void)promptForSurveyMethod:(id)sender region:(int)region{

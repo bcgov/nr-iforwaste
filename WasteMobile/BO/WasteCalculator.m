@@ -26,9 +26,7 @@
 #import "WasteBlockDAO.h"
 #import "EFWCoastStat+CoreDataClass.h"
 #import "EFWInteriorStat+CoreDataClass.h"
-#import "StratumPile+CoreDataClass.h"
 #import "WastePile+CoreDataClass.h"
-#import "AggregateCutblock+CoreDataClass.h"
 
 @implementation WasteCalculator
 
@@ -59,7 +57,7 @@
             //volume =(((t - td) *(t - td)) + ((b - bd) * (b - bd))) * ((l - ld)/10.0) * k;
         }
     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
-        volume = [wastePiece.estimatedVolume floatValue];
+        //volume = [wastePiece.estimatedVolume floatValue];
         
     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
         float totalEstimate = 0;
@@ -67,8 +65,8 @@
         if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
             totalEstimate = [ws.checkTotalEstimatedVolume floatValue];
         }else{
-            totalEstimate = [ws.totalEstimatedVolume floatValue];
-            //totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
+            //totalEstimate = [ws.totalEstimatedVolume floatValue];
+            totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
             //we need to calculate the check estimated volume for original waste piece object
             wastePiece.checkPieceVolume =[[[NSDecimalNumber alloc] initWithFloat:([ws.checkTotalEstimatedVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
         }
@@ -183,7 +181,7 @@
                             // no status at all - new piece
                             isCheck = YES;
                         //exclude deciduous speices
-                        }else if (([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]) && (![wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] && ![wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AR"] && ![wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AS"] && ![wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BI"] &&   ![wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CO"] && ![wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"MA"] && ![wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WI"])){
+                        }else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
                             // with status Not Check (1), Approve (2), or Edit (4) with "C" in the piece number
                             isCheck = YES;
                             
@@ -197,8 +195,23 @@
                         if(isCheck){
                             if([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]){
                                 
+                                
                                 //add to benchmark for anything greater than x
-                                if(![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Z"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"]){
+                                if(![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] &&
+                                   ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Z"] &&
+                                   ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"] &&
+                                   ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] &&
+                                   ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"] &&
+                                   !(([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"1"] ||
+                                      [wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"2"]) &&
+                                        ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
+                                         [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AR"] ||
+                                         [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AS"] ||
+                                         [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BI"] ||
+                                         [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CO"] ||
+                                         [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"MA"] ||
+                                         [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WI"])))
+                                { //Don't caluculate using Grades Y,Z,4,5,6 or Grades 1 and 2 Deciduous Species
                                     if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
                                         plotBenchmark = plotBenchmark + ([wpiece.pieceVolume doubleValue]* ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
                                     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
@@ -269,13 +282,13 @@
             }
         
             //update the benchmark
-            if (wasteBlock.blockMaturityCode){
+           /* if (wasteBlock.blockMaturityCode){
                 if ( [wasteBlock.blockMaturityCode.maturityCode isEqualToString:@"I"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"10"];
                 }else if ([wasteBlock.blockMaturityCode.maturityCode isEqualToString:@"M"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"35"];
                 }
-            }else if(wasteBlock.blockSiteCode){
+            }else*/ if(wasteBlock.blockSiteCode){
                 if ([wasteBlock.blockSiteCode.siteCode isEqualToString:@"DB"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"4"];
                 }else if ([wasteBlock.blockSiteCode.siteCode isEqualToString:@"TZ"]){
@@ -291,13 +304,13 @@
                 tm.avoidable = [[[NSDecimalNumber alloc] initWithDouble:(blockBenchmark / ([wasteBlock.netArea doubleValue] - ignoreExtraStratumArea))] decimalNumberByRoundingAccordingToBehavior:behavior];
             }
             //update the benchmark
-            if (wasteBlock.blockCheckMaturityCode){
+            /*if (wasteBlock.blockCheckMaturityCode){
                 if ( [wasteBlock.blockCheckMaturityCode.maturityCode isEqualToString:@"I"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"10"];
                 }else if ([wasteBlock.blockCheckMaturityCode.maturityCode isEqualToString:@"M"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"35"];
                 }
-            }else if(wasteBlock.blockCheckSiteCode){
+            }else */if(wasteBlock.blockCheckSiteCode){
                 if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"DB"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"4"];
                 }else if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"TZ"]){
@@ -368,7 +381,7 @@
     for (WasteStratum *ws in [wasteBlock.blockStratum allObjects]){
         NSLog(@" stratum  = %@, assessment method code = %@", ws.stratum, ws.stratumAssessmentMethodCode.assessmentMethodCode);
         
-        //if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
+        if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
         
             double stratumCheckBillTotalVol = 0.0;
             double stratumCheckCutControlTotalVol = 0.0;
@@ -414,7 +427,7 @@
                         if (wpiece.pieceNumber && wpiece.pieceScaleGradeCode && wpiece.pieceScaleSpeciesCode){
                             
                             NSString *key = [NSString stringWithFormat:@"%@_%@_%@",wpiece.pieceNumber, wpiece.pieceScaleGradeCode.scaleGradeCode, wpiece.pieceScaleSpeciesCode.scaleSpeciesCode];
-                            NSLog(@"checkerStatusCode = %@",wpiece.pieceCheckerStatusCode.checkerStatusCode);
+
                             if (! wpiece.pieceCheckerStatusCode ){
                                 // no status at all - new piece
                                 isCheck = YES;
@@ -422,7 +435,7 @@
                                     isSurvey = YES;
                                 }
                             
-                            }else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
+                            }else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
                                 // with status Not Check (1), Approve (2), or Edit (4) with "C" in the piece number
                                 isCheck = YES;
                                 isSurvey = YES;
@@ -435,10 +448,7 @@
                                     isSurvey = YES;
                                 }
                             }else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"]){
-                                isSurvey = YES;isCheck = YES;
-                            }else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
-                                isCheck = NO;
-                                isSurvey = NO;
+                                isSurvey = YES;
                             }
                             
                             if(isSurvey){
@@ -489,9 +499,6 @@
                                 }else{
                                     plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.pieceVolume doubleValue] );
                                 }
-                                if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Z"]){
-                                    plotCheckCutControlTotalVol = 0.00;
-                                }
                                 plotCheckCutControlCounter = plotCheckCutControlCounter + 1;
 
                                 // For Billable Volume
@@ -506,9 +513,6 @@
                                         }
                                     }else{
                                         plotCheckBillTotalVol = plotCheckBillTotalVol + ([wpiece.pieceVolume doubleValue]);
-                                    }
-                                    if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Z"]){
-                                        plotCheckBillTotalVol = 0.00;
                                     }
                                     plotCheckBillCounter = plotCheckBillCounter + 1;
                                     
@@ -566,8 +570,7 @@
                     //for total value at plot level, only use primary TM
                     for(Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
                         if ([tm.primaryInd integerValue] == 1){
-                            /*NSLog(@"orginal rate = %f, plot multipler = %f, mp = %ld",[self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES], [ws.stratumPlotSizeCode.plotMultipler doubleValue], (long)(100.0/[wplot.surveyedMeasurePercent integerValue]));
-                            NSLog(@"check rate = %f, plot multipler = %f, mp = %ld",[self getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO], [ws.stratumPlotSizeCode.plotMultipler doubleValue], (long)(100.0/[wplot.checkerMeasurePercent integerValue]));*/
+                            //NSLog(@"orginal rate = %f, plot multipler = %f, mp = %ld",[self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES], [ws.stratumPlotSizeCode.plotMultipler doubleValue], (long)[wplot.surveyedMeasurePercent integerValue]);
                             
                             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
                                 
@@ -579,16 +582,16 @@
                             }
                         }
                     }
-                    //NSLog(@"plotSurveyTotalValue %f plotCheckTotalValue %f", plotSurveyTotalValue, plotCheckTotalValue);
+
                     wplot.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:plotCheckTotalValue] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
                     wplot.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:plotSurveyTotalValue] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                    //NSLog(@"surveyNetVal %@ checkNetVal %@", wplot.surveyNetVal, wplot.checkNetVal);
+                    
                     stratumCheckTotalValue = stratumCheckTotalValue + [wplot.checkNetVal doubleValue];
                     stratumSurveyTotalValue =  stratumSurveyTotalValue + [wplot.surveyNetVal doubleValue];
                     
                     wplot.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkNetVal doubleValue] > 0.0 ? fabs((([wplot.surveyNetVal doubleValue] - [wplot.checkNetVal doubleValue])/ [wplot.checkNetVal doubleValue]) * 100.0 ): 0.0)];
                     wplot.deltaNetVal = [wplot.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
-                    //NSLog(@"deltaNetVal %@ ", wplot.deltaNetVal);
+                    
                     
                     //store the piece species grade volume array in stratum and block level for calculating the total value
 
@@ -648,13 +651,8 @@
                         stratumCheckBillTotalVol = stratumCheckBillTotalVol + (ws.stratumArea == 0 || [wplot.checkAvoidY doubleValue] == 0.0 ? 0.0 : ([wplot.checkAvoidY doubleValue]/[ws.stratumArea doubleValue]));
                         stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + (ws.stratumArea == 0 || [wplot.checkAvoidX doubleValue] == 0.0 ? 0.0 : ([wplot.checkAvoidX doubleValue]/[ws.stratumArea doubleValue]));
                     }
-                    for (WastePiece *wpiece in [wplot.plotPiece allObjects]){
-                        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] && [wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound) || wpiece.pieceCheckerStatusCode == nil){
-                        //if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
-                            stratumCheckCounter = stratumCheckCounter + 1;
-                            break;
-                        }
-                    }
+
+                    stratumCheckCounter = stratumCheckCounter + 1;
                     
                     //benchmark
                     stratumBenchmark = stratumBenchmark + (wplot.checkerMeasurePercent > 0 ? plotBenchmark * (100.0/[wplot.checkerMeasurePercent integerValue]) : plotBenchmark);
@@ -668,13 +666,8 @@
                             stratumSurveyBillTotalVol = stratumSurveyBillTotalVol + ( ws.stratumSurveyArea == 0 || [wplot.surveyAvoidY doubleValue] == 0.0 ? 0.0 :([wplot.surveyAvoidY doubleValue]/[ws.stratumSurveyArea doubleValue]));
                             stratumSurveyCutControlTotalVol = stratumSurveyCutControlTotalVol + (ws.stratumSurveyArea == 0 || [wplot.surveyAvoidX doubleValue] == 0.0 ? 0.0 :([wplot.surveyAvoidX doubleValue]/[ws.stratumSurveyArea doubleValue]));
                         }
-                        for (WastePiece *wpiece in [wplot.plotPiece allObjects]){
-                            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] && [wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound)){
-                            //if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
-                                stratumSurveyCounter = stratumSurveyCounter + 1;
-                                break;
-                            }
-                        }
+
+                        stratumSurveyCounter = stratumSurveyCounter + 1;
                     }
                 }
             }
@@ -690,7 +683,7 @@
             ws.deltaAvoidX = [ws.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
             ws.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidY doubleValue] > 0.0 ? fabsf((([ws.checkAvoidY floatValue] - [ws.surveyAvoidY floatValue])/ [ws.checkAvoidY floatValue]) * 100): 0.0)];
             ws.deltaAvoidY = [ws.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
-        //NSLog(@"ws.checkAvoidY %@ ws.checkAvoidX %@ ws.surveyAvoidY %@ ws.surveyAvoidX %@ ", ws.checkAvoidY,ws.checkAvoidX ,ws.surveyAvoidY, ws.surveyAvoidX);
+
 
             //calculate the total value with timebermarks
             //*** calculate the total value again with the pieces data to avoid the rounding problem
@@ -720,7 +713,7 @@
             
             ws.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([ws.checkNetVal doubleValue] > 0.0 ? fabs((([ws.checkNetVal doubleValue] - [ws.surveyNetVal doubleValue])/ [ws.checkNetVal doubleValue]) * 100.0 ): 0.0)];
             ws.deltaNetVal = [ws.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
-        //NSLog(@"surveyNetVal %@, checkNetVal %@ deltaNetVal%@",ws.surveyNetVal,ws.checkNetVal,ws.deltaNetVal );
+            
             //add to the block stats
             //if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
                 blockCheckBillTotalVol = blockCheckBillTotalVol + ([ws.checkAvoidY doubleValue] * [ws.stratumArea doubleValue]);
@@ -729,9 +722,8 @@
             //    blockCheckBillTotalVol = blockCheckBillTotalVol + ([ws.checkAvoidY doubleValue] * [ws.stratumArea doubleValue]);
              //   blockCheckCutControlTotalVol = blockCheckCutControlTotalVol + ([ws.checkAvoidX doubleValue] * [ws.stratumArea doubleValue]);
             //}
-        if(stratumCheckCounter > 0){
+        
             blockCheckCounter = blockCheckCounter + 1;
-        }
             
             //benchmark
             blockBenchmark = blockBenchmark + (stratumBenchmark * [ws.stratumArea doubleValue]);
@@ -749,9 +741,9 @@
                 //    blockSurveyCutControlTotalVol = blockSurveyCutControlTotalVol + ([ws.surveyAvoidX doubleValue]);
                 //}
 
-                if(stratumSurveyCounter > 0){
+                
                 blockSurveyCounter = blockSurveyCounter + 1;
-                }
+
                 valueDN = [[[NSDecimalNumber alloc] initWithDouble:([ws.surveyNetVal doubleValue] * [ws.stratumSurveyArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD2];
                 //NSLog(@"add to Block check value :%0.2f", [valueDN floatValue]);
                 blockSurveyTotalValue = blockSurveyTotalValue + [valueDN doubleValue];
@@ -762,7 +754,7 @@
             //NSLog(@" block bill volume = %0.4f", ([ws.surveyAvoidY doubleValue] * [ws.stratumSurveyArea doubleValue]));
             //NSLog(@" block cut control volume = %0.4f", ([ws.surveyAvoidX doubleValue] * [ws.stratumSurveyArea doubleValue]));
             //}
-        //}
+        }
 
     }
     
@@ -846,23 +838,22 @@
                 rate = tm.orgDeciduousWMRF;
 
             }else if ([key rangeOfString:@"W_"].location != NSNotFound){
-                //rate = tm.orgDeciduousWMRF ;
-                rate = tm.deciduousPrice;
+                rate = tm.orgDeciduousWMRF ;
+                
             }else if ([key rangeOfString:@"X_"].location != NSNotFound){
-                //rate = tm.orgXWMRF ;
-                rate = tm.xPrice;
+                rate = tm.orgXWMRF ;
+                
             }else if ([key rangeOfString:@"Y_"].location != NSNotFound || [key rangeOfString:@"_4_"].location != NSNotFound || [key rangeOfString:@"_5_"].location != NSNotFound ){
-                //rate =tm.orgYWMRF ;
-                rate = tm.yPrice;
+                rate =tm.orgYWMRF ;
+                
             }else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound){
-                //rate =tm.orgHembalWMRF ;
-                rate = tm.hembalPrice;
-            }else if ([key rangeOfString:@"_6_"].location != NSNotFound || [key rangeOfString:@"_Z_"].location != NSNotFound){
+                rate =tm.orgHembalWMRF ;
+
+            }else if ([key rangeOfString:@"_6_"].location != NSNotFound){
                 rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
             
             }else{
-                //rate =tm.orgAllSppJWMRF ;
-                rate = tm.coniferWMRF;
+                rate =tm.orgAllSppJWMRF ;
             }
         }else{
             
@@ -870,24 +861,22 @@
                 rate = tm.deciduousWMRF;
                 
             }else if ([key rangeOfString:@"W_"].location != NSNotFound){
-                //rate = tm.deciduousWMRF ;
-                rate =tm.deciduousPrice;
+                rate = tm.deciduousWMRF ;
+                
             }else if ([key rangeOfString:@"X_"].location != NSNotFound){
-                //rate = tm.xWMRF ;
-                rate = tm.xPrice;
+                rate = tm.xWMRF ;
+                
             }else if ([key rangeOfString:@"Y_"].location != NSNotFound || [key rangeOfString:@"_4_"].location != NSNotFound || [key rangeOfString:@"_5_"].location != NSNotFound ){
-                //rate =tm.yWMRF ;
-                rate = tm.yPrice;
+                rate =tm.yWMRF ;
                 
             }else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound){
-                //rate = tm.hembalWMRF ;
-                rate =tm.hembalPrice;
-            }else if ([key rangeOfString:@"_6_"].location != NSNotFound || [key rangeOfString:@"_Z_"].location != NSNotFound){
+                rate = tm.hembalWMRF ;
+                
+            }else if ([key rangeOfString:@"_6_"].location != NSNotFound){
                 rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
 
             }else{
-                //rate =tm.allSppJWMRF ;
-                rate = tm.coniferWMRF;
+                rate =tm.allSppJWMRF ;
             }
         }
         
@@ -915,8 +904,7 @@
 
 
 +(void) calculateEFWStat:(WasteBlock *) wasteBlock{
-    
-    @try {
+    @try{
         // do something that might throw an exception
 
     Timbermark* timbermark = nil;
@@ -936,810 +924,19 @@
         }
         int stratum_counter = 0;
         for( WasteStratum* ws in wasteBlock.blockStratum){
+            
             if(!ws.stratumInteriorStat){
                 ws.stratumInteriorStat = [WasteBlockDAO createEFWInteriorStat];
             }else{
                 [self resetEFWInteriorStat:ws.stratumInteriorStat];
             }
-            if([ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-                if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                    if(ws.strPile != nil){
-                        StratumPile* sp = ws.strPile;
-                        if(!sp.pileInteriorStat){
-                            sp.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-                        }else{
-                            [self resetEFWInteriorStat:sp.pileInteriorStat];
-                        }
-                        
-                        NSDecimalNumber *sumpilearea = nil;
-                        NSDecimalNumber *sumpilevolume = nil;
-                        NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                        NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                        NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                        NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                        NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                        NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                        NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                        NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                        NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                        NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                        for(WastePile* pile in sp.pileData){
-                            sumpilearea = [[NSDecimalNumber alloc] initWithDouble:[sumpilearea doubleValue] + [pile.measuredPileArea doubleValue]];
-                            sumpilevolume = [[NSDecimalNumber alloc] initWithDouble:[sumpilevolume doubleValue] + [pile.measuredPileVolume doubleValue]];
-                            //for avg species calculation
-                            if(pile.alPercent != 0 ){
-                               alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                            }
-                            if(pile.arPercent != 0 ){
-                               arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                            }
-                            if(pile.asPercent != 0 ){
-                               asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                            }
-                            if(pile.baPercent != 0 ){
-                               baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                            }
-                            if(pile.biPercent != 0 ){
-                               biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.cePercent != 0 ){
-                               ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.coPercent != 0 ){
-                               coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.cyPercent != 0 ){
-                               cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.fiPercent != 0 ){
-                               fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.hePercent != 0 ){
-                               heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.laPercent != 0 ){
-                               laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.loPercent != 0 ){
-                               loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.maPercent != 0 ){
-                               maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.spPercent != 0 ){
-                                spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.uuPercent != 0 ){
-                               uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.wbPercent != 0 ){
-                               wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.whPercent != 0 ){
-                               whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.wiPercent != 0 ){
-                               wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.yePercent != 0 ){
-                               yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                        }
-                        avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumpilevolume doubleValue]];
-                        
-                        NSDecimalNumber *averagePileArea = [[NSDecimalNumber alloc] initWithDouble:(([sumpilearea doubleValue]/[sp.pileData count])/10000) * [ws.totalNumPile doubleValue]] ;
-                        NSDecimalNumber *measuredPileVolume = [[NSDecimalNumber alloc] initWithDouble: [sumpilevolume doubleValue]];
-                        NSDecimalNumber *averageVolPerPile = [[NSDecimalNumber alloc] initWithDouble:[measuredPileVolume doubleValue] / [ws.measureSample doubleValue]] ;
-                        NSDecimalNumber *totalPileVol = [[NSDecimalNumber alloc] initWithDouble:[averageVolPerPile doubleValue] * [ws.totalNumPile doubleValue]];
-                        //packing ratio
-                        NSDecimalNumber *prGrade12 = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.grade12Percent doubleValue])/100];
-                        NSDecimalNumber *prGrade4 = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.grade4Percent doubleValue])/100];
-                        NSDecimalNumber *prGrade5 = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.grade5Percent doubleValue])/100];
-                        //NSLog(@"averagepilearea %@, measuredpilevol %@, averagevolperpile %@, totalpilevol %@", averagePileArea, measuredPileVolume, averageVolPerPile, totalPileVol);
-                       // NSLog(@"prgarde12 %@, prgrade4 %@, prgrade5 %@", prGrade12, prGrade4, prGrade5);
-                        if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                            if( isnan([averagePileArea floatValue])) averagePileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                            ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[averagePileArea doubleValue]];
-                        }
-                        //Volume by species and grade.
-                        //Grade12
-                        NSDecimalNumber *volAlGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAlSpecies doubleValue])/100];
-                        NSDecimalNumber *volArGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgArSpecies doubleValue])/100];
-                        NSDecimalNumber *volAsGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAsSpecies doubleValue])/100];
-                        NSDecimalNumber *volBaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBaSpecies doubleValue])/100];
-                        NSDecimalNumber *volBiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBiSpecies doubleValue])/100];
-                        NSDecimalNumber *volCeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCeSpecies doubleValue])/100];
-                        NSDecimalNumber *volCoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCoSpecies doubleValue])/100];
-                        NSDecimalNumber *volCyGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCySpecies doubleValue])/100];
-                        NSDecimalNumber *volFiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgFiSpecies doubleValue])/100];
-                        NSDecimalNumber *volHeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgHeSpecies doubleValue])/100];
-                        NSDecimalNumber *volLaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLaSpecies doubleValue])/100];
-                        NSDecimalNumber *volLoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLoSpecies doubleValue])/100];
-                        NSDecimalNumber *volMaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgMaSpecies doubleValue])/100];
-                        NSDecimalNumber *volSpGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgSpSpecies doubleValue])/100];
-                        NSDecimalNumber *volUuGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgUuSpecies doubleValue])/100];
-                        NSDecimalNumber *volWbGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWbSpecies doubleValue])/100];
-                        NSDecimalNumber *volWhGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWhSpecies doubleValue])/100];
-                        NSDecimalNumber *volWiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWiSpecies doubleValue])/100];
-                        NSDecimalNumber *volYeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgYeSpecies doubleValue])/100];
-
-                        //calculation at the footer. Volume(m3) column
-                        sp.pileInteriorStat.grade5Volume = prGrade5;
-                        sp.pileInteriorStat.grade4Volume = prGrade4;
-                        sp.pileInteriorStat.grade12Volume = prGrade12;
-                        sp.pileInteriorStat.grade124Volume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //volume (m3/ha)
-                        sp.pileInteriorStat.grade124VolumeHa = [[sp.pileInteriorStat.grade124Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade12VolumeHa = [[sp.pileInteriorStat.grade12Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade4VolumeHa = [[sp.pileInteriorStat.grade4Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade5VolumeHa = [[sp.pileInteriorStat.grade5Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillVolumeHa = [[sp.pileInteriorStat.totalBillVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalControlVolumeHa = [[sp.pileInteriorStat.totalControlVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($)
-                        if(timbermark){
-                        sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * ([timbermark.deciduousWMRF doubleValue]? [timbermark.deciduousWMRF doubleValue] : 0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * ([timbermark.coniferWMRF doubleValue]? [timbermark.coniferWMRF doubleValue] : 0)))];
-                        }else{
-                            sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy: [[NSDecimalNumber alloc] initWithInt:0] ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy: [[NSDecimalNumber alloc] initWithInt:0] ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * (0.0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * (0.0)))];
-                        }
-                        sp.pileInteriorStat.grade124Value = [[sp.pileInteriorStat.grade12Value decimalNumberByAdding:sp.pileInteriorStat.grade4Value] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] + [sp.pileInteriorStat.grade4Value doubleValue] + [sp.pileInteriorStat.grade5Value doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($/ha)
-                        sp.pileInteriorStat.grade124ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade124Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade12ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade4ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade4Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade5ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade5Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.totalBillValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        
-                        //Add the values to the stratum level
-                        ws.stratumInteriorStat.grade124ValueHa = [ws.stratumInteriorStat.grade124ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124ValueHa] ;
-                        ws.stratumInteriorStat.grade124VolumeHa = [ws.stratumInteriorStat.grade124VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124VolumeHa];
-                        ws.stratumInteriorStat.grade124Volume = [ws.stratumInteriorStat.grade124Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124Volume];
-                        ws.stratumInteriorStat.grade124Value = [ws.stratumInteriorStat.grade124Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124Value];
-                        ws.stratumInteriorStat.grade5ValueHa = [ws.stratumInteriorStat.grade5ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5ValueHa];
-                        ws.stratumInteriorStat.grade5VolumeHa = [ws.stratumInteriorStat.grade5VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5VolumeHa];
-                        ws.stratumInteriorStat.grade5Value = [ws.stratumInteriorStat.grade5Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5Value];
-                        ws.stratumInteriorStat.grade5Volume = [ws.stratumInteriorStat.grade5Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5Volume];
-                        ws.stratumInteriorStat.grade12ValueHa = [ws.stratumInteriorStat.grade12ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12ValueHa];
-                        ws.stratumInteriorStat.grade12VolumeHa = [ws.stratumInteriorStat.grade12VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12VolumeHa];
-                        ws.stratumInteriorStat.grade12Value = [ws.stratumInteriorStat.grade12Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12Value];
-                        ws.stratumInteriorStat.grade12Volume = [ws.stratumInteriorStat.grade12Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12Volume];
-                        ws.stratumInteriorStat.grade4ValueHa = [ws.stratumInteriorStat.grade4ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4ValueHa];
-                        ws.stratumInteriorStat.grade4VolumeHa = [ws.stratumInteriorStat.grade4VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4VolumeHa];
-                        ws.stratumInteriorStat.grade4Value = [ws.stratumInteriorStat.grade4Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4Value];
-                        ws.stratumInteriorStat.grade4Volume = [ws.stratumInteriorStat.grade4Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4Volume];
-                        ws.stratumInteriorStat.totalBillValueHa = [ws.stratumInteriorStat.totalBillValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillValueHa];
-                        ws.stratumInteriorStat.totalBillVolumeHa = [ws.stratumInteriorStat.totalBillVolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillVolumeHa];
-                        ws.stratumInteriorStat.totalBillValue = [ws.stratumInteriorStat.totalBillValue decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillValue];
-                        ws.stratumInteriorStat.totalBillVolume = [ws.stratumInteriorStat.totalBillVolume decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillVolume];
-                        ws.stratumInteriorStat.totalControlVolumeHa = [ws.stratumInteriorStat.totalControlVolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.totalControlVolumeHa];
-                        ws.stratumInteriorStat.totalControlVolume = [ws.stratumInteriorStat.totalControlVolume decimalNumberByAdding:ws.strPile.pileInteriorStat.totalControlVolume];
-                    }else if (ws.stratumAgg != nil){
-                        for(AggregateCutblock* aggCB in ws.stratumAgg){
-                            StratumPile* sp = aggCB.aggPile;
-                            if([sp.pileData count] >0){
-                             if(!sp.pileInteriorStat){
-                                 sp.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-                             }else{
-                                 [self resetEFWInteriorStat:sp.pileInteriorStat];
-                             }
-                             
-                             NSDecimalNumber *sumpilearea = nil;
-                             NSDecimalNumber *sumpilevolume = nil;
-                             NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                             NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                             NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                             NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                             NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                             NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                             NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                             NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                             NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                             NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                             for(WastePile* pile in sp.pileData){
-                                 sumpilearea = [[NSDecimalNumber alloc] initWithDouble:[sumpilearea doubleValue] + [pile.measuredPileArea doubleValue]];
-                                 sumpilevolume = [[NSDecimalNumber alloc] initWithDouble:[sumpilevolume doubleValue] + [pile.measuredPileVolume doubleValue]];
-                                 //for avg species calculation
-                                 if(pile.alPercent != 0 ){
-                                    alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                 }
-                                 if(pile.arPercent != 0 ){
-                                    arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                 }
-                                 if(pile.asPercent != 0 ){
-                                    asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                 }
-                                 if(pile.baPercent != 0 ){
-                                    baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                 }
-                                 if(pile.biPercent != 0 ){
-                                    biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.cePercent != 0 ){
-                                    ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.coPercent != 0 ){
-                                    coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.cyPercent != 0 ){
-                                    cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.fiPercent != 0 ){
-                                    fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.hePercent != 0 ){
-                                    heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.laPercent != 0 ){
-                                    laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.loPercent != 0 ){
-                                    loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.maPercent != 0 ){
-                                    maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.spPercent != 0 ){
-                                     spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.uuPercent != 0 ){
-                                    uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.wbPercent != 0 ){
-                                    wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.whPercent != 0 ){
-                                    whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.wiPercent != 0 ){
-                                    wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.yePercent != 0 ){
-                                    yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                             }
-                            avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumpilevolume doubleValue]];
-                            avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumpilevolume doubleValue]];
-                             
-                             NSDecimalNumber *averagePileArea = [[NSDecimalNumber alloc] initWithDouble:(([sumpilearea doubleValue]/[sp.pileData count])/10000) * [aggCB.totalNumPile doubleValue]];
-                             NSDecimalNumber *measuredPileVolume = [[NSDecimalNumber alloc] initWithDouble: [sumpilevolume doubleValue]];
-                             NSDecimalNumber *averageVolPerPile = [[NSDecimalNumber alloc] initWithDouble:[measuredPileVolume doubleValue] / [aggCB.measureSample doubleValue]];
-                             NSDecimalNumber *totalPileVol = [[NSDecimalNumber alloc] initWithDouble:[averageVolPerPile doubleValue] * [aggCB.totalNumPile doubleValue]];
-                             //packing ratio
-                             NSDecimalNumber *prGrade12 = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.grade12Percent doubleValue])/100];
-                             NSDecimalNumber *prGrade4 = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.grade4Percent doubleValue])/100];
-                             NSDecimalNumber *prGrade5 = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.grade5Percent doubleValue])/100];
-                            // NSLog(@"averagepilearea %@, measuredpilevol %@, averagevolperpile %@, totalpilevol %@", averagePileArea, measuredPileVolume, averageVolPerPile, totalPileVol);
-                            // NSLog(@"prgarde12 %@, prgrade4 %@, prgrade5 %@", prGrade12, prGrade4, prGrade5);
-                            if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                                if( isnan([averagePileArea floatValue])) averagePileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                                ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[averagePileArea doubleValue]];
-                            }
-                             //Volume by species and grade.
-                             //Grade12
-                            NSDecimalNumber *volAlGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAlSpecies doubleValue])/100];
-                            NSDecimalNumber *volArGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgArSpecies doubleValue])/100];
-                            NSDecimalNumber *volAsGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAsSpecies doubleValue])/100];
-                            NSDecimalNumber *volBaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBaSpecies doubleValue])/100];
-                            NSDecimalNumber *volBiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBiSpecies doubleValue])/100];
-                            NSDecimalNumber *volCeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCeSpecies doubleValue])/100];
-                            NSDecimalNumber *volCoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCoSpecies doubleValue])/100];
-                            NSDecimalNumber *volCyGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCySpecies doubleValue])/100];
-                            NSDecimalNumber *volFiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgFiSpecies doubleValue])/100];
-                            NSDecimalNumber *volHeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgHeSpecies doubleValue])/100];
-                            NSDecimalNumber *volLaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLaSpecies doubleValue])/100];
-                            NSDecimalNumber *volLoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLoSpecies doubleValue])/100];
-                            NSDecimalNumber *volMaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgMaSpecies doubleValue])/100];
-                            NSDecimalNumber *volSpGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgSpSpecies doubleValue])/100];
-                            NSDecimalNumber *volUuGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgUuSpecies doubleValue])/100];
-                            NSDecimalNumber *volWbGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWbSpecies doubleValue])/100];
-                            NSDecimalNumber *volWhGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWhSpecies doubleValue])/100];
-                            NSDecimalNumber *volWiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWiSpecies doubleValue])/100];
-                            NSDecimalNumber *volYeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgYeSpecies doubleValue])/100];
-
-                             //calculation at the footer. Volume(m3) column
-                             sp.pileInteriorStat.grade5Volume = prGrade5;
-                             sp.pileInteriorStat.grade4Volume = prGrade4;
-                             sp.pileInteriorStat.grade12Volume = prGrade12;
-                             sp.pileInteriorStat.grade124Volume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //volume (m3/ha)
-                             sp.pileInteriorStat.grade124VolumeHa = [[sp.pileInteriorStat.grade124Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade12VolumeHa = [[sp.pileInteriorStat.grade12Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade4VolumeHa = [[sp.pileInteriorStat.grade4Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade5VolumeHa = [[sp.pileInteriorStat.grade5Volume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillVolumeHa = [[sp.pileInteriorStat.totalBillVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalControlVolumeHa = [[sp.pileInteriorStat.totalControlVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //value($)
-                                if(timbermark){
-                                 sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                 sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                 sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * ([timbermark.deciduousWMRF doubleValue]? [timbermark.deciduousWMRF doubleValue] : 0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * ([timbermark.coniferWMRF doubleValue]? [timbermark.coniferWMRF doubleValue] : 0)))];
-                                }else{
-                                    sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                    sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                    sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * (0.0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * (0.0)))];
-                                }
-                             sp.pileInteriorStat.grade124Value = [[sp.pileInteriorStat.grade12Value decimalNumberByAdding:sp.pileInteriorStat.grade4Value] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] + [sp.pileInteriorStat.grade4Value doubleValue] + [sp.pileInteriorStat.grade5Value doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //value($/ha)
-                             sp.pileInteriorStat.grade124ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade124Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade12ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade4ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade4Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade5ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade5Value doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.totalBillValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             
-                             //Add the values to the stratum level
-                             ws.stratumInteriorStat.grade124ValueHa = [ws.stratumInteriorStat.grade124ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade124ValueHa] ;
-                             ws.stratumInteriorStat.grade124VolumeHa = [ws.stratumInteriorStat.grade124VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade124VolumeHa];
-                             ws.stratumInteriorStat.grade124Volume = [ws.stratumInteriorStat.grade124Volume decimalNumberByAdding:sp.pileInteriorStat.grade124Volume];
-                             ws.stratumInteriorStat.grade124Value = [ws.stratumInteriorStat.grade124Value decimalNumberByAdding:sp.pileInteriorStat.grade124Value];
-                             ws.stratumInteriorStat.grade5ValueHa = [ws.stratumInteriorStat.grade5ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade5ValueHa];
-                             ws.stratumInteriorStat.grade5VolumeHa = [ws.stratumInteriorStat.grade5VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade5VolumeHa];
-                             ws.stratumInteriorStat.grade5Value = [ws.stratumInteriorStat.grade5Value decimalNumberByAdding:sp.pileInteriorStat.grade5Value];
-                             ws.stratumInteriorStat.grade5Volume = [ws.stratumInteriorStat.grade5Volume decimalNumberByAdding:sp.pileInteriorStat.grade5Volume];
-                             ws.stratumInteriorStat.grade12ValueHa = [ws.stratumInteriorStat.grade12ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade12ValueHa];
-                             ws.stratumInteriorStat.grade12VolumeHa = [ws.stratumInteriorStat.grade12VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade12VolumeHa];
-                             ws.stratumInteriorStat.grade12Value = [ws.stratumInteriorStat.grade12Value decimalNumberByAdding:sp.pileInteriorStat.grade12Value];
-                             ws.stratumInteriorStat.grade12Volume = [ws.stratumInteriorStat.grade12Volume decimalNumberByAdding:sp.pileInteriorStat.grade12Volume];
-                             ws.stratumInteriorStat.grade4ValueHa = [ws.stratumInteriorStat.grade4ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade4ValueHa];
-                             ws.stratumInteriorStat.grade4VolumeHa = [ws.stratumInteriorStat.grade4VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade4VolumeHa];
-                             ws.stratumInteriorStat.grade4Value = [ws.stratumInteriorStat.grade4Value decimalNumberByAdding:sp.pileInteriorStat.grade4Value];
-                             ws.stratumInteriorStat.grade4Volume = [ws.stratumInteriorStat.grade4Volume decimalNumberByAdding:sp.pileInteriorStat.grade4Volume];
-                             ws.stratumInteriorStat.totalBillValueHa = [ws.stratumInteriorStat.totalBillValueHa decimalNumberByAdding:sp.pileInteriorStat.totalBillValueHa];
-                             ws.stratumInteriorStat.totalBillVolumeHa = [ws.stratumInteriorStat.totalBillVolumeHa decimalNumberByAdding:sp.pileInteriorStat.totalBillVolumeHa];
-                             ws.stratumInteriorStat.totalBillValue = [ws.stratumInteriorStat.totalBillValue decimalNumberByAdding:sp.pileInteriorStat.totalBillValue];
-                             ws.stratumInteriorStat.totalBillVolume = [ws.stratumInteriorStat.totalBillVolume decimalNumberByAdding:sp.pileInteriorStat.totalBillVolume];
-                             ws.stratumInteriorStat.totalControlVolumeHa = [ws.stratumInteriorStat.totalControlVolumeHa decimalNumberByAdding:sp.pileInteriorStat.totalControlVolumeHa];
-                             ws.stratumInteriorStat.totalControlVolume = [ws.stratumInteriorStat.totalControlVolume decimalNumberByAdding:sp.pileInteriorStat.totalControlVolume];
-                            }
-                        }
-                    }
-                }else{
-                    if(ws.strPile != nil){
-                        StratumPile* sp = ws.strPile;
-                        if(!sp.pileInteriorStat){
-                            sp.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-                        }else{
-                            [self resetEFWInteriorStat:sp.pileInteriorStat];
-                        }
-                        
-                        NSDecimalNumber *summ2estsample = nil;NSDecimalNumber *summ2meassample = nil;NSDecimalNumber *totalestm2 = nil;NSDecimalNumber *totalPredPileVolume = nil;
-                        NSDecimalNumber *sumPredVol = nil;NSDecimalNumber *sumMeasVolume = nil;
-                        NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                        NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                        NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                        NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                        NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                        NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                        NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                        NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                        NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                        NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                        for(WastePile* pile in sp.pileData){
-                            if([pile.isSample intValue] == [[[NSNumber alloc] initWithBool:TRUE]intValue]){
-                                summ2estsample = [[NSDecimalNumber alloc] initWithDouble:[summ2estsample doubleValue] + [pile.pileArea doubleValue]];
-                                sumPredVol = [[NSDecimalNumber alloc] initWithDouble:[sumPredVol doubleValue] + [pile.pileVolume doubleValue]];
-                                //for avg species calculation
-                                 if(pile.alPercent != 0 ){
-                                       alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                    }
-                                    if(pile.arPercent != 0 ){
-                                       arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                    }
-                                    if(pile.asPercent != 0 ){
-                                       asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                    }
-                                    if(pile.baPercent != 0 ){
-                                       baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                    }
-                                    if(pile.biPercent != 0 ){
-                                       biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.cePercent != 0 ){
-                                       ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.coPercent != 0 ){
-                                       coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.cyPercent != 0 ){
-                                       cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.fiPercent != 0 ){
-                                       fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.hePercent != 0 ){
-                                       heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.laPercent != 0 ){
-                                       laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.loPercent != 0 ){
-                                       loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.maPercent != 0 ){
-                                       maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.spPercent != 0 ){
-                                        spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.uuPercent != 0 ){
-                                       uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.wbPercent != 0 ){
-                                       wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.whPercent != 0 ){
-                                       whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.wiPercent != 0 ){
-                                       wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                                    if(pile.yePercent != 0 ){
-                                       yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                    }
-                            }
-                            summ2meassample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] + [pile.measuredPileArea doubleValue]];
-                            totalestm2 = [[NSDecimalNumber alloc] initWithDouble:[totalestm2 doubleValue] + [pile.pileArea doubleValue]] ;
-                            totalPredPileVolume = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolume doubleValue] + [pile.pileVolume doubleValue]];
-                            sumMeasVolume = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] + [pile.measuredPileVolume doubleValue]];
-                        }
-                        avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                        NSDecimalNumber *ratioSample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] / [summ2estsample doubleValue]];
-                        NSDecimalNumber *avgPileArea = [[NSDecimalNumber alloc] initWithDouble:([ratioSample doubleValue] * [totalestm2 doubleValue])/10000];
-                        NSDecimalNumber *ratio = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] / [sumPredVol doubleValue]];
-                        NSDecimalNumber *totalPileVolume = [[NSDecimalNumber alloc] initWithDouble:[ratio doubleValue] * [totalPredPileVolume doubleValue]];
-                        //Packing ratio
-                        NSDecimalNumber *prGrade12 = [[NSDecimalNumber alloc] initWithDouble:(([totalPileVolume doubleValue] * [ws.grade12Percent doubleValue])/100)];
-                        NSDecimalNumber *prGrade4 = [[NSDecimalNumber alloc] initWithDouble:(([totalPileVolume doubleValue] * [ws.grade4Percent doubleValue])/100)];
-                        NSDecimalNumber *prGrade5 = [[NSDecimalNumber alloc] initWithDouble:(([totalPileVolume doubleValue] * [ws.grade5Percent doubleValue])/100)];
-                       // NSLog(@"prgrade12 %@,prgrade4%@,prgrade5%@", prGrade12,prGrade4,prGrade5);
-                        NSLog(@"avgpilearea%@, summ2est%@, summ2meas %@, ratio %@, totalestm2%@, totPrepil%@, sumofPrevol%@, summeasuVol%@, ratio%@, totalPileVolum %@",avgPileArea,summ2estsample,summ2meassample,ratioSample,totalestm2,totalPredPileVolume,sumPredVol,sumMeasVolume,ratio,totalPileVolume);
-                        if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                            if( isnan([avgPileArea floatValue])) avgPileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                            ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[avgPileArea doubleValue]];
-                        }
-                        //Volume by species and grade.
-                        //Grade12
-                        NSDecimalNumber *volAlGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAlSpecies doubleValue])/100];
-                        NSDecimalNumber *volArGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgArSpecies doubleValue])/100];
-                        NSDecimalNumber *volAsGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAsSpecies doubleValue])/100];
-                        NSDecimalNumber *volBaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBaSpecies doubleValue])/100];
-                        NSDecimalNumber *volBiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBiSpecies doubleValue])/100];
-                        NSDecimalNumber *volCeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCeSpecies doubleValue])/100];
-                        NSDecimalNumber *volCoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCoSpecies doubleValue])/100];
-                        NSDecimalNumber *volCyGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCySpecies doubleValue])/100];
-                        NSDecimalNumber *volFiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgFiSpecies doubleValue])/100];
-                        NSDecimalNumber *volHeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgHeSpecies doubleValue])/100];
-                        NSDecimalNumber *volLaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLaSpecies doubleValue])/100];
-                        NSDecimalNumber *volLoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLoSpecies doubleValue])/100];
-                        NSDecimalNumber *volMaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgMaSpecies doubleValue])/100];
-                        NSDecimalNumber *volSpGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgSpSpecies doubleValue])/100];
-                        NSDecimalNumber *volUuGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgUuSpecies doubleValue])/100];
-                        NSDecimalNumber *volWbGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWbSpecies doubleValue])/100];
-                        NSDecimalNumber *volWhGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWhSpecies doubleValue])/100];
-                        NSDecimalNumber *volWiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWiSpecies doubleValue])/100];
-                        NSDecimalNumber *volYeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgYeSpecies doubleValue])/100];
-                        //calculation at the footer. Volume(m3) column
-                        sp.pileInteriorStat.grade5Volume = prGrade5;
-                        sp.pileInteriorStat.grade4Volume = prGrade4;
-                        sp.pileInteriorStat.grade12Volume = prGrade12;
-                        sp.pileInteriorStat.grade124Volume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //volume (m3/ha)
-                        sp.pileInteriorStat.grade124VolumeHa = [[sp.pileInteriorStat.grade124Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade12VolumeHa = [[sp.pileInteriorStat.grade12Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade4VolumeHa = [[sp.pileInteriorStat.grade4Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade5VolumeHa = [[sp.pileInteriorStat.grade5Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillVolumeHa = [[sp.pileInteriorStat.totalBillVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalControlVolumeHa = [[sp.pileInteriorStat.totalControlVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($)
-                        if(timbermark){
-                            sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * ([timbermark.deciduousWMRF doubleValue]? [timbermark.deciduousWMRF doubleValue] : 0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * ([timbermark.coniferWMRF doubleValue]? [timbermark.coniferWMRF doubleValue] : 0)))];
-                        }else{
-                            sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * (0.0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * (0.0)))];
-                        }
-                        sp.pileInteriorStat.grade124Value = [[sp.pileInteriorStat.grade12Value decimalNumberByAdding:sp.pileInteriorStat.grade4Value] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] + [sp.pileInteriorStat.grade4Value doubleValue] + [sp.pileInteriorStat.grade5Value doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($/ha)
-                        sp.pileInteriorStat.grade124ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade124Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade12ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade4ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade4Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.grade5ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade5Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileInteriorStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.totalBillValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        
-                        //Add the values to the stratum level
-                        ws.stratumInteriorStat.grade124ValueHa = [ws.stratumInteriorStat.grade124ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124ValueHa] ;
-                        ws.stratumInteriorStat.grade124VolumeHa = [ws.stratumInteriorStat.grade124VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124VolumeHa];
-                        ws.stratumInteriorStat.grade124Volume = [ws.stratumInteriorStat.grade124Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124Volume];
-                        ws.stratumInteriorStat.grade124Value = [ws.stratumInteriorStat.grade124Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade124Value];
-                        ws.stratumInteriorStat.grade5ValueHa = [ws.stratumInteriorStat.grade5ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5ValueHa];
-                        ws.stratumInteriorStat.grade5VolumeHa = [ws.stratumInteriorStat.grade5VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5VolumeHa];
-                        ws.stratumInteriorStat.grade5Value = [ws.stratumInteriorStat.grade5Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5Value];
-                        ws.stratumInteriorStat.grade5Volume = [ws.stratumInteriorStat.grade5Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade5Volume];
-                        ws.stratumInteriorStat.grade12ValueHa = [ws.stratumInteriorStat.grade12ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12ValueHa];
-                        ws.stratumInteriorStat.grade12VolumeHa = [ws.stratumInteriorStat.grade12VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12VolumeHa];
-                        ws.stratumInteriorStat.grade12Value = [ws.stratumInteriorStat.grade12Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12Value];
-                        ws.stratumInteriorStat.grade12Volume = [ws.stratumInteriorStat.grade12Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade12Volume];
-                        ws.stratumInteriorStat.grade4ValueHa = [ws.stratumInteriorStat.grade4ValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4ValueHa];
-                        ws.stratumInteriorStat.grade4VolumeHa = [ws.stratumInteriorStat.grade4VolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4VolumeHa];
-                        ws.stratumInteriorStat.grade4Value = [ws.stratumInteriorStat.grade4Value decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4Value];
-                        ws.stratumInteriorStat.grade4Volume = [ws.stratumInteriorStat.grade4Volume decimalNumberByAdding:ws.strPile.pileInteriorStat.grade4Volume];
-                        ws.stratumInteriorStat.totalBillValueHa = [ws.stratumInteriorStat.totalBillValueHa decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillValueHa];
-                        ws.stratumInteriorStat.totalBillVolumeHa = [ws.stratumInteriorStat.totalBillVolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillVolumeHa];
-                        ws.stratumInteriorStat.totalBillValue = [ws.stratumInteriorStat.totalBillValue decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillValue];
-                        ws.stratumInteriorStat.totalBillVolume = [ws.stratumInteriorStat.totalBillVolume decimalNumberByAdding:ws.strPile.pileInteriorStat.totalBillVolume];
-                        ws.stratumInteriorStat.totalControlVolumeHa = [ws.stratumInteriorStat.totalControlVolumeHa decimalNumberByAdding:ws.strPile.pileInteriorStat.totalControlVolumeHa];
-                        ws.stratumInteriorStat.totalControlVolume = [ws.stratumInteriorStat.totalControlVolume decimalNumberByAdding:ws.strPile.pileInteriorStat.totalControlVolume];
-                    }else if (ws.stratumAgg != nil){
-                        for(AggregateCutblock* aggCB in ws.stratumAgg){
-                            StratumPile* sp = aggCB.aggPile;
-                            if([sp.pileData count] >0){
-                             if(!sp.pileInteriorStat){
-                                 sp.pileInteriorStat = [WasteBlockDAO createEFWInteriorStat];
-                             }else{
-                                 [self resetEFWInteriorStat:sp.pileInteriorStat];
-                             }
-                             
-                             NSDecimalNumber *summ2estsample = nil;NSDecimalNumber *summ2meassample = nil;NSDecimalNumber *totalestm2 = nil;NSDecimalNumber *totalPredPileVolume = nil;
-                             NSDecimalNumber *sumPredVol = nil;NSDecimalNumber *sumMeasVolume = nil;
-                             NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                             NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                             NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                             NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                             NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                             NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                             NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                             NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                             NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                             NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                             for(WastePile* pile in sp.pileData){
-                                 if([pile.isSample intValue] == [[[NSNumber alloc] initWithBool:TRUE]intValue]){
-                                     summ2estsample = [[NSDecimalNumber alloc] initWithDouble:[summ2estsample doubleValue] + [pile.pileArea doubleValue]];
-                                     sumPredVol = [[NSDecimalNumber alloc] initWithDouble:[sumPredVol doubleValue] + [pile.pileVolume doubleValue]];
-                                     //for avg species calculation
-                                     if(pile.alPercent != 0 ){
-                                        alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.arPercent != 0 ){
-                                        arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.asPercent != 0 ){
-                                        asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.baPercent != 0 ){
-                                        baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.biPercent != 0 ){
-                                        biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.cePercent != 0 ){
-                                        ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.coPercent != 0 ){
-                                        coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.cyPercent != 0 ){
-                                        cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.fiPercent != 0 ){
-                                        fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.hePercent != 0 ){
-                                        heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.laPercent != 0 ){
-                                        laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.loPercent != 0 ){
-                                        loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.maPercent != 0 ){
-                                        maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.spPercent != 0 ){
-                                         spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.uuPercent != 0 ){
-                                        uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.wbPercent != 0 ){
-                                        wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.whPercent != 0 ){
-                                        whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.wiPercent != 0 ){
-                                        wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                     if(pile.yePercent != 0 ){
-                                        yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])];
-                                     }
-                                 }
-                                 summ2meassample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] + [pile.measuredPileArea doubleValue]];
-                                 totalestm2 = [[NSDecimalNumber alloc] initWithDouble:[totalestm2 doubleValue] + [pile.pileArea doubleValue]];
-                                 totalPredPileVolume = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolume doubleValue] + [pile.pileVolume doubleValue]];
-                                 sumMeasVolume = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] + [pile.measuredPileVolume doubleValue]];
-                             }
-                             avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumMeasVolume doubleValue]];
-                             NSDecimalNumber *ratioSample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] / [summ2estsample doubleValue]];
-                             NSDecimalNumber *avgPileArea = [[NSDecimalNumber alloc] initWithDouble:([ratioSample doubleValue] * [totalestm2 doubleValue])/10000];
-                             NSDecimalNumber *ratio = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] / [sumPredVol doubleValue]];
-                             NSDecimalNumber *totalPileVolume = [[NSDecimalNumber alloc] initWithDouble:[ratio doubleValue] * [totalPredPileVolume doubleValue]];
-                             //Packing ratio
-                             NSDecimalNumber *prGrade12 = [[NSDecimalNumber alloc] initWithDouble:(([totalPileVolume doubleValue] * [ws.grade12Percent doubleValue])/100)];
-                             NSDecimalNumber *prGrade4 = [[NSDecimalNumber alloc] initWithDouble:(([totalPileVolume doubleValue] * [ws.grade4Percent doubleValue])/100)];
-                             NSDecimalNumber *prGrade5 = [[NSDecimalNumber alloc] initWithDouble:(([totalPileVolume doubleValue] * [ws.grade5Percent doubleValue])/100)];
-                            // NSLog(@"prgrade12 %@,prgrade4%@,prgrade5%@", prGrade12,prGrade4,prGrade5);
-                            // NSLog(@"avgpilearea%@, summ2est%@, summ2meas %@, ratio %@, totalestm2%@, totPrepil%@, sumofPrevol%@, summeasuVol%@, ratio%@, totalPileVolum %@",avgPileArea,summ2estsample,summ2meassample,ratioSample,totalestm2,totalPredPileVolume,sumPredVol,sumMeasVolume,ratio,totalPileVolume);
-                            if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                                if( isnan([avgPileArea floatValue])) avgPileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                                ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[avgPileArea doubleValue]];
-                            }
-                             //Volume by species and grade.
-                             //Grade12
-                             NSDecimalNumber *volAlGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAlSpecies doubleValue])/100];
-                             NSDecimalNumber *volArGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgArSpecies doubleValue])/100];
-                             NSDecimalNumber *volAsGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgAsSpecies doubleValue])/100];
-                             NSDecimalNumber *volBaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBaSpecies doubleValue])/100];
-                             NSDecimalNumber *volBiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgBiSpecies doubleValue])/100];
-                             NSDecimalNumber *volCeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCeSpecies doubleValue])/100];
-                             NSDecimalNumber *volCoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCoSpecies doubleValue])/100];
-                             NSDecimalNumber *volCyGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgCySpecies doubleValue])/100];
-                             NSDecimalNumber *volFiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgFiSpecies doubleValue])/100];
-                             NSDecimalNumber *volHeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgHeSpecies doubleValue])/100];
-                             NSDecimalNumber *volLaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLaSpecies doubleValue])/100];
-                             NSDecimalNumber *volLoGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgLoSpecies doubleValue])/100];
-                             NSDecimalNumber *volMaGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgMaSpecies doubleValue])/100];
-                             NSDecimalNumber *volSpGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgSpSpecies doubleValue])/100];
-                             NSDecimalNumber *volUuGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgUuSpecies doubleValue])/100];
-                             NSDecimalNumber *volWbGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWbSpecies doubleValue])/100];
-                             NSDecimalNumber *volWhGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWhSpecies doubleValue])/100];
-                             NSDecimalNumber *volWiGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgWiSpecies doubleValue])/100];
-                             NSDecimalNumber *volYeGrade12 = [[NSDecimalNumber alloc] initWithDouble: ([prGrade12 doubleValue] * [avgYeSpecies doubleValue])/100];
-                             //calculation at the footer. Volume(m3) column
-                             sp.pileInteriorStat.grade5Volume = prGrade5;
-                             sp.pileInteriorStat.grade4Volume = prGrade4;
-                             sp.pileInteriorStat.grade12Volume = prGrade12;
-                             sp.pileInteriorStat.grade124Volume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGrade12 doubleValue] + [prGrade4 doubleValue] + [prGrade5 doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //volume (m3/ha)
-                             sp.pileInteriorStat.grade124VolumeHa = [[sp.pileInteriorStat.grade124Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade12VolumeHa = [[sp.pileInteriorStat.grade12Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade4VolumeHa = [[sp.pileInteriorStat.grade4Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade5VolumeHa = [[sp.pileInteriorStat.grade5Volume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillVolumeHa = [[sp.pileInteriorStat.totalBillVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalControlVolumeHa = [[sp.pileInteriorStat.totalControlVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //value($)
-                            if(timbermark){
-                                 sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                 sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy:timbermark.yWMRF ? timbermark.yWMRF : 0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * ([timbermark.deciduousWMRF doubleValue]? [timbermark.deciduousWMRF doubleValue] : 0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * ([timbermark.coniferWMRF doubleValue]? [timbermark.coniferWMRF doubleValue] : 0)))];
-                            }else{
-                                sp.pileInteriorStat.grade5Value = [[sp.pileInteriorStat.grade5Volume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileInteriorStat.grade4Value = [[sp.pileInteriorStat.grade4Volume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                       sp.pileInteriorStat.grade12Value = [[NSDecimalNumber alloc] initWithDouble:((([volAlGrade12 doubleValue] + [volArGrade12 doubleValue] + [volAsGrade12 doubleValue] + [volBiGrade12 doubleValue] + [volCoGrade12 doubleValue] + [volMaGrade12 doubleValue] + [volWiGrade12 doubleValue] + [volYeGrade12 doubleValue]) * (0.0)) + (([volBaGrade12 doubleValue]  + [volCeGrade12 doubleValue]  + [volCyGrade12 doubleValue] + [volFiGrade12 doubleValue] + [volHeGrade12 doubleValue] + [volLaGrade12 doubleValue] + [volLoGrade12 doubleValue] + [volSpGrade12 doubleValue] + [volUuGrade12 doubleValue] + [volWbGrade12 doubleValue] + [volWhGrade12 doubleValue] ) * (0.0)))];
-                            }
-                             sp.pileInteriorStat.grade124Value = [[sp.pileInteriorStat.grade12Value decimalNumberByAdding:sp.pileInteriorStat.grade4Value] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] + [sp.pileInteriorStat.grade4Value doubleValue] + [sp.pileInteriorStat.grade5Value doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //value($/ha)
-                             sp.pileInteriorStat.grade124ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade124Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade12ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade12Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade4ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade4Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.grade5ValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.grade5Value doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileInteriorStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileInteriorStat.totalBillValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             
-                             //Add the values to the stratum level
-                             ws.stratumInteriorStat.grade124ValueHa = [ws.stratumInteriorStat.grade124ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade124ValueHa] ;
-                             ws.stratumInteriorStat.grade124VolumeHa = [ws.stratumInteriorStat.grade124VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade124VolumeHa];
-                             ws.stratumInteriorStat.grade124Volume = [ws.stratumInteriorStat.grade124Volume decimalNumberByAdding:sp.pileInteriorStat.grade124Volume];
-                             ws.stratumInteriorStat.grade124Value = [ws.stratumInteriorStat.grade124Value decimalNumberByAdding:sp.pileInteriorStat.grade124Value];
-                             ws.stratumInteriorStat.grade5ValueHa = [ws.stratumInteriorStat.grade5ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade5ValueHa];
-                             ws.stratumInteriorStat.grade5VolumeHa = [ws.stratumInteriorStat.grade5VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade5VolumeHa];
-                             ws.stratumInteriorStat.grade5Value = [ws.stratumInteriorStat.grade5Value decimalNumberByAdding:sp.pileInteriorStat.grade5Value];
-                             ws.stratumInteriorStat.grade5Volume = [ws.stratumInteriorStat.grade5Volume decimalNumberByAdding:sp.pileInteriorStat.grade5Volume];
-                             ws.stratumInteriorStat.grade12ValueHa = [ws.stratumInteriorStat.grade12ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade12ValueHa];
-                             ws.stratumInteriorStat.grade12VolumeHa = [ws.stratumInteriorStat.grade12VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade12VolumeHa];
-                             ws.stratumInteriorStat.grade12Value = [ws.stratumInteriorStat.grade12Value decimalNumberByAdding:sp.pileInteriorStat.grade12Value];
-                             ws.stratumInteriorStat.grade12Volume = [ws.stratumInteriorStat.grade12Volume decimalNumberByAdding:sp.pileInteriorStat.grade12Volume];
-                             ws.stratumInteriorStat.grade4ValueHa = [ws.stratumInteriorStat.grade4ValueHa decimalNumberByAdding:sp.pileInteriorStat.grade4ValueHa];
-                             ws.stratumInteriorStat.grade4VolumeHa = [ws.stratumInteriorStat.grade4VolumeHa decimalNumberByAdding:sp.pileInteriorStat.grade4VolumeHa];
-                             ws.stratumInteriorStat.grade4Value = [ws.stratumInteriorStat.grade4Value decimalNumberByAdding:sp.pileInteriorStat.grade4Value];
-                             ws.stratumInteriorStat.grade4Volume = [ws.stratumInteriorStat.grade4Volume decimalNumberByAdding:sp.pileInteriorStat.grade4Volume];
-                             ws.stratumInteriorStat.totalBillValueHa = [ws.stratumInteriorStat.totalBillValueHa decimalNumberByAdding:sp.pileInteriorStat.totalBillValueHa];
-                             ws.stratumInteriorStat.totalBillVolumeHa = [ws.stratumInteriorStat.totalBillVolumeHa decimalNumberByAdding:sp.pileInteriorStat.totalBillVolumeHa];
-                             ws.stratumInteriorStat.totalBillValue = [ws.stratumInteriorStat.totalBillValue decimalNumberByAdding:sp.pileInteriorStat.totalBillValue];
-                             ws.stratumInteriorStat.totalBillVolume = [ws.stratumInteriorStat.totalBillVolume decimalNumberByAdding:sp.pileInteriorStat.totalBillVolume];
-                             ws.stratumInteriorStat.totalControlVolumeHa = [ws.stratumInteriorStat.totalControlVolumeHa decimalNumberByAdding:sp.pileInteriorStat.totalControlVolumeHa];
-                             ws.stratumInteriorStat.totalControlVolume = [ws.stratumInteriorStat.totalControlVolume decimalNumberByAdding:sp.pileInteriorStat.totalControlVolume];
-                            }
-                        }
-                    }
-                }
+            
+            // skip calculations if packing ratio stratum
+            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]) {
+                NSLog(@"assessment code R!!");
+                continue;
             }
+
             int plot_counter = 0;
             for(WastePlot* wp in ws.stratumPlot){
                 if(!wp.plotInteriorStat){
@@ -1753,58 +950,58 @@
                     for(WastePiece* piece in wp.plotPiece){
                         // && ![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"] this line  below was added as part of EFORWASTE-86 so that grade 6 is not calculated in total cut cntrl and total billable
                         if(![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Z"] && ![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"] ){
-                        //Calculate the piece value and the piece volume in per ha
-                        NSDecimalNumber *pieceRateDN = [[[NSDecimalNumber alloc] initWithDouble:[self pieceRate:piece.pieceScaleSpeciesCode.scaleSpeciesCode withGrade:piece.pieceScaleGradeCode.scaleGradeCode
-                                                                                                      withAvoid:[piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"] forBlock:wasteBlock withTimbermark:timbermark]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                        
-                        NSDecimalNumber *piecePriceDN =[[[NSDecimalNumber alloc] initWithDouble:[pieceRateDN doubleValue] * [piece.pieceVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        NSDecimalNumber *valueDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        NSDecimalNumber *valueHaDN = nil;
-                        NSDecimalNumber *pieceVolumeDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                        NSDecimalNumber *pieceVolumeHaDN = nil;
-                        
-                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                            pieceVolumeHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                            valueHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        }else{
-                            pieceVolumeHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [pieceVolumeDN decimalNumberByDividingBy:ws.stratumSurveyArea];
-                            valueHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [valueDN decimalNumberByDividingBy:ws.stratumSurveyArea];
+                            //Calculate the piece value and the piece volume in per ha
+                            NSDecimalNumber *pieceRateDN = [[[NSDecimalNumber alloc] initWithDouble:[self pieceRate:piece.pieceScaleSpeciesCode.scaleSpeciesCode withGrade:piece.pieceScaleGradeCode.scaleGradeCode
+                                                                                                          withAvoid:[piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"] forBlock:wasteBlock withTimbermark:timbermark]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                             
-                        }
-                        
-                        //Add the value and the volume back to stat placeholders
-                        if([piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]){
-                            if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] ){
-                                wp.plotInteriorStat.grade5ValueHa = [wp.plotInteriorStat.grade5ValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotInteriorStat.grade5Value = [wp.plotInteriorStat.grade5Value decimalNumberByAdding:valueDN];
-                                wp.plotInteriorStat.grade5VolumeHa = [wp.plotInteriorStat.grade5VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotInteriorStat.grade5Volume = [wp.plotInteriorStat.grade5Volume decimalNumberByAdding:pieceVolumeDN];
-                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"1"]||[piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"2"]){
-                                wp.plotInteriorStat.grade12ValueHa = [wp.plotInteriorStat.grade12ValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotInteriorStat.grade12Value = [wp.plotInteriorStat.grade12Value decimalNumberByAdding:valueDN];
-                                wp.plotInteriorStat.grade12VolumeHa = [wp.plotInteriorStat.grade12VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotInteriorStat.grade12Volume = [wp.plotInteriorStat.grade12Volume decimalNumberByAdding:pieceVolumeDN];
-                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"]){
-                                wp.plotInteriorStat.grade4ValueHa = [wp.plotInteriorStat.grade4ValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotInteriorStat.grade4Value = [wp.plotInteriorStat.grade4Value decimalNumberByAdding:valueDN];
-                                wp.plotInteriorStat.grade4VolumeHa = [wp.plotInteriorStat.grade4VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotInteriorStat.grade4Volume = [wp.plotInteriorStat.grade4Volume decimalNumberByAdding:pieceVolumeDN];
-                            }
-                            if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"1"] || [piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"2"] || [piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"]){
-                                wp.plotInteriorStat.grade124ValueHa = [wp.plotInteriorStat.grade124ValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotInteriorStat.grade124Value = [wp.plotInteriorStat.grade124Value decimalNumberByAdding:valueDN];
-                                wp.plotInteriorStat.grade124VolumeHa = [wp.plotInteriorStat.grade124VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotInteriorStat.grade124Volume = [wp.plotInteriorStat.grade124Volume decimalNumberByAdding:pieceVolumeDN];
-                            }
+                            NSDecimalNumber *piecePriceDN =[[[NSDecimalNumber alloc] initWithDouble:[pieceRateDN doubleValue] * [piece.pieceVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                            NSDecimalNumber *valueDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                            NSDecimalNumber *valueHaDN = nil;
+                            NSDecimalNumber *pieceVolumeDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                            NSDecimalNumber *pieceVolumeHaDN = nil;
                             
-                            wp.plotInteriorStat.totalBillValueHa =[wp.plotInteriorStat.totalBillValueHa decimalNumberByAdding:valueHaDN];
-                            wp.plotInteriorStat.totalBillValue =[wp.plotInteriorStat.totalBillValue decimalNumberByAdding:valueDN];
-                            wp.plotInteriorStat.totalBillVolumeHa =[wp.plotInteriorStat.totalBillVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                            wp.plotInteriorStat.totalBillVolume = [wp.plotInteriorStat.totalBillVolume decimalNumberByAdding:pieceVolumeDN];
-                        }
+                            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
+                                pieceVolumeHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                                valueHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                            }else{
+                                pieceVolumeHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [pieceVolumeDN decimalNumberByDividingBy:ws.stratumSurveyArea];
+                                valueHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [valueDN decimalNumberByDividingBy:ws.stratumSurveyArea];
+                                
+                            }
+                        
+                            //Add the value and the volume back to stat placeholders
+                            if([piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]){
+                                if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] ){
+                                    wp.plotInteriorStat.grade5ValueHa = [wp.plotInteriorStat.grade5ValueHa decimalNumberByAdding:valueHaDN];
+                                    wp.plotInteriorStat.grade5Value = [wp.plotInteriorStat.grade5Value decimalNumberByAdding:valueDN];
+                                    wp.plotInteriorStat.grade5VolumeHa = [wp.plotInteriorStat.grade5VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                    wp.plotInteriorStat.grade5Volume = [wp.plotInteriorStat.grade5Volume decimalNumberByAdding:pieceVolumeDN];
+                                }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"1"]||[piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"2"]){
+                                    wp.plotInteriorStat.grade12ValueHa = [wp.plotInteriorStat.grade12ValueHa decimalNumberByAdding:valueHaDN];
+                                    wp.plotInteriorStat.grade12Value = [wp.plotInteriorStat.grade12Value decimalNumberByAdding:valueDN];
+                                    wp.plotInteriorStat.grade12VolumeHa = [wp.plotInteriorStat.grade12VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                    wp.plotInteriorStat.grade12Volume = [wp.plotInteriorStat.grade12Volume decimalNumberByAdding:pieceVolumeDN];
+                                }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"]){
+                                    wp.plotInteriorStat.grade4ValueHa = [wp.plotInteriorStat.grade4ValueHa decimalNumberByAdding:valueHaDN];
+                                    wp.plotInteriorStat.grade4Value = [wp.plotInteriorStat.grade4Value decimalNumberByAdding:valueDN];
+                                    wp.plotInteriorStat.grade4VolumeHa = [wp.plotInteriorStat.grade4VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                    wp.plotInteriorStat.grade4Volume = [wp.plotInteriorStat.grade4Volume decimalNumberByAdding:pieceVolumeDN];
+                                }
+                                if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"1"] || [piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"2"] || [piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"]){
+                                    wp.plotInteriorStat.grade124ValueHa = [wp.plotInteriorStat.grade124ValueHa decimalNumberByAdding:valueHaDN];
+                                    wp.plotInteriorStat.grade124Value = [wp.plotInteriorStat.grade124Value decimalNumberByAdding:valueDN];
+                                    wp.plotInteriorStat.grade124VolumeHa = [wp.plotInteriorStat.grade124VolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                    wp.plotInteriorStat.grade124Volume = [wp.plotInteriorStat.grade124Volume decimalNumberByAdding:pieceVolumeDN];
+                                }
+                                
+                                wp.plotInteriorStat.totalBillValueHa =[wp.plotInteriorStat.totalBillValueHa decimalNumberByAdding:valueHaDN];
+                                wp.plotInteriorStat.totalBillValue =[wp.plotInteriorStat.totalBillValue decimalNumberByAdding:valueDN];
+                                wp.plotInteriorStat.totalBillVolumeHa =[wp.plotInteriorStat.totalBillVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                wp.plotInteriorStat.totalBillVolume = [wp.plotInteriorStat.totalBillVolume decimalNumberByAdding:pieceVolumeDN];
+                            }
                         wp.plotInteriorStat.totalControlVolumeHa =[wp.plotInteriorStat.totalControlVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
                         wp.plotInteriorStat.totalControlVolume =[wp.plotInteriorStat.totalControlVolume decimalNumberByAdding:pieceVolumeDN];
-                    }
+                        }
                     }
                     //Add the values to the stratum level
                     ws.stratumInteriorStat.grade124ValueHa = [ws.stratumInteriorStat.grade124ValueHa decimalNumberByAdding:wp.plotInteriorStat.grade124ValueHa] ;
@@ -1943,1239 +1140,249 @@
         }
 
 
-    }else if([wasteBlock.regionId intValue] == CoastRegion){
-        
-        if(!wasteBlock.blockCoastStat){
-            wasteBlock.blockCoastStat = [WasteBlockDAO createEFWCoastStat ];
-        }else{
-            [self resetEFWCoastStat :wasteBlock.blockCoastStat];
-        }
-        int stratum_counter = 0;
-        for( WasteStratum* ws in wasteBlock.blockStratum){
-            if(!ws.stratumCoastStat){
-                ws.stratumCoastStat = [WasteBlockDAO createEFWCoastStat];
+            }else if([wasteBlock.regionId intValue] == CoastRegion){
+            
+            if(!wasteBlock.blockCoastStat){
+                wasteBlock.blockCoastStat = [WasteBlockDAO createEFWCoastStat ];
             }else{
-                [self resetEFWCoastStat:ws.stratumCoastStat];
+                [self resetEFWCoastStat :wasteBlock.blockCoastStat];
             }
-            if([ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-                if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                    if(ws.strPile != nil){
-                        StratumPile* sp = ws.strPile;
-                        if(!sp.pileCoastStat){
-                            sp.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-                        }else{
-                            [self resetEFWCoastStat:sp.pileCoastStat];
-                        }
-                        
-                        NSDecimalNumber *sumpilearea = nil;
-                        NSDecimalNumber *sumpilevolume = nil;
-                        NSDecimalNumber *sumpileareawoHeBa = nil;
-                        NSDecimalNumber *sumpilevolumewoHeBa = nil;int counter = 0;
-                        NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                        NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                        NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                        NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                        NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                        NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                        NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                        NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                        NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                        NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                        for(WastePile* pile in sp.pileData){
-                            sumpilearea = [[NSDecimalNumber alloc] initWithDouble:[sumpilearea doubleValue] + [pile.measuredPileArea doubleValue]];
-                            sumpilevolume = [[NSDecimalNumber alloc] initWithDouble:[sumpilevolume doubleValue] + [pile.measuredPileVolume doubleValue]];
-                            if(pile.hePercent == 0 || pile.baPercent == 0){
-                                sumpileareawoHeBa = [[NSDecimalNumber alloc] initWithDouble:[sumpileareawoHeBa doubleValue] + [pile.measuredPileArea doubleValue]];
-                                sumpilevolumewoHeBa = [[NSDecimalNumber alloc] initWithDouble:[sumpilevolumewoHeBa doubleValue] + [pile.measuredPileVolume doubleValue]];
-                                counter++;
-                            }
-                            //for avg species calculation
-                            if(pile.alPercent != 0 ){
-                               alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.arPercent != 0 ){
-                               arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.asPercent != 0 ){
-                               asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.baPercent != 0 ){
-                               baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.biPercent != 0 ){
-                               biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.cePercent != 0 ){
-                               ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.coPercent != 0 ){
-                               coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.cyPercent != 0 ){
-                               cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.fiPercent != 0 ){
-                               fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.hePercent != 0 ){
-                               heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.laPercent != 0 ){
-                               laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.loPercent != 0 ){
-                               loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.maPercent != 0 ){
-                               maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.spPercent != 0 ){
-                                spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.uuPercent != 0 ){
-                               uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.wbPercent != 0 ){
-                               wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.whPercent != 0 ){
-                               whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.wiPercent != 0 ){
-                               wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                            if(pile.yePercent != 0 ){
-                               yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                            }
-                        }
-                        avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                        
-                        //grade distribution
-                        NSDecimalNumber *gradeALYW = [[NSDecimalNumber alloc] initWithDouble:[avgAlSpecies doubleValue]];
-                        NSDecimalNumber *gradeARYW = [[NSDecimalNumber alloc] initWithDouble:[avgArSpecies doubleValue]];
-                        NSDecimalNumber *gradeASYW = [[NSDecimalNumber alloc] initWithDouble:[avgAsSpecies doubleValue]];
-                        NSDecimalNumber *gradeBAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgBaSpecies doubleValue]];
-                        NSDecimalNumber *gradeBIYW = [[NSDecimalNumber alloc] initWithDouble:[avgBiSpecies doubleValue]];
-                        NSDecimalNumber *gradeCEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCeSpecies doubleValue]];
-                        NSDecimalNumber *gradeCOYW = [[NSDecimalNumber alloc] initWithDouble:[avgCoSpecies doubleValue]];
-                        NSDecimalNumber *gradeCYJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCySpecies doubleValue]];
-                        NSDecimalNumber *gradeFIJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgFiSpecies doubleValue]];
-                        NSDecimalNumber *gradeHEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgHeSpecies doubleValue]];
-                        NSDecimalNumber *gradeLAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLaSpecies doubleValue]];
-                        NSDecimalNumber *gradeLOJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLoSpecies doubleValue]];
-                        NSDecimalNumber *gradeMAYW = [[NSDecimalNumber alloc] initWithDouble:[avgMaSpecies doubleValue]];
-                        NSDecimalNumber *gradeSPJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgSpSpecies doubleValue]];
-                        NSDecimalNumber *gradeUUYW = [[NSDecimalNumber alloc] initWithDouble:[avgUuSpecies doubleValue]];
-                        NSDecimalNumber *gradeWBJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWbSpecies doubleValue]];
-                        NSDecimalNumber *gradeWHJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWhSpecies doubleValue]];
-                        NSDecimalNumber *gradeWIYW = [[NSDecimalNumber alloc] initWithDouble:[avgWiSpecies doubleValue]];
-                        NSDecimalNumber *gradeYEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgYeSpecies doubleValue]];
-                        NSDecimalNumber *totalJUX = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue]];
-                        NSDecimalNumber *totalY = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue] + [gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                        NSDecimalNumber *totalW = [[NSDecimalNumber alloc] initWithDouble:[gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                        //NSLog(@"Total grade jux %@, total grade Y %@, grade w %@", totalJUX, totalY, totalW);
-                        
-                        NSDecimalNumber *averagePileArea = [[NSDecimalNumber alloc] initWithDouble:(([sumpilearea doubleValue]/[sp.pileData count])/10000) * [ws.totalNumPile doubleValue]] ;
-                        NSDecimalNumber *measuredPileVolume = [[NSDecimalNumber alloc] initWithDouble: [sumpilevolume doubleValue]] ;
-                        NSDecimalNumber *averageVolPerPile = [[NSDecimalNumber alloc] initWithDouble:[measuredPileVolume doubleValue] / [ws.measureSample doubleValue]] ;
-                        NSDecimalNumber *totalPileVol = [[NSDecimalNumber alloc] initWithDouble:[averageVolPerPile doubleValue] * [ws.totalNumPile doubleValue]] ;
-                        NSDecimalNumber *averagePileAreawoHeBa = [[NSDecimalNumber alloc] initWithDouble:(([sumpileareawoHeBa doubleValue]/counter)/10000) * [ws.totalNumPile doubleValue]] ;
-                        NSDecimalNumber *measuredPileVolumewoHeBa = [[NSDecimalNumber alloc] initWithDouble: [sumpilevolumewoHeBa doubleValue]] ;
-                        NSDecimalNumber *averageVolPerPilewoHeBa = [[NSDecimalNumber alloc] initWithDouble:[measuredPileVolumewoHeBa doubleValue] / [ws.measureSample doubleValue]] ;
-                        NSDecimalNumber *totalPileVolwoHeBa = [[NSDecimalNumber alloc] initWithDouble:[averageVolPerPilewoHeBa doubleValue] * [ws.totalNumPile doubleValue]] ;
-                        //packing ratio
-                        NSDecimalNumber *prGradeJ = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeJPercent doubleValue])/100] ;
-                        NSDecimalNumber *prGradeU = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                        NSDecimalNumber *prGradeUwoHB = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolwoHeBa doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                        NSDecimalNumber *prGradeW = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeWPercent doubleValue])/100] ;
-                        NSDecimalNumber *prGradeX = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeXPercent doubleValue])/100] ;
-                        NSDecimalNumber *prGradeY = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeYPercent doubleValue])/100] ;
-                        //NSLog(@"averagepilearea %@, measuredpilevol %@, averagevolperpile %@, totalpilevol %@", averagePileArea, measuredPileVolume, averageVolPerPile, totalPileVol);
-                        //NSLog(@"prgardeJ %@, prgradeU %@, prgradeW %@, prgradeX %@, prgradeY %@", prGradeJ, prGradeU, prGradeW, prGradeX, prGradeY);
-                        if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                            if( isnan([averagePileArea floatValue])) averagePileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                            ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[averagePileArea doubleValue]];
-                        }
-                        //Volume by species and grade.
-                        //GradeJ
-                        NSDecimalNumber *volAlGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAlSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volArGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgArSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volAsGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAsSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volBaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBaSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volBiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBiSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volCeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCeSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volCoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCoSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volCyGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCySpecies doubleValue])/100] ;
-                        NSDecimalNumber *volFiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgFiSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volHeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgHeSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volLaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLaSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volLoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLoSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volMaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgMaSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volSpGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgSpSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volUuGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgUuSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volWbGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWbSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volWhGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWhSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volWiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWiSpecies doubleValue])/100] ;
-                        NSDecimalNumber *volYeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgYeSpecies doubleValue])/100] ;
+            int stratum_counter = 0;
+                for( WasteStratum* ws in wasteBlock.blockStratum){
+                    if(!ws.stratumCoastStat){
+                        ws.stratumCoastStat = [WasteBlockDAO createEFWCoastStat];
+                    }else{
+                        [self resetEFWCoastStat:ws.stratumCoastStat];
+                    }
+                    // skip calculations if packing ratio stratum
+                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]) {
+                        [self resetEFWCoastStat:ws.stratumCoastStat];
+                    } else {
 
-                        //calculation at the footer. Volume(m3) column
-                        sp.pileCoastStat.gradeYVolume = prGradeY;
-                        sp.pileCoastStat.gradeXHBVolume = prGradeX;
-                        sp.pileCoastStat.gradeUHBVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeJVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGradeJ doubleValue] + [prGradeW doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //volume (m3/ha)
-                        sp.pileCoastStat.gradeJVolumeHa = [[sp.pileCoastStat.gradeJVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUHBVolumeHa = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUVolumeHa = [[sp.pileCoastStat.gradeUVolume decimalNumberByDividingBy:averagePileAreawoHeBa] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeXHBVolumeHa = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeYVolumeHa = [[sp.pileCoastStat.gradeYVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalBillVolumeHa = [[sp.pileCoastStat.totalBillVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalControlVolumeHa = [[sp.pileCoastStat.totalControlVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($)
-                        if(timbermark){
-                            sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:timbermark.yWMRF?timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:timbermark.xWMRF? timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeJValue = [[[NSDecimalNumber alloc] initWithDouble:((((([gradeASYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeALYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeARYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeBIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeCOYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeMAYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeWIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])+(([gradeUUYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])) * [timbermark.deciduousWMRF doubleValue]) + (((([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue] +([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])) * [timbermark.coniferWMRF doubleValue])) ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        }else{
-                            sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeJValue = [[NSDecimalNumber alloc] initWithDouble:((([volAlGradeJ doubleValue] + [volArGradeJ doubleValue] + [volAsGradeJ doubleValue] + [volBiGradeJ doubleValue] + [volCoGradeJ doubleValue] + [volMaGradeJ doubleValue] + [volWiGradeJ doubleValue] + [volYeGradeJ doubleValue]) * (0.0)) + (([volBaGradeJ doubleValue]  + [volCeGradeJ doubleValue]  + [volCyGradeJ doubleValue] + [volFiGradeJ doubleValue] + [volHeGradeJ doubleValue] + [volLaGradeJ doubleValue] + [volLoGradeJ doubleValue] + [volSpGradeJ doubleValue] + [volUuGradeJ doubleValue] + [volWbGradeJ doubleValue] + [volWhGradeJ doubleValue] ) * (0.0)))];
-                        }
-                        sp.pileCoastStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] + [sp.pileCoastStat.gradeUHBValue doubleValue] + [sp.pileCoastStat.gradeUValue doubleValue] + [sp.pileCoastStat.gradeXHBValue doubleValue] + [sp.pileCoastStat.gradeYValue doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($/ha)
-                        sp.pileCoastStat.gradeJValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUHBValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUValue doubleValue] / [averagePileAreawoHeBa doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeXHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeXHBValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeYValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeYValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.totalBillValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        
-                        //Add the values to the stratum level
-                        ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByAdding:sp.pileCoastStat.gradeJValueHa] ;
-                        ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeJVolumeHa];
-                        ws.stratumCoastStat.gradeJVolume = [ws.stratumCoastStat.gradeJVolume decimalNumberByAdding:sp.pileCoastStat.gradeJVolume];
-                        ws.stratumCoastStat.gradeJValue = [ws.stratumCoastStat.gradeJValue decimalNumberByAdding:sp.pileCoastStat.gradeJValue];
-                        ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBValueHa];
-                        ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolumeHa];
-                        ws.stratumCoastStat.gradeUHBValue = [ws.stratumCoastStat.gradeUHBValue decimalNumberByAdding:sp.pileCoastStat.gradeUHBValue];
-                        ws.stratumCoastStat.gradeUHBVolume = [ws.stratumCoastStat.gradeUHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolume];
-                        ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUValueHa];
-                        ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUVolumeHa];
-                        ws.stratumCoastStat.gradeUValue = [ws.stratumCoastStat.gradeUValue decimalNumberByAdding:sp.pileCoastStat.gradeUValue];
-                        ws.stratumCoastStat.gradeUVolume = [ws.stratumCoastStat.gradeUVolume decimalNumberByAdding:sp.pileCoastStat.gradeUVolume];
-                        ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBValueHa];
-                        ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolumeHa];
-                        ws.stratumCoastStat.gradeXHBValue = [ws.stratumCoastStat.gradeXHBValue decimalNumberByAdding:sp.pileCoastStat.gradeXHBValue];
-                        ws.stratumCoastStat.gradeXHBVolume = [ws.stratumCoastStat.gradeXHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolume];
-                        ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByAdding:sp.pileCoastStat.gradeYValueHa];
-                        ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeYVolumeHa];
-                        ws.stratumCoastStat.gradeYValue = [ws.stratumCoastStat.gradeYValue decimalNumberByAdding:sp.pileCoastStat.gradeYValue];
-                        ws.stratumCoastStat.gradeYVolume = [ws.stratumCoastStat.gradeYVolume decimalNumberByAdding:sp.pileCoastStat.gradeYVolume];
-                        ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByAdding:sp.pileCoastStat.totalBillValueHa];
-                        ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalBillVolumeHa];
-                        ws.stratumCoastStat.totalBillValue = [ws.stratumCoastStat.totalBillValue decimalNumberByAdding:sp.pileCoastStat.totalBillValue];
-                        ws.stratumCoastStat.totalBillVolume = [ws.stratumCoastStat.totalBillVolume decimalNumberByAdding:sp.pileCoastStat.totalBillVolume];
-                        ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalControlVolumeHa];
-                        ws.stratumCoastStat.totalControlVolume = [ws.stratumCoastStat.totalControlVolume decimalNumberByAdding:sp.pileCoastStat.totalControlVolume];
-                    }else if (ws.stratumAgg != nil){
-                        for(AggregateCutblock* aggCB in ws.stratumAgg){
-                            StratumPile* sp = aggCB.aggPile;
-                            if([sp.pileData count] > 0){
-                             if(!sp.pileCoastStat){
-                                 sp.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-                             }else{
-                                 [self resetEFWCoastStat:sp.pileCoastStat];
-                             }
-                             
-                             NSDecimalNumber *sumpilearea = nil;
-                            NSDecimalNumber *sumpilevolume = nil;NSDecimalNumber *sumpileareawoHeBa = nil;NSDecimalNumber *sumpilevolumewoHeBa = nil;int counter = 0;
-                             NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                             NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                             NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                             NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                             NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                             NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                             NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                             NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                             NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                             NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                             for(WastePile* pile in sp.pileData){
-                                 sumpilearea = [[NSDecimalNumber alloc] initWithDouble:[sumpilearea doubleValue] + [pile.measuredPileArea doubleValue]];
-                                 sumpilevolume = [[NSDecimalNumber alloc] initWithDouble:[sumpilevolume doubleValue] + [pile.measuredPileVolume doubleValue]];
-                                 if(pile.hePercent == 0 || pile.baPercent == 0){
-                                     sumpileareawoHeBa = [[NSDecimalNumber alloc] initWithDouble:[sumpileareawoHeBa doubleValue] + [pile.measuredPileArea doubleValue]];
-                                     sumpilevolumewoHeBa = [[NSDecimalNumber alloc] initWithDouble:[sumpilevolumewoHeBa doubleValue] + [pile.measuredPileVolume doubleValue]];
-                                     counter++;
-                                 }
-                                 //for avg species calculation
-                                 if(pile.alPercent != 0 ){
-                                    alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.arPercent != 0 ){
-                                    arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.asPercent != 0 ){
-                                    asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.baPercent != 0 ){
-                                    baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.biPercent != 0 ){
-                                    biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.cePercent != 0 ){
-                                    ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.coPercent != 0 ){
-                                    coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.cyPercent != 0 ){
-                                    cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.fiPercent != 0 ){
-                                    fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.hePercent != 0 ){
-                                    heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.laPercent != 0 ){
-                                    laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.loPercent != 0 ){
-                                    loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.maPercent != 0 ){
-                                    maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.spPercent != 0 ){
-                                     spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.uuPercent != 0 ){
-                                    uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.wbPercent != 0 ){
-                                    wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.whPercent != 0 ){
-                                    whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.wiPercent != 0 ){
-                                    wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                                 if(pile.yePercent != 0 ){
-                                    yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                 }
-                             }
-                             avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                             avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumpilevolume doubleValue]] ;
-                            
-                            //grade distribution
-                            NSDecimalNumber *gradeALYW = [[NSDecimalNumber alloc] initWithDouble:[avgAlSpecies doubleValue]];
-                            NSDecimalNumber *gradeARYW = [[NSDecimalNumber alloc] initWithDouble:[avgArSpecies doubleValue]];
-                            NSDecimalNumber *gradeASYW = [[NSDecimalNumber alloc] initWithDouble:[avgAsSpecies doubleValue]];
-                            NSDecimalNumber *gradeBAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgBaSpecies doubleValue]];
-                            NSDecimalNumber *gradeBIYW = [[NSDecimalNumber alloc] initWithDouble:[avgBiSpecies doubleValue]];
-                            NSDecimalNumber *gradeCEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCeSpecies doubleValue]];
-                            NSDecimalNumber *gradeCOYW = [[NSDecimalNumber alloc] initWithDouble:[avgCoSpecies doubleValue]];
-                            NSDecimalNumber *gradeCYJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCySpecies doubleValue]];
-                            NSDecimalNumber *gradeFIJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgFiSpecies doubleValue]];
-                            NSDecimalNumber *gradeHEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgHeSpecies doubleValue]];
-                            NSDecimalNumber *gradeLAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLaSpecies doubleValue]];
-                            NSDecimalNumber *gradeLOJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLoSpecies doubleValue]];
-                            NSDecimalNumber *gradeMAYW = [[NSDecimalNumber alloc] initWithDouble:[avgMaSpecies doubleValue]];
-                            NSDecimalNumber *gradeSPJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgSpSpecies doubleValue]];
-                            NSDecimalNumber *gradeUUYW = [[NSDecimalNumber alloc] initWithDouble:[avgUuSpecies doubleValue]];
-                            NSDecimalNumber *gradeWBJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWbSpecies doubleValue]];
-                            NSDecimalNumber *gradeWHJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWhSpecies doubleValue]];
-                            NSDecimalNumber *gradeWIYW = [[NSDecimalNumber alloc] initWithDouble:[avgWiSpecies doubleValue]];
-                            NSDecimalNumber *gradeYEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgYeSpecies doubleValue]];
-                            NSDecimalNumber *totalJUX = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue]];
-                            NSDecimalNumber *totalY = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue] + [gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                            NSDecimalNumber *totalW = [[NSDecimalNumber alloc] initWithDouble:[gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                            //NSLog(@"Total grade jux %@, total grade Y %@, grade w %@", totalJUX, totalY, totalW);
-                             
-                             NSDecimalNumber *averagePileArea = [[NSDecimalNumber alloc] initWithDouble:(([sumpilearea doubleValue]/[sp.pileData count])/10000) * [aggCB.totalNumPile doubleValue]] ;
-                             NSDecimalNumber *measuredPileVolume = [[NSDecimalNumber alloc] initWithDouble: [sumpilevolume doubleValue]] ;
-                             NSDecimalNumber *averageVolPerPile = [[NSDecimalNumber alloc] initWithDouble:[measuredPileVolume doubleValue] / [aggCB.measureSample doubleValue]] ;
-                             NSDecimalNumber *totalPileVol = [[NSDecimalNumber alloc] initWithDouble:[averageVolPerPile doubleValue] * [aggCB.totalNumPile doubleValue]] ;
-                            NSDecimalNumber *averagePileAreawoHB = [[NSDecimalNumber alloc] initWithDouble:(([sumpileareawoHeBa doubleValue]/counter)/10000) * [aggCB.totalNumPile doubleValue]] ;
-                            NSDecimalNumber *measuredPileVolumewoHB = [[NSDecimalNumber alloc] initWithDouble: [sumpilevolumewoHeBa doubleValue]] ;
-                            NSDecimalNumber *averageVolPerPilewoHB = [[NSDecimalNumber alloc] initWithDouble:[measuredPileVolumewoHB doubleValue] / [aggCB.measureSample doubleValue]] ;
-                            NSDecimalNumber *totalPileVolwoHB = [[NSDecimalNumber alloc] initWithDouble:[averageVolPerPilewoHB doubleValue] * [aggCB.totalNumPile doubleValue]] ;
-                             //packing ratio
-                              NSDecimalNumber *prGradeJ = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeJPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeU = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeUwoHB = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolwoHB doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeW = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeWPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeX = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeXPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeY = [[NSDecimalNumber alloc] initWithDouble:([totalPileVol doubleValue] * [ws.gradeYPercent doubleValue])/100] ;
-                             // NSLog(@"averagepilearea %@, measuredpilevol %@, averagevolperpile %@, totalpilevol %@", averagePileArea, measuredPileVolume, averageVolPerPile, totalPileVol);
-                              //NSLog(@"prgardeJ %@, prgradeU %@, prgradeW %@, prgradeX %@, prgradeY %@", prGradeJ, prGradeU, prGradeW, prGradeX, prGradeY);
-                                if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                                    if( isnan([averagePileArea floatValue])) averagePileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                                    ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[averagePileArea doubleValue]];
-                                }
-                              //Volume by species and grade.
-                              //GradeJ
-                              NSDecimalNumber *volAlGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAlSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volArGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgArSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volAsGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAsSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volBaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBaSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volBiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBiSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volCeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCeSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volCoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCoSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volCyGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCySpecies doubleValue])/100] ;
-                              NSDecimalNumber *volFiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgFiSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volHeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgHeSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volLaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLaSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volLoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLoSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volMaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgMaSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volSpGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgSpSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volUuGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgUuSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volWbGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWbSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volWhGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWhSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volWiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWiSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volYeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgYeSpecies doubleValue])/100] ;
-
-                              //calculation at the footer. Volume(m3) column
-                              sp.pileCoastStat.gradeYVolume = prGradeY;
-                              sp.pileCoastStat.gradeXHBVolume = prGradeX;
-                              sp.pileCoastStat.gradeUHBVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeUVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeJVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGradeJ doubleValue] + [prGradeW doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              //volume (m3/ha)
-                              sp.pileCoastStat.gradeJVolumeHa = [[sp.pileCoastStat.gradeJVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeUHBVolumeHa = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeUVolumeHa = [[sp.pileCoastStat.gradeUVolume decimalNumberByDividingBy:averagePileAreawoHB] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeXHBVolumeHa = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeYVolumeHa = [[sp.pileCoastStat.gradeYVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.totalBillVolumeHa = [[sp.pileCoastStat.totalBillVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.totalControlVolumeHa = [[sp.pileCoastStat.totalControlVolume decimalNumberByDividingBy:averagePileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              //value($)
-                            if(timbermark){
-                                  sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:timbermark.yWMRF?timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                  sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:timbermark.xWMRF? timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                  sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                  sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                  sp.pileCoastStat.gradeJValue = [[[NSDecimalNumber alloc] initWithDouble:((((([gradeASYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeALYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeARYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeBIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeCOYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeMAYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeWIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])+(([gradeUUYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])) * [timbermark.deciduousWMRF doubleValue]) + (((([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue] +([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])) * [timbermark.coniferWMRF doubleValue])) ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                        int plot_counter = 0;
+                        for(WastePlot* wp in ws.stratumPlot){
+                            if(!wp.plotCoastStat){
+                                wp.plotCoastStat = [WasteBlockDAO createEFWCoastStat];
                             }else{
-                                sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeJValue = [[NSDecimalNumber alloc] initWithDouble:((([volAlGradeJ doubleValue] + [volArGradeJ doubleValue] + [volAsGradeJ doubleValue] + [volBiGradeJ doubleValue] + [volCoGradeJ doubleValue] + [volMaGradeJ doubleValue] + [volWiGradeJ doubleValue] + [volYeGradeJ doubleValue]) * (0.0)) + (([volBaGradeJ doubleValue]  + [volCeGradeJ doubleValue]  + [volCyGradeJ doubleValue] + [volFiGradeJ doubleValue] + [volHeGradeJ doubleValue] + [volLaGradeJ doubleValue] + [volLoGradeJ doubleValue] + [volSpGradeJ doubleValue] + [volUuGradeJ doubleValue] + [volWbGradeJ doubleValue] + [volWhGradeJ doubleValue] ) * (0.0)))];
+                                [self resetEFWCoastStat:wp.plotCoastStat];
                             }
-                              sp.pileCoastStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] + [sp.pileCoastStat.gradeUHBValue doubleValue] + [sp.pileCoastStat.gradeUValue doubleValue] + [sp.pileCoastStat.gradeXHBValue doubleValue] + [sp.pileCoastStat.gradeYValue doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              //value($/ha)
-                              sp.pileCoastStat.gradeJValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeUHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUHBValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeUValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUValue doubleValue] / [averagePileAreawoHB doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeXHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeXHBValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.gradeYValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeYValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              sp.pileCoastStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.totalBillValue doubleValue] / [averagePileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                              
-                              //Add the values to the stratum level
-                              ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByAdding:sp.pileCoastStat.gradeJValueHa] ;
-                              ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeJVolumeHa];
-                              ws.stratumCoastStat.gradeJVolume = [ws.stratumCoastStat.gradeJVolume decimalNumberByAdding:sp.pileCoastStat.gradeJVolume];
-                              ws.stratumCoastStat.gradeJValue = [ws.stratumCoastStat.gradeJValue decimalNumberByAdding:sp.pileCoastStat.gradeJValue];
-                              ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBValueHa];
-                              ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolumeHa];
-                              ws.stratumCoastStat.gradeUHBValue = [ws.stratumCoastStat.gradeUHBValue decimalNumberByAdding:sp.pileCoastStat.gradeUHBValue];
-                              ws.stratumCoastStat.gradeUHBVolume = [ws.stratumCoastStat.gradeUHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolume];
-                              ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUValueHa];
-                              ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUVolumeHa];
-                              ws.stratumCoastStat.gradeUValue = [ws.stratumCoastStat.gradeUValue decimalNumberByAdding:sp.pileCoastStat.gradeUValue];
-                              ws.stratumCoastStat.gradeUVolume = [ws.stratumCoastStat.gradeUVolume decimalNumberByAdding:sp.pileCoastStat.gradeUVolume];
-                              ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBValueHa];
-                              ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolumeHa];
-                              ws.stratumCoastStat.gradeXHBValue = [ws.stratumCoastStat.gradeXHBValue decimalNumberByAdding:sp.pileCoastStat.gradeXHBValue];
-                              ws.stratumCoastStat.gradeXHBVolume = [ws.stratumCoastStat.gradeXHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolume];
-                              ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByAdding:sp.pileCoastStat.gradeYValueHa];
-                              ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeYVolumeHa];
-                              ws.stratumCoastStat.gradeYValue = [ws.stratumCoastStat.gradeYValue decimalNumberByAdding:sp.pileCoastStat.gradeYValue];
-                              ws.stratumCoastStat.gradeYVolume = [ws.stratumCoastStat.gradeYVolume decimalNumberByAdding:sp.pileCoastStat.gradeYVolume];
-                              ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByAdding:sp.pileCoastStat.totalBillValueHa];
-                              ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalBillVolumeHa];
-                              ws.stratumCoastStat.totalBillValue = [ws.stratumCoastStat.totalBillValue decimalNumberByAdding:sp.pileCoastStat.totalBillValue];
-                              ws.stratumCoastStat.totalBillVolume = [ws.stratumCoastStat.totalBillVolume decimalNumberByAdding:sp.pileCoastStat.totalBillVolume];
-                              ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalControlVolumeHa];
-                              ws.stratumCoastStat.totalControlVolume = [ws.stratumCoastStat.totalControlVolume decimalNumberByAdding:sp.pileCoastStat.totalControlVolume];
-                            }
-                        }
-                    }
-                }else{
-                    if(ws.strPile != nil){
-                        StratumPile* sp = ws.strPile;
-                        if(!sp.pileCoastStat){
-                            sp.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-                        }else{
-                            [self resetEFWCoastStat:sp.pileCoastStat];
-                        }
-                        
-                        NSDecimalNumber *summ2estsample = nil;NSDecimalNumber *summ2meassample = nil;NSDecimalNumber *totalestm2 = nil;NSDecimalNumber *totalPredPileVolume = nil;
-                        NSDecimalNumber *sumPredVol = nil;NSDecimalNumber *sumMeasVolume = nil;NSDecimalNumber *summ2estsamplewoHB = nil;NSDecimalNumber *sumPredVolwoHB = nil;
-                        NSDecimalNumber *summ2meassamplewoHB = nil;NSDecimalNumber *totalestm2woHB = nil; NSDecimalNumber *totalPredPileVolumewoHB = nil;NSDecimalNumber *sumMeasVolumewoHB = nil;
-                        NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                        NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                        NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                        NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                        NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                        NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                        NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                        NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                        NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                        NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                        for(WastePile* pile in sp.pileData){
-                            if([pile.isSample intValue] == [[[NSNumber alloc] initWithBool:TRUE]intValue]){
-                                summ2estsample = [[NSDecimalNumber alloc] initWithDouble:[summ2estsample doubleValue] + [pile.pileArea doubleValue]] ;
-                                sumPredVol = [[NSDecimalNumber alloc] initWithDouble:[sumPredVol doubleValue] + [pile.pileVolume doubleValue]] ;
-                                if(pile.hePercent == 0 || pile.baPercent == 0){
-                                    summ2estsamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2estsamplewoHB doubleValue] + [pile.measuredPileArea doubleValue]];
-                                    sumPredVolwoHB = [[NSDecimalNumber alloc] initWithDouble:[sumPredVolwoHB doubleValue] + [pile.measuredPileVolume doubleValue]];
-                                    summ2meassamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2meassamplewoHB doubleValue] + [pile.measuredPileArea doubleValue]] ;
-                                    totalestm2woHB = [[NSDecimalNumber alloc] initWithDouble:[totalestm2woHB doubleValue] + [pile.pileArea doubleValue]] ;
-                                    totalPredPileVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolumewoHB doubleValue] + [pile.pileVolume doubleValue]] ;
-                                    sumMeasVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolumewoHB doubleValue] + [pile.measuredPileVolume doubleValue]] ;
-                                }
-                                //for avg species calculation
-                                if(pile.alPercent != 0 ){
-                                   alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.arPercent != 0 ){
-                                   arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.asPercent != 0 ){
-                                   asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.baPercent != 0 ){
-                                   baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.biPercent != 0 ){
-                                   biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.cePercent != 0 ){
-                                   ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.coPercent != 0 ){
-                                   coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.cyPercent != 0 ){
-                                   cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.fiPercent != 0 ){
-                                   fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.hePercent != 0 ){
-                                   heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.laPercent != 0 ){
-                                   laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.loPercent != 0 ){
-                                   loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.maPercent != 0 ){
-                                   maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.spPercent != 0 ){
-                                    spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.uuPercent != 0 ){
-                                   uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.wbPercent != 0 ){
-                                   wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.whPercent != 0 ){
-                                   whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.wiPercent != 0 ){
-                                   wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                                if(pile.yePercent != 0 ){
-                                   yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                }
-                            }
-                            summ2meassample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] + [pile.measuredPileArea doubleValue]] ;
-                            totalestm2 = [[NSDecimalNumber alloc] initWithDouble:[totalestm2 doubleValue] + [pile.pileArea doubleValue]] ;
-                            totalPredPileVolume = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolume doubleValue] + [pile.pileVolume doubleValue]] ;
-                            sumMeasVolume = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] + [pile.measuredPileVolume doubleValue]] ;
-                        }
-                        avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                        
-                        //grade distribution
-                        NSDecimalNumber *gradeALYW = [[NSDecimalNumber alloc] initWithDouble:[avgAlSpecies doubleValue]];
-                        NSDecimalNumber *gradeARYW = [[NSDecimalNumber alloc] initWithDouble:[avgArSpecies doubleValue]];
-                        NSDecimalNumber *gradeASYW = [[NSDecimalNumber alloc] initWithDouble:[avgAsSpecies doubleValue]];
-                        NSDecimalNumber *gradeBAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgBaSpecies doubleValue]];
-                        NSDecimalNumber *gradeBIYW = [[NSDecimalNumber alloc] initWithDouble:[avgBiSpecies doubleValue]];
-                        NSDecimalNumber *gradeCEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCeSpecies doubleValue]];
-                        NSDecimalNumber *gradeCOYW = [[NSDecimalNumber alloc] initWithDouble:[avgCoSpecies doubleValue]];
-                        NSDecimalNumber *gradeCYJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCySpecies doubleValue]];
-                        NSDecimalNumber *gradeFIJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgFiSpecies doubleValue]];
-                        NSDecimalNumber *gradeHEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgHeSpecies doubleValue]];
-                        NSDecimalNumber *gradeLAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLaSpecies doubleValue]];
-                        NSDecimalNumber *gradeLOJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLoSpecies doubleValue]];
-                        NSDecimalNumber *gradeMAYW = [[NSDecimalNumber alloc] initWithDouble:[avgMaSpecies doubleValue]];
-                        NSDecimalNumber *gradeSPJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgSpSpecies doubleValue]];
-                        NSDecimalNumber *gradeUUYW = [[NSDecimalNumber alloc] initWithDouble:[avgUuSpecies doubleValue]];
-                        NSDecimalNumber *gradeWBJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWbSpecies doubleValue]];
-                        NSDecimalNumber *gradeWHJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWhSpecies doubleValue]];
-                        NSDecimalNumber *gradeWIYW = [[NSDecimalNumber alloc] initWithDouble:[avgWiSpecies doubleValue]];
-                        NSDecimalNumber *gradeYEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgYeSpecies doubleValue]];
-                        NSDecimalNumber *totalJUX = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue]];
-                        NSDecimalNumber *totalY = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue] + [gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                        NSDecimalNumber *totalW = [[NSDecimalNumber alloc] initWithDouble:[gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                        //NSLog(@"Total grade jux %@, total grade Y %@, grade w %@", totalJUX, totalY, totalW);
-                        
-                        NSDecimalNumber *ratioSample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] / [summ2estsample doubleValue]] ;
-                        NSDecimalNumber *avgPileArea = [[NSDecimalNumber alloc] initWithDouble:([ratioSample doubleValue] * [totalestm2 doubleValue])/10000] ;
-                        NSDecimalNumber *ratio = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] / [sumPredVol doubleValue]] ;
-                        NSDecimalNumber *totalPileVolume = [[NSDecimalNumber alloc] initWithDouble:[ratio doubleValue] * [totalPredPileVolume doubleValue]] ;
-                        NSDecimalNumber *ratioSamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2meassamplewoHB doubleValue] / [summ2estsamplewoHB doubleValue]] ;
-                        NSDecimalNumber *avgPileAreawoHB = [[NSDecimalNumber alloc] initWithDouble:([ratioSamplewoHB doubleValue] * [totalestm2woHB doubleValue])/10000] ;
-                        NSDecimalNumber *ratiowoHB = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolumewoHB doubleValue] / [sumPredVolwoHB doubleValue]] ;
-                        NSDecimalNumber *totalPileVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[ratiowoHB doubleValue] * [totalPredPileVolumewoHB doubleValue]] ;
-                        //Packing ratio
-                         NSDecimalNumber *prGradeJ = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeJPercent doubleValue])/100] ;
-                         NSDecimalNumber *prGradeU = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                         NSDecimalNumber *prGradeUwoHB = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolumewoHB doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                         NSDecimalNumber *prGradeW = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeWPercent doubleValue])/100] ;
-                         NSDecimalNumber *prGradeX = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeXPercent doubleValue])/100] ;
-                         NSDecimalNumber *prGradeY = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeYPercent doubleValue])/100] ;
-                        // NSLog(@"averagepilearea %@, measuredpilevol %@, averagevolperpile %@, totalpilevol %@", averagePileArea, measuredPileVolume, averageVolPerPile, totalPileVol);
-                         //NSLog(@"prgardeJ %@, prgradeU %@, prgradeW %@, prgradeX %@, prgradeY %@", prGradeJ, prGradeU, prGradeW, prGradeX, prGradeY);
-                        if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                            if( isnan([avgPileArea floatValue])) avgPileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                            ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[avgPileArea doubleValue]];
-                        }
-                         //Volume by species and grade.
-                         //GradeJ
-                         NSDecimalNumber *volAlGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAlSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volArGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgArSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volAsGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAsSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volBaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBaSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volBiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBiSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volCeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCeSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volCoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCoSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volCyGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCySpecies doubleValue])/100] ;
-                         NSDecimalNumber *volFiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgFiSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volHeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgHeSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volLaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLaSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volLoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLoSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volMaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgMaSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volSpGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgSpSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volUuGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgUuSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volWbGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWbSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volWhGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWhSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volWiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWiSpecies doubleValue])/100] ;
-                         NSDecimalNumber *volYeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgYeSpecies doubleValue])/100] ;
-                        //calculation at the footer. Volume(m3) column
-                        sp.pileCoastStat.gradeYVolume = prGradeY;
-                        sp.pileCoastStat.gradeXHBVolume = prGradeX;
-                        sp.pileCoastStat.gradeUHBVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeJVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGradeJ doubleValue] + [prGradeW doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //volume (m3/ha)
-                        sp.pileCoastStat.gradeJVolumeHa = [[sp.pileCoastStat.gradeJVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUHBVolumeHa = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUVolumeHa = [[sp.pileCoastStat.gradeUVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeXHBVolumeHa = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeYVolumeHa = [[sp.pileCoastStat.gradeYVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalBillVolumeHa = [[sp.pileCoastStat.totalBillVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalControlVolumeHa = [[sp.pileCoastStat.totalControlVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($)
-                        if(timbermark){
-                            sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:timbermark.yWMRF?timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:timbermark.xWMRF? timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeJValue = [[[NSDecimalNumber alloc] initWithDouble:((((([gradeASYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeALYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeARYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeBIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeCOYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeMAYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeWIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])+(([gradeUUYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])) * [timbermark.deciduousWMRF doubleValue]) + (((([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue] +([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])) * [timbermark.coniferWMRF doubleValue])) ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        }else{
-                            sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            sp.pileCoastStat.gradeJValue = [[NSDecimalNumber alloc] initWithDouble:((([volAlGradeJ doubleValue] + [volArGradeJ doubleValue] + [volAsGradeJ doubleValue] + [volBiGradeJ doubleValue] + [volCoGradeJ doubleValue] + [volMaGradeJ doubleValue] + [volWiGradeJ doubleValue] + [volYeGradeJ doubleValue]) * (0.0)) + (([volBaGradeJ doubleValue]  + [volCeGradeJ doubleValue]  + [volCyGradeJ doubleValue] + [volFiGradeJ doubleValue] + [volHeGradeJ doubleValue] + [volLaGradeJ doubleValue] + [volLoGradeJ doubleValue] + [volSpGradeJ doubleValue] + [volUuGradeJ doubleValue] + [volWbGradeJ doubleValue] + [volWhGradeJ doubleValue] ) * (0.0)))];
-                        }
-                        sp.pileCoastStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] + [sp.pileCoastStat.gradeUHBValue doubleValue] + [sp.pileCoastStat.gradeUValue doubleValue] + [sp.pileCoastStat.gradeXHBValue doubleValue] + [sp.pileCoastStat.gradeYValue doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //value($/ha)
-                        sp.pileCoastStat.gradeJValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUHBValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeUValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeXHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeXHBValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.gradeYValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeYValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        sp.pileCoastStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.totalBillValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        //Add the values to the stratum level
-                        ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByAdding:sp.pileCoastStat.gradeJValueHa] ;
-                        ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeJVolumeHa];
-                        ws.stratumCoastStat.gradeJVolume = [ws.stratumCoastStat.gradeJVolume decimalNumberByAdding:sp.pileCoastStat.gradeJVolume];
-                        ws.stratumCoastStat.gradeJValue = [ws.stratumCoastStat.gradeJValue decimalNumberByAdding:sp.pileCoastStat.gradeJValue];
-                        ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBValueHa];
-                        ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolumeHa];
-                        ws.stratumCoastStat.gradeUHBValue = [ws.stratumCoastStat.gradeUHBValue decimalNumberByAdding:sp.pileCoastStat.gradeUHBValue];
-                        ws.stratumCoastStat.gradeUHBVolume = [ws.stratumCoastStat.gradeUHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolume];
-                        ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUValueHa];
-                        ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUVolumeHa];
-                        ws.stratumCoastStat.gradeUValue = [ws.stratumCoastStat.gradeUValue decimalNumberByAdding:sp.pileCoastStat.gradeUValue];
-                        ws.stratumCoastStat.gradeUVolume = [ws.stratumCoastStat.gradeUVolume decimalNumberByAdding:sp.pileCoastStat.gradeUVolume];
-                        ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBValueHa];
-                        ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolumeHa];
-                        ws.stratumCoastStat.gradeXHBValue = [ws.stratumCoastStat.gradeXHBValue decimalNumberByAdding:sp.pileCoastStat.gradeXHBValue];
-                        ws.stratumCoastStat.gradeXHBVolume = [ws.stratumCoastStat.gradeXHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolume];
-                        ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByAdding:sp.pileCoastStat.gradeYValueHa];
-                        ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeYVolumeHa];
-                        ws.stratumCoastStat.gradeYValue = [ws.stratumCoastStat.gradeYValue decimalNumberByAdding:sp.pileCoastStat.gradeYValue];
-                        ws.stratumCoastStat.gradeYVolume = [ws.stratumCoastStat.gradeYVolume decimalNumberByAdding:sp.pileCoastStat.gradeYVolume];
-                        ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByAdding:sp.pileCoastStat.totalBillValueHa];
-                        ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalBillVolumeHa];
-                        ws.stratumCoastStat.totalBillValue = [ws.stratumCoastStat.totalBillValue decimalNumberByAdding:sp.pileCoastStat.totalBillValue];
-                        ws.stratumCoastStat.totalBillVolume = [ws.stratumCoastStat.totalBillVolume decimalNumberByAdding:sp.pileCoastStat.totalBillVolume];
-                        ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalControlVolumeHa];
-                        ws.stratumCoastStat.totalControlVolume = [ws.stratumCoastStat.totalControlVolume decimalNumberByAdding:sp.pileCoastStat.totalControlVolume];
-                    }else if (ws.stratumAgg != nil){
-                        for(AggregateCutblock* aggCB in ws.stratumAgg){
-                            StratumPile* sp = aggCB.aggPile;
-                            if([sp.pileData count] > 0){
-                             if(!sp.pileCoastStat){
-                                 sp.pileCoastStat = [WasteBlockDAO createEFWCoastStat];
-                             }else{
-                                 [self resetEFWCoastStat:sp.pileCoastStat];
-                             }
-                             
-                             NSDecimalNumber *summ2estsample = nil;NSDecimalNumber *summ2meassample = nil;NSDecimalNumber *totalestm2 = nil;NSDecimalNumber *totalPredPileVolume = nil;
-                             NSDecimalNumber *sumPredVol = nil;NSDecimalNumber *sumMeasVolume = nil;NSDecimalNumber *summ2estsamplewoHB = nil;NSDecimalNumber *sumPredVolwoHB = nil;
-                             NSDecimalNumber *summ2meassamplewoHB = nil;NSDecimalNumber *totalestm2woHB = nil; NSDecimalNumber *totalPredPileVolumewoHB = nil;NSDecimalNumber *sumMeasVolumewoHB = nil;
-                             NSDecimalNumber *avgAlSpecies = nil;NSDecimalNumber *alSpecies = nil;
-                             NSDecimalNumber *avgArSpecies = nil;NSDecimalNumber *arSpecies = nil;NSDecimalNumber *avgAsSpecies = nil;NSDecimalNumber *asSpecies = nil;
-                             NSDecimalNumber *avgBaSpecies = nil;NSDecimalNumber *baSpecies = nil;NSDecimalNumber *avgBiSpecies = nil;NSDecimalNumber *biSpecies = nil;
-                             NSDecimalNumber *avgCeSpecies = nil;NSDecimalNumber *ceSpecies = nil;NSDecimalNumber *avgCoSpecies = nil;NSDecimalNumber *coSpecies = nil;
-                             NSDecimalNumber *avgCySpecies = nil;NSDecimalNumber *cySpecies = nil;NSDecimalNumber *avgFiSpecies = nil;NSDecimalNumber *fiSpecies = nil;
-                             NSDecimalNumber *avgHeSpecies = nil;NSDecimalNumber *heSpecies = nil;NSDecimalNumber *avgLaSpecies = nil;NSDecimalNumber *laSpecies = nil;
-                             NSDecimalNumber *avgLoSpecies = nil;NSDecimalNumber *loSpecies = nil;NSDecimalNumber *avgMaSpecies = nil;NSDecimalNumber *maSpecies = nil;
-                             NSDecimalNumber *avgSpSpecies = nil;NSDecimalNumber *spSpecies = nil;NSDecimalNumber *avgUuSpecies = nil;NSDecimalNumber *uuSpecies = nil;
-                             NSDecimalNumber *avgWbSpecies = nil;NSDecimalNumber *wbSpecies = nil;NSDecimalNumber *avgWhSpecies = nil;NSDecimalNumber *whSpecies = nil;
-                             NSDecimalNumber *avgWiSpecies = nil;NSDecimalNumber *wiSpecies = nil;NSDecimalNumber *avgYeSpecies = nil;NSDecimalNumber *yeSpecies = nil;
-                             for(WastePile* pile in sp.pileData){
-                                 if([pile.isSample intValue] == [[[NSNumber alloc] initWithBool:TRUE]intValue]){
-                                     summ2estsample = [[NSDecimalNumber alloc] initWithDouble:[summ2estsample doubleValue] + [pile.pileArea doubleValue]] ;
-                                     sumPredVol = [[NSDecimalNumber alloc] initWithDouble:[sumPredVol doubleValue] + [pile.pileVolume doubleValue]] ;
-                                     if(pile.hePercent == 0 || pile.baPercent == 0){
-                                         summ2estsamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2estsamplewoHB doubleValue] + [pile.measuredPileArea doubleValue]];
-                                         sumPredVolwoHB = [[NSDecimalNumber alloc] initWithDouble:[sumPredVolwoHB doubleValue] + [pile.measuredPileVolume doubleValue]];
-                                         summ2meassamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2meassamplewoHB doubleValue] + [pile.measuredPileArea doubleValue]] ;
-                                         totalestm2woHB = [[NSDecimalNumber alloc] initWithDouble:[totalestm2woHB doubleValue] + [pile.pileArea doubleValue]] ;
-                                         totalPredPileVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolumewoHB doubleValue] + [pile.pileVolume doubleValue]] ;
-                                         sumMeasVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolumewoHB doubleValue] + [pile.measuredPileVolume doubleValue]] ;
-                                     }
-                                     //for avg species calculation
-                                     if(pile.alPercent != 0 ){
-                                        alSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] + ([pile.alPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.arPercent != 0 ){
-                                        arSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] + ([pile.arPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.asPercent != 0 ){
-                                        asSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] + ([pile.asPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.baPercent != 0 ){
-                                        baSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] + ([pile.baPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.biPercent != 0 ){
-                                        biSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] + ([pile.biPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.cePercent != 0 ){
-                                        ceSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] + ([pile.cePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.coPercent != 0 ){
-                                        coSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] + ([pile.coPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.cyPercent != 0 ){
-                                        cySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] + ([pile.cyPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.fiPercent != 0 ){
-                                        fiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] + ([pile.fiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.hePercent != 0 ){
-                                        heSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] + ([pile.hePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.laPercent != 0 ){
-                                        laSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] + ([pile.laPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.loPercent != 0 ){
-                                        loSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] + ([pile.loPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.maPercent != 0 ){
-                                        maSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] + ([pile.maPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.spPercent != 0 ){
-                                         spSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] + ([pile.spPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.uuPercent != 0 ){
-                                        uuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] + ([pile.uuPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.wbPercent != 0 ){
-                                        wbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] + ([pile.wbPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.whPercent != 0 ){
-                                        whSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] + ([pile.whPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.wiPercent != 0 ){
-                                        wiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] + ([pile.wiPercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                     if(pile.yePercent != 0 ){
-                                        yeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] + ([pile.yePercent doubleValue] * [pile.measuredPileVolume doubleValue])] ;
-                                     }
-                                 }
-                                 summ2meassample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] + [pile.measuredPileArea doubleValue]] ;
-                                 totalestm2 = [[NSDecimalNumber alloc] initWithDouble:[totalestm2 doubleValue] + [pile.pileArea doubleValue]] ;
-                                 totalPredPileVolume = [[NSDecimalNumber alloc] initWithDouble:[totalPredPileVolume doubleValue] + [pile.pileVolume doubleValue]] ;
-                                 sumMeasVolume = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] + [pile.measuredPileVolume doubleValue]] ;
-                             }
-                             avgAlSpecies = [[NSDecimalNumber alloc] initWithDouble:[alSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgArSpecies = [[NSDecimalNumber alloc] initWithDouble:[arSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgAsSpecies = [[NSDecimalNumber alloc] initWithDouble:[asSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgBaSpecies = [[NSDecimalNumber alloc] initWithDouble:[baSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgBiSpecies = [[NSDecimalNumber alloc] initWithDouble:[biSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgCeSpecies = [[NSDecimalNumber alloc] initWithDouble:[ceSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgCoSpecies = [[NSDecimalNumber alloc] initWithDouble:[coSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgCySpecies = [[NSDecimalNumber alloc] initWithDouble:[cySpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgFiSpecies = [[NSDecimalNumber alloc] initWithDouble:[fiSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgHeSpecies = [[NSDecimalNumber alloc] initWithDouble:[heSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgLaSpecies = [[NSDecimalNumber alloc] initWithDouble:[laSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgLoSpecies = [[NSDecimalNumber alloc] initWithDouble:[loSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgMaSpecies = [[NSDecimalNumber alloc] initWithDouble:[maSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgSpSpecies = [[NSDecimalNumber alloc] initWithDouble:[spSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgUuSpecies = [[NSDecimalNumber alloc] initWithDouble:[uuSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgWbSpecies = [[NSDecimalNumber alloc] initWithDouble:[wbSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgWhSpecies = [[NSDecimalNumber alloc] initWithDouble:[whSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgWiSpecies = [[NSDecimalNumber alloc] initWithDouble:[wiSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
-                             avgYeSpecies = [[NSDecimalNumber alloc] initWithDouble:[yeSpecies doubleValue] / [sumMeasVolume doubleValue]] ;
+                            if (!wp.isMeasurePlot || [wp.isMeasurePlot integerValue] == 1){
                                 
-                            //grade distribution
-                            NSDecimalNumber *gradeALYW = [[NSDecimalNumber alloc] initWithDouble:[avgAlSpecies doubleValue]];
-                            NSDecimalNumber *gradeARYW = [[NSDecimalNumber alloc] initWithDouble:[avgArSpecies doubleValue]];
-                            NSDecimalNumber *gradeASYW = [[NSDecimalNumber alloc] initWithDouble:[avgAsSpecies doubleValue]];
-                            NSDecimalNumber *gradeBAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgBaSpecies doubleValue]];
-                            NSDecimalNumber *gradeBIYW = [[NSDecimalNumber alloc] initWithDouble:[avgBiSpecies doubleValue]];
-                            NSDecimalNumber *gradeCEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCeSpecies doubleValue]];
-                            NSDecimalNumber *gradeCOYW = [[NSDecimalNumber alloc] initWithDouble:[avgCoSpecies doubleValue]];
-                            NSDecimalNumber *gradeCYJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgCySpecies doubleValue]];
-                            NSDecimalNumber *gradeFIJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgFiSpecies doubleValue]];
-                            NSDecimalNumber *gradeHEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgHeSpecies doubleValue]];
-                            NSDecimalNumber *gradeLAJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLaSpecies doubleValue]];
-                            NSDecimalNumber *gradeLOJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgLoSpecies doubleValue]];
-                            NSDecimalNumber *gradeMAYW = [[NSDecimalNumber alloc] initWithDouble:[avgMaSpecies doubleValue]];
-                            NSDecimalNumber *gradeSPJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgSpSpecies doubleValue]];
-                            NSDecimalNumber *gradeUUYW = [[NSDecimalNumber alloc] initWithDouble:[avgUuSpecies doubleValue]];
-                            NSDecimalNumber *gradeWBJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWbSpecies doubleValue]];
-                            NSDecimalNumber *gradeWHJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgWhSpecies doubleValue]];
-                            NSDecimalNumber *gradeWIYW = [[NSDecimalNumber alloc] initWithDouble:[avgWiSpecies doubleValue]];
-                            NSDecimalNumber *gradeYEJUXY = [[NSDecimalNumber alloc] initWithDouble:[avgYeSpecies doubleValue]];
-                            NSDecimalNumber *totalJUX = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue]];
-                            NSDecimalNumber *totalY = [[NSDecimalNumber alloc] initWithDouble:[gradeBAJUXY doubleValue] + [gradeCEJUXY doubleValue] + [gradeCYJUXY doubleValue] + [gradeFIJUXY doubleValue] + [gradeHEJUXY doubleValue] + [gradeLAJUXY doubleValue] + [gradeLOJUXY doubleValue] + [gradeYEJUXY doubleValue] + [gradeSPJUXY doubleValue] + [gradeWHJUXY doubleValue] + [gradeWBJUXY doubleValue] + [gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                            NSDecimalNumber *totalW = [[NSDecimalNumber alloc] initWithDouble:[gradeASYW doubleValue] + [gradeALYW doubleValue] + [gradeARYW doubleValue] + [gradeBIYW doubleValue] + [gradeCOYW doubleValue] + [gradeMAYW doubleValue] + [gradeWIYW doubleValue] + [gradeUUYW doubleValue]];
-                            //NSLog(@"Total grade jux %@, total grade Y %@, grade w %@", totalJUX, totalY, totalW);
-                                
-                             NSDecimalNumber *ratioSample = [[NSDecimalNumber alloc] initWithDouble:[summ2meassample doubleValue] / [summ2estsample doubleValue]] ;
-                             NSDecimalNumber *avgPileArea = [[NSDecimalNumber alloc] initWithDouble:([ratioSample doubleValue] * [totalestm2 doubleValue])/10000] ;
-                             NSDecimalNumber *ratio = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolume doubleValue] / [sumPredVol doubleValue]] ;
-                             NSDecimalNumber *totalPileVolume = [[NSDecimalNumber alloc] initWithDouble:[ratio doubleValue] * [totalPredPileVolume doubleValue]] ;
-                            NSDecimalNumber *ratioSamplewoHB = [[NSDecimalNumber alloc] initWithDouble:[summ2meassamplewoHB doubleValue] / [summ2estsamplewoHB doubleValue]] ;
-                            NSDecimalNumber *avgPileAreawoHB = [[NSDecimalNumber alloc] initWithDouble:([ratioSamplewoHB doubleValue] * [totalestm2woHB doubleValue])/10000] ;
-                            NSDecimalNumber *ratiowoHB = [[NSDecimalNumber alloc] initWithDouble:[sumMeasVolumewoHB doubleValue] / [sumPredVolwoHB doubleValue]] ;
-                            NSDecimalNumber *totalPileVolumewoHB = [[NSDecimalNumber alloc] initWithDouble:[ratiowoHB doubleValue] * [totalPredPileVolumewoHB doubleValue]] ;
-                             //packing ratio
-                              NSDecimalNumber *prGradeJ = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeJPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeU = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeUwoHB = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolumewoHB doubleValue] * [ws.gradeUPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeW = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeWPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeX = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeXPercent doubleValue])/100] ;
-                              NSDecimalNumber *prGradeY = [[NSDecimalNumber alloc] initWithDouble:([totalPileVolume doubleValue] * [ws.gradeYPercent doubleValue])/100] ;
-                             // NSLog(@"averagepilearea %@, measuredpilevol %@, averagevolperpile %@, totalpilevol %@", averagePileArea, measuredPileVolume, averageVolPerPile, totalPileVol);
-                              //NSLog(@"prgardeJ %@, prgradeU %@, prgradeW %@, prgradeX %@, prgradeY %@", prGradeJ, prGradeU, prGradeW, prGradeX, prGradeY);
-                            if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
-                                if( isnan([avgPileArea floatValue])) avgPileArea = [[NSDecimalNumber alloc] initWithDouble:0.0];
-                                ws.stratumSurveyArea = [[NSDecimalNumber alloc] initWithDouble:[avgPileArea doubleValue]];
+                                plot_counter = plot_counter + 1;
+                                for(WastePiece* piece in wp.plotPiece){
+                                    if(![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Z"]){
+                                        //Calculate the piece value and the piece volume in per ha
+                                        NSDecimalNumber *pieceRateDN = [[[NSDecimalNumber alloc] initWithDouble:[self pieceRate:piece.pieceScaleSpeciesCode.scaleSpeciesCode withGrade:piece.pieceScaleGradeCode.scaleGradeCode
+                                                                                                                      withAvoid:[piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"] forBlock:wasteBlock withTimbermark:timbermark]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                                        NSDecimalNumber *piecePriceDN =[[[NSDecimalNumber alloc] initWithDouble:[pieceRateDN doubleValue] * [piece.pieceVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                                        NSDecimalNumber *valueDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                                        NSDecimalNumber *valueHaDN = nil;
+                                        NSDecimalNumber *pieceVolumeDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                                        NSDecimalNumber *pieceVolumeHaDN = nil;
+                                        
+                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
+                                            pieceVolumeHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                                            valueHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                                        }else{
+                                            pieceVolumeHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [pieceVolumeDN decimalNumberByDividingBy:ws.stratumSurveyArea];
+                                            valueHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [valueDN decimalNumberByDividingBy:ws.stratumSurveyArea];
+                                        }
+                                        
+                                        //Add the value and the volume back to stat placeholders
+                                        if([piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]){
+                                            if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] ){
+                                                wp.plotCoastStat.gradeYValueHa = [wp.plotCoastStat.gradeYValueHa decimalNumberByAdding:valueHaDN];
+                                                wp.plotCoastStat.gradeYValue = [wp.plotCoastStat.gradeYValue decimalNumberByAdding:valueDN];
+                                                wp.plotCoastStat.gradeYVolumeHa = [wp.plotCoastStat.gradeYVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                                wp.plotCoastStat.gradeYVolume = [wp.plotCoastStat.gradeYVolume decimalNumberByAdding:pieceVolumeDN];
+                                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] && ([piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"]||[piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"]) ){
+                                                wp.plotCoastStat.gradeUHBValueHa = [wp.plotCoastStat.gradeUHBValueHa decimalNumberByAdding:valueHaDN];
+                                                wp.plotCoastStat.gradeUHBValue = [wp.plotCoastStat.gradeUHBValue decimalNumberByAdding:valueDN];
+                                                wp.plotCoastStat.gradeUHBVolumeHa = [wp.plotCoastStat.gradeUHBVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                                wp.plotCoastStat.gradeUHBVolume = [wp.plotCoastStat.gradeUHBVolume decimalNumberByAdding:pieceVolumeDN];
+                                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] && (!([piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"]||[piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"])) ){
+                                                wp.plotCoastStat.gradeUValueHa = [wp.plotCoastStat.gradeUValueHa decimalNumberByAdding:valueHaDN];
+                                                wp.plotCoastStat.gradeUValue = [wp.plotCoastStat.gradeUValue decimalNumberByAdding:valueDN];
+                                                wp.plotCoastStat.gradeUVolumeHa = [wp.plotCoastStat.gradeUVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                                wp.plotCoastStat.gradeUVolume = [wp.plotCoastStat.gradeUVolume decimalNumberByAdding:pieceVolumeDN];
+                                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"]){
+                                                wp.plotCoastStat.gradeXHBValueHa = [wp.plotCoastStat.gradeXHBValueHa decimalNumberByAdding:valueHaDN];
+                                                wp.plotCoastStat.gradeXHBValue = [wp.plotCoastStat.gradeXHBValue decimalNumberByAdding:valueDN];
+                                                wp.plotCoastStat.gradeXHBVolumeHa = [wp.plotCoastStat.gradeXHBVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                                wp.plotCoastStat.gradeXHBVolume = [wp.plotCoastStat.gradeXHBVolume decimalNumberByAdding:pieceVolumeDN ];
+                                            }else if(![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] && ![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"] ){
+                                                wp.plotCoastStat.gradeJValueHa = [wp.plotCoastStat.gradeJValueHa decimalNumberByAdding:valueHaDN];
+                                                wp.plotCoastStat.gradeJValue = [wp.plotCoastStat.gradeJValue decimalNumberByAdding:valueDN];
+                                                wp.plotCoastStat.gradeJVolumeHa = [wp.plotCoastStat.gradeJVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                                wp.plotCoastStat.gradeJVolume = [wp.plotCoastStat.gradeJVolume decimalNumberByAdding:pieceVolumeDN];
+                                            }
+                                            if(![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] ){
+                                                wp.plotCoastStat.totalBillValue =[wp.plotCoastStat.totalBillValue decimalNumberByAdding:valueDN];
+                                                wp.plotCoastStat.totalBillValueHa =[wp.plotCoastStat.totalBillValueHa decimalNumberByAdding:valueHaDN];
+                                                wp.plotCoastStat.totalBillVolumeHa =[wp.plotCoastStat.totalBillVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                                wp.plotCoastStat.totalBillVolume =[wp.plotCoastStat.totalBillVolume decimalNumberByAdding:pieceVolumeDN];
+                                            }
+                                        }
+                                        wp.plotCoastStat.totalControlVolumeHa =[wp.plotCoastStat.totalControlVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
+                                        wp.plotCoastStat.totalControlVolume =[wp.plotCoastStat.totalControlVolume decimalNumberByAdding:pieceVolumeDN];
+                                    }
+                                }
+                                //Add the values to the stratum level
+                                ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByAdding:wp.plotCoastStat.gradeJValueHa] ;
+                                ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeJVolumeHa];
+                                ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByAdding:wp.plotCoastStat.gradeYValueHa];
+                                ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeYVolumeHa];
+                                ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByAdding:wp.plotCoastStat.gradeUHBValueHa];
+                                ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeUHBVolumeHa];
+                                ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByAdding:wp.plotCoastStat.gradeUValueHa];
+                                ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeUVolumeHa];
+                                ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByAdding:wp.plotCoastStat.gradeXHBValueHa];
+                                ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeXHBVolumeHa];
+                                ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByAdding:wp.plotCoastStat.totalBillValueHa];
+                                ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByAdding:wp.plotCoastStat.totalBillVolumeHa];
+                                ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByAdding:wp.plotCoastStat.totalControlVolumeHa];
                             }
-                              //Volume by species and grade.
-                              //GradeJ
-                              NSDecimalNumber *volAlGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAlSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volArGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgArSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volAsGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgAsSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volBaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBaSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volBiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgBiSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volCeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCeSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volCoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCoSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volCyGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgCySpecies doubleValue])/100] ;
-                              NSDecimalNumber *volFiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgFiSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volHeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgHeSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volLaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLaSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volLoGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgLoSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volMaGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgMaSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volSpGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgSpSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volUuGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgUuSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volWbGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWbSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volWhGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWhSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volWiGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgWiSpecies doubleValue])/100] ;
-                              NSDecimalNumber *volYeGradeJ = [[NSDecimalNumber alloc] initWithDouble: ([prGradeJ doubleValue] * [avgYeSpecies doubleValue])/100] ;
-                             //calculation at the footer. Volume(m3) column
-                             sp.pileCoastStat.gradeYVolume = prGradeY;
-                             sp.pileCoastStat.gradeXHBVolume = prGradeX;
-                             sp.pileCoastStat.gradeUHBVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeUVolume = [[[NSDecimalNumber alloc] initWithDouble:(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeU doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeJVolume = [[[NSDecimalNumber alloc] initWithDouble:[prGradeJ doubleValue] + [prGradeW doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.totalBillVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.totalControlVolume = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJVolume doubleValue] + [sp.pileCoastStat.gradeUHBVolume doubleValue] + [sp.pileCoastStat.gradeUVolume doubleValue] + [sp.pileCoastStat.gradeXHBVolume doubleValue] + [sp.pileCoastStat.gradeYVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //volume (m3/ha)
-                             sp.pileCoastStat.gradeJVolumeHa = [[sp.pileCoastStat.gradeJVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeUHBVolumeHa = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeUVolumeHa = [[sp.pileCoastStat.gradeUVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeXHBVolumeHa = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeYVolumeHa = [[sp.pileCoastStat.gradeYVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.totalBillVolumeHa = [[sp.pileCoastStat.totalBillVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.totalControlVolumeHa = [[sp.pileCoastStat.totalControlVolume decimalNumberByDividingBy:avgPileArea] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //value($)
-                            if(timbermark){
-                                sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:timbermark.yWMRF?timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:timbermark.xWMRF? timbermark.yWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:timbermark.hembalWMRF?timbermark.hembalWMRF:0] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeJValue = [[[NSDecimalNumber alloc] initWithDouble:((((([gradeASYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) + (([gradeALYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeARYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeBIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeCOYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeMAYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue]) +(([gradeWIYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])+(([gradeUUYW doubleValue]/[totalW doubleValue])*[prGradeW doubleValue])) * [timbermark.deciduousWMRF doubleValue]) + (((([gradeBAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeCYJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeFIJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeHEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLAJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeLOJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeYEJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue] +([gradeSPJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])+(([gradeWHJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue]) +(([gradeWBJUXY doubleValue]/[totalJUX doubleValue])*[prGradeJ doubleValue])) * [timbermark.coniferWMRF doubleValue])) ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                            }else{
-                                sp.pileCoastStat.gradeYValue = [[sp.pileCoastStat.gradeYVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeXHBValue = [[sp.pileCoastStat.gradeXHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeUValue = [[sp.pileCoastStat.gradeUVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeUHBValue = [[sp.pileCoastStat.gradeUHBVolume decimalNumberByMultiplyingBy:[[NSDecimalNumber alloc] initWithInt:0]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                                sp.pileCoastStat.gradeJValue = [[NSDecimalNumber alloc] initWithDouble:((([volAlGradeJ doubleValue] + [volArGradeJ doubleValue] + [volAsGradeJ doubleValue] + [volBiGradeJ doubleValue] + [volCoGradeJ doubleValue] + [volMaGradeJ doubleValue] + [volWiGradeJ doubleValue] + [volYeGradeJ doubleValue]) * (0.0)) + (([volBaGradeJ doubleValue]  + [volCeGradeJ doubleValue]  + [volCyGradeJ doubleValue] + [volFiGradeJ doubleValue] + [volHeGradeJ doubleValue] + [volLaGradeJ doubleValue] + [volLoGradeJ doubleValue] + [volSpGradeJ doubleValue] + [volUuGradeJ doubleValue] + [volWbGradeJ doubleValue] + [volWhGradeJ doubleValue] ) * (0.0)))];
-                            }
-                             sp.pileCoastStat.totalBillValue = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] + [sp.pileCoastStat.gradeUHBValue doubleValue] + [sp.pileCoastStat.gradeUValue doubleValue] + [sp.pileCoastStat.gradeXHBValue doubleValue] + [sp.pileCoastStat.gradeYValue doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //value($/ha)
-                             sp.pileCoastStat.gradeJValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeJValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeUHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUHBValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeUValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeUValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeXHBValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeXHBValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.gradeYValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.gradeYValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             sp.pileCoastStat.totalBillValueHa = [[[NSDecimalNumber alloc] initWithDouble:[sp.pileCoastStat.totalBillValue doubleValue] / [avgPileArea doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                             //Add the values to the stratum level
-                             ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByAdding:sp.pileCoastStat.gradeJValueHa] ;
-                             ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeJVolumeHa];
-                             ws.stratumCoastStat.gradeJVolume = [ws.stratumCoastStat.gradeJVolume decimalNumberByAdding:sp.pileCoastStat.gradeJVolume];
-                                ws.stratumCoastStat.gradeJValue = [ws.stratumCoastStat.gradeJValue decimalNumberByAdding:sp.pileCoastStat.gradeJValue];
-                             ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBValueHa];
-                             ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolumeHa];
-                             ws.stratumCoastStat.gradeUHBValue = [ws.stratumCoastStat.gradeUHBValue decimalNumberByAdding:sp.pileCoastStat.gradeUHBValue];
-                             ws.stratumCoastStat.gradeUHBVolume = [ws.stratumCoastStat.gradeUHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeUHBVolume];
-                             ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByAdding:sp.pileCoastStat.gradeUValueHa];
-                             ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeUVolumeHa];
-                             ws.stratumCoastStat.gradeUValue = [ws.stratumCoastStat.gradeUValue decimalNumberByAdding:sp.pileCoastStat.gradeUValue];
-                             ws.stratumCoastStat.gradeUVolume = [ws.stratumCoastStat.gradeUVolume decimalNumberByAdding:sp.pileCoastStat.gradeUVolume];
-                             ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBValueHa];
-                             ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolumeHa];
-                             ws.stratumCoastStat.gradeXHBValue = [ws.stratumCoastStat.gradeXHBValue decimalNumberByAdding:sp.pileCoastStat.gradeXHBValue];
-                             ws.stratumCoastStat.gradeXHBVolume = [ws.stratumCoastStat.gradeXHBVolume decimalNumberByAdding:sp.pileCoastStat.gradeXHBVolume];
-                             ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByAdding:sp.pileCoastStat.gradeYValueHa];
-                             ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByAdding:sp.pileCoastStat.gradeYVolumeHa];
-                             ws.stratumCoastStat.gradeYValue = [ws.stratumCoastStat.gradeYValue decimalNumberByAdding:sp.pileCoastStat.gradeYValue];
-                             ws.stratumCoastStat.gradeYVolume = [ws.stratumCoastStat.gradeYVolume decimalNumberByAdding:sp.pileCoastStat.gradeYVolume];
-                             ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByAdding:sp.pileCoastStat.totalBillValueHa];
-                             ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalBillVolumeHa];
-                             ws.stratumCoastStat.totalBillValue = [ws.stratumCoastStat.totalBillValue decimalNumberByAdding:sp.pileCoastStat.totalBillValue];
-                             ws.stratumCoastStat.totalBillVolume = [ws.stratumCoastStat.totalBillVolume decimalNumberByAdding:sp.pileCoastStat.totalBillVolume];
-                             ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByAdding:sp.pileCoastStat.totalControlVolumeHa];
-                             ws.stratumCoastStat.totalControlVolume = [ws.stratumCoastStat.totalControlVolume decimalNumberByAdding:sp.pileCoastStat.totalControlVolume];
-                            }
-                        }
-                    }
-                }
-            }
-            int plot_counter = 0;
-            for(WastePlot* wp in ws.stratumPlot){
-                if(!wp.plotCoastStat){
-                    wp.plotCoastStat = [WasteBlockDAO createEFWCoastStat];
-                }else{
-                    [self resetEFWCoastStat:wp.plotCoastStat];
-                }
-                if (!wp.isMeasurePlot || [wp.isMeasurePlot integerValue] == 1){
-                    
-                    plot_counter = plot_counter + 1;
-                    for(WastePiece* piece in wp.plotPiece){
-                        if(![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Z"]){
-                        //Calculate the piece value and the piece volume in per ha
-                        NSDecimalNumber *pieceRateDN = [[[NSDecimalNumber alloc] initWithDouble:[self pieceRate:piece.pieceScaleSpeciesCode.scaleSpeciesCode withGrade:piece.pieceScaleGradeCode.scaleGradeCode
-                                                                                                      withAvoid:[piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"] forBlock:wasteBlock withTimbermark:timbermark]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                        NSDecimalNumber *piecePriceDN =[[[NSDecimalNumber alloc] initWithDouble:[pieceRateDN doubleValue] * [piece.pieceVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                        NSDecimalNumber *valueDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        NSDecimalNumber *valueHaDN = nil;
-                        NSDecimalNumber *pieceVolumeDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                        NSDecimalNumber *pieceVolumeHaDN = nil;
-                        
-                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                            pieceVolumeHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piece.pieceVolume doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                            valueHaDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue]) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        }else{
-                            pieceVolumeHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [pieceVolumeDN decimalNumberByDividingBy:ws.stratumSurveyArea];
-                            valueHaDN = [ws.stratumSurveyArea doubleValue] == 0 ? [[NSDecimalNumber alloc] initWithInt:0] : [valueDN decimalNumberByDividingBy:ws.stratumSurveyArea];
                         }
                         
-                        //Add the value and the volume back to stat placeholders
-                        if([piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]){
-                            if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] ){
-                                wp.plotCoastStat.gradeYValueHa = [wp.plotCoastStat.gradeYValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotCoastStat.gradeYValue = [wp.plotCoastStat.gradeYValue decimalNumberByAdding:valueDN];
-                                wp.plotCoastStat.gradeYVolumeHa = [wp.plotCoastStat.gradeYVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotCoastStat.gradeYVolume = [wp.plotCoastStat.gradeYVolume decimalNumberByAdding:pieceVolumeDN];
-                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] && ([piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"]||[piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"]) ){
-                                wp.plotCoastStat.gradeUHBValueHa = [wp.plotCoastStat.gradeUHBValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotCoastStat.gradeUHBValue = [wp.plotCoastStat.gradeUHBValue decimalNumberByAdding:valueDN];
-                                wp.plotCoastStat.gradeUHBVolumeHa = [wp.plotCoastStat.gradeUHBVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotCoastStat.gradeUHBVolume = [wp.plotCoastStat.gradeUHBVolume decimalNumberByAdding:pieceVolumeDN];
-                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] && (!([piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"]||[piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"])) ){
-                                wp.plotCoastStat.gradeUValueHa = [wp.plotCoastStat.gradeUValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotCoastStat.gradeUValue = [wp.plotCoastStat.gradeUValue decimalNumberByAdding:valueDN];
-                                wp.plotCoastStat.gradeUVolumeHa = [wp.plotCoastStat.gradeUVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotCoastStat.gradeUVolume = [wp.plotCoastStat.gradeUVolume decimalNumberByAdding:pieceVolumeDN];
-                            }else if([piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"]){
-                                wp.plotCoastStat.gradeXHBValueHa = [wp.plotCoastStat.gradeXHBValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotCoastStat.gradeXHBValue = [wp.plotCoastStat.gradeXHBValue decimalNumberByAdding:valueDN];
-                                wp.plotCoastStat.gradeXHBVolumeHa = [wp.plotCoastStat.gradeXHBVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotCoastStat.gradeXHBVolume = [wp.plotCoastStat.gradeXHBVolume decimalNumberByAdding:pieceVolumeDN ];
-                            }else if(![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] && ![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"] ){
-                                wp.plotCoastStat.gradeJValueHa = [wp.plotCoastStat.gradeJValueHa decimalNumberByAdding:valueHaDN];
-                                wp.plotCoastStat.gradeJValue = [wp.plotCoastStat.gradeJValue decimalNumberByAdding:valueDN];
-                                wp.plotCoastStat.gradeJVolumeHa = [wp.plotCoastStat.gradeJVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                                wp.plotCoastStat.gradeJVolume = [wp.plotCoastStat.gradeJVolume decimalNumberByAdding:pieceVolumeDN];
-                            }
-                            if(![piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] ){
-                            wp.plotCoastStat.totalBillValue =[wp.plotCoastStat.totalBillValue decimalNumberByAdding:valueDN];
-                            wp.plotCoastStat.totalBillValueHa =[wp.plotCoastStat.totalBillValueHa decimalNumberByAdding:valueHaDN];
-                            wp.plotCoastStat.totalBillVolumeHa =[wp.plotCoastStat.totalBillVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                            wp.plotCoastStat.totalBillVolume =[wp.plotCoastStat.totalBillVolume decimalNumberByAdding:pieceVolumeDN];
+                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] ){
+                            if(plot_counter > 1){
+                                // Get the average of plots for stratum
+                                ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
+                                ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
+                                ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
+                                ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
                             }
                         }
-                        wp.plotCoastStat.totalControlVolumeHa =[wp.plotCoastStat.totalControlVolumeHa decimalNumberByAdding:pieceVolumeHaDN];
-                        wp.plotCoastStat.totalControlVolume =[wp.plotCoastStat.totalControlVolume decimalNumberByAdding:pieceVolumeDN];
+                        if([ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
+                            if ([ws.stratumSurveyArea doubleValue] > 0 ){
+                                ws.stratumCoastStat.gradeJValue = [ws.stratumCoastStat.gradeJValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeJVolume = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeYValue = [ws.stratumCoastStat.gradeYValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeYVolume= [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeUHBValue = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeUHBVolume = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeUValue = [ws.stratumCoastStat.gradeUValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeUVolume = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
+                                ws.stratumCoastStat.gradeXHBValue = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
+                                ws.stratumCoastStat.gradeXHBVolume = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
+                                ws.stratumCoastStat.totalBillValue = [ws.stratumCoastStat.totalBillValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
+                                ws.stratumCoastStat.totalBillVolume = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
+                                ws.stratumCoastStat.totalControlVolume = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
+                            }
+                        }
+                        
+                        //Add the values to the block level
+                        wasteBlock.blockCoastStat.gradeJValueHa = [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeJValueHa];
+                        wasteBlock.blockCoastStat.gradeJVolumeHa = [wasteBlock.blockCoastStat.gradeJVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeJVolumeHa];
+                        wasteBlock.blockCoastStat.gradeYValueHa = [wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeYValueHa];
+                        wasteBlock.blockCoastStat.gradeYVolumeHa= [wasteBlock.blockCoastStat.gradeYVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeYVolumeHa];
+                        wasteBlock.blockCoastStat.gradeUHBValueHa = [wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeUHBValueHa];
+                        wasteBlock.blockCoastStat.gradeUHBVolumeHa = [wasteBlock.blockCoastStat.gradeUHBVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeUHBVolumeHa];
+                        wasteBlock.blockCoastStat.gradeUValueHa = [wasteBlock.blockCoastStat.gradeUValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeUValueHa];
+                        wasteBlock.blockCoastStat.gradeUVolumeHa = [wasteBlock.blockCoastStat.gradeUVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeUVolumeHa];
+                        wasteBlock.blockCoastStat.gradeXHBValueHa = [wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeXHBValueHa];
+                        wasteBlock.blockCoastStat.gradeXHBVolumeHa = [wasteBlock.blockCoastStat.gradeXHBVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeXHBVolumeHa];
+                        wasteBlock.blockCoastStat.totalBillValueHa = [wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByAdding:ws.stratumCoastStat.totalBillValueHa];
+                        wasteBlock.blockCoastStat.totalBillVolumeHa = [wasteBlock.blockCoastStat.totalBillVolumeHa decimalNumberByAdding:ws.stratumCoastStat.totalBillVolumeHa];
+                        wasteBlock.blockCoastStat.totalControlValueHa = [wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByAdding:ws.stratumCoastStat.totalControlValueHa];
+                        wasteBlock.blockCoastStat.totalControlVolumeHa = [wasteBlock.blockCoastStat.totalControlVolumeHa decimalNumberByAdding:ws.stratumCoastStat.totalControlVolumeHa];
+                        
+                        wasteBlock.blockCoastStat.gradeJValue = [wasteBlock.blockCoastStat.gradeJValue decimalNumberByAdding:ws.stratumCoastStat.gradeJValue ];
+                        wasteBlock.blockCoastStat.gradeJVolume = [wasteBlock.blockCoastStat.gradeJVolume decimalNumberByAdding:ws.stratumCoastStat.gradeJVolume];
+                        wasteBlock.blockCoastStat.gradeYValue = [wasteBlock.blockCoastStat.gradeYValue decimalNumberByAdding:ws.stratumCoastStat.gradeYValue ];
+                        wasteBlock.blockCoastStat.gradeYVolume= [wasteBlock.blockCoastStat.gradeYVolume decimalNumberByAdding:ws.stratumCoastStat.gradeYVolume ];
+                        wasteBlock.blockCoastStat.gradeUHBValue = [wasteBlock.blockCoastStat.gradeUHBValue decimalNumberByAdding:ws.stratumCoastStat.gradeUHBValue ];
+                        wasteBlock.blockCoastStat.gradeUHBVolume = [wasteBlock.blockCoastStat.gradeUHBVolume decimalNumberByAdding:ws.stratumCoastStat.gradeUHBVolume ];
+                        wasteBlock.blockCoastStat.gradeUValue = [wasteBlock.blockCoastStat.gradeUValue decimalNumberByAdding:ws.stratumCoastStat.gradeUValue ];
+                        wasteBlock.blockCoastStat.gradeUVolume = [wasteBlock.blockCoastStat.gradeUVolume decimalNumberByAdding:ws.stratumCoastStat.gradeUVolume ];
+                        wasteBlock.blockCoastStat.gradeXHBValue = [wasteBlock.blockCoastStat.gradeXHBValue decimalNumberByAdding:ws.stratumCoastStat.gradeXHBValue ];
+                        wasteBlock.blockCoastStat.gradeXHBVolume = [wasteBlock.blockCoastStat.gradeXHBVolume decimalNumberByAdding:ws.stratumCoastStat.gradeXHBVolume ];
+                        wasteBlock.blockCoastStat.totalBillValue = [wasteBlock.blockCoastStat.totalBillValue decimalNumberByAdding:ws.stratumCoastStat.totalBillValue ];
+                        wasteBlock.blockCoastStat.totalBillVolume = [wasteBlock.blockCoastStat.totalBillVolume decimalNumberByAdding:ws.stratumCoastStat.totalBillVolume ];
+                        wasteBlock.blockCoastStat.totalControlValue = [wasteBlock.blockCoastStat.totalControlValue decimalNumberByAdding:ws.stratumCoastStat.totalControlValue ];
+                        wasteBlock.blockCoastStat.totalControlVolume = [wasteBlock.blockCoastStat.totalControlVolume decimalNumberByAdding:ws.stratumCoastStat.totalControlVolume ];
+                        
+                        if([ws.stratumCoastStat.totalControlVolumeHa doubleValue] > 0 ){
+                            stratum_counter = stratum_counter + 1;
+                        }
                     }
-                    }
-                    //Add the values to the stratum level
-                    ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByAdding:wp.plotCoastStat.gradeJValueHa] ;
-                    ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeJVolumeHa];
-                    ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByAdding:wp.plotCoastStat.gradeYValueHa];
-                    ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeYVolumeHa];
-                    ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByAdding:wp.plotCoastStat.gradeUHBValueHa];
-                    ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeUHBVolumeHa];
-                    ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByAdding:wp.plotCoastStat.gradeUValueHa];
-                    ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeUVolumeHa];
-                    ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByAdding:wp.plotCoastStat.gradeXHBValueHa];
-                    ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByAdding:wp.plotCoastStat.gradeXHBVolumeHa];
-                    ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByAdding:wp.plotCoastStat.totalBillValueHa];
-                    ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByAdding:wp.plotCoastStat.totalBillVolumeHa];
-                    ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByAdding:wp.plotCoastStat.totalControlVolumeHa];
                 }
-            }
             
-            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] ){
-                if(plot_counter > 1){
-                    // Get the average of plots for stratum
-                    ws.stratumCoastStat.gradeJValueHa = [ws.stratumCoastStat.gradeJValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
-                    ws.stratumCoastStat.gradeJVolumeHa = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
-                    ws.stratumCoastStat.gradeYValueHa = [ws.stratumCoastStat.gradeYValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
-                    ws.stratumCoastStat.gradeYVolumeHa = [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
-                    ws.stratumCoastStat.gradeUHBValueHa = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
-                    ws.stratumCoastStat.gradeUHBVolumeHa = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
-                    ws.stratumCoastStat.gradeUValueHa = [ws.stratumCoastStat.gradeUValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
-                    ws.stratumCoastStat.gradeUVolumeHa = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
-                    ws.stratumCoastStat.gradeXHBValueHa = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
-                    ws.stratumCoastStat.gradeXHBVolumeHa = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
-                    ws.stratumCoastStat.totalBillValueHa = [ws.stratumCoastStat.totalBillValueHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD2];
-                    ws.stratumCoastStat.totalBillVolumeHa = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
-                    ws.stratumCoastStat.totalControlVolumeHa = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithInt:plot_counter ] withBehavior:behaviorD4];
-                }
-            }
-            if([ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-            if ([ws.stratumSurveyArea doubleValue] > 0 ){
-                ws.stratumCoastStat.gradeJValue = [ws.stratumCoastStat.gradeJValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
-                ws.stratumCoastStat.gradeJVolume = [ws.stratumCoastStat.gradeJVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
-                ws.stratumCoastStat.gradeYValue = [ws.stratumCoastStat.gradeYValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
-                ws.stratumCoastStat.gradeYVolume= [ws.stratumCoastStat.gradeYVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
-                ws.stratumCoastStat.gradeUHBValue = [ws.stratumCoastStat.gradeUHBValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
-                ws.stratumCoastStat.gradeUHBVolume = [ws.stratumCoastStat.gradeUHBVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
-                ws.stratumCoastStat.gradeUValue = [ws.stratumCoastStat.gradeUValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
-                ws.stratumCoastStat.gradeUVolume = [ws.stratumCoastStat.gradeUVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
-                ws.stratumCoastStat.gradeXHBValue = [ws.stratumCoastStat.gradeXHBValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
-                ws.stratumCoastStat.gradeXHBVolume = [ws.stratumCoastStat.gradeXHBVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
-                ws.stratumCoastStat.totalBillValue = [ws.stratumCoastStat.totalBillValueHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD2];
-                ws.stratumCoastStat.totalBillVolume = [ws.stratumCoastStat.totalBillVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
-                ws.stratumCoastStat.totalControlVolume = [ws.stratumCoastStat.totalControlVolumeHa decimalNumberByMultiplyingBy:ws.stratumSurveyArea withBehavior:behaviorD4];
-            }
-            }
-            
-            //Add the values to the block level
-            wasteBlock.blockCoastStat.gradeJValueHa = [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeJValueHa];
-            wasteBlock.blockCoastStat.gradeJVolumeHa = [wasteBlock.blockCoastStat.gradeJVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeJVolumeHa];
-            wasteBlock.blockCoastStat.gradeYValueHa = [wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeYValueHa];
-            wasteBlock.blockCoastStat.gradeYVolumeHa= [wasteBlock.blockCoastStat.gradeYVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeYVolumeHa];
-            wasteBlock.blockCoastStat.gradeUHBValueHa = [wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeUHBValueHa];
-            wasteBlock.blockCoastStat.gradeUHBVolumeHa = [wasteBlock.blockCoastStat.gradeUHBVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeUHBVolumeHa];
-            wasteBlock.blockCoastStat.gradeUValueHa = [wasteBlock.blockCoastStat.gradeUValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeUValueHa];
-            wasteBlock.blockCoastStat.gradeUVolumeHa = [wasteBlock.blockCoastStat.gradeUVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeUVolumeHa];
-            wasteBlock.blockCoastStat.gradeXHBValueHa = [wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByAdding:ws.stratumCoastStat.gradeXHBValueHa];
-            wasteBlock.blockCoastStat.gradeXHBVolumeHa = [wasteBlock.blockCoastStat.gradeXHBVolumeHa decimalNumberByAdding:ws.stratumCoastStat.gradeXHBVolumeHa];
-            wasteBlock.blockCoastStat.totalBillValueHa = [wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByAdding:ws.stratumCoastStat.totalBillValueHa];
-            wasteBlock.blockCoastStat.totalBillVolumeHa = [wasteBlock.blockCoastStat.totalBillVolumeHa decimalNumberByAdding:ws.stratumCoastStat.totalBillVolumeHa];
-            wasteBlock.blockCoastStat.totalControlValueHa = [wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByAdding:ws.stratumCoastStat.totalControlValueHa];
-            wasteBlock.blockCoastStat.totalControlVolumeHa = [wasteBlock.blockCoastStat.totalControlVolumeHa decimalNumberByAdding:ws.stratumCoastStat.totalControlVolumeHa];
-            
-            wasteBlock.blockCoastStat.gradeJValue = [wasteBlock.blockCoastStat.gradeJValue decimalNumberByAdding:ws.stratumCoastStat.gradeJValue ];
-            wasteBlock.blockCoastStat.gradeJVolume = [wasteBlock.blockCoastStat.gradeJVolume decimalNumberByAdding:ws.stratumCoastStat.gradeJVolume];
-            wasteBlock.blockCoastStat.gradeYValue = [wasteBlock.blockCoastStat.gradeYValue decimalNumberByAdding:ws.stratumCoastStat.gradeYValue ];
-            wasteBlock.blockCoastStat.gradeYVolume= [wasteBlock.blockCoastStat.gradeYVolume decimalNumberByAdding:ws.stratumCoastStat.gradeYVolume ];
-            wasteBlock.blockCoastStat.gradeUHBValue = [wasteBlock.blockCoastStat.gradeUHBValue decimalNumberByAdding:ws.stratumCoastStat.gradeUHBValue ];
-            wasteBlock.blockCoastStat.gradeUHBVolume = [wasteBlock.blockCoastStat.gradeUHBVolume decimalNumberByAdding:ws.stratumCoastStat.gradeUHBVolume ];
-            wasteBlock.blockCoastStat.gradeUValue = [wasteBlock.blockCoastStat.gradeUValue decimalNumberByAdding:ws.stratumCoastStat.gradeUValue ];
-            wasteBlock.blockCoastStat.gradeUVolume = [wasteBlock.blockCoastStat.gradeUVolume decimalNumberByAdding:ws.stratumCoastStat.gradeUVolume ];
-            wasteBlock.blockCoastStat.gradeXHBValue = [wasteBlock.blockCoastStat.gradeXHBValue decimalNumberByAdding:ws.stratumCoastStat.gradeXHBValue ];
-            wasteBlock.blockCoastStat.gradeXHBVolume = [wasteBlock.blockCoastStat.gradeXHBVolume decimalNumberByAdding:ws.stratumCoastStat.gradeXHBVolume ];
-            wasteBlock.blockCoastStat.totalBillValue = [wasteBlock.blockCoastStat.totalBillValue decimalNumberByAdding:ws.stratumCoastStat.totalBillValue ];
-            wasteBlock.blockCoastStat.totalBillVolume = [wasteBlock.blockCoastStat.totalBillVolume decimalNumberByAdding:ws.stratumCoastStat.totalBillVolume ];
-            wasteBlock.blockCoastStat.totalControlValue = [wasteBlock.blockCoastStat.totalControlValue decimalNumberByAdding:ws.stratumCoastStat.totalControlValue ];
-            wasteBlock.blockCoastStat.totalControlVolume = [wasteBlock.blockCoastStat.totalControlVolume decimalNumberByAdding:ws.stratumCoastStat.totalControlVolume ];
-            
-            if([ws.stratumCoastStat.totalControlVolumeHa doubleValue] > 0 ){
-                stratum_counter = stratum_counter + 1;
-            }
-        }
-        
-        if (stratum_counter > 1){
-            //NSDecimalNumber *swCounterDN = [[NSDecimalNumber alloc] initWithInt:stratum_counter];
+            if (stratum_counter > 1){
+                //NSDecimalNumber *swCounterDN = [[NSDecimalNumber alloc] initWithInt:stratum_counter];
 
-            wasteBlock.blockCoastStat.gradeJValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByDividingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeUHBValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeUValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeUValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeYValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeXHBValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.totalBillValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.totalControlValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
-            
-            wasteBlock.blockCoastStat.gradeJVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeJVolume decimalNumberByDividingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeUHBVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeUHBVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeUVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeUVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeYVolumeHa= [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeYVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeXHBVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeXHBVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.totalBillVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.totalBillVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.totalControlVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
-            [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.totalControlVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
-/*
-            wasteBlock.blockCoastStat.gradeJValueHa = [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByDividingBy:swCounterDN withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeUHBValueHa = [wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeYValueHa = [wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeXHBValueHa = [wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.totalBillValueHa = [wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.totalControlValueHa = [wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
-            
-            wasteBlock.blockCoastStat.gradeJVolumeHa = [wasteBlock.blockCoastStat.gradeJVolumeHa decimalNumberByDividingBy:swCounterDN withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeUHBVolumeHa = [wasteBlock.blockCoastStat.gradeUHBVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeYVolumeHa= [wasteBlock.blockCoastStat.gradeYVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeXHBVolumeHa = [wasteBlock.blockCoastStat.gradeXHBVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.totalBillVolumeHa = [wasteBlock.blockCoastStat.totalBillVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.totalControlVolumeHa = [wasteBlock.blockCoastStat.totalControlVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
-  */
-            /*
-            wasteBlock.blockCoastStat.gradeUHBVolume = [wasteBlock.blockCoastStat.gradeUHBVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeXHBVolume = [wasteBlock.blockCoastStat.gradeXHBVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeJVolume = [wasteBlock.blockCoastStat.gradeJVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.gradeYVolume= [wasteBlock.blockCoastStat.gradeYVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.totalBillVolume = [wasteBlock.blockCoastStat.totalBillVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
-            wasteBlock.blockCoastStat.totalControlVolume = [wasteBlock.blockCoastStat.totalControlVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
-            
-            wasteBlock.blockCoastStat.gradeJValue = [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeYValue = [wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeUHBValue = [wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.gradeXHBValue = [wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.totalBillValue = [wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
-            wasteBlock.blockCoastStat.totalControlValue = [wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
-             */
-        }
-     }
+                wasteBlock.blockCoastStat.gradeJValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByDividingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeUHBValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeUValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeUValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeYValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeXHBValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.totalBillValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.totalControlValueHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] :[wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD2];
+                
+                wasteBlock.blockCoastStat.gradeJVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeJVolume decimalNumberByDividingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeUHBVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeUHBVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeUVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeUVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeYVolumeHa= [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeYVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeXHBVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.gradeXHBVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.totalBillVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.totalBillVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.totalControlVolumeHa = [wasteBlock.surveyArea floatValue] == 0 ?
+                [[NSDecimalNumber alloc] initWithInt:0] : [wasteBlock.blockCoastStat.totalControlVolume decimalNumberByDividingBy:wasteBlock.surveyArea  withBehavior:behaviorD4];
+    /*
+                wasteBlock.blockCoastStat.gradeJValueHa = [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByDividingBy:swCounterDN withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeUHBValueHa = [wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeYValueHa = [wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeXHBValueHa = [wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.totalBillValueHa = [wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.totalControlValueHa = [wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD2];
+                
+                wasteBlock.blockCoastStat.gradeJVolumeHa = [wasteBlock.blockCoastStat.gradeJVolumeHa decimalNumberByDividingBy:swCounterDN withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeUHBVolumeHa = [wasteBlock.blockCoastStat.gradeUHBVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeYVolumeHa= [wasteBlock.blockCoastStat.gradeYVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeXHBVolumeHa = [wasteBlock.blockCoastStat.gradeXHBVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.totalBillVolumeHa = [wasteBlock.blockCoastStat.totalBillVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.totalControlVolumeHa = [wasteBlock.blockCoastStat.totalControlVolumeHa decimalNumberByDividingBy:swCounterDN  withBehavior:behaviorD4];
+      */
+                /*
+                wasteBlock.blockCoastStat.gradeUHBVolume = [wasteBlock.blockCoastStat.gradeUHBVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeXHBVolume = [wasteBlock.blockCoastStat.gradeXHBVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeJVolume = [wasteBlock.blockCoastStat.gradeJVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.gradeYVolume= [wasteBlock.blockCoastStat.gradeYVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.totalBillVolume = [wasteBlock.blockCoastStat.totalBillVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
+                wasteBlock.blockCoastStat.totalControlVolume = [wasteBlock.blockCoastStat.totalControlVolumeHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD4];
+                
+                wasteBlock.blockCoastStat.gradeJValue = [wasteBlock.blockCoastStat.gradeJValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeYValue = [wasteBlock.blockCoastStat.gradeYValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeUHBValue = [wasteBlock.blockCoastStat.gradeUHBValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.gradeXHBValue = [wasteBlock.blockCoastStat.gradeXHBValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.totalBillValue = [wasteBlock.blockCoastStat.totalBillValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
+                wasteBlock.blockCoastStat.totalControlValue = [wasteBlock.blockCoastStat.totalControlValueHa decimalNumberByMultiplyingBy:wasteBlock.surveyArea withBehavior:behaviorD2];
+                 */
+            }
+         }
     }
+
     @catch (NSException *exception) {
         // deal with the exception
         NSLog(@"Exception caught in calcuateEFWStat funciton.");

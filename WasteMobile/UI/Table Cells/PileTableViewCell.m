@@ -36,21 +36,21 @@
     // Configure the view for the selected state
 }
 
--(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock userCreatedBlock:(BOOL)userCreatedBlock{
+-(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock userCreatedBlock:(BOOL)userCreatedBlock{
     
     if([wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:NO] intValue]){
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
         int locationCounter = 0;
         
-        [labelArray addObject:@";pileNumber;w;44"];
+        //[labelArray addObject:@";pileNumber;w;44"];
         [labelArray addObject:@";measuredLength;w;111"];
         [labelArray addObject:@";measuredWidth;w;110"];
         [labelArray addObject:@";measuredHeight;w;110"];
         [labelArray addObject:@"CN;pilePileShapeCode;w;110"];
         [labelArray addObject:@";measuredPileArea;w;110"];
         [labelArray addObject:@";measuredPileVolume;w;110"];
-        [labelArray addObject:@"0.000;;w;110"];
-        [labelArray addObject:@"*;comment;w;110"];
+        //[labelArray addObject:@"0.000;;w;110"];
+        //[labelArray addObject:@"*;comment;w;110"];
         
         
         if (!self.displayObjectDictionary){
@@ -143,8 +143,8 @@
         [labelArray addObject:@";measuredHeight;m;43"];
         [labelArray addObject:@";measuredPileArea;w;43"];
         [labelArray addObject:@";measuredPileVolume;w;43"];
-        [labelArray addObject:@"0.000;;w;110"];
-        [labelArray addObject:@"*;comment;w;110"];
+        //[labelArray addObject:@"0.000;;w;110"];
+        //[labelArray addObject:@"*;comment;w;43"];
         
         
         if (!self.displayObjectDictionary){

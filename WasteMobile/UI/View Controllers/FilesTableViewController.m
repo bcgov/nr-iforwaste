@@ -530,23 +530,17 @@
     
     if(outcome == ImportFailCutBlockExist){
         //for existing cut block, ask for merge
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Merge File"
-                                                                       message:@"Existing cut block is detected. Do you want to merge the cut block data to the existing cut block?"
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Existing Cut Block"
+                                                                       message:@"Existing cut block exists. Cannot Import/Download"
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         
-        UIAlertAction* goToAction = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault
-                                                           handler:^(UIAlertAction * action) {
-                                                               //merge cut block
-                                                               [self mergeCutBlock];
-                                                               [alert dismissViewControllerAnimated:YES completion:nil];
-                                                           }];
         
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
-                                                             [alert dismissViewControllerAnimated:YES completion:nil];
+            [self performSegueWithIdentifier:@"ImportDownloadSegue" sender:self];
+            [alert dismissViewControllerAnimated:YES completion:nil];
                                                          }];
         
-        [alert addAction:goToAction];
         [alert addAction:okAction];
         
         [self presentViewController:alert animated:YES completion:nil];
@@ -625,6 +619,43 @@
         db_wb = [WasteBlockDAO getWasteBlockByRUButWAID:[NSString stringWithFormat:@"%@",import_wb.reportingUnit] cutBlockId:import_wb.cutBlockId  license:import_wb.licenceNumber cutPermit:import_wb.cuttingPermitId wasteAsseID:[NSString stringWithFormat:@"%@", import_wb.wasteAssessmentAreaID]];
         
         if(db_wb){
+            
+            NSMutableArray *warning = [WasteImportBlockValidator compareBlockForImport:db_wb wb2:import_wb];
+            
+            if ([warning count] > 0){
+                //alert warning
+                NSString *warning_msg = [NSString stringWithFormat:@"Data does not match between cut blocks (%d found)\n", [warning count]];
+                
+                for (NSString *field in warning){
+                   warning_msg = [warning_msg stringByAppendingString:[NSString stringWithFormat:@" - %@\n", field]];
+                                                        
+                }
+                [self showAlert:@"Merge Error" message:warning_msg];
+                
+                //delete imported cut block data
+                [WasteBlockDAO deleteCutBlock:import_wb];
+            }else{
+                //merge cut block
+                [WasteBlockDAO mergeWasteBlock:db_wb WasteBlock:import_wb];
+                
+                [WasteCalculator calculateWMRF:db_wb updateOriginal:NO];
+                [WasteCalculator calculateRate:db_wb ];
+                [WasteCalculator calculatePiecesValue:db_wb ];
+                
+                if([db_wb.userCreated intValue] ==1){
+                    [WasteCalculator calculateEFWStat:db_wb];
+                }
+                
+                //delete the imported block
+                [WasteBlockDAO deleteCutBlock:import_wb];
+                
+                self.targetWasteBlock = db_wb;
+                
+                //prompt to go to cut block
+                [self showRedirectAlert:@"Merge File" message:@"Cut block data merged successfully. Do you want to go to the cut block?" ];
+            }
+            
+            /* Start 1.5 old code
             for(WasteStratum *ws1 in db_wb.blockStratum){
                 if([ws1.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:YES] intValue]){
                     pileCounter1++;
@@ -746,6 +777,7 @@
                      [self showRedirectAlert:@"Merge File" message:@"Cut block data merged successfully. Do you want to go to the cut block?" ];
                  }
             }
+             */
         }else{
             //can't find cut block in databaes to merge
             [self showAlert:@"Merge Error" message:@"Cut Block not found."];
@@ -883,8 +915,11 @@
 #pragma mark - segue
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     
-    BlockViewController *blockVC = segue.destinationViewController;
-    blockVC.wasteBlock = self.targetWasteBlock;
+    if(![@"ImportDownloadSegue" isEqualToString:segue.identifier])
+    {
+        BlockViewController *blockVC = segue.destinationViewController;
+        blockVC.wasteBlock = self.targetWasteBlock;
+    }
     
     //clear local waste block pointer
     self.targetWasteBlock = nil;

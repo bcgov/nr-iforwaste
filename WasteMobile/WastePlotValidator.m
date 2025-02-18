@@ -29,8 +29,6 @@
 #import "InteriorCedarMaturityCode+CoreDataClass.h"
 #import "ScaleSpeciesCode.h"
 #import "WasteStratum.h"
-#import "AggregateCutblock+CoreDataClass.h"
-#import "StratumPile+CoreDataClass.h"
 #import "WastePile+CoreDataClass.h"
 #import "PileShapeCode+CoreDataClass.h"
 
@@ -196,6 +194,23 @@
                 pieceErrorMessage = [pieceErrorMessage stringByAppendingString:@" Kind 'W', length cannot be >= 30.\n"];
             }
             
+            NSCalendar *calendar = [[NSCalendar alloc]initWithCalendarIdentifier:@"gregorian"];
+               NSDateComponents *comps = [[NSDateComponents alloc]init];
+               comps.year = 2020;
+               comps.month = 8;
+               comps.day = 31;
+               NSDate* date = [calendar dateFromComponents:comps];
+               
+               if([wp.piecePlot.plotStratum.stratumBlock.regionId integerValue] == InteriorRegion && [wp.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] &&
+                  (wp.piecePlot.plotStratum.stratumBlock.surveyDate == nil || [wp.piecePlot.plotStratum.stratumBlock.surveyDate compare:date] == NSOrderedDescending))
+               {
+                   pieceErrorMessage = [pieceErrorMessage stringByAppendingString:@"Error - Grade 5 is not allowed for Interior blocks with Survey Dates that are blank or on or after September 1, 2020\n"];
+               }
+            
+            if(([wp.piecePlot.plotStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"D"] || [wp.piecePlot.plotStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"F"] || [wp.piecePlot.plotStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"G"] || [wp.piecePlot.plotStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"H"] || [wp.piecePlot.plotStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"S"] || [wp.piecePlot.plotStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"T"] ) && [wp.pieceMaterialKindCode.materialKindCode isEqualToString:@"W"] && [wp.pieceButtEndCode.buttEndCode isEqualToString:@"B"]){
+                    pieceErrorMessage = [pieceErrorMessage stringByAppendingString:@"Error - Kind W, butt code Broken not allowed in a dispersed strata.\n"];
+                }
+            
             //validate species and grade combo
             if([wastePlot.plotStratum.stratumBlock.regionId integerValue] == CoastRegion) {
                  if([wp.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"] || [wp.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CE"] || [wp.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CY"] || [wp.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"FI"] || [wp.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"]  || [wp.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"LO"] ||
@@ -280,10 +295,6 @@
             if(wp.topDeduction && [wp.topDeduction integerValue] > 0 && wp.buttDeduction && [wp.buttDeduction intValue] > 0 && wp.lengthDeduction && [wp.lengthDeduction intValue] > 0){
                 pieceWarning = [pieceWarning stringByAppendingString:@" More than 2 deductions.\n"];
             }
-            if(([wp.piecePlot.plotStratum.stratumBlock.regionId integerValue] == InteriorRegion) && [wp.pieceMaterialKindCode.materialKindCode isEqualToString:@"W"] && [wp.pieceButtEndCode.buttEndCode isEqualToString:@"B"]){
-                pieceWarning = [pieceWarning stringByAppendingString:@" Kind W, butt Code Broken not allowed. \n"];
-            }
-            
             if (![pieceWarning isEqualToString:@""]){
                 //[errorMessageAry addObject:[NSString stringWithFormat:@"Piece %@: %@\n", wp.pieceNumber ,errorMessage]];
                 errorMessage = [errorMessage stringByAppendingString:[NSString stringWithFormat:@"Warning - Piece %@: %@\n", wp.pieceNumber ,pieceWarning]];
@@ -308,7 +319,7 @@
     }
 }
 
--(NSString *) validateBlock:(WasteBlock *) wasteBlock{
+-(NSString *) validateBlock:(WasteBlock *) wasteBlock checkPlot:(BOOL)checkPlot{
     NSString * errorMessage = @"";
 
     for (WasteStratum *ws in [wasteBlock.blockStratum allObjects]){
@@ -317,6 +328,10 @@
             errorMessage =[NSString stringWithFormat:@"%@%@", errorMessage, [self validatePlot:wp showDetail:NO]];
             if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wasteBlock.userCreated intValue] == 1){
                 errorMessage =[NSString stringWithFormat:@"%@%@", errorMessage, [self validateTotalPercent:wp]];
+            }
+            if(checkPlot)
+            {
+                errorMessage =[NSString stringWithFormat:@"%@%@", errorMessage, [self validatePlot:wp showDetail:TRUE]];
             }
         }
         if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wasteBlock.userCreated intValue] == 1){
@@ -402,6 +417,12 @@
     if([wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"]){
         if(!(([wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"P"] || [wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"W"]) || [wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"O"] || [wasteStratum.stratumWasteTypeCode.wasteTypeCode isEqualToString:@"L"] )){
              errorMessage =[NSString stringWithFormat:@"%@ Waste Type can only be P, W, O or L when Assessment/Size is R. ", errorMessage];
+        } else if ([wasteStratum.stratumBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]) {
+            if ([wasteStratum.measurePlot doubleValue] <= 0 || [wasteStratum.predictionPlot doubleValue] <= 0) {
+                errorMessage = [NSString stringWithFormat:@"%@ Prediction plot and measure plot values must be greater than 0.", errorMessage];
+            } else if ([wasteStratum.measurePlot doubleValue] > [wasteStratum.predictionPlot doubleValue]) {
+                errorMessage = [NSString stringWithFormat:@"%@ The number of prediction plots must be greater than or equal to the number of measure plots.", errorMessage];
+            }
         }
     }
     
@@ -421,28 +442,17 @@
     return errorMessage;
 }
 
--(NSString *) validatePile:(NSArray *)wastePile wasteBlock:(WasteBlock*)wasteBlock wasteStratum:(WasteStratum*)wasteStratum aggregatecutblock:(AggregateCutblock*)aggregatecutblock{
+-(NSString *) validatePile:(NSArray *)wastePile wasteBlock:(WasteBlock*)wasteBlock wasteStratum:(WasteStratum*)wasteStratum {
     NSString * errorMessage = @"";
 
-    if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue] && [wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-        if( [wastePile count] != [wasteStratum.totalNumPile intValue]){
-            errorMessage = [NSString stringWithFormat:@"%@ %lu out of %d piles are missing information.\n", errorMessage, (unsigned long)[wastePile count], [wasteStratum.totalNumPile intValue]];
-        }
-    }else if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue] && [wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-        if([wastePile count] != [aggregatecutblock.totalNumPile intValue]){
-            errorMessage = [NSString stringWithFormat:@"%@ %lu out of %d piles are missing information.\n", errorMessage, (unsigned long)[wastePile count], [aggregatecutblock.totalNumPile intValue]];
-        }
-    }else if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue] && [wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
+    if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue] && [wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
         int counter = 0;
         int incomplete = 0;
         NSString *pilenumber = @"";
         for (WastePile *wp in wastePile){
-            int total = 0;
-            total = [wp.alPercent intValue] + [wp.arPercent intValue] + [wp.asPercent intValue] + [wp.baPercent intValue] + [wp.biPercent intValue] + [wp.cePercent intValue] + [wp.coPercent intValue] + [wp.cyPercent intValue] + [wp.fiPercent intValue] + [wp.hePercent intValue] + [wp.laPercent intValue] + [wp.loPercent intValue] + [wp.maPercent intValue] + [wp.spPercent intValue] + [wp.wbPercent intValue] +
-            [wp.whPercent intValue] + [wp.wiPercent intValue] + [wp.uuPercent intValue] + [wp.yePercent intValue];
-            if([wp.measuredLength doubleValue] != 0 && [wp.measuredWidth doubleValue] != 0 && [wp.measuredHeight doubleValue] != 0 && wp.pilePileShapeCode.pileShapeCode != nil && total != 0){
+            if([wp.measuredLength doubleValue] != 0 && [wp.measuredWidth doubleValue] != 0 && [wp.measuredHeight doubleValue] != 0 && wp.pilePileShapeCode.pileShapeCode != nil){
                 counter++;
-            }else if([wp.measuredLength doubleValue] != 0 || [wp.measuredWidth doubleValue] != 0 || [wp.measuredHeight doubleValue] != 0 || wp.pilePileShapeCode.pileShapeCode != nil || total != 0){
+            }else if([wp.measuredLength doubleValue] != 0 || [wp.measuredWidth doubleValue] != 0 || [wp.measuredHeight doubleValue] != 0 || wp.pilePileShapeCode.pileShapeCode != nil){
                 incomplete++;
                 if(incomplete>1){
                     pilenumber = [pilenumber stringByAppendingString:@", "];
@@ -459,12 +469,9 @@
         int incomplete = 0;
         NSString *pilenumber = @"";
         for (WastePile *wp in wastePile){
-            int total = 0;
-            total = [wp.alPercent intValue] + [wp.arPercent intValue] + [wp.asPercent intValue] + [wp.baPercent intValue] + [wp.biPercent intValue] + [wp.cePercent intValue] + [wp.coPercent intValue] + [wp.cyPercent intValue] + [wp.fiPercent intValue] + [wp.hePercent intValue] + [wp.laPercent intValue] + [wp.loPercent intValue] + [wp.maPercent intValue] + [wp.spPercent intValue] + [wp.wbPercent intValue] +
-            [wp.whPercent intValue] + [wp.wiPercent intValue] + [wp.uuPercent intValue] + [wp.yePercent intValue];
-            if([wp.measuredLength doubleValue] != 0 && [wp.measuredWidth doubleValue] != 0 && [wp.measuredHeight doubleValue] != 0 && wp.pilePileShapeCode.pileShapeCode != nil && total != 0){
+            if([wp.measuredLength doubleValue] != 0 && [wp.measuredWidth doubleValue] != 0 && [wp.measuredHeight doubleValue] != 0 && wp.pilePileShapeCode.pileShapeCode != nil){
                 counter++;
-            }else if([wp.measuredLength doubleValue] != 0 || [wp.measuredWidth doubleValue] != 0 || [wp.measuredHeight doubleValue] != 0 || wp.pilePileShapeCode.pileShapeCode != nil || total != 0){
+            }else if([wp.measuredLength doubleValue] != 0 || [wp.measuredWidth doubleValue] != 0 || [wp.measuredHeight doubleValue] != 0 || wp.pilePileShapeCode.pileShapeCode != nil){
                 incomplete++;
                 if(incomplete>1){
                     pilenumber = [pilenumber stringByAppendingString:@", "];
@@ -478,29 +485,11 @@
         }
     }
     for (WastePile *wp in wastePile){
-     if([wp.pilePileShapeCode.pileShapeCode isEqualToString:@"CN"] || [wp.pilePileShapeCode.pileShapeCode isEqualToString:@"PR"]){
-              double x = [wp.measuredLength doubleValue] * .15;
-              double width_less = [wp.measuredLength doubleValue] - x;
-              double width_more = [wp.measuredLength doubleValue] + x;
-              if([wp.measuredWidth floatValue] < width_less || [wp.measuredWidth floatValue] > width_more){
-                  errorMessage = [NSString stringWithFormat:@" For pile number %@ ", wp.pileNumber];
-                  errorMessage = [errorMessage stringByAppendingString:@" length and width are not within 15% for the cone or paraboloid shape.\n"];
-              }
-          }
         if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
             if([wp.pilePileShapeCode.pileShapeCode isEqual:@"CN"] || [wp.pilePileShapeCode.pileShapeCode isEqual:@"CY"] || [wp.pilePileShapeCode.pileShapeCode isEqual:@"RT"] || [wp.pilePileShapeCode.pileShapeCode isEqual:@"PR"] || [wp.pilePileShapeCode.pileShapeCode isEqual:@"EL"]){
-                if(wp.measuredWidth == 0 || wp.measuredHeight == 0 || wp.measuredLength == 0){
+                if([wp.measuredWidth doubleValue] == 0 || [wp.measuredHeight doubleValue] == 0 || [wp.measuredLength doubleValue] == 0){
                     errorMessage = [NSString stringWithFormat:@"%@Error: L, W, H - always required for all shapes.\n", errorMessage];
                 }
-            }
-        }
-        if([wp.isSample intValue] == [[[NSNumber alloc] initWithBool:YES] intValue] && [wp.measuredLength doubleValue] != 0 ){
-            int total = 0;
-            total = [wp.alPercent intValue] + [wp.arPercent intValue] + [wp.asPercent intValue] + [wp.baPercent intValue] + [wp.biPercent intValue] + [wp.cePercent intValue] + [wp.coPercent intValue] + [wp.cyPercent intValue] + [wp.fiPercent intValue] + [wp.hePercent intValue] + [wp.laPercent intValue] + [wp.loPercent intValue] + [wp.maPercent intValue] + [wp.spPercent intValue] + [wp.wbPercent intValue] +
-            [wp.whPercent intValue] + [wp.wiPercent intValue] + [wp.uuPercent intValue] + [wp.yePercent intValue];
-            if(total == 0){
-                errorMessage = [NSString stringWithFormat:@"%@Error: Species percentage are mandatory.\n", errorMessage];
-                break;
             }
         }
     }
@@ -513,9 +502,17 @@
         if([wasteBlock.blockStratum count] > 0){
             for(WasteStratum *ws in [wasteBlock.blockStratum allObjects]){
                 if([ws.isPileStratum intValue] == 1){
-                    if([ws.strPile.pileData count] != [ws.totalNumPile intValue]){
-                        errorMessage = [NSString stringWithFormat:@"%@ For stratum %@ number of records entered %lu is not equal to total number of piles %d \n", errorMessage, ws.stratum,(unsigned long)[ws.strPile.pileData count], [ws.totalNumPile intValue]];
-                    }
+                    // EFW-560 disable error
+//                    if([ws.stratumPile count] != [ws.totalNumPile intValue]){
+//                        errorMessage = [NSString stringWithFormat:@"%@ For stratum %@ number of records entered %lu is not equal to total number of piles %d \n", errorMessage, ws.stratum,(unsigned long)[ws.stratumPile count], [ws.totalNumPile intValue]];
+//                    }
+                } else {
+                    // EFW-560 disable error
+//                    NSInteger numPlots = [ws.stratumPlot count];
+//                    NSInteger numPredictionPlots = [ws.predictionPlot integerValue];
+//                    if (numPlots != numPredictionPlots) {
+//                        errorMessage = [NSString stringWithFormat:@"%@ For stratum %@ expected number of plots %lu is not equal to the actual number of plots %lu \n", errorMessage, ws.stratum, numPredictionPlots, numPlots];
+//                    }
                 }
             }
         }
@@ -523,14 +520,19 @@
         if([wasteBlock.blockStratum count] > 0){
             for(WasteStratum *ws in [wasteBlock.blockStratum allObjects]){
                 if([ws.isPileStratum intValue] == 1){
-                    if( [ws.stratumAgg count] > 0 ){
-                        for(AggregateCutblock *aggCB in [ws.stratumAgg allObjects]){
-                            if([aggCB.aggPile.pileData count] != [aggCB.totalNumPile intValue]){
-                                errorMessage = [NSString stringWithFormat:@"%@ For stratum %@, aggregate cutblock %@ number of records entered %lu is not equal to total number of piles %d \n", errorMessage, ws.stratum, aggCB.aggregateCutblock,(unsigned long)[aggCB.aggPile.pileData count], [aggCB.totalNumPile intValue]];
-                            }
-                        }
-                        
-                    }
+                    // EFW-560 disable error
+//                    NSInteger numPiles = [ws.stratumPile count];
+//                    NSInteger numPredictionPlots = [ws.predictionPlot integerValue];
+//                    if (numPiles != numPredictionPlots) {
+//                        errorMessage = [NSString stringWithFormat:@"%@ For stratum %@ expected number of piles %lu is not equal to the actual number of plots %lu \n", errorMessage, ws.stratum, numPredictionPlots, numPiles];
+//                    }
+                } else {
+                    // EFW-560 disable error
+//                    NSInteger numPlots = [ws.stratumPlot count];
+//                    NSInteger numPredictionPlots = [ws.predictionPlot integerValue];
+//                    if (numPlots != numPredictionPlots) {
+//                        errorMessage = [NSString stringWithFormat:@"%@ For stratum %@ expected number of plots %lu is not equal to the actual number of plots %lu \n", errorMessage, ws.stratum, numPredictionPlots, numPlots];
+//                    }
                 }
             }
         }

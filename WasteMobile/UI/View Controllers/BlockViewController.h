@@ -27,7 +27,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 
 // fields
-@property (weak, nonatomic) IBOutlet UITextField *reporintUnitNo;
+@property (weak, nonatomic) IBOutlet UITextField *reportingUnitNo;
 @property (weak, nonatomic) IBOutlet UITextField *cuttingPermit;
 @property (weak, nonatomic) IBOutlet UITextField *cutBlock;
 @property (weak, nonatomic) IBOutlet UITextField *licence;

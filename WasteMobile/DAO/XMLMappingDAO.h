@@ -26,8 +26,6 @@ typedef enum MappingDataType{
 -(NSArray *) getWastePlotMapping;
 -(NSArray *) getWastePieceMapping:(NSString*) assessmnetMethodCode;
 -(NSArray *) getTimberMarkMapping;
--(NSArray *) getAggregateCutblockMapping;
--(NSArray *) getStratumPileMapping;
 -(NSArray *) getWastePileMapping;
 
 @end

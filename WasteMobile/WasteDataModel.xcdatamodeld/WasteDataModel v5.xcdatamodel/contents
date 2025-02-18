@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="21G115" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
-    <entity name="AggregateCutblock" representedClassName="AggregateCutblock" syncable="YES">
-        <attribute name="aggregateCutblock" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="aggregateCuttingPermit" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="aggregateID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="aggregateLicense" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="fixedSample" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="measureSample" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="n1sample" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="n2sample" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="totalNumPile" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <relationship name="aggPile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StratumPile" inverseName="aggPile" inverseEntity="StratumPile" syncable="YES"/>
-        <relationship name="stratumAgg" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumAgg" inverseEntity="WasteStratum" syncable="YES"/>
-    </entity>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="AssessmentMethodCode" representedClassName="AssessmentMethodCode" syncable="YES">
         <attribute name="assessmentMethodCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
@@ -156,6 +143,14 @@
         <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="maturityCodeBlock" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockMaturityCode" inverseEntity="WasteBlock" syncable="YES"/>
     </entity>
+    <entity name="MeasuredPileShapeCode" representedClassName="MeasuredPileShapeCode" syncable="YES">
+        <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="measuredPileShapeCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="measuredPileShapeCodePile" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="WastePile" inverseName="pileMeasuredPileShapeCode" inverseEntity="WastePile" syncable="YES"/>
+    </entity>
     <entity name="MonetaryReductionFactorCode" representedClassName="MonetaryReductionFactorCode" syncable="YES">
         <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="effectiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -223,17 +218,6 @@
         <attribute name="snowCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="snowCodeBlock" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockSnowCode" inverseEntity="WasteBlock" syncable="YES"/>
-    </entity>
-    <entity name="StratumPile" representedClassName="StratumPile" syncable="YES">
-        <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="stratumPileId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="surveyDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="surveyorName" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="aggPile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AggregateCutblock" inverseName="aggPile" inverseEntity="AggregateCutblock" syncable="YES"/>
-        <relationship name="pileCoastStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWCoastStat" syncable="YES"/>
-        <relationship name="pileData" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePile" inverseName="pileData" inverseEntity="WastePile" syncable="YES"/>
-        <relationship name="pileInteriorStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWInteriorStat" syncable="YES"/>
-        <relationship name="strPile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="strPile" inverseEntity="WasteStratum" syncable="YES"/>
     </entity>
     <entity name="StratumTypeCode" representedClassName="StratumTypeCode" syncable="YES">
         <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>
@@ -406,41 +390,36 @@
         <relationship name="pieceWasteClassCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteClassCode" inverseName="wasteClassCodePiece" inverseEntity="WasteClassCode" syncable="YES"/>
     </entity>
     <entity name="WastePile" representedClassName="WastePile" syncable="YES">
-        <attribute name="alPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="arPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="asPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="baPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="biPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="cePercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="assistant" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="block" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="coPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="cyPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="fiPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="cuttingPermit" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcDesignation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcLicenseNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcRationale" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcSignature" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="dcSurveyorName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="height" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="hePercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isSample" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="laPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="length" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="loPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="maPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="licence" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="measuredHeight" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="measuredLength" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="measuredPileArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="measuredPileVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="measuredWidth" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="otPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pileArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="pileId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="pileNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pileNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="pileVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="spPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="uuPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="wbPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="whPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="returnNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="surveyDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyorLicence" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="surveyorName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="weather" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="width" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="wiPercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="yePercent" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <relationship name="pileData" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StratumPile" inverseName="pileData" inverseEntity="StratumPile" syncable="YES"/>
+        <relationship name="pileMeasuredPileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeasuredPileShapeCode" inverseName="measuredPileShapeCodePile" inverseEntity="MeasuredPileShapeCode" syncable="YES"/>
         <relationship name="pilePileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PileShapeCode" inverseName="pileShapeCodePile" inverseEntity="PileShapeCode" syncable="YES"/>
         <relationship name="pileStratum" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumPile" inverseEntity="WasteStratum" syncable="YES"/>
     </entity>
@@ -515,6 +494,7 @@
         <attribute name="gradeWPercent" optional="YES" attributeType="Decimal" syncable="YES"/>
         <attribute name="gradeXPercent" optional="YES" attributeType="Decimal" syncable="YES"/>
         <attribute name="gradeYPercent" optional="YES" attributeType="Decimal" syncable="YES"/>
+        <attribute name="isLocked" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isPileStratum" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isSurvey" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="measurePlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -535,8 +515,8 @@
         <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="totalEstimatedVolume" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="totalNumPile" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="totalPileCounter" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="deleteStratumPlot" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WastePlot" inverseName="deletePlotStratum" inverseEntity="WastePlot" syncable="YES"/>
-        <relationship name="stratumAgg" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AggregateCutblock" inverseName="stratumAgg" inverseEntity="AggregateCutblock" syncable="YES"/>
         <relationship name="stratumAssessmentMethodCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AssessmentMethodCode" inverseName="assessmentMethodCodeStratum" inverseEntity="AssessmentMethodCode" syncable="YES"/>
         <relationship name="stratumBlock" maxCount="1" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockStratum" inverseEntity="WasteBlock" syncable="YES"/>
         <relationship name="stratumCoastStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWCoastStat" syncable="YES"/>
@@ -548,7 +528,6 @@
         <relationship name="stratumStratumTypeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StratumTypeCode" inverseName="stratumTypeCodeStratum" inverseEntity="StratumTypeCode" syncable="YES"/>
         <relationship name="stratumWasteLevelCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteLevelCode" inverseName="wasteLevelCodeStratum" inverseEntity="WasteLevelCode" syncable="YES"/>
         <relationship name="stratumWasteTypeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteTypeCode" inverseName="wasteTypeCodeStratum" inverseEntity="WasteTypeCode" syncable="YES"/>
-        <relationship name="strPile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StratumPile" inverseName="strPile" inverseEntity="StratumPile" syncable="YES"/>
     </entity>
     <entity name="WasteTypeCode" representedClassName="WasteTypeCode" syncable="YES">
         <attribute name="desc" optional="YES" attributeType="String" syncable="YES"/>

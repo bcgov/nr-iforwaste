@@ -17,6 +17,7 @@
 #import "SWRevealViewController.h"
 #import "SidebarViewController.h"
 #import "FilesTableViewController.h"
+#import "DownloadedTableViewController.h"
 #import "AppPatch.h"
 #import "PlotSampleGenerator.h"
 
@@ -170,7 +171,7 @@
         return _managedObjectModel;
     }
     NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"WasteDataModel" withExtension:@"momd"];
-    modelURL = [modelURL URLByAppendingPathComponent:@"WasteDataModel v 4.mom"];
+    modelURL = [modelURL URLByAppendingPathComponent:@"WasteDataModel v5.mom"];
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }
@@ -249,4 +250,47 @@
     return YES;
 }
 
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+    if (url != nil && [url isFileURL]) {
+        
+        SWRevealViewController *svc = (SWRevealViewController *)self.window.rootViewController;
+        UINavigationController * font = (UINavigationController *)svc.frontViewController;
+        SidebarViewController * sv = (SidebarViewController * )svc.rearViewController;
+
+        if([[[url pathExtension] lowercaseString] isEqualToString:@"efw"])
+        {
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Import EFW File?"
+                                                                           message:@"The file you are trying to import is an '.efw' file type.\nWould you like to import this file?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* goToAction = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action) {
+                //navigate to the file view controller
+                [sv performSegueWithIdentifier:@"fileSegue" sender:sv];
+                
+                FilesTableViewController *rc = (FilesTableViewController *) [font.viewControllers objectAtIndex:0];
+                [rc handleImportFile:url];
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            
+            UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action) {
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            
+            [alert addAction:goToAction];
+            [alert addAction:okAction];
+            [font presentViewController:alert animated:YES completion:nil];
+        }
+        else
+        {
+            //navigate to the file view controller
+            [sv performSegueWithIdentifier:@"fileSegue" sender:sv];
+            
+            FilesTableViewController *rc = (FilesTableViewController *) [font.viewControllers objectAtIndex:0];
+            [rc handleImportFile:url];
+        }
+
+    }    return YES;
+}
 @end

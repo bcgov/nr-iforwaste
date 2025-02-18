@@ -15,6 +15,7 @@
 }
 
 @dynamic isAggregate;
+@dynamic versionNumber;
 
 @dynamic blockID;
 @dynamic blockNumber;

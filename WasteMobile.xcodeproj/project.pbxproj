@@ -310,14 +310,6 @@
 		8B5A9E47223AF57900AFD8FC /* PileValueTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E45223AF57900AFD8FC /* PileValueTableViewController.m */; };
 		8B5A9E4A224193F000AFD8FC /* SpeciesPercentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */; };
 		8B5A9E4B224193F000AFD8FC /* SpeciesPercentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */; };
-		8B6209482412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */; };
-		8B6209492412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */; };
-		8B62094A2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */; };
-		8B62094B2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */; };
-		8B69335F2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */; };
-		8B6933602416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */; };
-		8B6933612416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */; };
-		8B6933622416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */; };
 		8B6DA7B92407334A009F2A1E /* AggregatePileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */; };
 		8B6DA7BA2407334A009F2A1E /* AggregatePileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */; };
 		8B8EE9F8220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8EE9F6220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m */; };
@@ -370,7 +362,12 @@
 		CA0577CE29240581002F2959 /* BTSRow4.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD62357BE2600A98BAF /* BTSRow4.html */; };
 		CA0577CF29240581002F2959 /* BTSRow5.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD82357BE5F00A98BAF /* BTSRow5.html */; };
 		CA0577D029240581002F2959 /* BTSRow6.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEADA2357BE8B00A98BAF /* BTSRow6.html */; };
+		CA1938452D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1938432D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataClass.m */; };
+		CA1938462D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1938442D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataProperties.m */; };
+		CA1938492D52E63D00AFC14C /* AggregatePackingRatioPlotTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CA1938482D52E63D00AFC14C /* AggregatePackingRatioPlotTableViewCell.m */; };
+		CA19384B2D52E65700AFC14C /* PackingRatioTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CA19384A2D52E65700AFC14C /* PackingRatioTableViewCell.m */; };
 		CA23CC5528E744A100293E33 /* WasteMobile-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4EECF19177C99F400778578 /* WasteMobile-Info.plist */; };
+		CA667A052D5EB6A500C8440A /* AggregatePlotTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 961B114022720ADB0088283A /* AggregatePlotTableViewCell.m */; };
 		F4EECF12177C99F400778578 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF11177C99F400778578 /* UIKit.framework */; };
 		F4EECF14177C99F400778578 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF13177C99F400778578 /* Foundation.framework */; };
 		F4EECF16177C99F400778578 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF15177C99F400778578 /* CoreGraphics.framework */; };
@@ -619,14 +616,6 @@
 		8B5A9E45223AF57900AFD8FC /* PileValueTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PileValueTableViewController.m; sourceTree = "<group>"; };
 		8B5A9E48224193F000AFD8FC /* SpeciesPercentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeciesPercentViewController.h; sourceTree = "<group>"; };
 		8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeciesPercentViewController.m; sourceTree = "<group>"; };
-		8B6209442412B7FF00AF913D /* StratumPile+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StratumPile+CoreDataProperties.h"; sourceTree = "<group>"; };
-		8B6209452412B7FF00AF913D /* StratumPile+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StratumPile+CoreDataClass.h"; sourceTree = "<group>"; };
-		8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "StratumPile+CoreDataClass.m"; sourceTree = "<group>"; };
-		8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "StratumPile+CoreDataProperties.m"; sourceTree = "<group>"; };
-		8B69335B2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AggregateCutblock+CoreDataProperties.h"; sourceTree = "<group>"; };
-		8B69335C2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AggregateCutblock+CoreDataClass.h"; sourceTree = "<group>"; };
-		8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AggregateCutblock+CoreDataClass.m"; sourceTree = "<group>"; };
-		8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AggregateCutblock+CoreDataProperties.m"; sourceTree = "<group>"; };
 		8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AggregatePileTableViewCell.m; sourceTree = "<group>"; };
 		8B6DA7BB240733C7009F2A1E /* AggregatePileTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregatePileTableViewCell.h; sourceTree = "<group>"; };
 		8B73961D23FF5FDB00D10F4C /* WasteDataModel v 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WasteDataModel v 4.xcdatamodel"; sourceTree = "<group>"; };
@@ -700,6 +689,19 @@
 		9B93DB9319EF18F4006ACD16 /* CanAutoSave.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanAutoSave.h; sourceTree = "<group>"; };
 		C3CE377218E1F48600E7400E /* Search-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Search-icon.png"; sourceTree = "<group>"; };
 		C3CE377418E1F9EF00E7400E /* Saved-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Saved-icon.png"; sourceTree = "<group>"; };
+		CA1938402D52D79300AFC14C /* WasteDataModel v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WasteDataModel v5.xcdatamodel"; sourceTree = "<group>"; };
+		CA1938412D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MeasuredPileShapeCode+CoreDataProperties.h"; sourceTree = "<group>"; };
+		CA1938422D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MeasuredPileShapeCode+CoreDataClass.h"; sourceTree = "<group>"; };
+		CA1938432D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MeasuredPileShapeCode+CoreDataClass.m"; sourceTree = "<group>"; };
+		CA1938442D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MeasuredPileShapeCode+CoreDataProperties.m"; sourceTree = "<group>"; };
+		CA1938472D52E60F00AFC14C /* AggregatePackingRatioPlotTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregatePackingRatioPlotTableViewCell.h; sourceTree = "<group>"; };
+		CA1938482D52E63D00AFC14C /* AggregatePackingRatioPlotTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AggregatePackingRatioPlotTableViewCell.m; sourceTree = "<group>"; };
+		CA19384A2D52E65700AFC14C /* PackingRatioTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PackingRatioTableViewCell.m; sourceTree = "<group>"; };
+		CA19384C2D52E66D00AFC14C /* PackingRatioTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PackingRatioTableViewCell.h; sourceTree = "<group>"; };
+		CAECBABC2D52E7570061A73F /* DataEndorsementViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataEndorsementViewController.h; sourceTree = "<group>"; };
+		CAECBABD2D52E7770061A73F /* DataEndorsementViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataEndorsementViewController.m; sourceTree = "<group>"; };
+		CAECBABE2D52E7A20061A73F /* SignatureView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SignatureView.m; sourceTree = "<group>"; };
+		CAECBABF2D52E7B60061A73F /* SignatureView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SignatureView.h; sourceTree = "<group>"; };
 		F4EECF0E177C99F400778578 /* WasteMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WasteMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4EECF11177C99F400778578 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F4EECF13177C99F400778578 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -940,13 +942,15 @@
 		970D1381191D94460010B797 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				9B93DB9019EF1532006ACD16 /* Timer.h */,
 				9B93DB9119EF1532006ACD16 /* Timer.m */,
+				9B93DB9019EF1532006ACD16 /* Timer.h */,
 				9B93DB9319EF18F4006ACD16 /* CanAutoSave.h */,
 				15F8606719A7C391005482FC /* Color */,
 				15F8606319A7A9CB005482FC /* Views */,
 				970D1382191D94460010B797 /* Table Cells */,
 				970D1385191D94460010B797 /* View Controllers */,
+				CAECBABE2D52E7A20061A73F /* SignatureView.m */,
+				CAECBABF2D52E7B60061A73F /* SignatureView.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -980,6 +984,10 @@
 				961B114222720AEB0088283A /* AggregatePlotTableViewCell.h */,
 				8B6DA7BB240733C7009F2A1E /* AggregatePileTableViewCell.h */,
 				8B6DA7B82407334A009F2A1E /* AggregatePileTableViewCell.m */,
+				CA1938472D52E60F00AFC14C /* AggregatePackingRatioPlotTableViewCell.h */,
+				CA1938482D52E63D00AFC14C /* AggregatePackingRatioPlotTableViewCell.m */,
+				CA19384A2D52E65700AFC14C /* PackingRatioTableViewCell.m */,
+				CA19384C2D52E66D00AFC14C /* PackingRatioTableViewCell.h */,
 			);
 			path = "Table Cells";
 			sourceTree = "<group>";
@@ -1033,6 +1041,8 @@
 				8B5A9E45223AF57900AFD8FC /* PileValueTableViewController.m */,
 				8B5A9E48224193F000AFD8FC /* SpeciesPercentViewController.h */,
 				8B5A9E49224193F000AFD8FC /* SpeciesPercentViewController.m */,
+				CAECBABC2D52E7570061A73F /* DataEndorsementViewController.h */,
+				CAECBABD2D52E7770061A73F /* DataEndorsementViewController.m */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -1049,14 +1059,10 @@
 		97E0F091191D72080097A6A1 /* ModelManager */ = {
 			isa = PBXGroup;
 			children = (
-				8B69335B2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.h */,
-				8B69335C2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.h */,
-				8B69335D2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m */,
-				8B69335E2416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m */,
-				8B6209442412B7FF00AF913D /* StratumPile+CoreDataProperties.h */,
-				8B6209452412B7FF00AF913D /* StratumPile+CoreDataClass.h */,
-				8B6209462412B7FF00AF913D /* StratumPile+CoreDataClass.m */,
-				8B6209472412B7FF00AF913D /* StratumPile+CoreDataProperties.m */,
+				CA1938412D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataProperties.h */,
+				CA1938422D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataClass.h */,
+				CA1938432D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataClass.m */,
+				CA1938442D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataProperties.m */,
 				8B5A9E3C22305D8600AFD8FC /* WastePile+CoreDataProperties.h */,
 				8B5A9E3D22305D8600AFD8FC /* WastePile+CoreDataClass.h */,
 				8B5A9E3E22305D8600AFD8FC /* WastePile+CoreDataClass.m */,
@@ -1573,7 +1579,6 @@
 				15BF98141E2EDC8E004D8F12 /* LoginViewController.m in Sources */,
 				274569761E64DA49000F3A6C /* ExportUserData+CoreDataClass.m in Sources */,
 				15BF98151E2EDC8E004D8F12 /* FilesTableViewController.m in Sources */,
-				8B62094B2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */,
 				157393C920222D9900B19210 /* AppPatch.m in Sources */,
 				15BF98B41E303DB3004D8F12 /* BlockTypeSummaryReport.m in Sources */,
 				15BF98161E2EDC8E004D8F12 /* WasteStratum+CoreDataProperties.m in Sources */,
@@ -1596,7 +1601,6 @@
 				15B587CD1E7C42A4009E2DBB /* PlotSampleGenerator.m in Sources */,
 				15BF98241E2EDC8E004D8F12 /* CreatedTableViewController.m in Sources */,
 				15BF98251E2EDC8E004D8F12 /* GDataXMLNode.m in Sources */,
-				8B6933602416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */,
 				153F6AE11F04147D00C05C97 /* EFWInteriorStat+CoreDataProperties.m in Sources */,
 				15BF98261E2EDC8E004D8F12 /* SiteCode+CoreDataClass.m in Sources */,
 				15BF98271E2EDC8E004D8F12 /* XMLDataImporter.m in Sources */,
@@ -1615,7 +1619,6 @@
 				8B5A9E4122305D8600AFD8FC /* WastePile+CoreDataClass.m in Sources */,
 				15BF98311E2EDC8E004D8F12 /* Constants.m in Sources */,
 				15BF98321E2EDC8E004D8F12 /* FooterStatView.m in Sources */,
-				8B6209492412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */,
 				27296B241E64EA2100E81B58 /* ExportUserDataDAO.m in Sources */,
 				15BF98331E2EDC8E004D8F12 /* WasteBlockDTOAdaptor.m in Sources */,
 				15BF98341E2EDC8E004D8F12 /* SearchResultsTableViewController.m in Sources */,
@@ -1651,7 +1654,6 @@
 				8B5A9E2B222DE07500AFD8FC /* PileHeaderView.m in Sources */,
 				15BF984C1E2EDC8E004D8F12 /* WasteBlockDAO.m in Sources */,
 				8B5A9E47223AF57900AFD8FC /* PileValueTableViewController.m in Sources */,
-				8B6933622416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */,
 				15BF984D1E2EDC8E004D8F12 /* PieceValueTableViewController.m in Sources */,
 				15BF984E1E2EDC8E004D8F12 /* MonetaryReductionFactorCode.m in Sources */,
 				15BF984F1E2EDC8E004D8F12 /* WasteStratumDTOAdaptor.m in Sources */,
@@ -1723,7 +1725,6 @@
 				15CFC28219FB168B0079228A /* WasteTypeCode.m in Sources */,
 				15CFC25219FAF7A80079228A /* DecayTypeCode.m in Sources */,
 				15ECDF5D1DA46D190077B7F8 /* WastePiece+CoreDataProperties.m in Sources */,
-				8B62094A2412B7FF00AF913D /* StratumPile+CoreDataProperties.m in Sources */,
 				15ECDF5E1DA46D190077B7F8 /* WastePiece.m in Sources */,
 				15B587BF1E789126009E2DBB /* PlotSelectorLog.m in Sources */,
 				8B8EE9F8220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m in Sources */,
@@ -1732,6 +1733,7 @@
 				157393C820222D9900B19210 /* AppPatch.m in Sources */,
 				158502171DCCF060008792B3 /* SiteCode+CoreDataClass.m in Sources */,
 				150D5D981DCA9E87006B44A7 /* XMLDataImporter.m in Sources */,
+				CA19384B2D52E65700AFC14C /* PackingRatioTableViewCell.m in Sources */,
 				156C65741E66048F00A75202 /* XMLToESFMappingDAO.m in Sources */,
 				154464EE19E5A31A00E7959D /* TimbermarkDTOAdaptor.m in Sources */,
 				970D139E191D94460010B797 /* DownloadedTableViewController.m in Sources */,
@@ -1740,6 +1742,8 @@
 				157F68011AE6B483006A60F2 /* Timbermark.m in Sources */,
 				15F8606A19A7C3AA005482FC /* UIColor+WasteColor.m in Sources */,
 				15CFC25E19FAF7A90079228A /* ButtEndCode.m in Sources */,
+				CA1938452D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataClass.m in Sources */,
+				CA1938462D52DA5C00AFC14C /* MeasuredPileShapeCode+CoreDataProperties.m in Sources */,
 				153F6AE41F04147D00C05C97 /* EFWCoastStat+CoreDataClass.m in Sources */,
 				153F6AE61F04147D00C05C97 /* EFWCoastStat+CoreDataProperties.m in Sources */,
 				F4EECF22177C99F400778578 /* AppDelegate.m in Sources */,
@@ -1758,13 +1762,11 @@
 				15CFC26119FAF7A90079228A /* CheckerStatusCode.m in Sources */,
 				15F8606219A6732F005482FC /* ChecksCompletedTableViewController.m in Sources */,
 				150DDC811B12D7C5001083E3 /* WastePlotValidator.m in Sources */,
-				8B69335F2416B5BB00792DAE /* AggregateCutblock+CoreDataClass.m in Sources */,
 				8B5A9E4A224193F000AFD8FC /* SpeciesPercentViewController.m in Sources */,
 				153F6ADE1F04147D00C05C97 /* EFWInteriorStat+CoreDataClass.m in Sources */,
 				15897E66199AAB9400D51B91 /* PieceTableViewController.m in Sources */,
 				1581CE4B19BA5D0000A7E94F /* FS702Report.m in Sources */,
 				15713F551DB1812E00713EBB /* FileDTO.m in Sources */,
-				8B6933612416B5BB00792DAE /* AggregateCutblock+CoreDataProperties.m in Sources */,
 				970D13A1191D94460010B797 /* ReportsTableViewController.m in Sources */,
 				154464E519E498EC00E7959D /* WasteBlockDTO.m in Sources */,
 				970D13BA1925591B0010B797 /* PlotTallyCardViewController.m in Sources */,
@@ -1785,6 +1787,7 @@
 				154464FA19E5ACD200E7959D /* WasteStratumDTOAdaptor.m in Sources */,
 				153F6AE01F04147D00C05C97 /* EFWInteriorStat+CoreDataProperties.m in Sources */,
 				970D13A0191D94460010B797 /* PlotViewController.m in Sources */,
+				CA1938492D52E63D00AFC14C /* AggregatePackingRatioPlotTableViewCell.m in Sources */,
 				970D13AE191D960C0010B797 /* TimbermarkTableViewCell.m in Sources */,
 				970D13A5191D94460010B797 /* StratumViewController.m in Sources */,
 				15A5DF9919D385AD0075665E /* SearchResultDTO.m in Sources */,
@@ -1803,7 +1806,6 @@
 				8B5A9E3822305C1F00AFD8FC /* PileShapeCode+CoreDataClass.m in Sources */,
 				15DFC5AF1B69937000479CCB /* AssessmentMethodCode.m in Sources */,
 				1581CE3819B7949700A7E94F /* PieceEditTableViewCell.m in Sources */,
-				8B6209482412B7FF00AF913D /* StratumPile+CoreDataClass.m in Sources */,
 				970D13A7191D94460010B797 /* WelcomeViewController.m in Sources */,
 				15CFC27019FAF7AA0079228A /* StratumTypeCode.m in Sources */,
 				154464F119E5AB5700E7959D /* WasteStratumDTO.m in Sources */,
@@ -1818,6 +1820,7 @@
 				1581CE4519BA377600A7E94F /* ReportGeneratorTableViewController.m in Sources */,
 				15CFC24319FAF7A70079228A /* BorderlineCode.m in Sources */,
 				15CFC23D19FAF7A70079228A /* ScaleGradeCode.m in Sources */,
+				CA667A052D5EB6A500C8440A /* AggregatePlotTableViewCell.m in Sources */,
 				970D13B719213C1F0010B797 /* PieceTableViewCell.m in Sources */,
 				970D13AB191D94740010B797 /* SWRevealViewController.m in Sources */,
 				15CFC27319FAF7AA0079228A /* ShapeCode.m in Sources */,
@@ -2100,12 +2103,13 @@
 		97E3F8671905BA1D00EAB073 /* WasteDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				CA1938402D52D79300AFC14C /* WasteDataModel v5.xcdatamodel */,
 				8B73961D23FF5FDB00D10F4C /* WasteDataModel v 4.xcdatamodel */,
 				8BB6D7782342A2BC003528E5 /* WasteDataModel v3.xcdatamodel */,
 				8B05FADD2203853E00353A88 /* WasteDataModel v2.xcdatamodel */,
 				97E3F8681905BA1D00EAB073 /* WasteDataModel.xcdatamodel */,
 			);
-			currentVersion = 8B73961D23FF5FDB00D10F4C /* WasteDataModel v 4.xcdatamodel */;
+			currentVersion = CA1938402D52D79300AFC14C /* WasteDataModel v5.xcdatamodel */;
 			path = WasteDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

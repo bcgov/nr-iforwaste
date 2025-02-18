@@ -13,7 +13,7 @@
 #import "EFWFooterView.h"
 
 
-@class WasteStratum,WasteBlock, AggregateCutblock;
+@class WasteStratum,WasteBlock;
 
 typedef enum StratumAlertTypeCode{
     ValidEnum = -3,
@@ -43,6 +43,7 @@ typedef enum StratumAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *wasteLevelLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *totalPileLabel;
+@property (weak, nonatomic) IBOutlet UILabel *totalNumPiles;
 @property (weak, nonatomic) IBOutlet UITextField *areaHa;
 @property (weak, nonatomic) IBOutlet UILabel *numOfPlots;
 @property (weak, nonatomic) IBOutlet UITextView *notes;
@@ -58,6 +59,11 @@ typedef enum StratumAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *grade4Label;
 @property (weak, nonatomic) IBOutlet UILabel *gradeXLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gradeYLabel;
+
+@property (nonatomic, strong) UITextField *plotNumberTextField;
+@property (nonatomic, strong) UITextField *lengthTextField;
+@property (nonatomic, strong) UITextField *widthTextField;
+@property (nonatomic, strong) UITextField *heightTextField;
 
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *downArrowImage;
@@ -81,11 +87,18 @@ typedef enum StratumAlertTypeCode{
 @property (strong, nonatomic) IBOutlet UITableView *plotTableView;
 @property (strong, nonatomic) IBOutlet UITableView *aggregatePlotTableView;
 @property (strong, nonatomic) IBOutlet UITableView *aggregatePileTableView;
+@property (strong, nonatomic) IBOutlet UITableView *packingRatioTableView;
+@property (strong, nonatomic) IBOutlet UITableView *aggregatePackingRatioPlotTableView;
 
 @property (weak, nonatomic) IBOutlet UIButton *sortPlotNumber;
 @property (weak, nonatomic) IBOutlet UIButton *sortLicense;
 @property (weak, nonatomic) IBOutlet UIButton *sortCuttingPermit;
 @property (weak, nonatomic) IBOutlet UIButton *sortCutblock;
+
+@property (weak, nonatomic) IBOutlet UIButton *sortPlotNumberAPR;
+@property (weak, nonatomic) IBOutlet UIButton *sortLicenseAPR;
+@property (weak, nonatomic) IBOutlet UIButton *sortCuttingPermitAPR;
+@property (weak, nonatomic) IBOutlet UIButton *sortCutblockAPR;
 
 @property (strong, nonatomic) NSString *sortColumn;
 
@@ -102,8 +115,7 @@ typedef enum StratumAlertTypeCode{
 
 @property (strong, nonatomic) NSArray *sortedPlots;
 @property (strong, nonatomic) NSArray *sortedblocks;
-
-@property (strong, nonatomic) AggregateCutblock *currentAggCutblock;
+@property (strong, nonatomic) NSArray *sortedPiles;
 
 // pickers values
 @property (strong, retain) NSArray *stratumTypeArray;

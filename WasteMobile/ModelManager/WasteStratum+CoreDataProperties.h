@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSNumber *measurePlot;
 @property (nullable, nonatomic, copy) NSString *n1sample;
 @property (nullable, nonatomic, copy) NSString *n2sample;
+@property (nullable, nonatomic, copy) NSString *fixedSample;
 @property (nullable, nonatomic, copy) NSString *notes;
 @property (nullable, nonatomic, copy) NSNumber *orgMeasurePlot;
 @property (nullable, nonatomic, copy) NSNumber *orgPredictionPlot;
@@ -43,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) WasteBlock *stratumBlock;
 @property (nullable, nonatomic, retain) HarvestMethodCode *stratumHarvestMethodCode;
 @property (nullable, nonatomic, retain) NSSet<WastePlot *> *stratumPlot;
+@property (nullable, nonatomic, retain) NSSet<WastePile *> *stratumPile;
 @property (nullable, nonatomic, retain) PlotSizeCode *stratumPlotSizeCode;
 @property (nullable, nonatomic, retain) StratumTypeCode *stratumStratumTypeCode;
 @property (nullable, nonatomic, retain) WasteLevelCode *stratumWasteLevelCode;
@@ -50,8 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) EFWCoastStat *stratumCoastStat;
 @property (nullable, nonatomic, retain) EFWInteriorStat *stratumInteriorStat;
 @property (nullable, nonatomic, retain) NSNumber *isPileStratum;
-@property (nullable, nonatomic, retain) NSSet<AggregateCutblock *> *stratumAgg;
 @property (nullable, nonatomic, copy) NSNumber *totalNumPile;
+@property (nullable, nonatomic, copy) NSNumber *totalPileCounter;
 @property (nullable, nonatomic, copy) NSNumber *measureSample;
 @property (nullable, nonatomic, copy) NSDecimalNumber *grade12Percent;
 @property (nullable, nonatomic, copy) NSDecimalNumber *grade4Percent;
@@ -61,8 +63,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeWPercent;
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeYPercent;
 @property (nullable, nonatomic, copy) NSDecimalNumber *gradeXPercent;
-@property (nullable, nonatomic, retain) StratumPile *strPile;
+@property (nullable, nonatomic, retain) NSSet<WastePlot *> *deletedStratumPlot;
+@property (nullable, nonatomic, retain) NSNumber *isLocked;
 
+//Data change variables
+@property (nullable, nonatomic, copy) NSString *dcSurveyorName;
+@property (nullable, nonatomic, copy) NSString *dcDesignation;
+@property (nullable, nonatomic, copy) NSString *dcLicenseNumber;
+@property (nullable, nonatomic, copy) UIImage *dcSignature;
+@property (nullable, nonatomic, copy) NSString *dcRationale;
 @end
 
 @interface WasteStratum (CoreDataGeneratedAccessors)
@@ -72,15 +81,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addStratumPlot:(NSSet<WastePlot *> *)values;
 - (void)removeStratumPlot:(NSSet<WastePlot *> *)values;
 
-- (void)addStratumAggObject:(AggregateCutblock *)value;
-- (void)removeStratumAggObject:(AggregateCutblock *)value;
-- (void)addStratumAgg:(NSSet<AggregateCutblock *> *)values;
-- (void)removeStratumAgg:(NSSet<AggregateCutblock *> *)values;
-
-- (void)addStrPileObject:(StratumPile *)value;
-- (void)removeStrPileObject:(StratumPile *)value;
-- (void)addStrPile:(NSSet<StratumPile *> *)values;
-- (void)removeStrPile:(NSSet<StratumPile *> *)values;
+- (void)addStratumPileObject:(WastePile *)value;
+- (void)removeStratumPileObject:(WastePile *)value;
+- (void)addStratumPile:(NSSet<WastePile *> *)values;
+- (void)removeStratumPile:(NSSet<WastePile *> *)values;
 
 @end
 

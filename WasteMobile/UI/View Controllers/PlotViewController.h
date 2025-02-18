@@ -71,7 +71,6 @@ typedef enum PlotAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *totalEstimatedVolumeLabel;
 @property (weak, nonatomic) IBOutlet UITextField *totalEstimateVolume;
 @property (weak, nonatomic) IBOutlet UILabel *surveyTotalEstimateVolume;
-@property (weak, nonatomic) IBOutlet UITextField *surveyTotalEstimateVolumeText;
 @property (weak, nonatomic) IBOutlet UILabel *checkSurveyDateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *checkMeasureLabel;
 @property (weak, nonatomic) IBOutlet UILabel *checkByLabel;
@@ -81,6 +80,7 @@ typedef enum PlotAlertTypeCode{
 
 @property (weak, nonatomic) IBOutlet UILabel *isMeasurePlotLabel;
 @property (weak, nonatomic) IBOutlet UILabel *isMeasurePlot;
+@property (weak, nonatomic) IBOutlet UITextField *isMeasurePlot;
 @property (weak, nonatomic) IBOutlet UILabel *greenVolumeLabel;
 @property (weak, nonatomic) IBOutlet UITextField *greenVolume;
 @property (weak, nonatomic) IBOutlet UILabel *dryVolumeLabel;
@@ -117,6 +117,9 @@ typedef enum PlotAlertTypeCode{
 
 @property (weak, nonatomic) UITextField *activeTF;
 
+@property (strong, nonatomic) NSNumber *originalMP;
+@property (strong, nonatomic) NSNumber *fromBackButton;
+
 
 -(IBAction)hideKeyboard:(id)sender;
 
@@ -128,6 +131,7 @@ typedef enum PlotAlertTypeCode{
 -(void) initNewPieceProperty:(NSString*)piece_number;
 -(void) removeCurrentPiece;
 -(void) updateCurrentPieceProperty:(WastePiece*)wp property:(NSString*)property;
+
 
 @end
 

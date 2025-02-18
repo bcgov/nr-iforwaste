@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSFetchRequest<WasteBlock *> *)fetchRequest;
 
 @property (nullable, nonatomic, copy) NSNumber *isAggregate;
+@property (nullable, nonatomic, copy) NSString *versionNumber;
 
 @property (nullable, nonatomic, copy) NSNumber *blockID;
 @property (nullable, nonatomic, copy) NSString *blockNumber;

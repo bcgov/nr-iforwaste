@@ -12,14 +12,18 @@
 #import "PileValueTableViewController.h"
 #import "PileViewController.h"
 #import "PileShapeCode+CoreDataClass.h"
+#import "MeasuredPileShapeCode+CoreDataClass.h"
 #import "CodeDAO.h"
 #import "WasteBlock.h"
 #import "Constants.h"
 #import "SpeciesPercentViewController.h"
+#import "WasteStratum.h"
+#import "PlotSelectorLog.h"
+#import "WasteCalculator.h"
 
 @implementation PileEditTableViewCell
 
-@synthesize cellWastePile;
+@synthesize cellWastePile, wasteStratum;
 @synthesize displayObjectDictionary;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -44,24 +48,22 @@
     // Configure the view for the selected state
 }
 
--(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock userCreatedBlock:(BOOL)userCreatedBlock {
-    
+-(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock {
+
     if([wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:NO] intValue]){
         self.cellWastePile = wastePile;
         self.wasteBlock = wasteBlock;
+        self.wasteStratum = wasteStratum;
         NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
-        int locationCounter = 0;
+        int locationCounter = 44;
         int total = 0;
-        [labelArray addObject:@";pileNumber;w;44;l;1"];
-        [labelArray addObject:@";measuredLength;m;111;b;2"];
+        [labelArray addObject:@";measuredLength;m;110;b;2"];
         [labelArray addObject:@";measuredWidth;m;110;b;3"];
         [labelArray addObject:@";measuredHeight;m;110;b;4"];
         [labelArray addObject:@";pilePileShapeCode;w;110;b;5"];
-        [labelArray addObject:@";measuredPileArea;w;110;l;6"];
-        [labelArray addObject:@";measuredPileVolume;w;110;l;7"];
-        [labelArray addObject:@";;w;110;b;8"];
-        [labelArray addObject:@";comment;w;110;b;9"];
+        [labelArray addObject:@";measuredPileArea;w;140;l;6"];
+        [labelArray addObject:@";measuredPileVolume;w;140;l;7"];
         
         
         //init the display object dictionary if it is not initialized yet
@@ -79,7 +81,8 @@
                 UILabel *lbl = nil;
                 if ([self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]]){
                     lbl =[self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]];
-                }else{
+                }
+                else{
                     lbl = [[UILabel alloc] initWithFrame:CGRectMake(locationCounter, -1, width, 45)];
                     [self.displayObjectDictionary setObject:lbl forKey:[lbStrAry objectAtIndex:1]];
                 }
@@ -87,7 +90,6 @@
                 if (![[lbStrAry objectAtIndex:1] isEqualToString: @""]){
                     if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
                         lbl.text = [[NSString alloc] initWithFormat:@"%0.1f", [[(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] decimalNumberByRoundingAccordingToBehavior:behaviorD2] floatValue]];
-                        //[btn setTitle:[[NSString alloc] initWithFormat:@"%0.1f", [(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] floatValue]] forState:UIControlStateNormal];
                     }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
                         lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]];
                     }else if ([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
@@ -120,7 +122,7 @@
                 UIButton *btn = nil;
                 
                 if ([self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]]){
-                    btn =[self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]];
+                    btn = [self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]];
                 }else{
                     btn = [[UIButton alloc] initWithFrame:CGRectMake(locationCounter, -1, width, 45)];
                     [self.displayObjectDictionary setObject:btn forKey:[lbStrAry objectAtIndex:1]];
@@ -136,9 +138,7 @@
                             [btn setTitle: @"" forState:UIControlStateNormal];
                         }
                     }else{
-                        //NSLog(@"property name = %@", [lbStrAry objectAtIndex:1]);
                         if ([wastePile valueForKey:[lbStrAry objectAtIndex:1]]){
-                            
                             if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
                                 [btn setTitle:[[NSString alloc] initWithFormat:@"%0.1f", [(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] floatValue]] forState:UIControlStateNormal];
                             }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[PileShapeCode class]]){
@@ -169,8 +169,7 @@
                 }
                 
                 if([[lbStrAry objectAtIndex:1] isEqualToString:@""]){
-                    total += [wastePile.alPercent intValue] + [wastePile.arPercent intValue] + [wastePile.asPercent intValue] + [wastePile.baPercent intValue] + [wastePile.biPercent intValue] + [wastePile.cePercent intValue] + [wastePile.coPercent intValue] + [wastePile.cyPercent intValue] + [wastePile.fiPercent intValue] + [wastePile.hePercent intValue] + [wastePile.laPercent intValue] + [wastePile.loPercent intValue] + [wastePile.maPercent intValue] + [wastePile.spPercent intValue] + [wastePile.wbPercent intValue] +
-                    [wastePile.whPercent intValue] + [wastePile.wiPercent intValue] + [wastePile.uuPercent intValue] + [wastePile.yePercent intValue];
+                    total += 0;
                     
                     [btn setTitle:[NSString stringWithFormat:@"%d", total] forState:UIControlStateNormal];
                      if(total >0 && total != 100){
@@ -179,16 +178,8 @@
                          btn.backgroundColor = [UIColor whiteColor];
                      }
                 }
-                //populate the initial value for testing purpose
-                /*
-                 if (![[lbStrAry objectAtIndex:0] isEqualToString:@""]){
-                 [btn setTitle:[lbStrAry objectAtIndex:0] forState:UIControlStateNormal];
-                 }
-                 */
                 
-                //btn.textColor = [UIColor blackColor];
                 [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-                //btn.textAlignment = NSTextAlignmentCenter;
                 btn.layer.borderColor = [UIColor blackColor].CGColor;
                 btn.layer.borderWidth = 1.0;
                 [[btn titleLabel] setFont:[UIFont fontWithName:@"Helvetica" size:18]];
@@ -204,32 +195,30 @@
                 [self addSubview:btn];
             }
             
-            
             locationCounter = locationCounter + widthInt;
-            //  alterCounter = alterCounter + 1;
         }
+        
     }else if([wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:YES] intValue]){
         self.cellWastePile = wastePile;
         self.wasteBlock = wasteBlock;
+        self.wasteStratum = wasteStratum;
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
         int locationCounter = 0;
         int total = 0;
         NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
-        [labelArray addObject:@";pileNumber;w;44;l;1"];
+        [labelArray addObject:@";pileNumber;w;45;l;1"];
         [labelArray addObject:@";length;e;70;l;2"];
         [labelArray addObject:@";width;e;70;l;3"];
         [labelArray addObject:@";height;e;70;l;4"];
         [labelArray addObject:@";pilePileShapeCode;e;70;l;5"];
-        [labelArray addObject:@";pileArea;w;70;l;6"];
-        [labelArray addObject:@";pileVolume;w;70;l;7"];
-        [labelArray addObject:@";isSample;e;70;l;8"];
+        [labelArray addObject:@";pileArea;w;105;l;6"];
+        [labelArray addObject:@";pileVolume;w;105;l;7"];
         [labelArray addObject:@";measuredLength;m;70;b;9"];
         [labelArray addObject:@";measuredWidth;m;70;b;10"];
         [labelArray addObject:@";measuredHeight;m;70;b;11"];
-        [labelArray addObject:@";measuredPileArea;w;70;l;12"];
-        [labelArray addObject:@";measuredPileVolume;w;70;l;13"];
-        [labelArray addObject:@";;w;70;b;14"];
-        [labelArray addObject:@";comment;w;70;b;15"];
+        [labelArray addObject:@";pileMeasuredPileShapeCode;e;70;b;12"];
+        [labelArray addObject:@";measuredPileArea;w;105;l;13"];
+        [labelArray addObject:@";measuredPileVolume;w;105;l;14"];
 
         
         //init the display object dictionary if it is not initialized yet
@@ -255,7 +244,8 @@
                 if (![[lbStrAry objectAtIndex:1] isEqualToString: @""]){
                     if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
                         lbl.text = [[NSString alloc] initWithFormat:@"%0.1f", [[(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] decimalNumberByRoundingAccordingToBehavior:behaviorD2] floatValue]];
-                        //[btn setTitle:[[NSString alloc] initWithFormat:@"%0.1f", [(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] floatValue]] forState:UIControlStateNormal];
+                    }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[MeasuredPileShapeCode class]]){
+                        lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [(MeasuredPileShapeCode *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] measuredPileShapeCode] : @"";
                     }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
                         lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]];
                     }else if ([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
@@ -271,19 +261,13 @@
                     lbl.backgroundColor = [UIColor grayColor];
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) {
                     lbl.backgroundColor = [UIColor grayColor];
+                    if ([lbl.text isEqualToString:@"0.0"]) {
+                        lbl.text = @"";
+                    }
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"]) {
                     lbl.backgroundColor = [UIColor grayColor];
-                }
-                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"isSample"]){
-                    if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] integerValue] == 1){
-                        lbl.text = @"Yes";
-                    }else {
-                        lbl.text = @"No";
-                    }
-                    if([lbl.text isEqualToString:@"Yes"]){
-                        lbl.backgroundColor = [UIColor colorWithRed:5/255.0 green:180/255.0 blue:66/255.0 alpha:1];
-                    }else{
-                        lbl.backgroundColor = [UIColor whiteColor];
+                    if ([lbl.text isEqualToString:@"0.0"]) {
+                        lbl.text = @"";
                     }
                 }
                 
@@ -292,7 +276,15 @@
                 lbl.textAlignment = NSTextAlignmentCenter;
                 lbl.layer.borderColor = [UIColor blackColor].CGColor;
                 lbl.layer.borderWidth = 1.0;
-                [lbl setFont:[UIFont fontWithName:@"Helvetica" size:18]];
+                // If the value is > 10 characters, reduce the font size to make it more readable so it doesn't overlap with the edge of the cell
+                if (([[lbStrAry objectAtIndex:1] isEqualToString:@"pileArea"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) && ([lbl.text floatValue] > 99999999.9)) {
+                    [lbl setFont:[UIFont fontWithName:@"Helvetica" size:15]];
+                } else {
+                    [lbl setFont:[UIFont fontWithName:@"Helvetica" size:18]];
+                }
+                // This ensures that the full value will always be displayed
+                lbl.adjustsFontSizeToFitWidth = YES;
+                lbl.numberOfLines = 1;
                 
                 [self addSubview:lbl];
                 
@@ -300,7 +292,7 @@
                 UIButton *btn = nil;
                 
                 if ([self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]]){
-                    btn =[self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]];
+                    btn = [self.displayObjectDictionary valueForKey:[lbStrAry objectAtIndex:1]];
                 }else{
                     btn = [[UIButton alloc] initWithFrame:CGRectMake(locationCounter, -1, width, 45)];
                     [self.displayObjectDictionary setObject:btn forKey:[lbStrAry objectAtIndex:1]];
@@ -316,11 +308,12 @@
                             [btn setTitle: @"" forState:UIControlStateNormal];
                         }
                     }else{
-                        //NSLog(@"property name = %@", [lbStrAry objectAtIndex:1]);
                         if ([wastePile valueForKey:[lbStrAry objectAtIndex:1]]){
                             
                             if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
                                 [btn setTitle:[[NSString alloc] initWithFormat:@"%0.1f", [(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] floatValue]] forState:UIControlStateNormal];
+                            }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[MeasuredPileShapeCode class]]){
+                                [btn setTitle:[(MeasuredPileShapeCode *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] measuredPileShapeCode] forState:UIControlStateNormal];
                             }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[PileShapeCode class]]){
                                 [btn setTitle:[(PileShapeCode *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] pileShapeCode] forState:UIControlStateNormal];
                             }else if ([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
@@ -328,8 +321,6 @@
                                 total += [(NSNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] integerValue];
                             }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
                                 [btn setTitle:[wastePile valueForKey:[lbStrAry objectAtIndex:1]] forState:UIControlStateNormal];
-                            }else{
-                                
                             }
                         }else{
                             [btn setTitle:@" " forState:UIControlStateNormal];
@@ -349,8 +340,7 @@
                 }
                 
                 if([[lbStrAry objectAtIndex:1] isEqualToString:@""]){
-                    total += [wastePile.alPercent intValue] + [wastePile.arPercent intValue] + [wastePile.asPercent intValue] + [wastePile.baPercent intValue] + [wastePile.biPercent intValue] + [wastePile.cePercent intValue] + [wastePile.coPercent intValue] + [wastePile.cyPercent intValue] + [wastePile.fiPercent intValue] + [wastePile.hePercent intValue] + [wastePile.laPercent intValue] + [wastePile.loPercent intValue] + [wastePile.maPercent intValue] + [wastePile.spPercent intValue] + [wastePile.wbPercent intValue] +
-                    [wastePile.whPercent intValue] + [wastePile.wiPercent intValue] + [wastePile.uuPercent intValue] + [wastePile.yePercent intValue];
+                    total += 0;
                     
                      [btn setTitle:[NSString stringWithFormat:@"%d", total] forState:UIControlStateNormal];
                     if(total >0 && total != 100){
@@ -359,16 +349,8 @@
                         btn.backgroundColor = [UIColor whiteColor];
                     }
                 }
-                //populate the initial value for testing purpose
-                /*
-                 if (![[lbStrAry objectAtIndex:0] isEqualToString:@""]){
-                 [btn setTitle:[lbStrAry objectAtIndex:0] forState:UIControlStateNormal];
-                 }
-                 */
                 
-                //btn.textColor = [UIColor blackColor];
                 [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-                //btn.textAlignment = NSTextAlignmentCenter;
                 btn.layer.borderColor = [UIColor blackColor].CGColor;
                 btn.layer.borderWidth = 1.0;
                 [[btn titleLabel] setFont:[UIFont fontWithName:@"Helvetica" size:18]];
@@ -376,41 +358,19 @@
                 if (![[lbStrAry objectAtIndex:5] isEqualToString: @""]){
                     btn.tag = [[lbStrAry objectAtIndex:5] intValue];
                 }
-                if([self.cellWastePile.isSample intValue] == 1){
-                if (btn.tag == 14) {
-                    [btn addTarget:self action:@selector(editActionClick1:) forControlEvents:UIControlEventTouchUpInside];
-                    /*NSMutableAttributedString *titleString = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%d", total]];
-                    [titleString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, [titleString length])];
-                    [btn setAttributedTitle: titleString forState:UIControlStateNormal];*/
-                } else if(btn.tag == 9 || btn.tag == 10 || btn.tag == 11)
-                {
-                    [btn addTarget:self action:@selector(editActionClick3:) forControlEvents:UIControlEventTouchUpInside];
-                }
-                else {
-                    [btn addTarget:self action:@selector(editActionClick2:) forControlEvents:UIControlEventTouchUpInside];
-                    if(btn.tag == 9){
-                        //NSMutableAttributedString *titleString = [[NSMutableAttributedString alloc] initWithString:[self.cellWastePile.measuredLength stringValue]];
-                        //[titleString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, [titleString length])];
-                        //[btn setAttributedTitle: titleString forState:UIControlStateNormal];
+                if([self.cellWastePile.isSample intValue] == 1) {
+                    if(btn.tag == 9 || btn.tag == 10 || btn.tag == 11) {
+                        [btn addTarget:self action:@selector(editActionClick3:) forControlEvents:UIControlEventTouchUpInside];
+                    } else if (btn.tag == 12) {
+                        [btn addTarget:self action:@selector(editActionClick:) forControlEvents:UIControlEventTouchUpInside];
+                    } else {
+                        [btn addTarget:self action:@selector(editActionClick2:) forControlEvents:UIControlEventTouchUpInside];
                     }
-                    if(btn.tag == 10){
-                        //NSMutableAttributedString *titleString = [[NSMutableAttributedString alloc] initWithString:[self.cellWastePile.measuredWidth stringValue]];
-                        //[titleString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, [titleString length])];
-                        //[btn setAttributedTitle: titleString forState:UIControlStateNormal];
-                    }
-                    if(btn.tag == 11){
-                        //NSMutableAttributedString *titleString = [[NSMutableAttributedString alloc] initWithString:[self.cellWastePile.measuredHeight stringValue]];
-                        //[titleString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInteger:NSUnderlineStyleSingle] range:NSMakeRange(0, [titleString length])];
-                        //[btn setAttributedTitle: titleString forState:UIControlStateNormal];
-                    }
-                }
                 }
                 [self addSubview:btn];
             }
             
-            
             locationCounter = locationCounter + widthInt;
-            //  alterCounter = alterCounter + 1;
         }
     }
 }
@@ -436,17 +396,15 @@
         case 9:
             pvc.propertyName = @"comment";
             break;
+        case 12:
+            pvc.propertyName = @"pileMeasuredPileShapeCode";
         default:
             break;
     }
-    // pvc.title =[NSString stringWithFormat:@"%@ %@", @"(IFOR 205", pvc.title];
     pvc.wastePile = self.cellWastePile;
     pvc.wasteBlock = self.wasteBlock;
     pvc.pileVC = self.pileView;
-    //pvc.editPieceViewController = self.superview;
-    
-    //NSLog(@"cell's super view = %@", self.superview);
-    
+        
     [self.pileView.navigationController pushViewController:pvc animated:YES];
 }
 
@@ -471,11 +429,9 @@
             default:
                 break;
         }
-        // pvc.title =[NSString stringWithFormat:@"%@ %@", @"(IFOR 205", pvc.title];
         pvc.wastePile = self.cellWastePile;
         pvc.wasteBlock = self.wasteBlock;
         pvc.pileVC = self.pileView;
-        //pvc.editPieceViewController = self.superview;
         
         [self.pileView.navigationController pushViewController:pvc animated:YES];
     }
@@ -504,7 +460,7 @@
                textField.accessibilityLabel = NSLocalizedString(@"Length", nil);
                textField.clearButtonMode    = UITextFieldViewModeAlways;
                textField.keyboardType       = UIKeyboardTypeNumberPad;
-               textField.tag                = 8;
+               textField.tag                = 9;
                textField.delegate           = self;
            }];
            
@@ -513,7 +469,7 @@
                textField.accessibilityLabel = NSLocalizedString(@"Width", nil);
                textField.clearButtonMode    = UITextFieldViewModeAlways;
                textField.keyboardType       = UIKeyboardTypeNumberPad;
-               textField.tag                = 8;
+               textField.tag                = 9;
                textField.delegate           = self;
            }];
            
@@ -522,17 +478,53 @@
                textField.accessibilityLabel = NSLocalizedString(@"Height", nil);
                textField.clearButtonMode    = UITextFieldViewModeAlways;
                textField.keyboardType       = UIKeyboardTypeNumberPad;
-               textField.tag                = 8;
+               textField.tag                = 10;
                textField.delegate           = self;
            }];
            UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
                                                             handler:^(UIAlertAction * action) {
-               self.cellWastePile.measuredLength = [NSDecimalNumber decimalNumberWithString:alert.textFields[0].text];
-               self.cellWastePile.measuredWidth = [NSDecimalNumber decimalNumberWithString:alert.textFields[1].text];
-               self.cellWastePile.measuredHeight = [NSDecimalNumber decimalNumberWithString:alert.textFields[2].text];
-               [self bindCell:self.cellWastePile wasteBlock:self.wasteBlock userCreatedBlock:self.wasteBlock.userCreated];
+               NSString *measuredLengthText = alert.textFields[0].text;
+               NSString *measuredWidthText = alert.textFields[1].text;
+               NSString *measuredHeightText = alert.textFields[2].text;
+               
+               NSDecimalNumber *measuredLength = ([measuredLengthText isEqualToString:@""]) ? [NSDecimalNumber zero] : [NSDecimalNumber decimalNumberWithString:measuredLengthText];
+               NSDecimalNumber *measuredWidth = ([measuredWidthText isEqualToString:@""]) ? [NSDecimalNumber zero] : [NSDecimalNumber decimalNumberWithString:measuredWidthText];
+               NSDecimalNumber *measuredHeight = ([measuredHeightText isEqualToString:@""]) ? [NSDecimalNumber zero] : [NSDecimalNumber decimalNumberWithString:measuredHeightText];
+
+               if ([measuredLength compare:[NSDecimalNumber zero]] == NSOrderedSame ||
+                   [measuredWidth compare:[NSDecimalNumber zero]] == NSOrderedSame ||
+                   [measuredHeight compare:[NSDecimalNumber zero]] == NSOrderedSame) {
+                   // Display an alert indicating that one of the values is 0
+                   UIAlertController *zeroAlert = [UIAlertController alertControllerWithTitle:@"Invalid Input"
+                                                                                      message:@"Please enter non-zero values for Length, Width, and Height."
+                                                                               preferredStyle:UIAlertControllerStyleAlert];
+                   UIAlertAction *okZeroAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                        handler:^(UIAlertAction * zeroAction) {
+                                                                            // Show the "Pile Measure" alert again
+                                                                            [self.pileView presentViewController:alert animated:YES completion:nil];
+                                                                        }];
+                   [zeroAlert addAction:okZeroAction];
+                   [self.pileView presentViewController:zeroAlert animated:YES completion:nil];
+               } else {
+                   self.cellWastePile.measuredLength = measuredLength;
+                   self.cellWastePile.measuredWidth = measuredWidth;
+                   self.cellWastePile.measuredHeight = measuredHeight;
+                   
+                   [self bindCell:self.cellWastePile wasteBlock:self.wasteBlock wasteStratum:self.wasteStratum userCreatedBlock:self.wasteBlock.userCreated];
+                   [self.pileView calculatePileAreaAndVolume:self.cellWastePile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
+                   [WasteCalculator calculateEFWStat:self.wasteBlock];
+                   if(![self.wasteStratum.stratumBlock.isAggregate isEqualToNumber:[NSNumber numberWithInt:1]]){
+                       [self.pileView.efwFooterView setPileViewValue2:self.wasteStratum];
+                   }
+                   else
+                   {
+                       [self.pileView.efwFooterView setPileViewValue2:self.wasteStratum]; // agg used to be different
+                   }
+                   [self.pileView.efwFooterView reloadInputViews];
+                   [self.pileView.pileTableView reloadData];
+               }
                                                             }];
-           UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
+               UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
                                                                 handler:^(UIAlertAction * action) {
                                                                 }];
            
@@ -543,14 +535,25 @@
        }
    }
 
+- (NSManagedObjectContext *) managedObjectContext {
+        NSManagedObjectContext *context = nil;
+        id delegate = [[UIApplication sharedApplication] delegate];
+        if ([delegate performSelector:@selector(managedObjectContext)]){
+            context = [delegate managedObjectContext];
+        }
+        return context;
+}
+
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
           
-          // INPUT VALIDATION
-          //
+        // INPUT VALIDATION
+        //
+
+        // measured dimensions alert
+    
           NSMutableString *str = [[NSMutableString alloc] initWithString:textField.text];
           [str appendString:string];
           NSString *theString = str;
-          
           
           NSUInteger newLength = [textField.text length] + [string length] - range.length;
           NSCharacterSet *myCharSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
@@ -611,6 +614,62 @@
                       }
                   }
                   break;
+              case 9://width/height
+              {
+                  NSString *updatedText = [textField.text stringByReplacingCharactersInRange:range withString:string];
+                  if (updatedText.length == 0) {
+                      // Allow empty string
+                      return YES;
+                  }
+
+                  NSCharacterSet *myCharSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789."];
+
+                  if ([updatedText rangeOfCharacterFromSet:[myCharSet invertedSet]].location != NSNotFound) {
+                      return NO;
+                  }
+
+                  NSArray *components = [updatedText componentsSeparatedByString:@"."];
+
+                  if (components.count > 2 || (components.count == 2 && [components[1] length] > 1)) {
+                      // More than one decimal place
+                      return NO;
+                  }
+
+                  CGFloat floatValue = [updatedText floatValue];
+                  if (floatValue >= 10000) {
+                      return NO;
+                  }
+
+                  return YES;
+              }
+              case 10: //length
+              {
+                  NSString *updatedText = [textField.text stringByReplacingCharactersInRange:range withString:string];
+                  if (updatedText.length == 0) {
+                      // Allow empty string
+                      return YES;
+                  }
+
+                  NSCharacterSet *myCharSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789."];
+
+                  if ([updatedText rangeOfCharacterFromSet:[myCharSet invertedSet]].location != NSNotFound) {
+                      return NO;
+                  }
+
+                  NSArray *components = [updatedText componentsSeparatedByString:@"."];
+
+                  if (components.count > 2 || (components.count == 2 && [components[1] length] > 1)) {
+                      // More than one decimal place
+                      return NO;
+                  }
+
+                  CGFloat floatValue = [updatedText floatValue];
+                  if (floatValue >= 100) {
+                      return NO;
+                  }
+
+                  return YES;
+              }
               default:
                   return NO; // NOT EDITABLE
           }

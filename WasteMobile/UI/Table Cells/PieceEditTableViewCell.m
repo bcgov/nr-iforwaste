@@ -126,13 +126,13 @@
     }else if ([assessmentMethodCode isEqualToString:@"E"]){
         
         [labelArray addObject:@";pieceNumber;w;44;l;"];
-        [labelArray addObject:@";pieceScaleSpeciesCode;w;110;b;2"];
-        [labelArray addObject:@";pieceMaterialKindCode;w;110;b;3"];
-        [labelArray addObject:@";pieceWasteClassCode;w;110;b;4"];
-        [labelArray addObject:@";pieceScaleGradeCode;w;110;b;10"];
-        [labelArray addObject:@"#;usercode;w;110;b;22"];  // mchu
-        [labelArray addObject:@"*;notes;w;110;b;18"];
-        [labelArray addObject:@";estimatedPercent;w;110;b;21"];
+        [labelArray addObject:@";pieceScaleSpeciesCode;w;120;b;2"];
+        [labelArray addObject:@";pieceMaterialKindCode;w;120;b;3"];
+        [labelArray addObject:@";pieceWasteClassCode;w;120;b;4"];
+        [labelArray addObject:@";pieceScaleGradeCode;w;120;b;10"];
+        [labelArray addObject:@"#;usercode;w;120;b;22"];  // mchu
+        //[labelArray addObject:@"*;notes;w;110;b;18"];
+        [labelArray addObject:@";estimatedPercent;w;120;b;21"];
         
         if (userCreatedBlock){
             [labelArray addObject:@";pieceVolume;r;139;l;"];
@@ -147,7 +147,7 @@
         [labelArray addObject:@";pieceMaterialKindCode;w;100;b;3"];
         [labelArray addObject:@";pieceWasteClassCode;w;100;b;4"];
         [labelArray addObject:@";pieceScaleGradeCode;w;100;b;10"];
-        [labelArray addObject:@";notes;w;100;b;18"];
+        //[labelArray addObject:@";notes;w;100;b;18"];
         [labelArray addObject:@";densityEstimate;w;100;b;19"];
         [labelArray addObject:@";estimatedVolume;w;100;b;20"];
         

@@ -17,8 +17,6 @@
 #import "Constants.h"
 #import "PlotSampleGenerator.h"
 #import "PlotSelectorLog.h"
-#import "AggregateCutblock+CoreDataClass.h"
-#import "StratumPile+CoreDataClass.h"
 #import "WastePile+CoreDataClass.h"
 #import "PileShapeCode+CoreDataClass.h"
 
@@ -45,18 +43,30 @@
     
     [request setEntity:entity];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat: @" cutBlockId = %@ AND reportingUnitId = %@ ", cutBlockId, reportUnitId];
-    
-    [request setPredicate:predicate];
-    
-   // NSError *error = nil;
+    // EFW-558 fix
+    [request setPredicate:nil];
     NSArray *result = [context executeFetchRequest:request error:&error];
+
     
-    if (result.count > 0) {
-        return result[0];
-    }else{
-        return nil;
+    WasteBlock *wb = nil;
+    int inputReportingUnit = [reportUnitId intValue];
+
+    // Iterate over the existing waste blocks, comparing them to the input values
+    for (WasteBlock *wasteBlock in result) {
+        // Convert nil values found from the request to empty strings
+        NSString *existingCutBlockId = wasteBlock.cutBlockId ?: @"";
+        int existingReportingUnit = [wasteBlock.reportingUnit intValue];
+
+        // If a match is found, return it
+        if (existingReportingUnit == inputReportingUnit &&
+            [existingCutBlockId isEqualToString:cutBlockId]) {
+            
+            wb = wasteBlock;
+            break;
+        }
     }
+    
+    return wb;
 }
 
 +(WasteBlock *) getWasteBlockByAssessmentAreaId:(NSString *) assessmentAreaId{
@@ -85,29 +95,45 @@
 }
 
 +(WasteBlock *) getWasteBlockByRU:(NSString *) ru cutBlockId:(NSString *)cutBlockId license:(NSString*)license cutPermit:(NSString*)cutPermit{
-    
     NSManagedObjectContext *context = [self managedObjectContext];
     
     NSError *error = nil;
-    //Don't save before getting a cut block, Save should be done in different place before this method call
-    //[context save:&error];
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"WasteBlock" inManagedObjectContext:context];
     
     [request setEntity:entity];
+    [request setPredicate:nil];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat: @" reportingUnit =[c] %@ AND cutBlockId =[c] %@  AND licenceNumber =[c] %@  AND cuttingPermitId =[c] %@  ", ru, cutBlockId, license, cutPermit];
+    // If a user uploads a file, stays on the page, and uploads the same file,
+    // issues will arise if string values in the file were nil. This is because
+    // they are converted to empty strings after leaving the file upload page
     
-    [request setPredicate:predicate];
-    
-    // NSError *error = nil;
+    // Get all the uploaded WasteBlocks
     NSArray *result = [context executeFetchRequest:request error:&error];
-    //NSLog(@"Find Cut Block - result.count = %lu", (unsigned long)result.count);
+    
     WasteBlock *wb = nil;
-    if (result.count > 0) {
-        wb = result[0];
+    int inputReportingUnit = [ru intValue];
+
+    // Iterate over the existing waste blocks, comparing them to the input values
+    for (WasteBlock *wasteBlock in result) {
+        // Convert nil values found from the request to empty strings
+        NSString *existingCutBlockId = wasteBlock.cutBlockId ?: @"";
+        NSString *existingCuttingPermitId = wasteBlock.cuttingPermitId ?: @"";
+        NSString *existingLicenceNumber = wasteBlock.licenceNumber ?: @"";
+        int existingReportingUnit = [wasteBlock.reportingUnit intValue];
+
+        // If a match is found, return it
+        if (existingReportingUnit == inputReportingUnit &&
+            [existingCutBlockId isEqualToString:cutBlockId] &&
+            [existingCuttingPermitId isEqualToString:cutPermit] &&
+            [existingLicenceNumber isEqualToString:license]) {
+            
+            wb = wasteBlock;
+            break;
+        }
     }
+    
     return wb;
 }
 +(WasteBlock *) getWasteBlockByRUCheckDuplicate:(NSString *) ru cutBlockId:(NSString *)cutBlockId license:(NSString*)license cutPermit:(NSString*)cutPermit{
@@ -115,25 +141,39 @@
     NSManagedObjectContext *context = [self managedObjectContext];
     
     NSError *error = nil;
-    //Don't save before getting a cut block, Save should be done in different place before this method call
-    //[context save:&error];
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"WasteBlock" inManagedObjectContext:context];
     
     [request setEntity:entity];
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat: @" reportingUnit = %@ AND cutBlockId = %@  AND licenceNumber = %@  AND cuttingPermitId = %@  ", ru, cutBlockId, license, cutPermit];
-    
-    [request setPredicate:predicate];
-    
-    // NSError *error = nil;
+    // EFW-558 fix
+    [request setPredicate:nil];
     NSArray *result = [context executeFetchRequest:request error:&error];
-    //NSLog(@"Find Cut Block - result.count = %lu", (unsigned long)result.count);
+
+    
     WasteBlock *wb = nil;
-    if (result.count > 0) {
-        wb = result[0];
+    int inputReportingUnit = [ru intValue];
+
+    // Iterate over the existing waste blocks, comparing them to the input values
+    for (WasteBlock *wasteBlock in result) {
+        // Convert nil values found from the request to empty strings
+        NSString *existingCutBlockId = wasteBlock.cutBlockId ?: @"";
+        NSString *existingCuttingPermitId = wasteBlock.cuttingPermitId ?: @"";
+        NSString *existingLicenceNumber = wasteBlock.licenceNumber ?: @"";
+        int existingReportingUnit = [wasteBlock.reportingUnit intValue];
+
+        // If a match is found, return it
+        if (existingReportingUnit == inputReportingUnit &&
+            [existingCutBlockId isEqualToString:cutBlockId] &&
+            [existingCuttingPermitId isEqualToString:cutPermit] &&
+            [existingLicenceNumber isEqualToString:license]) {
+            
+            wb = wasteBlock;
+            break;
+        }
     }
+    
     return wb;
 }
 
@@ -142,8 +182,6 @@
     NSManagedObjectContext *context = [self managedObjectContext];
     
     NSError *error = nil;
-    //Don't save before getting a cut block, Save should be done in different place before this method call
-    //[context save:&error];
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"WasteBlock" inManagedObjectContext:context];
@@ -155,20 +193,33 @@
     license = license ? [license stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
     cutPermit = cutPermit ? [cutPermit stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
     
-    NSPredicate *predicate = [NSPredicate predicateWithFormat: @" reportingUnit =[c] %@ AND cutBlockId =[c] %@ AND licenceNumber =[c] %@ AND cuttingPermitId =[c] %@ AND wasteAssessmentAreaID != %@ ", ru, cutBlockId, license, cutPermit, wasteAsseID];
-    
-    [request setPredicate:predicate];
-    
+    // EFW-558 fix
+    [request setPredicate:nil];
     NSArray *result = [context executeFetchRequest:request error:&error];
 
-    if (error){
-        NSLog(@"getWasteBlockByRUButWAID Error: %@", error);
-    }
-        
+    
     WasteBlock *wb = nil;
-    if (result.count > 0) {
-        wb = result[0];
+    int inputReportingUnit = [ru intValue];
+
+    // Iterate over the existing waste blocks, comparing them to the input values
+    for (WasteBlock *wasteBlock in result) {
+        // Convert nil values found from the request to empty strings
+        NSString *existingCutBlockId = wasteBlock.cutBlockId ?: @"";
+        NSString *existingCuttingPermitId = wasteBlock.cuttingPermitId ?: @"";
+        NSString *existingLicenceNumber = wasteBlock.licenceNumber ?: @"";
+        int existingReportingUnit = [wasteBlock.reportingUnit intValue];
+
+        // If a match is found, return it
+        if (existingReportingUnit == inputReportingUnit &&
+            [existingCutBlockId isEqualToString:cutBlockId] &&
+            [existingCuttingPermitId isEqualToString:cutPermit] &&
+            [existingLicenceNumber isEqualToString:license]) {
+            
+            wb = wasteBlock;
+            break;
+        }
     }
+    
     return wb;
 }
 
@@ -182,6 +233,8 @@
     // get the max waste block id in core data
     wasteBlock.wasteAssessmentAreaID = [self GetNextAssessmentAreaId];
 
+    wasteBlock.versionNumber = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+    
     //set the entry date
     wasteBlock.entryDate = [NSDate date];
     wasteBlock.regionId = [[NSNumber alloc] initWithInt:regionId];
@@ -238,14 +291,6 @@
     StratumPile *stratumPile = [NSEntityDescription insertNewObjectForEntityForName:@"StratumPile" inManagedObjectContext:context];
     
     return stratumPile;
-}
-
-+(AggregateCutblock *) createEmptyAggregateCutblock{
-    NSManagedObjectContext *context = [self managedObjectContext];
-    
-    AggregateCutblock *aggCB = [NSEntityDescription insertNewObjectForEntityForName:@"AggregateCutblock" inManagedObjectContext:context];
-    
-    return aggCB;
 }
 
 +(WastePile *) createEmptyWastePile{
@@ -353,53 +398,53 @@
 +(void) deleteStratum:(WasteStratum *) targetWasteStratum usingWB:(WasteBlock *) targetWasteBlock {
     
     NSManagedObjectContext *context = [self managedObjectContext];
-    
+    BOOL hasRatioLogMsg = false;
     // Step 1 - Remove the piece and plot object
     NSMutableSet *tempPlot = [NSMutableSet setWithSet:targetWasteStratum.stratumPlot];
+    if([targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
+          if(targetWasteBlock.ratioSamplingLog != nil){
+              if(targetWasteStratum.stratumPlot.count > 0)
+              {
+                  targetWasteBlock.ratioSamplingLog = [targetWasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:targetWasteStratum actionDec:@"Delete Stratum*"]];
+                  hasRatioLogMsg = true;
+              }
+          }
+    }
     for (WastePlot *wpl in targetWasteStratum.stratumPlot) {
-        if([targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
-            if(targetWasteBlock.ratioSamplingLog != nil){
-                targetWasteBlock.ratioSamplingLog = [targetWasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:wpl stratum:targetWasteStratum actionDec:@"Delete Stratum, Delete Plot"]];}
-        }
-        // Remove each plot piece - cast to superclass NSManagedObject so it can be removed
-        for(NSManagedObject *wpi in wpl.plotPiece){
-            [context deleteObject:wpi];
-        }
-        [tempPlot removeObject:wpl];
-        [context deleteObject:wpl];
+          // Remove each plot piece - cast to superclass NSManagedObject so it can be removed
+      for(NSManagedObject *wpi in wpl.plotPiece){
+           [context deleteObject:wpi];
+       }
+       [tempPlot removeObject:wpl];
+       [context deleteObject:wpl];
     }
     targetWasteStratum.stratumPlot = tempPlot;
     
-    NSMutableSet *tempaggCB = [NSMutableSet setWithSet:targetWasteStratum.stratumAgg];
-    for (AggregateCutblock *aggcb in targetWasteStratum.stratumAgg) {
-        if([targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
-            if(targetWasteBlock.ratioSamplingLog != nil){
-                targetWasteBlock.ratioSamplingLog = [targetWasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog2:aggcb stratum:targetWasteStratum actionDec:@"Delete Stratum, Delete Pile"]];
-            }
-        }
-        for(NSManagedObject *wpi in aggcb.aggPile.pileData){
-            [context deleteObject:wpi];
-        }
-        [tempaggCB removeObject:aggcb.aggPile];
-        [tempaggCB removeObject:aggcb];
-        [context deleteObject:aggcb];
-    }
-    targetWasteStratum.stratumAgg = tempaggCB;
+    NSMutableSet *temppile = [NSMutableSet setWithSet:targetWasteStratum.stratumPile];
     
-    NSMutableSet *temppile = [NSMutableSet setWithSet:targetWasteStratum.strPile.pileData];
-    for (WastePile *wp in targetWasteStratum.strPile.pileData) {
-        if([targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
-            if(targetWasteBlock.ratioSamplingLog != nil){
-                targetWasteBlock.ratioSamplingLog = [targetWasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:targetWasteStratum actionDec:@"Delete Stratum, Delete Pile"]];
-            }
+    if([targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
+          if(targetWasteBlock.ratioSamplingLog != nil){
+              if(targetWasteStratum.stratumPile.count > 0)
+              {
+                  targetWasteBlock.ratioSamplingLog = [targetWasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:targetWasteStratum actionDec:@"Delete Stratum*"]];
+                  hasRatioLogMsg = true;
+              }
+          }
+    }
+    if ([targetWasteStratum.isPileStratum intValue] == 1) {
+        for (WastePile *wp in targetWasteStratum.stratumPile) {
+            [temppile removeObject:wp];
+            [context deleteObject:wp];
         }
-        [temppile removeObject:wp];
-        [context deleteObject:wp];
+        targetWasteStratum.stratumPile = temppile;
     }
-    targetWasteStratum.stratumAgg = tempaggCB;
-    if(targetWasteStratum.strPile != nil){
-        [context deleteObject:targetWasteStratum.strPile];
+    
+    //if no message yet it was an empty stratum, no asterisk in msgLog
+    if(!hasRatioLogMsg && [targetWasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1)
+    {
+        targetWasteBlock.ratioSamplingLog = [targetWasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPlotSelectorLog:targetWasteStratum actionDec:@"Delete Stratum"]];
     }
+    
     // Step 2 - Remove stratum
     NSMutableSet *tempStratum = [NSMutableSet setWithSet:targetWasteBlock.blockStratum];
     [tempStratum removeObject:targetWasteStratum];
@@ -537,7 +582,14 @@
             primary_wb.notes = @"";
         }
         if(secondary_wb.notes){
-            primary_wb.notes = [NSString stringWithFormat:@"%@, %@", primary_wb.notes, secondary_wb.notes];
+            if([primary_wb.notes isEqualToString:@""] || primary_wb.notes == nil)
+            {
+                primary_wb.notes = secondary_wb.notes;
+            }
+            else
+            {
+                primary_wb.notes = [NSString stringWithFormat:@"%@, %@", primary_wb.notes, secondary_wb.notes];
+            }
         }
         
         //comparing Timber Mark
@@ -627,75 +679,62 @@
                 }
             }
         }
-        
+        if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
+            // note - this does not filter out any duplicate entries
+            primary_wb.ratioSamplingLog = [primary_wb.ratioSamplingLog stringByAppendingString:secondary_wb.ratioSamplingLog];
+        }
         // comparing Stratum
+        NSMutableArray *stratumsToAdd = [NSMutableArray array];
         BOOL found_matching_st = NO;
-        NSSet* stra_set = [NSSet setWithSet:secondary_wb.blockStratum];
-        for (WasteStratum *sst_swb in stra_set){
-           
+        for (WasteStratum *sst_swb in secondary_wb.blockStratum){
+            found_matching_st = NO;
+
             for (WasteStratum *sst_pwb in primary_wb.blockStratum ){
                 if([sst_swb.stratum isEqualToString:sst_pwb.stratum]){
                     found_matching_st = YES;
-                    //merge note field
-                    if(!sst_pwb.notes){ sst_pwb.notes = @""; }
-                    if(sst_swb.notes){
+                    
+                    // Merge note field
+                    if(!sst_pwb.notes) {
+                        sst_pwb.notes = @"";
+                    }
+                    if(sst_swb.notes) {
                         sst_pwb.notes = [NSString stringWithFormat:@"%@, %@", sst_pwb.notes, sst_swb.notes];
                     }
+
+                    // Move the plots from secondary to primary
+                    NSMutableSet* secondary_plot_set = [NSMutableSet setWithSet:sst_swb.stratumPlot];
+                    NSMutableSet* secondary_pile_set = [NSMutableSet setWithSet:sst_swb.stratumPile];
                     
-                    //move the plots from secondary to primary
-                    NSSet* plot_set = [NSSet setWithSet:sst_swb.stratumPlot];
                     if([sst_swb.stratumBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:TRUE]intValue]){
-                        for(WastePlot *plot1 in plot_set){
-                            for(WastePlot *plot2 in sst_pwb.stratumPlot){
-                                if([plot1.plotNumber intValue] == [plot2.plotNumber intValue]){
-                                    
-                                }else{
-                                    for(WastePlot *plot in plot_set){
-                                        //[sst_swb removeStratumPlotObject:plot];
-                                        [sst_pwb addStratumPlotObject:plot];
-                                    }
-                                }
+                        if([sst_swb.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE]intValue]) {
+                            for(WastePile *pile in secondary_pile_set){
+                                [sst_pwb addStratumPileObject:pile];
+                            }
+                        } else {
+                            for(WastePlot *plot in secondary_plot_set){
+                                [sst_pwb addStratumPlotObject:plot];
                             }
                         }
                     }
                     if([sst_swb.stratumBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE]intValue]){
-                        for(WastePlot *plot in plot_set){
-                            //[sst_swb removeStratumPlotObject:plot];
+                        for(WastePlot *plot in secondary_plot_set){
                             [sst_pwb addStratumPlotObject:plot];
                         }
-                    }
-                    if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
-                        //merge stratum ratio sampling log and plot selected
-                        sst_pwb.ratioSamplingLog = [sst_pwb.ratioSamplingLog stringByAppendingString:sst_swb.ratioSamplingLog];
-                        /* don't want to merge the sampling list and don't refresh the isMearsurePlot flag.
-                        sst_pwb.n1sample = [self mergeSamples:sst_pwb.n1sample secondary_n1:sst_swb.n1sample];
-                        sst_pwb.n2sample = [sst_pwb.n2sample stringByAppendingString:sst_swb.n2sample];
-                        
-                        //refresh isMeasurePlot
-                        NSArray* pn_ary = [sst_pwb.n1sample componentsSeparatedByString:@","];
-                        for(WastePlot* wp in sst_pwb.stratumPlot){
-                            BOOL isMeasurePlot = NO;
-                            for(NSString* pn in pn_ary){
-                                if([pn isEqualToString:[wp.plotNumber stringValue]]){
-                                    isMeasurePlot = YES;
-                                    break;
-                                }
-                            }
-                            wp.isMeasurePlot = isMeasurePlot? [[NSNumber alloc]  initWithInt:1] : [[NSNumber alloc]  initWithInt:0];
+                        for(WastePile *pile in secondary_pile_set){
+                            [sst_pwb addStratumPileObject:pile];
                         }
-                         */
                     }
                     break;
                 }
             }
             if(!found_matching_st){
                 //if stratum not in the primary block, merge whole stratum into primary
-                //[secondary_wb removeBlockStratumObject:sst_swb];
-                [primary_wb addBlockStratumObject:sst_swb];
+                [stratumsToAdd addObject:sst_swb];
             }
-            found_matching_st = NO;
         }
-        
+
+        [primary_wb addBlockStratum:[NSSet setWithArray:stratumsToAdd]];
+
         return MergeSuccessful;
     }else{
         return MergeFailCutBlockNotFound;
@@ -898,7 +937,14 @@
             primary_wb.notes = @"";
         }
         if(secondary_wb.notes){
-            primary_wb.notes = [NSString stringWithFormat:@"%@, %@", primary_wb.notes, secondary_wb.notes];
+            if([primary_wb.notes isEqualToString:@""] || primary_wb.notes == nil)
+            {
+                primary_wb.notes = secondary_wb.notes;
+            }
+            else
+            {
+                primary_wb.notes = [NSString stringWithFormat:@"%@, %@", primary_wb.notes, secondary_wb.notes];
+            }
         }
         
         //comparing Timber Mark
@@ -1005,21 +1051,21 @@
                             sst_pwb.notes = [NSString stringWithFormat:@"%@, %@", sst_pwb.notes, sst_swb.notes];
                         }
                         //move the pile from secondary to primary. Assuming stratumpile data will be made in master before sharing.So during merge there is no confict in pile number generated.
-                        //[sst_pwb addStrPileObject:sst_swb.strPile];
                         if([sst_swb.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                            [self mergeSingleBlkPileStratum:sst_pwb.strPile.pileData swb_pileData:sst_swb.strPile.pileData];
+                            [self mergeSingleBlkPileStratum:sst_pwb.stratumPile swb_pileData:sst_swb.stratumPile];
                             
                             if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                 //merge stratum ratio sampling log and plot selected
+                                // note - this does not filter out any duplicate entries
                                 sst_pwb.ratioSamplingLog = [sst_pwb.ratioSamplingLog stringByAppendingString:sst_swb.ratioSamplingLog];
                             }
                         }else{
-                            if([sst_swb.strPile.pileData count] == 0){
+                            if([sst_swb.stratumPile count] == 0){
                                 
-                            }else if(sst_swb.strPile.stratumPileId == sst_pwb.strPile.stratumPileId){
-                                NSSet* pile_set = [NSSet setWithSet:sst_swb.strPile.pileData];
+                            }else {
+                                NSSet* pile_set = [NSSet setWithSet:sst_swb.stratumPile];
                                 for(WastePile *swb_pile in pile_set){
-                                    for(WastePile *pwb_pile in sst_pwb.strPile.pileData){
+                                    for(WastePile *pwb_pile in sst_pwb.stratumPile){
                                         if(pwb_pile.pileNumber == swb_pile.pileNumber){
                                             if(([pwb_pile.length doubleValue] == 0 && [pwb_pile.width doubleValue] ==0 && [pwb_pile.height doubleValue] ==0 && [pwb_pile.measuredLength doubleValue] == 0 && [pwb_pile.measuredWidth doubleValue] == 0 && [pwb_pile.measuredHeight doubleValue] == 0 && [pwb_pile.measuredPileArea doubleValue] == 0 && [pwb_pile.measuredPileVolume doubleValue] == 0) && ([swb_pile.length doubleValue] == 0 && [swb_pile.width doubleValue] ==0 && [swb_pile.height doubleValue] ==0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
                                                 NSLog(@"case 1 in doc: where incoming file and receiving file is 0");
@@ -1032,8 +1078,6 @@
                                         }
                                     }
                                 }
-                            }else{
-                                sst_pwb.strPile = sst_swb.strPile;
                             }
                             if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                 //merge stratum ratio sampling log and plot selected
@@ -1053,7 +1097,7 @@
         }else if([primary_wb.isAggregate intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
             // comparing Stratum
             BOOL found_matching_st = NO;
-            BOOL found_matching_agg = NO;
+            BOOL found_matching_pile = NO;
             NSSet* stra_set = [NSSet setWithSet:secondary_wb.blockStratum];
             for (WasteStratum *sst_swb in stra_set){
                
@@ -1068,37 +1112,31 @@
                             sst_pwb.notes = [NSString stringWithFormat:@"%@, %@", sst_pwb.notes, sst_swb.notes];
                         }
                         
-                        for (AggregateCutblock *swb_aggCB in sst_swb.stratumAgg){
-                            for(AggregateCutblock *pwb_aggCB in sst_pwb.stratumAgg){
-                                if(pwb_aggCB.aggregateCuttingPermit == swb_aggCB.aggregateCuttingPermit && pwb_aggCB.aggregateCutblock == swb_aggCB.aggregateCutblock && pwb_aggCB.aggregateLicense == swb_aggCB.aggregateLicense){
-                                    found_matching_agg = YES;
+                        for (WastePile *swb_pile in sst_swb.stratumPile){
+                            for(WastePile *pwb_pile in sst_pwb.stratumPile){
+                                if(pwb_pile.cuttingPermit == swb_pile.cuttingPermit && pwb_pile.block == swb_pile.block && pwb_pile.licence == swb_pile.licence){
+                                    found_matching_pile = YES;
                                     if([sst_swb.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                                       [self mergeSingleBlkPileStratum:pwb_aggCB.aggPile.pileData swb_pileData:swb_aggCB.aggPile.pileData];
+                                       [self mergeSingleBlkPileStratum:sst_pwb.stratumPile swb_pileData:sst_swb.stratumPile];
                                        
                                        if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                            //merge stratum ratio sampling log and plot selected
                                            sst_pwb.ratioSamplingLog = [sst_pwb.ratioSamplingLog stringByAppendingString:sst_swb.ratioSamplingLog];
                                        }
                                     }else{
-                                       if([swb_aggCB.aggPile.pileData count] == 0){
-                                       }else if(swb_aggCB.aggPile.stratumPileId == pwb_aggCB.aggPile.stratumPileId){
-                                        NSSet* pile_set = [NSSet setWithSet:swb_aggCB.aggPile.pileData];
-                                        for(WastePile *swb_pile in pile_set){
-                                            for(WastePile *pwb_pile in pwb_aggCB.aggPile.pileData){
-                                                if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                                    if(([pwb_pile.length doubleValue] == 0 && [pwb_pile.width doubleValue] ==0 && [pwb_pile.height doubleValue] ==0 && [pwb_pile.measuredLength doubleValue] == 0 && [pwb_pile.measuredWidth doubleValue] == 0 && [pwb_pile.measuredHeight doubleValue] == 0 && [pwb_pile.measuredPileArea doubleValue] == 0 && [pwb_pile.measuredPileVolume doubleValue] == 0) && ([swb_pile.length doubleValue] == 0 && [swb_pile.width doubleValue] ==0 && [swb_pile.height doubleValue] ==0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
-                                                        NSLog(@"case 1 in doc: where incoming file and receiving file is 0");
-                                                    }else if(([pwb_pile.length doubleValue] != 0 && [pwb_pile.width doubleValue] !=0 && [pwb_pile.height doubleValue] !=0 && [pwb_pile.measuredLength doubleValue] != 0 && [pwb_pile.measuredWidth doubleValue] != 0 && [pwb_pile.measuredHeight doubleValue] != 0 && [pwb_pile.measuredPileArea doubleValue] != 0 && [pwb_pile.measuredPileVolume doubleValue] != 0) && ([swb_pile.length doubleValue] != 0 && [swb_pile.width doubleValue] !=0 && [swb_pile.height doubleValue] !=0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
-                                                        NSLog(@"case 2 in doc: where receiving file is not 0 and incoming file is 0");
-                                                    }else if([pwb_pile.length doubleValue] == [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] == [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] == [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] == [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] == [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] == [swb_pile.measuredHeight doubleValue] && [pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] == [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] == [swb_pile.measuredPileVolume doubleValue]){
-                                                        NSLog(@"case 4 in doc: where incoming file and receiving file data is exact same");
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                       }else{
-                                          pwb_aggCB.aggPile = swb_aggCB.aggPile;
+                                       if([sst_swb.stratumPile count] == 0){
+                                           // no piles
+                                       }else {
+                                           if(pwb_pile.pileNumber == swb_pile.pileNumber){
+                                               if(([pwb_pile.length doubleValue] == 0 && [pwb_pile.width doubleValue] ==0 && [pwb_pile.height doubleValue] ==0 && [pwb_pile.measuredLength doubleValue] == 0 && [pwb_pile.measuredWidth doubleValue] == 0 && [pwb_pile.measuredHeight doubleValue] == 0 && [pwb_pile.measuredPileArea doubleValue] == 0 && [pwb_pile.measuredPileVolume doubleValue] == 0) && ([swb_pile.length doubleValue] == 0 && [swb_pile.width doubleValue] ==0 && [swb_pile.height doubleValue] ==0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
+                                                   NSLog(@"case 1 in doc: where incoming file and receiving file is 0");
+                                               }else if(([pwb_pile.length doubleValue] != 0 && [pwb_pile.width doubleValue] !=0 && [pwb_pile.height doubleValue] !=0 && [pwb_pile.measuredLength doubleValue] != 0 && [pwb_pile.measuredWidth doubleValue] != 0 && [pwb_pile.measuredHeight doubleValue] != 0 && [pwb_pile.measuredPileArea doubleValue] != 0 && [pwb_pile.measuredPileVolume doubleValue] != 0) && ([swb_pile.length doubleValue] != 0 && [swb_pile.width doubleValue] !=0 && [swb_pile.height doubleValue] !=0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
+                                                   NSLog(@"case 2 in doc: where receiving file is not 0 and incoming file is 0");
+                                               }else if([pwb_pile.length doubleValue] == [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] == [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] == [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] == [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] == [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] == [swb_pile.measuredHeight doubleValue] && [pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] == [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] == [swb_pile.measuredPileVolume doubleValue]){
+                                                   NSLog(@"case 4 in doc: where incoming file and receiving file data is exact same");
+                                               }
+                                               break;
+                                           }
                                        }
                                         if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                             //merge stratum ratio sampling log and plot selected
@@ -1108,10 +1146,10 @@
                                     break;
                                 }
                             }
-                            if(!found_matching_agg){
-                                [sst_pwb addStratumAggObject:swb_aggCB];
+                            if(!found_matching_pile){
+                                [sst_pwb addStratumPileObject:swb_pile];
                             }
-                            found_matching_agg = NO;
+                            found_matching_pile = NO;
                         }
                         break;
                     }
@@ -1150,25 +1188,6 @@
                     }
                     pwb_pile.measuredPileArea = [[NSDecimalNumber alloc] initWithDouble:[swb_pile.measuredPileArea doubleValue]];
                     pwb_pile.measuredPileVolume = [[NSDecimalNumber alloc] initWithDouble:[swb_pile.measuredPileVolume doubleValue]];
-                    pwb_pile.alPercent = [[NSNumber alloc] initWithInt:[swb_pile.alPercent intValue]];
-                    pwb_pile.arPercent = [[NSNumber alloc] initWithInt:[swb_pile.arPercent intValue]];
-                    pwb_pile.asPercent = [[NSNumber alloc] initWithInt:[swb_pile.asPercent intValue]];
-                    pwb_pile.biPercent = [[NSNumber alloc] initWithInt:[swb_pile.biPercent intValue]];
-                    pwb_pile.baPercent = [[NSNumber alloc] initWithInt:[swb_pile.baPercent intValue]];
-                    pwb_pile.cePercent = [[NSNumber alloc] initWithInt:[swb_pile.cePercent intValue]];
-                    pwb_pile.coPercent = [[NSNumber alloc] initWithInt:[swb_pile.coPercent intValue]];
-                    pwb_pile.cyPercent = [[NSNumber alloc] initWithInt:[swb_pile.cyPercent intValue]];
-                    pwb_pile.fiPercent = [[NSNumber alloc] initWithInt:[swb_pile.fiPercent intValue]];
-                    pwb_pile.hePercent = [[NSNumber alloc] initWithInt:[swb_pile.hePercent intValue]];
-                    pwb_pile.laPercent = [[NSNumber alloc] initWithInt:[swb_pile.laPercent intValue]];
-                    pwb_pile.loPercent = [[NSNumber alloc] initWithInt:[swb_pile.loPercent intValue]];
-                    pwb_pile.maPercent = [[NSNumber alloc] initWithInt:[swb_pile.maPercent intValue]];
-                    pwb_pile.spPercent = [[NSNumber alloc] initWithInt:[swb_pile.spPercent intValue]];
-                    pwb_pile.wbPercent = [[NSNumber alloc] initWithInt:[swb_pile.wbPercent intValue]];
-                    pwb_pile.whPercent = [[NSNumber alloc] initWithInt:[swb_pile.whPercent intValue]];
-                    pwb_pile.wiPercent = [[NSNumber alloc] initWithInt:[swb_pile.wiPercent intValue]];
-                    pwb_pile.uuPercent = [[NSNumber alloc] initWithInt:[swb_pile.uuPercent intValue]];
-                    pwb_pile.yePercent = [[NSNumber alloc] initWithInt:[swb_pile.yePercent intValue]];
                     if(swb_pile.comment){
                         pwb_pile.comment = swb_pile.comment;
                     }
@@ -1301,7 +1320,14 @@
             primary_wb.notes = @"";
         }
         if(secondary_wb.notes){
-            primary_wb.notes = [NSString stringWithFormat:@"%@, %@", primary_wb.notes, secondary_wb.notes];
+            if([primary_wb.notes isEqualToString:@""] || primary_wb.notes == nil)
+            {
+                primary_wb.notes = secondary_wb.notes;
+            }
+            else
+            {
+                primary_wb.notes = [NSString stringWithFormat:@"%@, %@", primary_wb.notes, secondary_wb.notes];
+            }
         }
         
         //comparing Timber Mark
@@ -1435,7 +1461,8 @@
                         }
                         break;
                     }
-                }else{  BOOL found_matching_agg = NO;
+                }else{
+                    BOOL found_matching_pile = NO;
                     if([primary_wb.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
                         if([sst_swb.stratum isEqualToString:sst_pwb.stratum]){
                             found_matching_st = YES;
@@ -1447,21 +1474,20 @@
                                 sst_pwb.notes = [NSString stringWithFormat:@"%@, %@", sst_pwb.notes, sst_swb.notes];
                             }
                             //move the pile from secondary to primary. Assuming stratumpile data will be made in master before sharing.So during merge there is no confict in pile number generated.
-                            //[sst_pwb addStrPileObject:sst_swb.strPile];
                             if([sst_swb.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                                [self mergeSingleBlkPileStratum:sst_pwb.strPile.pileData swb_pileData:sst_swb.strPile.pileData];
+                                [self mergeSingleBlkPileStratum:sst_pwb.stratumPile swb_pileData:sst_swb.stratumPile];
                                 
                                 if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                     //merge stratum ratio sampling log and plot selected
                                     sst_pwb.ratioSamplingLog = [sst_pwb.ratioSamplingLog stringByAppendingString:sst_swb.ratioSamplingLog];
                                 }
                             }else{
-                                if([sst_swb.strPile.pileData count] == 0){
+                                if([sst_swb.stratumPile count] == 0){
                                     
-                                }else if(sst_swb.strPile.stratumPileId == sst_pwb.strPile.stratumPileId){
-                                    NSSet* pile_set = [NSSet setWithSet:sst_swb.strPile.pileData];
+                                }else{
+                                    NSSet* pile_set = [NSSet setWithSet:sst_swb.stratumPile];
                                     for(WastePile *swb_pile in pile_set){
-                                        for(WastePile *pwb_pile in sst_pwb.strPile.pileData){
+                                        for(WastePile *pwb_pile in sst_pwb.stratumPile){
                                             if(pwb_pile.pileNumber == swb_pile.pileNumber){
                                                 if(([pwb_pile.length doubleValue] == 0 && [pwb_pile.width doubleValue] ==0 && [pwb_pile.height doubleValue] ==0 && [pwb_pile.measuredLength doubleValue] == 0 && [pwb_pile.measuredWidth doubleValue] == 0 && [pwb_pile.measuredHeight doubleValue] == 0 && [pwb_pile.measuredPileArea doubleValue] == 0 && [pwb_pile.measuredPileVolume doubleValue] == 0) && ([swb_pile.length doubleValue] == 0 && [swb_pile.width doubleValue] ==0 && [swb_pile.height doubleValue] ==0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
                                                     NSLog(@"case 1 in doc: where incoming file and receiving file is 0");
@@ -1474,8 +1500,6 @@
                                             }
                                         }
                                     }
-                                }else{
-                                    sst_pwb.strPile = sst_swb.strPile;
                                 }
                                 if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                     //merge stratum ratio sampling log and plot selected
@@ -1495,37 +1519,31 @@
                                sst_pwb.notes = [NSString stringWithFormat:@"%@, %@", sst_pwb.notes, sst_swb.notes];
                            }
                            
-                           for (AggregateCutblock *swb_aggCB in sst_swb.stratumAgg){
-                               for(AggregateCutblock *pwb_aggCB in sst_pwb.stratumAgg){
-                                   if(pwb_aggCB.aggregateCuttingPermit == swb_aggCB.aggregateCuttingPermit && pwb_aggCB.aggregateCutblock == swb_aggCB.aggregateCutblock && pwb_aggCB.aggregateLicense == swb_aggCB.aggregateLicense){
-                                       found_matching_agg = YES;
+                            for (WastePile *swb_pile in sst_swb.stratumPile){
+                               for(WastePile *pwb_pile in sst_pwb.stratumPile){
+                                   if(pwb_pile.cuttingPermit == swb_pile.cuttingPermit && pwb_pile.block == swb_pile.block && pwb_pile.licence == swb_pile.licence){
+                                       found_matching_pile = YES;
                                        if([sst_swb.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                                          [self mergeSingleBlkPileStratum:pwb_aggCB.aggPile.pileData swb_pileData:swb_aggCB.aggPile.pileData];
+                                          [self mergeSingleBlkPileStratum:sst_pwb.stratumPile swb_pileData:sst_swb.stratumPile];
                                           
                                           if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                               //merge stratum ratio sampling log and plot selected
                                               sst_pwb.ratioSamplingLog = [sst_pwb.ratioSamplingLog stringByAppendingString:sst_swb.ratioSamplingLog];
                                           }
                                        }else{
-                                          if([swb_aggCB.aggPile.pileData count] == 0){
-                                          }else if(swb_aggCB.aggPile.stratumPileId == pwb_aggCB.aggPile.stratumPileId){
-                                           NSSet* pile_set = [NSSet setWithSet:swb_aggCB.aggPile.pileData];
-                                           for(WastePile *swb_pile in pile_set){
-                                               for(WastePile *pwb_pile in pwb_aggCB.aggPile.pileData){
-                                                   if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                                       if(([pwb_pile.length doubleValue] == 0 && [pwb_pile.width doubleValue] ==0 && [pwb_pile.height doubleValue] ==0 && [pwb_pile.measuredLength doubleValue] == 0 && [pwb_pile.measuredWidth doubleValue] == 0 && [pwb_pile.measuredHeight doubleValue] == 0 && [pwb_pile.measuredPileArea doubleValue] == 0 && [pwb_pile.measuredPileVolume doubleValue] == 0) && ([swb_pile.length doubleValue] == 0 && [swb_pile.width doubleValue] ==0 && [swb_pile.height doubleValue] ==0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
-                                                           NSLog(@"case 1 in doc: where incoming file and receiving file is 0");
-                                                       }else if(([pwb_pile.length doubleValue] != 0 && [pwb_pile.width doubleValue] !=0 && [pwb_pile.height doubleValue] !=0 && [pwb_pile.measuredLength doubleValue] != 0 && [pwb_pile.measuredWidth doubleValue] != 0 && [pwb_pile.measuredHeight doubleValue] != 0 && [pwb_pile.measuredPileArea doubleValue] != 0 && [pwb_pile.measuredPileVolume doubleValue] != 0) && ([swb_pile.length doubleValue] != 0 && [swb_pile.width doubleValue] !=0 && [swb_pile.height doubleValue] !=0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
-                                                           NSLog(@"case 2 in doc: where receiving file is not 0 and incoming file is 0");
-                                                       }else if([pwb_pile.length doubleValue] == [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] == [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] == [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] == [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] == [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] == [swb_pile.measuredHeight doubleValue] && [pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] == [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] == [swb_pile.measuredPileVolume doubleValue]){
-                                                           NSLog(@"case 4 in doc: where incoming file and receiving file data is exact same");
-                                                       }
-                                                       break;
+                                          if([sst_swb.stratumPile count] == 0){
+                                              // no piles
+                                          } else {
+                                               if(pwb_pile.pileNumber == swb_pile.pileNumber){
+                                                   if(([pwb_pile.length doubleValue] == 0 && [pwb_pile.width doubleValue] ==0 && [pwb_pile.height doubleValue] ==0 && [pwb_pile.measuredLength doubleValue] == 0 && [pwb_pile.measuredWidth doubleValue] == 0 && [pwb_pile.measuredHeight doubleValue] == 0 && [pwb_pile.measuredPileArea doubleValue] == 0 && [pwb_pile.measuredPileVolume doubleValue] == 0) && ([swb_pile.length doubleValue] == 0 && [swb_pile.width doubleValue] ==0 && [swb_pile.height doubleValue] ==0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
+                                                       NSLog(@"case 1 in doc: where incoming file and receiving file is 0");
+                                                   }else if(([pwb_pile.length doubleValue] != 0 && [pwb_pile.width doubleValue] !=0 && [pwb_pile.height doubleValue] !=0 && [pwb_pile.measuredLength doubleValue] != 0 && [pwb_pile.measuredWidth doubleValue] != 0 && [pwb_pile.measuredHeight doubleValue] != 0 && [pwb_pile.measuredPileArea doubleValue] != 0 && [pwb_pile.measuredPileVolume doubleValue] != 0) && ([swb_pile.length doubleValue] != 0 && [swb_pile.width doubleValue] !=0 && [swb_pile.height doubleValue] !=0 && [swb_pile.measuredLength doubleValue] == 0 && [swb_pile.measuredWidth doubleValue] == 0 && [swb_pile.measuredHeight doubleValue] == 0 && [swb_pile.measuredPileArea doubleValue] == 0 && [swb_pile.measuredPileVolume doubleValue] == 0)){
+                                                       NSLog(@"case 2 in doc: where receiving file is not 0 and incoming file is 0");
+                                                   }else if([pwb_pile.length doubleValue] == [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] == [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] == [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] == [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] == [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] == [swb_pile.measuredHeight doubleValue] && [pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] == [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] == [swb_pile.measuredPileVolume doubleValue]){
+                                                       NSLog(@"case 4 in doc: where incoming file and receiving file data is exact same");
                                                    }
+                                                   break;
                                                }
-                                           }
-                                          }else{
-                                             pwb_aggCB.aggPile = swb_aggCB.aggPile;
                                           }
                                            if(primary_wb.ratioSamplingEnabled && [primary_wb.ratioSamplingEnabled intValue] == 1){
                                                //merge stratum ratio sampling log and plot selected
@@ -1535,10 +1553,10 @@
                                        break;
                                    }
                                }
-                               if(!found_matching_agg){
-                                   [sst_pwb addStratumAggObject:swb_aggCB];
+                               if(!found_matching_pile){
+                                   [sst_pwb addStratumPileObject:swb_pile];
                                }
-                               found_matching_agg = NO;
+                               found_matching_pile = NO;
                            }
                            break;
                        }
