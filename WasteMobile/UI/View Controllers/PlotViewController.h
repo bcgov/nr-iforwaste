@@ -79,7 +79,6 @@ typedef enum PlotAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *totalCheckPercent;
 
 @property (weak, nonatomic) IBOutlet UILabel *isMeasurePlotLabel;
-@property (weak, nonatomic) IBOutlet UILabel *isMeasurePlot;
 @property (weak, nonatomic) IBOutlet UITextField *isMeasurePlot;
 @property (weak, nonatomic) IBOutlet UILabel *greenVolumeLabel;
 @property (weak, nonatomic) IBOutlet UITextField *greenVolume;
