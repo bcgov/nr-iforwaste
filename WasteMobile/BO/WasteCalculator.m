@@ -62,14 +62,14 @@
     }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
         float totalEstimate = 0;
 
-        if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
+        /*if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
             totalEstimate = [ws.checkTotalEstimatedVolume floatValue];
-        }else{
+        }else{*/
             //totalEstimate = [ws.totalEstimatedVolume floatValue];
             totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
             //we need to calculate the check estimated volume for original waste piece object
             wastePiece.checkPieceVolume =[[[NSDecimalNumber alloc] initWithFloat:([ws.checkTotalEstimatedVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
-        }
+        //}
         volume = totalEstimate * ([wastePiece.estimatedPercent floatValue] / 100.0);
 
         wastePiece.estimatedVolume = [[[NSDecimalNumber alloc] initWithFloat:volume] decimalNumberByRoundingAccordingToBehavior:behavior];

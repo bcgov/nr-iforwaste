@@ -274,6 +274,7 @@
             [self.plotNumber setEnabled:NO];
             [self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
             [self.plotEstimatedVolume setHidden:NO];
+            [self.plotEstimatedVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
             [self.plotEstimatedVolumeLabel setHidden:NO];
             if([self.wastePlot.isMeasurePlot integerValue] == 1){
                 [self.measurePct setEnabled:YES];
@@ -291,12 +292,18 @@
     if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
     {
         [self.licence setHidden:NO];
+        [self.licence setEnabled:NO];
+        [self.licence setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         self.licence.tag = 8;
         [self.licenceLabel setHidden:NO];
         [self.cuttingPermit setHidden:NO];
+        [self.cuttingPermit setEnabled:NO];
+        [self.cuttingPermit setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         self.cuttingPermit.tag = 9;
         [self.cuttingPermitLabel setHidden:NO];
         [self.cutBlock setHidden:NO];
+        [self.cutBlock setEnabled:NO];
+        [self.cutBlock setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         self.cutBlock.tag = 10;
         [self.cutBlockLabel setHidden:NO];
     }

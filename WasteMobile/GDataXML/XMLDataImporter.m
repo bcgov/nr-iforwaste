@@ -156,6 +156,7 @@
                 attStrValue = @"0";
             }
             [self fillManagedObject:(NSManagedObject *)targetObj valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
+            
         }else{
             //some field need to set to nil
             if([strAry[2] isEqualToString:@"2"]){
@@ -163,6 +164,23 @@
             }
         }
     }
+    
+    if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+    {
+        if([(NSManagedObject *)*wb valueForKey:@"blockMaturityCode"] != nil)
+        {
+            [*wb setValue:[(NSManagedObject *)*wb valueForKey:@"blockMaturityCode"] forKey:@"blockCheckMaturityCode"];
+        }
+        if([(NSManagedObject *)*wb valueForKey:@"blockSiteCode"] != nil)
+        {
+            [*wb setValue:[(NSManagedObject *)*wb valueForKey:@"blockSiteCode"] forKey:@"blockCheckSiteCode"];
+        }
+        if([(NSManagedObject *)*wb valueForKey:@"surveyArea"] != nil)
+        {
+            [*wb setValue:[(NSManagedObject *)*wb valueForKey:@"surveyArea"] forKey:@"netArea"];
+        }
+    }
+
     
     NSArray *stratums = [doc.rootElement elementsForName:@"WasteStratum"];
     if (stratums.count > 0){
@@ -187,6 +205,14 @@
                 }
             }
             
+            if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+            {
+                if([(NSManagedObject *)ws valueForKey:@"stratumSurveyArea"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"stratumSurveyArea"] forKey:@"stratumArea"];
+                }
+            }
+            
             //get plot
             NSArray *plots = [stra elementsForName:@"WastePlot"];
             for(GDataXMLElement *plot in plots){
@@ -206,6 +232,14 @@
                         if([strAry[2] isEqualToString:@"2"]){
                             [(NSManagedObject *)wp setValue:nil forKey:strAry[1]];
                         }
+                    }
+                }
+                
+                if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+                {
+                    if([(NSManagedObject *)wp valueForKey:@"surveyedMeasurePercent"] != nil)
+                    {
+                        [wp setValue:[(NSManagedObject *)wp valueForKey:@"surveyedMeasurePercent"] forKey:@"checkerMeasurePercent"];
                     }
                 }
                 

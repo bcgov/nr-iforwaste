@@ -1933,16 +1933,6 @@
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2uJ-Re-mW7">
-                                <rect key="frame" x="614" y="16" width="147" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                                <connections>
-                                    <action selector="hideKeyboard:" destination="Mkd-4v-F1V" eventType="editingDidEndOnExit" id="iNA-lL-fNK"/>
-                                    <outlet property="delegate" destination="Mkd-4v-F1V" id="zyk-pR-exN"/>
-                                </connections>
-                            </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c5H-i5-XYA">
                                 <rect key="frame" x="880" y="198" width="128" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2393,6 +2383,16 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textField opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2uJ-Re-mW7">
+                                <rect key="frame" x="614" y="16" width="147" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                <connections>
+                                    <action selector="hideKeyboard:" destination="Mkd-4v-F1V" eventType="editingDidEndOnExit" id="iNA-lL-fNK"/>
+                                    <outlet property="delegate" destination="Mkd-4v-F1V" id="zyk-pR-exN"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -2416,7 +2416,7 @@
                     <connections>
                         <outlet property="addPlotButton" destination="c5H-i5-XYA" id="XkT-YP-5JL"/>
                         <outlet property="aggregatePlotTableView" destination="5NN-dm-ou9" id="6Dq-uK-Gn1"/>
-                        <outlet property="areaHa" destination="2uJ-Re-mW7" id="MdO-AH-ktV"/>
+                        <outlet property="areaHa" destination="2uJ-Re-mW7" id="dzx-xM-777"/>
                         <outlet property="assesmentSize" destination="Gfv-yP-IRX" id="abC-xF-7xl"/>
                         <outlet property="checkAreaLabel" destination="b3G-ds-yNq" id="L0M-Uz-uRg"/>
                         <outlet property="downArrowImage" destination="Qs6-hU-gJW" id="d4K-zY-fLx"/>
@@ -2429,7 +2429,6 @@
                         <outlet property="sortCuttingPermit" destination="JNl-lq-26L" id="KWx-Sa-p5j"/>
                         <outlet property="sortLicense" destination="hzb-fc-60T" id="uel-qN-m2T"/>
                         <outlet property="sortPlotNumber" destination="xWK-Y5-BIN" id="KjP-kN-nPL"/>
-                        <outlet property="stratumArea" destination="caD-f2-zkT" id="lxT-3B-jEt"/>
                         <outlet property="surveyAreaLabel" destination="ErN-M6-utK" id="yZ4-2R-ltF"/>
                         <outlet property="versionLabel" destination="w19-wo-K73" id="Gzf-Hy-k4c"/>
                         <outlet property="wasteLevel" destination="caD-f2-zkT" id="Y3x-uL-COi"/>
@@ -2534,8 +2533,8 @@
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gVJ-gb-49U">
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="1379"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Csu-Kt-Tif">
-                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1381"/>
+                                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Csu-Kt-Tif">
+                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1434"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Baseline" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sxv-de-zsQ">
                                                 <rect key="frame" x="37" y="55" width="111" height="21"/>
@@ -2968,7 +2967,7 @@
                                                 </connections>
                                             </tableView>
                                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nlm-7K-SC2" customClass="FooterStatView">
-                                                <rect key="frame" x="0.0" y="1220" width="1024" height="123"/>
+                                                <rect key="frame" x="0.0" y="1263" width="1024" height="123"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iFY-fg-NPy">
@@ -3107,7 +3106,7 @@
                                                 </connections>
                                             </textField>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Version 0.0.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eML-qs-vtc">
-                                                <rect key="frame" x="362" y="1351" width="300" height="21"/>
+                                                <rect key="frame" x="362" y="1364" width="300" height="21"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -3259,12 +3258,15 @@
                         <outlet property="checkSurveyDateLabel" destination="RWn-7M-dm1" id="g7J-Kq-Mxh"/>
                         <outlet property="checkedBy" destination="4HR-Nf-QEu" id="2bb-gD-u56"/>
                         <outlet property="cutBlock" destination="mw8-nB-rK1" id="AiU-N4-b1a"/>
+                        <outlet property="cutBlockLabel" destination="wOz-Ss-RbH" id="Qta-in-xeV"/>
                         <outlet property="cuttingPermit" destination="xqp-wS-qNR" id="MOB-UW-6sG"/>
+                        <outlet property="cuttingPermitLabel" destination="8jh-Ev-UUc" id="tAc-G2-JVe"/>
                         <outlet property="footerStatView" destination="Nlm-7K-SC2" id="njA-AE-jP3"/>
                         <outlet property="headerView" destination="ib5-S1-Flg" id="3rf-Ee-wjN"/>
                         <outlet property="isMeasurePlot" destination="gpi-UJ-4A0" id="ooH-FH-LIl"/>
                         <outlet property="isMeasurePlotLabel" destination="ufj-s9-d3K" id="2ii-CP-37G"/>
                         <outlet property="licence" destination="wNY-sj-gbF" id="RRY-S9-xnF"/>
+                        <outlet property="licenceLabel" destination="PAs-vN-URo" id="YBz-8M-GIC"/>
                         <outlet property="measurePct" destination="kTa-av-F6t" id="BPo-mY-BAl"/>
                         <outlet property="notes" destination="L7g-Zi-KuI" id="W2T-pY-X5N"/>
                         <outlet property="pieceTableView" destination="Y9A-ot-erk" id="gvD-lL-Djv"/>
@@ -3866,7 +3868,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="2NT-KX-ffW"/>
+        <segue reference="JY6-XQ-rkC"/>
         <segue reference="hqm-tD-Bwe"/>
         <segue reference="MQ1-sc-9Nq"/>
         <segue reference="GQ1-Xd-ei5"/>
