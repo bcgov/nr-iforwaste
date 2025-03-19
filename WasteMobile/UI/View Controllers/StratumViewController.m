@@ -2729,18 +2729,15 @@ NSInteger orignialWasteTypeRow;
     }else{
         //[self.sizePicker setUserInteractionEnabled:YES];
         [self.assesmentSize setEnabled:YES];
+                
+        [self.predictionPlot setHidden:NO];
+        [self.predictionPlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.predictionPlotLabel setHidden:NO];
+            
+        [self.measurePlot setHidden:NO];
+        [self.measurePlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.measurePlotLabel setHidden:NO];
         
-        if([wasteBlock.ratioSamplingEnabled integerValue] == 1){
-            [self.predictionPlot setHidden:NO];
-            [self.predictionPlotLabel setHidden:NO];
-            [self.measurePlot setHidden:NO];
-            [self.measurePlotLabel setHidden:NO];
-        }else{
-            [self.predictionPlot setHidden:YES];
-            [self.predictionPlotLabel setHidden:YES];
-            [self.measurePlot setHidden:YES];
-            [self.measurePlotLabel setHidden:YES];
-        }
     }
     if ([self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"]){
         [self.assesmentSize setEnabled:NO];
