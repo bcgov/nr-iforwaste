@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="FUu-XX-1jG">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="FUu-XX-1jG">
     <device id="ipad9_7" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -2393,6 +2393,40 @@
                                     <outlet property="delegate" destination="Mkd-4v-F1V" id="zyk-pR-exN"/>
                                 </connections>
                             </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Prediction Plots" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="40G-zj-CKf">
+                                <rect key="frame" x="598" y="68" width="120" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="biZ-78-s37">
+                                <rect key="frame" x="726" y="60" width="60" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                <connections>
+                                    <action selector="hideKeyboard:" destination="Mkd-4v-F1V" eventType="editingDidEndOnExit" id="LvM-fv-LB7"/>
+                                    <outlet property="delegate" destination="Mkd-4v-F1V" id="Ggd-hy-4X1"/>
+                                </connections>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Measure Plots" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vtv-tF-rQw">
+                                <rect key="frame" x="809" y="68" width="108" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Nt-8V-4Mb">
+                                <rect key="frame" x="925" y="62" width="60" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                <connections>
+                                    <action selector="hideKeyboard:" destination="Mkd-4v-F1V" eventType="editingDidEndOnExit" id="RNu-s6-Aum"/>
+                                    <outlet property="delegate" destination="Mkd-4v-F1V" id="Y1f-0r-Z7j"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -2422,9 +2456,13 @@
                         <outlet property="downArrowImage" destination="Qs6-hU-gJW" id="d4K-zY-fLx"/>
                         <outlet property="footerStatView" destination="Num-PY-cMv" id="YA3-c0-poy"/>
                         <outlet property="harvestMethod" destination="lGo-7h-b2t" id="5G7-wg-2Ku"/>
+                        <outlet property="measurePlot" destination="2Nt-8V-4Mb" id="jcB-e3-snl"/>
+                        <outlet property="measurePlotLabel" destination="vtv-tF-rQw" id="sAF-TI-NXA"/>
                         <outlet property="notes" destination="yNU-hu-OPN" id="G3s-uU-01L"/>
                         <outlet property="numOfPlots" destination="lH8-s2-Mri" id="7Zg-M6-U0n"/>
                         <outlet property="plotTableView" destination="NPN-ZE-HyY" id="9c4-iN-ZF1"/>
+                        <outlet property="predictionPlot" destination="biZ-78-s37" id="Vxf-ZN-T9c"/>
+                        <outlet property="predictionPlotLabel" destination="40G-zj-CKf" id="XEZ-wV-od1"/>
                         <outlet property="sortCutblock" destination="D9R-2d-oYl" id="g91-fc-ScA"/>
                         <outlet property="sortCuttingPermit" destination="JNl-lq-26L" id="KWx-Sa-p5j"/>
                         <outlet property="sortLicense" destination="hzb-fc-60T" id="uel-qN-m2T"/>
@@ -3868,8 +3906,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="JY6-XQ-rkC"/>
-        <segue reference="hqm-tD-Bwe"/>
+        <segue reference="2NT-KX-ffW"/>
+        <segue reference="BK3-M5-iDF"/>
         <segue reference="MQ1-sc-9Nq"/>
         <segue reference="GQ1-Xd-ei5"/>
         <segue reference="a0Z-Gt-Ph1"/>
