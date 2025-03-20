@@ -1284,6 +1284,8 @@
             self.isMeasurePlot.textColor = [UIColor whiteColor];
             self.isMeasurePlot.backgroundColor = [UIColor redColor];
             [self.predictionOnlyWarningLabel setHidden:NO];
+            [self.checkMeasurePerc setEnabled:NO];
+            [self.checkMeasurePerc setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         }
     }
     

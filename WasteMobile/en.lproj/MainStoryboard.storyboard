@@ -3242,6 +3242,13 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Prediction plot only. No piece audit required" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0VP-ZJ-YQi">
+                                                <rect key="frame" x="345" y="521" width="368" height="23"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                                <color key="textColor" systemColor="systemRedColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <accessibility key="accessibilityConfiguration" identifier="greenVolumeLabel"/>
@@ -3311,6 +3318,7 @@
                         <outlet property="plotEstimatedVolume" destination="uLf-Tf-MCr" id="3cv-iB-fL6"/>
                         <outlet property="plotEstimatedVolumeLabel" destination="bmi-9c-hPs" id="D6q-6o-mtt"/>
                         <outlet property="plotNumber" destination="M4O-Fz-DN7" id="OG5-Ep-yrL"/>
+                        <outlet property="predictionOnlyWarningLabel" destination="0VP-ZJ-YQi" id="kTf-b8-gsB"/>
                         <outlet property="residueSurveyor" destination="6Pk-Al-CbO" id="rbX-hB-3sA"/>
                         <outlet property="returnNumber" destination="Fd8-Gb-YRl" id="Kvt-VB-rjs"/>
                         <outlet property="shape" destination="5tC-Le-HKH" id="DRE-0m-6xB"/>
@@ -3906,7 +3914,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="2NT-KX-ffW"/>
+        <segue reference="JY6-XQ-rkC"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="MQ1-sc-9Nq"/>
         <segue reference="GQ1-Xd-ei5"/>

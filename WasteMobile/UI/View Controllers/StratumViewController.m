@@ -2732,10 +2732,12 @@ NSInteger orignialWasteTypeRow;
         
         if([self.wasteBlock.ratioSamplingEnabled integerValue] == 1) {
             [self.predictionPlot setHidden:NO];
+            [self.predictionPlot setEnabled:NO];
             [self.predictionPlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
             [self.predictionPlotLabel setHidden:NO];
                 
             [self.measurePlot setHidden:NO];
+            [self.measurePlot setEnabled:NO];
             [self.measurePlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
             [self.measurePlotLabel setHidden:NO];
         } else {
