@@ -2729,14 +2729,22 @@ NSInteger orignialWasteTypeRow;
     }else{
         //[self.sizePicker setUserInteractionEnabled:YES];
         [self.assesmentSize setEnabled:YES];
+        
+        if([self.wasteBlock.ratioSamplingEnabled integerValue] == 1) {
+            [self.predictionPlot setHidden:NO];
+            [self.predictionPlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+            [self.predictionPlotLabel setHidden:NO];
                 
-        [self.predictionPlot setHidden:NO];
-        [self.predictionPlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-        [self.predictionPlotLabel setHidden:NO];
-            
-        [self.measurePlot setHidden:NO];
-        [self.measurePlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-        [self.measurePlotLabel setHidden:NO];
+            [self.measurePlot setHidden:NO];
+            [self.measurePlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+            [self.measurePlotLabel setHidden:NO];
+        } else {
+            [self.predictionPlot setHidden:YES];
+            [self.predictionPlotLabel setHidden:YES];
+                
+            [self.measurePlot setHidden:YES];
+            [self.measurePlotLabel setHidden:YES];
+        }
         
     }
     if ([self.wasteStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"]){
@@ -2783,7 +2791,7 @@ NSInteger orignialWasteTypeRow;
         [self.measurePlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     }
     
-    if(![self.predictionPlot.text isEqualToString:@""] && ![self.measurePlot.text isEqualToString:@""] && [wasteBlock.ratioSamplingEnabled integerValue] == 1 && [self.wasteStratum.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]&& (![self.wasteStratum.n1sample isEqualToString:@""] || ![self.wasteStratum.fixedSample isEqualToString:@""])){
+    if(![self.predictionPlot.text isEqualToString:@""] && ![self.measurePlot.text isEqualToString:@""] && [self.wasteBlock.ratioSamplingEnabled integerValue] == 1 && [self.wasteStratum.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]&& (![self.wasteStratum.n1sample isEqualToString:@""] || ![self.wasteStratum.fixedSample isEqualToString:@""])){
             [self.predictionPlot setEnabled:NO];
             [self.predictionPlot setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
             [self.measurePlot setEnabled:NO];
