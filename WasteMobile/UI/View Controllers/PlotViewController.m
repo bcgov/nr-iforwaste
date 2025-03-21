@@ -1273,21 +1273,23 @@
     self.residueSurveyor.text = self.wastePlot.surveyorName ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.surveyorName] : @"";
     self.weather.text = self.wastePlot.weather ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.weather] : @"";
     self.plotEstimatedVolume.text = self.wastePlot.plotEstimatedVolume ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.plotEstimatedVolume] : @"";
-    if (self.wastePlot.isMeasurePlot){
-        if ( [self.wastePlot.isMeasurePlot integerValue] == 1 ){
-            self.isMeasurePlot.text =  @"YES";
-            self.isMeasurePlot.textColor = [UIColor whiteColor];
-            self.isMeasurePlot.backgroundColor = [UIColor greenColor];
-            [self.predictionOnlyWarningLabel setHidden:YES];
-        }else{
-            self.isMeasurePlot.text =  @"NO";
-            self.isMeasurePlot.textColor = [UIColor whiteColor];
-            self.isMeasurePlot.backgroundColor = [UIColor redColor];
-            [self.predictionOnlyWarningLabel setHidden:NO];
-            [self.checkMeasurePerc setEnabled:NO];
-            [self.checkMeasurePerc setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-        }
-    }
+//    if (self.wastePlot.isMeasurePlot){
+//        if ( [self.wastePlot.isMeasurePlot integerValue] == 1 ){
+//            self.isMeasurePlot.text =  @"YES";
+//            self.isMeasurePlot.textColor = [UIColor whiteColor];
+//            self.isMeasurePlot.backgroundColor = [UIColor greenColor];
+//            [self.predictionOnlyWarningLabel setHidden:YES];
+//        }else{
+//            self.isMeasurePlot.text =  @"NO";
+//            self.isMeasurePlot.textColor = [UIColor whiteColor];
+//            self.isMeasurePlot.backgroundColor = [UIColor redColor];
+//            [self.isMeasurePlot setHidden:NO];
+//            [self.isMeasurePlotLabel setHidden:NO];
+//            [self.predictionOnlyWarningLabel setHidden:NO];
+//            [self.checkMeasurePerc setEnabled:NO];
+//            [self.checkMeasurePerc setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+//        }
+//    }
     
     
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
@@ -1303,24 +1305,45 @@
     if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
 
         [self.totalEstimatedVolumeLabel setHidden:YES];
-        [self.plotEstimatedVolumeLabel setHidden:NO];
         [self.totalEstimateVolume setHidden:YES];
-        [self.plotEstimatedVolume setHidden:NO];
         [self.totalCheckPercent setHidden:NO];
         [self.totalCheckPercentLabel setHidden:NO];
-        
         
         [self updateCheckTotalPercent];
         
     }else{
         //hide estimate volume and total percent
         [self.totalEstimatedVolumeLabel setHidden:YES];
-        [self.plotEstimatedVolumeLabel setHidden:YES];
         [self.totalEstimateVolume setHidden:YES];
-        [self.plotEstimatedVolume setHidden:YES];
         [self.totalCheckPercent setHidden:YES];
         [self.totalCheckPercentLabel setHidden:YES];
         [self.surveyTotalEstimateVolume setHidden:YES];
+    }
+    
+    if (![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"S"] &&
+       ![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"E"] &&
+       ![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"O"]) {
+        
+        [self.plotEstimatedVolumeLabel setHidden:NO];
+        [self.plotEstimatedVolume setHidden:NO];
+        [self.plotEstimatedVolume setEnabled:NO];
+        [self.plotEstimatedVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        
+        if ([self.wastePlot.isMeasurePlot integerValue] == 1 ) {
+            self.isMeasurePlot.text =  @"YES";
+            self.isMeasurePlot.textColor = [UIColor whiteColor];
+            self.isMeasurePlot.backgroundColor = [UIColor greenColor];
+            [self.predictionOnlyWarningLabel setHidden:YES];
+        } else {
+            self.isMeasurePlot.text =  @"NO";
+            self.isMeasurePlot.textColor = [UIColor whiteColor];
+            self.isMeasurePlot.backgroundColor = [UIColor redColor];
+            [self.isMeasurePlot setHidden:NO];
+            [self.isMeasurePlotLabel setHidden:NO];
+            [self.predictionOnlyWarningLabel setHidden:NO];
+            [self.checkMeasurePerc setEnabled:NO];
+            [self.checkMeasurePerc setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        }
     }
     
     self.wastePieces = [self.wastePlot.plotPiece allObjects];

@@ -1661,13 +1661,19 @@
                         <outlet property="checkMaturityLabel" destination="HuB-SW-a4y" id="OWd-GT-Zo1"/>
                         <outlet property="checkNetAreaLabel" destination="0W4-4V-RHx" id="7do-kB-k7n"/>
                         <outlet property="checkerLabel" destination="k5D-pZ-EFe" id="9Ol-VS-jmH"/>
+                        <outlet property="cpCutblockLabel" destination="3EH-5d-rLK" id="0ok-Xq-FAR"/>
                         <outlet property="cutBlock" destination="7cQ-t3-qX2" id="68y-zT-L7b"/>
                         <outlet property="cuttingPermit" destination="J80-Dm-GE8" id="4wB-pt-q0D"/>
                         <outlet property="footerStatView" destination="DzR-uh-wm0" id="8vz-vT-xSY"/>
                         <outlet property="licence" destination="Kfu-HE-qt4" id="D0f-ZO-4Xb"/>
+                        <outlet property="licenceLabel" destination="bRp-Hy-OnS" id="JkM-6p-A5Q"/>
                         <outlet property="location" destination="8Ns-Mz-S6y" id="3EG-2b-QiU"/>
+                        <outlet property="locationLabel" destination="sGz-ET-eBs" id="daG-QZ-nfD"/>
                         <outlet property="loggedFrom" destination="mb6-CD-vEb" id="nh9-uv-Dgc"/>
+                        <outlet property="loggedFromLabel" destination="bKV-QD-TUl" id="jHq-j4-5dm"/>
                         <outlet property="loggedTo" destination="ayl-Lx-7Ed" id="Tth-sM-f2H"/>
+                        <outlet property="loggedToLabel" destination="DHD-gT-O40" id="YRr-3F-TpV"/>
+                        <outlet property="loggingCompleteLabel" destination="sXA-Dp-FVM" id="5US-Pj-vrl"/>
                         <outlet property="loggingCompleteTextField" destination="xIs-dQ-MyG" id="95U-4t-lug"/>
                         <outlet property="maturity" destination="UVe-Wd-Xwn" id="24P-H0-1Fz"/>
                         <outlet property="maturityLabel" destination="UAF-3H-M3F" id="cV3-MF-2ta"/>
@@ -3914,7 +3920,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="JY6-XQ-rkC"/>
+        <segue reference="IeM-N2-dmH"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="MQ1-sc-9Nq"/>
         <segue reference="GQ1-Xd-ei5"/>

@@ -240,13 +240,13 @@ UITextField *activeTextField;
     
     NSString *tmp  = [[NSString alloc] initWithFormat:@"(IFOR 202) Cut Block - %@", self.wasteBlock.cutBlockId && ![self.wasteBlock.cutBlockId isEqualToString:@"" ]  ? self.wasteBlock.cutBlockId : @"New Block" ];
     if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-        tmp = [tmp stringByAppendingString:@" Aggregate Ratio Sampling"];
+        tmp = [tmp stringByAppendingString:@" Aggregate Ratio Survey"];
     }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
         tmp = [tmp stringByAppendingString:@" Aggregate SRS Survey"];
     }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
         tmp = [tmp stringByAppendingString:@" Single Block SRS Survey"];
     }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-        tmp = [tmp stringByAppendingString:@" Single Block Ratio Sampling"];
+        tmp = [tmp stringByAppendingString:@" Single Block Ratio Survey"];
     }
     [[self navigationItem] setTitle:tmp];
     
