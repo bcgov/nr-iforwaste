@@ -67,6 +67,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, nonatomic, copy) NSNumber *measurePctEdited;
 
+@property (nullable, nonatomic, copy) NSNumber *checkVolume;
+
 @end
 
 @interface WastePlot (CoreDataGeneratedAccessors)

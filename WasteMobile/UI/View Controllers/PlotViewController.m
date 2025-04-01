@@ -209,6 +209,14 @@
     [self.isMeasurePlotLabel setHidden:YES];
     [self.plotEstimatedVolume setHidden:YES];
     [self.plotEstimatedVolumeLabel setHidden:YES];
+    [self.totalCheckPercentLabel setHidden:YES];
+    [self.totalCheckPercent setHidden:YES];
+    [self.totalEstimatedVolumeLabel setHidden:YES];
+    [self.totalEstimateVolume setHidden:YES];
+    [self.checkVolumeLabel setHidden:YES];
+    [self.checkVolume setHidden:YES];
+    [self.checkVolume setEnabled:YES];
+    
     
     [self.measurePct addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingDidEnd];
 
@@ -273,9 +281,9 @@
             [self.isMeasurePlotLabel setHidden:NO];
             [self.plotNumber setEnabled:NO];
             [self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-            [self.plotEstimatedVolume setHidden:NO];
-            [self.plotEstimatedVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-            [self.plotEstimatedVolumeLabel setHidden:NO];
+            //[self.plotEstimatedVolume setHidden:NO];
+            //[self.plotEstimatedVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+           // [self.plotEstimatedVolumeLabel setHidden:NO];
             if([self.wastePlot.isMeasurePlot integerValue] == 1){
                 [self.measurePct setEnabled:YES];
                 [self.isMeasurePlot setText:@"YES"];
@@ -478,6 +486,7 @@
     self.wasteBlock.checkerName = self.checkedBy.text;
     self.wastePlot.assistant = self.assistant.text;
     self.wastePlot.checkDate = [dateFormat dateFromString:self.checkSurveyDate.text];
+    self.wastePlot.checkVolume = [NSDecimalNumber decimalNumberWithString:self.checkVolume.text];
     
     for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
         double  totalestimatedvolume = 0.0;
@@ -757,7 +766,7 @@
     return YES;
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+- (BOOL):(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     
     // INPUT VALIDATION
     //
@@ -776,7 +785,7 @@
         if ( ![self validInputNumbersOnly:theString] ) {
             return NO;
         }
-    }else if(textField == self.totalEstimateVolume || textField == self.plotEstimatedVolume){
+    }else if(textField == self.totalEstimateVolume || textField == self.plotEstimatedVolume || textField == self.checkVolume){
         
         if ( ![self validInputNumbersOnlyWithDot:theString] ) {
             return NO;
@@ -1273,24 +1282,7 @@
     self.residueSurveyor.text = self.wastePlot.surveyorName ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.surveyorName] : @"";
     self.weather.text = self.wastePlot.weather ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.weather] : @"";
     self.plotEstimatedVolume.text = self.wastePlot.plotEstimatedVolume ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.plotEstimatedVolume] : @"";
-//    if (self.wastePlot.isMeasurePlot){
-//        if ( [self.wastePlot.isMeasurePlot integerValue] == 1 ){
-//            self.isMeasurePlot.text =  @"YES";
-//            self.isMeasurePlot.textColor = [UIColor whiteColor];
-//            self.isMeasurePlot.backgroundColor = [UIColor greenColor];
-//            [self.predictionOnlyWarningLabel setHidden:YES];
-//        }else{
-//            self.isMeasurePlot.text =  @"NO";
-//            self.isMeasurePlot.textColor = [UIColor whiteColor];
-//            self.isMeasurePlot.backgroundColor = [UIColor redColor];
-//            [self.isMeasurePlot setHidden:NO];
-//            [self.isMeasurePlotLabel setHidden:NO];
-//            [self.predictionOnlyWarningLabel setHidden:NO];
-//            [self.checkMeasurePerc setEnabled:NO];
-//            [self.checkMeasurePerc setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-//        }
-//    }
-    
+    self.checkVolume.text = [self.wastePlot.checkVolume isEqualToNumber:@0] ? [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.plotEstimatedVolume intValue]] : [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.checkVolume intValue]];
     
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"MMM-dd-yyyy"];
@@ -1303,31 +1295,31 @@
     
     // Check stratum to show the total estimated volume
     if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
-
-        [self.totalEstimatedVolumeLabel setHidden:YES];
-        [self.totalEstimateVolume setHidden:YES];
+        //Note: plotEstimatedVolume is mapped to Survey Volume
+        [self.plotEstimatedVolumeLabel setHidden:NO];
+        [self.plotEstimatedVolume setEnabled:NO];
+        [self.plotEstimatedVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.plotEstimatedVolume setHidden:NO];
+        
+        [self.checkVolumeLabel setHidden:NO];
+        [self.checkVolume setHidden:NO];
+        
         [self.totalCheckPercent setHidden:NO];
         [self.totalCheckPercentLabel setHidden:NO];
         
         [self updateCheckTotalPercent];
-        
-    }else{
-        //hide estimate volume and total percent
-        [self.totalEstimatedVolumeLabel setHidden:YES];
-        [self.totalEstimateVolume setHidden:YES];
-        [self.totalCheckPercent setHidden:YES];
-        [self.totalCheckPercentLabel setHidden:YES];
-        [self.surveyTotalEstimateVolume setHidden:YES];
     }
     
     if (![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"S"] &&
-       ![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"E"] &&
-       ![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"O"]) {
+        ![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"E"] &&
+        ![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"O"] &&
+        [self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]) {
         
-        [self.plotEstimatedVolumeLabel setHidden:NO];
-        [self.plotEstimatedVolume setHidden:NO];
-        [self.plotEstimatedVolume setEnabled:NO];
-        [self.plotEstimatedVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        //Note: totalEstimatedVolume is mapped to Predicted Volume -> TODO: Need to confirm
+        [self.totalEstimatedVolumeLabel setHidden:NO];
+        [self.totalEstimateVolume setHidden:NO];
+        [self.totalEstimateVolume setEnabled:NO];
+        [self.totalEstimateVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         
         if ([self.wastePlot.isMeasurePlot integerValue] == 1 ) {
             self.isMeasurePlot.text =  @"YES";
@@ -1359,7 +1351,6 @@
     self.licence.text = self.wastePlot.aggregateLicence;
     self.cuttingPermit.text = self.wastePlot.aggregateCuttingPermit;
     self.cutBlock.text = self.wastePlot.aggregateCutblock;
-    
 }
 
 
@@ -1544,7 +1535,8 @@
     
     if([wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
         //check if the estimate percentage, it needs to be 100%
-        if([self.totalCheckPercent.text floatValue] != 100.0){
+       
+         if([self.totalCheckPercent.text floatValue] != 100.0){
             errorMessage =[NSString stringWithFormat:@"%@ Species and Grade percent estimates do not equal 100%%, please adjust values.", errorMessage];
             isfatal = YES;
         }

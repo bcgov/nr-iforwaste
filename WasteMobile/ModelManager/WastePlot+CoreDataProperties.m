@@ -65,4 +65,6 @@
 
 @dynamic measurePctEdited;
 
+@dynamic checkVolume;
+
 @end

@@ -88,6 +88,9 @@ typedef enum PlotAlertTypeCode{
 
 @property (strong, nonatomic) IBOutlet PiecesHeaderView *headerView;
 
+@property (weak, nonatomic) IBOutlet UILabel *checkVolumeLabel;
+@property (weak, nonatomic) IBOutlet UITextField *checkVolume;
+
 // spinner for fields
 @property (strong, nonatomic) IBOutlet UIView *pickerViewContainer;
 
