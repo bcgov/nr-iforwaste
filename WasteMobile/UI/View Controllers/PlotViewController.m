@@ -1293,6 +1293,7 @@
     self.checkSurveyDate.text = [[NSString alloc] initWithFormat:@"%@", self.wastePlot.checkDate ? [dateFormat stringFromDate:self.wastePlot.checkDate] : [dateFormat stringFromDate:[NSDate date]]];
     self.notes.text = self.wastePlot.notes ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.notes] : @"";
     
+    NSLog(@"Assessment method code: %@", self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode);
     // Check stratum to show the total estimated volume
     if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
         //Note: plotEstimatedVolume is mapped to Survey Volume

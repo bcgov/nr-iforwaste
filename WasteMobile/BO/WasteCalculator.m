@@ -353,6 +353,15 @@
     
 }
 
++(NSString *) convertDecimalNumberToString:(NSDecimalNumber *) decimalNo {
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setMaximumFractionDigits:2];
+    [formatter setMinimumFractionDigits:2];
+    [formatter setMinimumIntegerDigits:1];
+    return [formatter stringFromNumber:decimalNo];
+   
+}
+
 +(void) calculatePiecesValue:(WasteBlock *) wasteBlock{
 
 
@@ -402,10 +411,6 @@
             double stratumCheckTotalValue = 0.0;
             
             for (WastePlot *wplot in [ws.stratumPlot allObjects]){
-                
-               // BOOL isPiecesAudited = [WasteCalculator isPiecesAudited:wplot];
-               // NSLog(@"isPiecesAudited: %d", isPiecesAudited);
-                
                 //if it is ratio stratum plot, it has to be marked as measure plot
                 double plotCheckBillTotalVol = 0.0;
                 double plotCheckCutControlTotalVol = 0.0;
@@ -419,21 +424,16 @@
                 int plotSurveyCutControlCounter = 0;
                 
               // if (!wplot.isMeasurePlot || [wplot.isMeasurePlot integerValue] == 1) {
-                
-                
                     NSMutableDictionary *plotSurveyPieceSpeciesGradeVolume = [[NSMutableDictionary alloc] init];
                     NSMutableDictionary *plotCheckPieceSpeciesGradeVolume = [[NSMutableDictionary alloc] init];
-                    NSLog(@"No. of plot piece: %lu", (unsigned long)wplot.plotPiece.count);
-                    
-                    NSLog(@"isMeasurePlot: %@", wplot.isMeasurePlot);
                    
-                        
                     for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
                         
                         //only interested on avoidable pieces
                         BOOL isSurvey = NO;
                         BOOL isCheck = NO;
-                        if (![wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] && wpiece.pieceNumber && wpiece.pieceScaleGradeCode && wpiece.pieceScaleSpeciesCode){
+                        if (![wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] &&
+                            wpiece.pieceNumber && wpiece.pieceScaleGradeCode && wpiece.pieceScaleSpeciesCode){
                             
                             NSString *key = [NSString stringWithFormat:@"%@_%@_%@",wpiece.pieceNumber, wpiece.pieceScaleGradeCode.scaleGradeCode, wpiece.pieceScaleSpeciesCode.scaleSpeciesCode];
 
@@ -443,7 +443,6 @@
                                 if ([wasteBlock.userCreated intValue] == 1){
                                     isSurvey = YES;
                                 }
-                            
                             } else {
                                 // with status: Not Check (1), Approve (2), No Tally(3) or Edit (4)
                                 if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]) {
@@ -460,120 +459,103 @@
                                 }
                             }
                             
-//                            else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
-//                                // with status Not Check (1), Approve (2), No Tally(3) or Edit (4) with "C" in the piece number
-//                                isCheck = YES;
-//                                isSurvey = YES;
-//
-//                            }else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] ){
-//                                // with edit status
-//                                if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
-//                                    isCheck = YES;
-//                                }else{
-//                                    isSurvey = YES;
-//                                }
-//                            }else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"]){
-//                                isSurvey = YES;
-//                            }
-                            
-                            if(isSurvey){
-
+                            //---Volume & Value Summary Calculation:Original---
+                            if (isSurvey) {
                                 //add the volume to the cut-control pot
-                                if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
+                                if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
                                     plotSurveyCutControlTotalVol = plotSurveyCutControlTotalVol + ([wpiece.pieceVolume doubleValue] * ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
-                                }else{
+                                } else {
                                     plotSurveyCutControlTotalVol = plotSurveyCutControlTotalVol + [wpiece.pieceVolume doubleValue];
                                 }
                                 
                                 plotSurveyCutControlCounter = plotSurveyCutControlCounter + 1;
                                 
-                               // NSLog(@"Piece volume: %@", wpiece.pieceVolume);
-                               // NSLog(@"Stratum plotmultipler: %@", ws.stratumPlotSizeCode.plotMultipler);
-
-                                if([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]){
+                                if ([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]) {
                                     // add the volume to the billable
-                                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
+                                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
                                         plotSurveyBillTotalVol = plotSurveyBillTotalVol + ([wpiece.pieceVolume doubleValue] * ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
-                                    }else{
+                                    } else {
                                         plotSurveyBillTotalVol = plotSurveyBillTotalVol + [wpiece.pieceVolume doubleValue];
                                     }
 
                                     plotSurveyBillCounter = plotSurveyBillCounter + 1;
                                     
                                     // the mutable array is used to get the total value at the end
-                                    if ([plotSurveyPieceSpeciesGradeVolume objectForKey:key]){
+                                    if ([plotSurveyPieceSpeciesGradeVolume objectForKey:key]) {
                                         
                                         NSDecimalNumber *newDN =[[plotSurveyPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.pieceVolume];
                                         
                                         [plotSurveyPieceSpeciesGradeVolume removeObjectForKey:key];
                                         [plotSurveyPieceSpeciesGradeVolume setObject:newDN forKey:key];
-                                    }else{
+                                    } else {
                                         // for new key
                                         [plotSurveyPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[wpiece.pieceVolume doubleValue]] forKey:key];
                                     }
                                 }
-                            }
+                            }// End of if:isSurvey
 
-                            if(isCheck){
+                            //---Volume & Value Summary Calculation:Check---
+                            if (isCheck) {
                                 // For Cut Control Volume
-                                if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
+                                if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
                                     plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.pieceVolume doubleValue] * ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
-                                }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
-                                    if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
-                                        plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.pieceVolume doubleValue] );
-                                    }else{
-                                        plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.checkPieceVolume doubleValue] );
+                                } else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
+                                    if ([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound) {
+                                        plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.pieceVolume doubleValue]);
+                                    } else {
+                                        plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.checkPieceVolume doubleValue]);
                                     }
-                                }else{
+                                } else {
                                     plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.pieceVolume doubleValue] );
                                 }
+                                
                                 plotCheckCutControlCounter = plotCheckCutControlCounter + 1;
 
                                 // For Billable Volume
-                                if([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]){
-                                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
+                                if ([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]) {
+                                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
                                         plotCheckBillTotalVol = plotCheckBillTotalVol + ([wpiece.pieceVolume doubleValue]* ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
-                                    }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
-                                        if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
+                                    } else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
+                                        if ([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound) {
                                             plotCheckBillTotalVol = plotCheckBillTotalVol + ([wpiece.pieceVolume doubleValue]);
-                                        }else{
+                                        } else {
                                             plotCheckBillTotalVol = plotCheckBillTotalVol + ([wpiece.checkPieceVolume doubleValue]);
                                         }
-                                    }else{
+                                    } else {
                                         plotCheckBillTotalVol = plotCheckBillTotalVol + ([wpiece.pieceVolume doubleValue]);
                                     }
+                                    
                                     plotCheckBillCounter = plotCheckBillCounter + 1;
                                     
                                     //add to benchmark
-                                    if(![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"]){
+                                    if (![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"]) {
                                         plotBenchmark = plotBenchmark + ([wpiece.pieceVolume doubleValue]* ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
                                     }
 
-                                    if ([plotCheckPieceSpeciesGradeVolume objectForKey:key]){
+                                    if ([plotCheckPieceSpeciesGradeVolume objectForKey:key]) {
                                         NSDecimalNumber *newDN = nil;
 
-                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound){
+                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
                                             newDN =[[plotCheckPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.checkPieceVolume];
-                                        }else{
+                                        } else {
                                             newDN =[[plotCheckPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.pieceVolume];
                                         }
                                         
                                         [plotCheckPieceSpeciesGradeVolume removeObjectForKey:key];
                                         [plotCheckPieceSpeciesGradeVolume setObject:newDN forKey:key];
-                                    }else{
+                                    } else {
                                         // for new key
-                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound){
+                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
                                             [plotCheckPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[wpiece.checkPieceVolume doubleValue]] forKey:key];
-                                        }else{
+                                        } else {
                                             [plotCheckPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[wpiece.pieceVolume doubleValue]] forKey:key];
                                         }
                                     }
                                 }
-                            }
+                            }//End of if:isCheck
                         }
-                    }
+                    } //End of for loop:WastePiece
                     
-
                     // store the plot average volume here
                     //plotCheckBillTotalVol = [[[[NSDecimalNumber alloc] initWithFloat:plotCheckBillTotalVol ] decimalNumberByRoundingAccordingToBehavior:behaviorD4] de];
                     plotSurveyCutControlTotalVol = [[[[NSDecimalNumber alloc] initWithDouble:plotSurveyCutControlTotalVol ] decimalNumberByRoundingAccordingToBehavior:behaviorD4] doubleValue];
@@ -581,17 +563,8 @@
                     wplot.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:([wplot.checkerMeasurePercent integerValue]> 0 ? plotCheckBillTotalVol * (100.0/[wplot.checkerMeasurePercent integerValue]) : plotCheckBillTotalVol)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                     wplot.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:([wplot.checkerMeasurePercent integerValue]> 0 ? plotCheckCutControlTotalVol * (100.0/[wplot.checkerMeasurePercent integerValue]) :plotCheckCutControlTotalVol)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                     
-                   // NSLog(@"Survey measure percent: %@", wplot.surveyedMeasurePercent );
-                   // NSLog(@"plot survery Vill total volume: %f", plotSurveyBillTotalVol);
-                    //NSLog(@"Caluclulated survery avoid Y: %f", plotSurveyBillTotalVol *(100.0/[wplot.surveyedMeasurePercent integerValue]) );
-                    
                     wplot.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:([wplot.surveyedMeasurePercent integerValue]> 0 ? plotSurveyBillTotalVol *(100.0/[wplot.surveyedMeasurePercent integerValue]) : plotSurveyBillTotalVol) ] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                   // NSLog(@"Plot SurveyAvoidY: %@", wplot.surveyAvoidY);
-                   
                     wplot.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:([wplot.surveyedMeasurePercent integerValue]> 0 ? plotSurveyCutControlTotalVol * (100.0/[wplot.surveyedMeasurePercent integerValue]) : plotSurveyCutControlTotalVol)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                    
-                    
-                    //NSLog(@"Plot SurveyAvoidX: %@", wplot.surveyAvoidX);
 
                     wplot.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkAvoidX doubleValue] > 0.0 ? fabs((([wplot.checkAvoidX doubleValue] - [wplot.surveyAvoidX doubleValue])/ [wplot.checkAvoidX doubleValue]) * 100.0) : 0.0)];
                     wplot.deltaAvoidX = [wplot.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
@@ -607,32 +580,37 @@
                     //for total value at plot level, only use primary TM
                     for(Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
                         if ([tm.primaryInd integerValue] == 1){
-                            //NSLog(@"orginal rate = %f, plot multipler = %f, mp = %ld",[self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES], [ws.stratumPlotSizeCode.plotMultipler doubleValue], (long)[wplot.surveyedMeasurePercent integerValue]);
-                            
+                            //Note: Logic updated based on IFORWASTE-137
                             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
+                                //---For standard stratum---
+            
+                               // plotSurveyTotalValue = ([self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES] * [ws.stratumPlotSizeCode.plotMultipler doubleValue]) * ([wplot.surveyedMeasurePercent integerValue] > 0 ? (100.0/[wplot.surveyedMeasurePercent integerValue]) : 1.0);
+                                //plotCheckTotalValue = ([self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * [ws.stratumPlotSizeCode.plotMultipler doubleValue]) * ([wplot.checkerMeasurePercent integerValue] > 0 ? (100.0/[wplot.checkerMeasurePercent integerValue]) : 1.0);
                                 
-                                //NSLog(@"getValueFromPieceDictionary: %f", [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES]);
-                                //NSLog(@"plotMultipler %@", ws.stratumPlotSizeCode.plotMultipler);
-                                //NSLog(@"surveyedMeasurePercent: %@", wplot.surveyedMeasurePercent);
-                                
-                                plotSurveyTotalValue = ([self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES] * [ws.stratumPlotSizeCode.plotMultipler doubleValue]) * ([wplot.surveyedMeasurePercent integerValue] > 0 ? (100.0/[wplot.surveyedMeasurePercent integerValue]) : 1.0);
+                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES];
+                                plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
                                
-                                NSLog(@"plotSurveyTotalValue: %f", plotSurveyTotalValue);
-                                plotCheckTotalValue = ([self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * [ws.stratumPlotSizeCode.plotMultipler doubleValue]) * ([wplot.checkerMeasurePercent integerValue] > 0 ? (100.0/[wplot.checkerMeasurePercent integerValue]) : 1.0);
                             }else{
+                                //---For Percent, Ocular, 100% Scale Stratum---
                                 
+                                //plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES] * ([wplot.surveyedMeasurePercent integerValue] > 0 ? (100.0/[wplot.surveyedMeasurePercent integerValue]) : 1.0);
+                                //plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * ([wplot.checkerMeasurePercent integerValue] > 0 ? (100.0/[wplot.checkerMeasurePercent integerValue]) : 1.0);
                                 
-                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES] * ([wplot.surveyedMeasurePercent integerValue] > 0 ? (100.0/[wplot.surveyedMeasurePercent integerValue]) : 1.0);
-                                NSLog(@"Value per ha: %f", plotSurveyTotalValue);
-                                plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * ([wplot.checkerMeasurePercent integerValue] > 0 ? (100.0/[wplot.checkerMeasurePercent integerValue]) : 1.0);
+                                double survaryTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES];
+                                double surveyArea = [[self convertDecimalNumberToString:ws.stratumSurveyArea] doubleValue];
+                                plotSurveyTotalValue = survaryTotalValue / surveyArea;
+                                
+                                double checkTotalValue = [self getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
+                                double checkArea = [[self convertDecimalNumberToString:ws.stratumArea] doubleValue];
+                                plotCheckTotalValue = checkTotalValue / checkArea;
                             }
                         }
                     }
+                    
                     // volume summary in plot IFOR-204
                     wplot.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:plotCheckTotalValue] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
                     
                     wplot.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:plotSurveyTotalValue] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                    NSLog(@"surveyNetVal: %@", wplot.surveyNetVal);
                     
                     stratumCheckTotalValue = stratumCheckTotalValue + [wplot.checkNetVal doubleValue];
                     stratumSurveyTotalValue =  stratumSurveyTotalValue + [wplot.surveyNetVal doubleValue];
@@ -642,7 +620,6 @@
                     
                     
                     //store the piece species grade volume array in stratum and block level for calculating the total value
-
                     for(NSString *key in [plotCheckPieceSpeciesGradeVolume allKeys]){
                         if ([stratumCheckPieceSpeciesGradeVolume objectForKey:key]){
                             
@@ -717,7 +694,7 @@
 
                         stratumSurveyCounter = stratumSurveyCounter + 1;
                     }
-               // }//222
+               // }
                 
             }
         
@@ -740,6 +717,8 @@
             //at the strutam level, the total value will be the average of the total value of the plots within the stratum
             //DEV: because of the rounding issue: 0.1 + 0.1 + 0.1 = 0.2999999 etc
             // use NSDecimalNumber to do the division
+
+            //---Value calculation within startum---
             NSDecimalNumber *valueDN =[[[NSDecimalNumber alloc] initWithDouble:(stratumCheckTotalValue)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             if ( stratumCheckCounter != 0){
                 valueDN = [valueDN decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:stratumCheckCounter]];
@@ -749,8 +728,8 @@
             }
             ws.checkNetVal = [valueDN decimalNumberByRoundingAccordingToBehavior:behaviorD2];
 
-            
             valueDN =[[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyTotalValue)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            NSLog(@"stratumSurveyCounter: %d", stratumSurveyCounter);
             if (stratumSurveyCounter != 0 && valueDN != 0){
                 valueDN = [valueDN decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:stratumSurveyCounter]];
             }
@@ -758,8 +737,8 @@
                 valueDN = [valueDN decimalNumberByDividingBy:ws.stratumSurveyArea];
             }
             ws.surveyNetVal = [valueDN decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            NSLog(@"Stratum Value: %@", ws.surveyNetVal);
         
-            
             ws.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([ws.checkNetVal doubleValue] > 0.0 ? fabs((([ws.checkNetVal doubleValue] - [ws.surveyNetVal doubleValue])/ [ws.checkNetVal doubleValue]) * 100.0 ): 0.0)];
             ws.deltaNetVal = [ws.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
             
@@ -805,7 +784,7 @@
             //}
         }
 
-    }
+    }//End of for:WasteStratum
     
     //DEBUG OUTPUT
     //NSLog(@" block check bill volume = %0.4f", blockCheckBillTotalVol);

@@ -28,5 +28,5 @@
 +(void) resetEFWCoastStat:(EFWCoastStat *) stat;
 +(void) resetEFWInteriorStat:(EFWInteriorStat *) stat;
 +(float)pieceRate:(NSString*)species withGrade:(NSString*)grade withAvoid:(BOOL)avoid forBlock:(WasteBlock*)wasteBlock withTimbermark:(Timbermark*)timbermark;
-
++(NSString *) convertDecimalNumberToString:(NSDecimalNumber *) decimalNo;
 @end

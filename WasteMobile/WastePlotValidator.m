@@ -299,19 +299,18 @@
                 //[errorMessageAry addObject:[NSString stringWithFormat:@"Piece %@: %@\n", wp.pieceNumber ,errorMessage]];
                 errorMessage = [errorMessage stringByAppendingString:[NSString stringWithFormat:@"Warning - Piece %@: %@\n", wp.pieceNumber ,pieceWarning]];
             }
-            
-            
         }
-        
     }
     
     // Additional Error check
-    if([wastePlot.plotStratum.stratumBlock.regionId integerValue] == InteriorRegion) {
-        if(!wastePlot.surveyorName || [wastePlot.surveyorName isEqualToString:@""]){
-            errorMessage = [errorMessage stringByAppendingString:@"Error - Surveyor name missing."];
-            shortErrorMessage = [shortErrorMessage stringByAppendingFormat:@"%@ Surveyor name is missing.\n",shortErrorMessageHeader];
-        }
-    }
+//---Removed validation as per IFORWASTE-98---
+//    if([wastePlot.plotStratum.stratumBlock.regionId integerValue] == InteriorRegion) {
+//        if(!wastePlot.surveyorName || [wastePlot.surveyorName isEqualToString:@""]){
+//            errorMessage = [errorMessage stringByAppendingString:@"Error - Surveyor name missing."];
+//            shortErrorMessage = [shortErrorMessage stringByAppendingFormat:@"%@ Surveyor name is missing.\n",shortErrorMessageHeader];
+//        }
+//    }
+    
     if(showDetail){
         return errorMessage;
     }else{

@@ -3280,7 +3280,7 @@
                                                 <rect key="frame" x="481" y="512" width="97" height="34"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                <textInputTraits key="textInputTraits"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                 <connections>
                                                     <action selector="hideKeyboard:" destination="9Gp-a2-4z6" eventType="editingDidEndOnExit" id="fjc-ZC-pRX"/>
                                                     <outlet property="delegate" destination="9Gp-a2-4z6" id="DKu-mw-u7Z"/>
@@ -3974,7 +3974,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="JY6-XQ-rkC"/>
+        <segue reference="2NT-KX-ffW"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="MQ1-sc-9Nq"/>
         <segue reference="GQ1-Xd-ei5"/>
