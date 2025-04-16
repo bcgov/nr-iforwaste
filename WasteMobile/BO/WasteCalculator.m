@@ -423,7 +423,7 @@
                 int plotCheckCutControlCounter = 0;
                 int plotSurveyCutControlCounter = 0;
                 
-              // if (!wplot.isMeasurePlot || [wplot.isMeasurePlot integerValue] == 1) {
+               if (!wplot.isMeasurePlot || [wplot.isMeasurePlot integerValue] == 1) {
                     NSMutableDictionary *plotSurveyPieceSpeciesGradeVolume = [[NSMutableDictionary alloc] init];
                     NSMutableDictionary *plotCheckPieceSpeciesGradeVolume = [[NSMutableDictionary alloc] init];
                    
@@ -694,7 +694,7 @@
 
                         stratumSurveyCounter = stratumSurveyCounter + 1;
                     }
-               // }
+                }
                 
             }
         
