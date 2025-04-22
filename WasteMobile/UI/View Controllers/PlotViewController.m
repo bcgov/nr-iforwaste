@@ -1283,7 +1283,7 @@
     self.weather.text = self.wastePlot.weather ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.weather] : @"";
     self.plotEstimatedVolume.text = self.wastePlot.plotEstimatedVolume ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.plotEstimatedVolume] : @"";
     self.checkVolume.text = [self.wastePlot.checkVolume isEqualToNumber:@0] ? [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.plotEstimatedVolume intValue]] : [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.checkVolume intValue]];
-    self.totalEstimateVolume.text = self.wastePlot.plotStratum.totalEstimatedVolume ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.plotStratum.totalEstimatedVolume] : @"";
+    self.totalEstimateVolume.text = self.wastePlot.plotStratum.totalEstimatedVolume && [self.wastePlot.plotStratum.totalEstimatedVolume floatValue] > 0 ?  [[NSString alloc] initWithFormat:@"%.2f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue]] : @"";
     
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"MMM-dd-yyyy"];
