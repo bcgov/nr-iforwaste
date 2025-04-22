@@ -284,6 +284,8 @@
 		2745696F1E5B9C9B000F3A6C /* XMLToESFMappingDAO.m in Sources */ = {isa = PBXBuildFile; fileRef = 2745696E1E5B9C9B000F3A6C /* XMLToESFMappingDAO.m */; };
 		274569761E64DA49000F3A6C /* ExportUserData+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 274569731E64DA49000F3A6C /* ExportUserData+CoreDataClass.m */; };
 		274569771E64DA49000F3A6C /* ExportUserData+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 274569751E64DA49000F3A6C /* ExportUserData+CoreDataProperties.m */; };
+		34F1387B2DB6A20B0099E689 /* DataEndorsementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAECBABD2D52E7770061A73F /* DataEndorsementViewController.m */; };
+		34F1387C2DB6EA590099E689 /* DataEndorsementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAECBABD2D52E7770061A73F /* DataEndorsementViewController.m */; };
 		8B1CEAD52357BDA700A98BAF /* BTSTable4.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD42357BDA700A98BAF /* BTSTable4.html */; };
 		8B1CEAD72357BE2600A98BAF /* BTSRow4.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD62357BE2600A98BAF /* BTSRow4.html */; };
 		8B1CEAD92357BE5F00A98BAF /* BTSRow5.html in Resources */ = {isa = PBXBuildFile; fileRef = 8B1CEAD82357BE5F00A98BAF /* BTSRow5.html */; };
@@ -1651,6 +1653,7 @@
 				153F6ACF1F03233600C05C97 /* EFWFooterView.m in Sources */,
 				15BF98491E2EDC8E004D8F12 /* TextInputTableViewCell.m in Sources */,
 				15BF984A1E2EDC8E004D8F12 /* CheckSummaryReport.m in Sources */,
+				34F1387B2DB6A20B0099E689 /* DataEndorsementViewController.m in Sources */,
 				15BF984B1E2EDC8E004D8F12 /* WasteStratum.m in Sources */,
 				8B5A9E2B222DE07500AFD8FC /* PileHeaderView.m in Sources */,
 				15BF984C1E2EDC8E004D8F12 /* WasteBlockDAO.m in Sources */,
@@ -1730,6 +1733,7 @@
 				15B587BF1E789126009E2DBB /* PlotSelectorLog.m in Sources */,
 				8B8EE9F8220E3A9C00BCC12E /* InteriorCedarMaturityCode+CoreDataClass.m in Sources */,
 				1502F4E01D9F2B86007BAD12 /* CreatedTableViewController.m in Sources */,
+				34F1387C2DB6EA590099E689 /* DataEndorsementViewController.m in Sources */,
 				15750B891DB686980052D71C /* GDataXMLNode.m in Sources */,
 				157393C820222D9900B19210 /* AppPatch.m in Sources */,
 				158502171DCCF060008792B3 /* SiteCode+CoreDataClass.m in Sources */,

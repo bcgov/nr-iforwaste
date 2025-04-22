@@ -674,172 +674,52 @@ NSInteger orignialWasteTypeRow;
     [alert show];
 }
 - (IBAction)deletePlot:(id)sender{
-    NSString *title = NSLocalizedString(@"Endorsement of Data Changes", nil);
+    
+    NSString *title = NSLocalizedString(@"Delete Plot Confirmation", nil);
     NSString *message = NSLocalizedString(@"", nil);
     NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-    NSString *otherButtonTitleOne = NSLocalizedString(@"Confirm Deletion", nil);
+    NSString *otherButtonTitleOne = NSLocalizedString(@"Confirm", nil);
     
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder        = NSLocalizedString(@"Surveyor Name", nil);
-        textField.accessibilityLabel = NSLocalizedString(@"Surveyor Name", nil);
-        textField.clearButtonMode    = UITextFieldViewModeAlways;
-        textField.keyboardType       = UIKeyboardTypeNumberPad;
-        textField.tag                = 3;
-        textField.delegate           = self;
-    }];
-    
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder        = NSLocalizedString(@"Designation", nil);
-        textField.accessibilityLabel = NSLocalizedString(@"Designation", nil);
-        textField.clearButtonMode    = UITextFieldViewModeAlways;
-        textField.keyboardType       = UIKeyboardTypeNumberPad;
-        textField.tag                = 3;
-        textField.delegate           = self;
-    }];
-    
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder        = NSLocalizedString(@"License Number", nil);
-        textField.accessibilityLabel = NSLocalizedString(@"License Number", nil);
-        textField.clearButtonMode    = UITextFieldViewModeAlways;
-        textField.keyboardType       = UIKeyboardTypeNumberPad;
-        textField.tag                = 3;
-        textField.delegate           = self;
-    }];
-    //todo add signature
-    
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        textField.placeholder        = NSLocalizedString(@"Rationale for Deletion", nil);
-        textField.accessibilityLabel = NSLocalizedString(@"Rationale for Deletion", nil);
-        textField.clearButtonMode    = UITextFieldViewModeAlways;
-        textField.keyboardType       = UIKeyboardTypeNumberPad;
-        textField.tag                = 3;
-        textField.delegate           = self;
-    }];
-    
     
     UIAlertAction* okAction = [UIAlertAction actionWithTitle:otherButtonTitleOne style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction * action) {
         UIButton *button = (UIButton *)sender;
-        [self validateAndDeletePlot:alert plotNumber:button.tag];
+        [self deletePlotFrmCoreData:alert plotNumber:button.tag];
     }];
     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:cancelButtonTitle style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
     }];
     
-    
     [alert addAction:okAction];
     [alert addAction:cancelAction];
-
-    DataEndorsementViewController *devc = [self.storyboard instantiateViewControllerWithIdentifier:@"dataEndorsementViewController"];
-    devc.wasteStratum = self.wasteStratum;
-    devc.stratumVC = self;
-    devc.endorsementType = @"Delete Plot";
-    UIButton *button = (UIButton *)sender;
-    devc.plotNumber = [NSNumber numberWithInt:button.tag];
-    [self.navigationController pushViewController:devc animated:YES];
-}
-
--(void)validateAndDeletePlot:(UIAlertController*)alert plotNumber:(int)plotNumber{
-    NSString* inputSurveyName = @"";
-    NSString* inputDesg = @"";
-    NSString* inputLicenseNum = @"";
-    NSString* inputRationale = @"";
-    for(UITextField* tf in alert.textFields){
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Surveyor Name", nil)]){
-            inputSurveyName =tf.text;
-        }
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Designation", nil)]){
-            inputDesg = tf.text;
-        }
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"License Number", nil)]){
-            inputLicenseNum = tf.text;
-        }
-        if([tf.accessibilityLabel isEqualToString:NSLocalizedString(@"Rationale for Deletion", nil)]){
-            inputRationale =tf.text;
-        }
-    }
     
-    if([inputSurveyName isEqualToString:@""]){
-        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
-                                                                              message:@"Please enter Surveyor Name."
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-            [self presentViewController:alert animated:YES completion:nil];
-        }];
-        
-        [warningAlert addAction:okAction];
-        [self presentViewController:warningAlert animated:YES completion:nil];
-    }
-    else if([inputDesg isEqualToString:@""]){
-        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
-                                                                              message:@"Please enter a Designation."
-                                                                       preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-            [self presentViewController:alert animated:YES completion:nil];
-        }];
-        
-        [warningAlert addAction:okAction];
-        [self presentViewController:warningAlert animated:YES completion:nil];
-    }
-    else if(![inputLicenseNum isEqualToString:@""] && inputLicenseNum.length > 8){
-        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Invalid entry", nil)
-                                                                                  message:@"The License Number must be 8 characters or less."             preferredStyle:UIAlertControllerStyleAlert];
-                
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                                  handler:^(UIAlertAction * action) {
-                                                                      [self presentViewController:alert animated:YES completion:nil];
-                                                                  }];
-                
-        [warningAlert addAction:okAction];
-        [self presentViewController:warningAlert animated:YES completion:nil];
-    }
-    else if([inputRationale isEqualToString:@""] || inputRationale.length < 5 || inputRationale.length > 100){
-        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Missing Required Field", nil)
-                                                                                  message:@"Please enter a Rationale for Deletion between 5 and 100 characters."
-                                                                           preferredStyle:UIAlertControllerStyleAlert];
-                
-        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                                  handler:^(UIAlertAction * action) {
-                                                                      [self presentViewController:alert animated:YES completion:nil];
-                                                                  }];
-                
-        [warningAlert addAction:okAction];
-        [self presentViewController:warningAlert animated:YES completion:nil];
-    }
-    else
-    {
-        WastePlot *targetPlot = [self.sortedPlots objectAtIndex:plotNumber];
-        targetPlot.dcSurveyorName = inputSurveyName;
-        targetPlot.dcDesignation = inputDesg;
-        targetPlot.dcLicenseNumber = inputLicenseNum;
-        targetPlot.dcRationale = inputRationale;
-        [PlotSampleGenerator deletePlot2:wasteStratum plotNumber:[targetPlot.plotNumber intValue]];
-        [self deletePlot:targetPlot targetWastePlot:wasteStratum];
-        
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"plotNumber" ascending:YES]; // is key ok ? does it actually sort according to it
-        self.sortedPlots = [[[self.wasteStratum stratumPlot] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-        
-        [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
-        [WasteCalculator calculateRate:self.wasteBlock ];
-        [WasteCalculator calculatePiecesValue:self.wasteBlock];
-        if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
-            [WasteCalculator calculateEFWStat:self.wasteBlock];
-            [self.efwFooterView setStratumViewValue:self.wasteStratum];
-        }else{
-            [self.footerStatView setViewValue:self.wasteStratum];
-        }
-        [self.plotTableView reloadData];
-        [self.aggregatePlotTableView reloadData];
-    }
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
+-(void)deletePlotFrmCoreData:(UIAlertController*)alert plotNumber:(int)plotNumber{
+
+    WastePlot *targetPlot = [self.sortedPlots objectAtIndex:plotNumber];
+    [PlotSampleGenerator deletePlot2:wasteStratum plotNumber:[targetPlot.plotNumber intValue]];
+    [self deletePlot:targetPlot targetWastePlot:wasteStratum];
+    
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"plotNumber" ascending:YES]; // is key ok ? does it actually sort according to it
+    self.sortedPlots = [[[self.wasteStratum stratumPlot] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+    
+    [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
+    [WasteCalculator calculateRate:self.wasteBlock ];
+    [WasteCalculator calculatePiecesValue:self.wasteBlock];
+    if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
+        [WasteCalculator calculateEFWStat:self.wasteBlock];
+        [self.efwFooterView setStratumViewValue:self.wasteStratum];
+    }else{
+        [self.footerStatView setViewValue:self.wasteStratum];
+    }
+    [self.plotTableView reloadData];
+    [self.aggregatePlotTableView reloadData];
+}
 
 
 - (IBAction)addRatioPlot:(id)sender{

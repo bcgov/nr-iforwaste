@@ -106,11 +106,13 @@
         //*** populate other rate from the master wmrf ***
         
         // - static rate $1 for deciduous
-        if([wasteBlock.regionId integerValue] == InteriorRegion) {
-            tm.deciduousWMRF = [[[NSDecimalNumber alloc] initWithDouble:[tm.deciduousPrice doubleValue]] decimalNumberByRoundingAccordingToBehavior:behavior];
-        }else if([wasteBlock.regionId integerValue] == CoastRegion){
-            tm.deciduousWMRF = [[[NSDecimalNumber alloc] initWithDouble:[tm.deciduousPrice doubleValue]] decimalNumberByRoundingAccordingToBehavior:behavior];
-        }
+//        if([wasteBlock.regionId integerValue] == InteriorRegion) {
+//            tm.deciduousWMRF = [[[NSDecimalNumber alloc] initWithDouble:[tm.deciduousPrice doubleValue]] decimalNumberByRoundingAccordingToBehavior:behavior];
+//        }else if([wasteBlock.regionId integerValue] == CoastRegion){
+//            tm.deciduousWMRF = [[[NSDecimalNumber alloc] initWithDouble:[tm.deciduousPrice doubleValue]] decimalNumberByRoundingAccordingToBehavior:behavior];
+//        }
+        
+        tm.deciduousWMRF = [[[NSDecimalNumber alloc] initWithDouble:[tm.deciduousPrice doubleValue]] decimalNumberByRoundingAccordingToBehavior:behavior];
         
         // - hembal rate = master rate * 0.25
         //new change Hembal U = WMRF x Hembal U Stumpage Rate
@@ -127,6 +129,8 @@
         // - Other rate is wmrf * conifer
         tm.allSppJWMRF = [[[NSDecimalNumber alloc] initWithDouble: [tm.coniferWMRF doubleValue] * [tm.wmrf doubleValue] ] decimalNumberByRoundingAccordingToBehavior:behavior];
 
+        
+        
         //**** Original Rates ****
         if([wasteBlock.regionId integerValue] == InteriorRegion) {
             tm.orgDeciduousWMRF = [[[NSDecimalNumber alloc] initWithDouble: [tm.orgWMRF doubleValue] * [tm.deciduousPrice doubleValue]] decimalNumberByRoundingAccordingToBehavior:behavior];
@@ -359,11 +363,9 @@
     [formatter setMinimumFractionDigits:2];
     [formatter setMinimumIntegerDigits:1];
     return [formatter stringFromNumber:decimalNo];
-   
 }
 
 +(void) calculatePiecesValue:(WasteBlock *) wasteBlock{
-
 
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -585,9 +587,11 @@
                                 //---For standard stratum---
             
                                // plotSurveyTotalValue = ([self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES] * [ws.stratumPlotSizeCode.plotMultipler doubleValue]) * ([wplot.surveyedMeasurePercent integerValue] > 0 ? (100.0/[wplot.surveyedMeasurePercent integerValue]) : 1.0);
+                                
                                 //plotCheckTotalValue = ([self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * [ws.stratumPlotSizeCode.plotMultipler doubleValue]) * ([wplot.checkerMeasurePercent integerValue] > 0 ? (100.0/[wplot.checkerMeasurePercent integerValue]) : 1.0);
                                 
-                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:YES];
+                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
+                                
                                 plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
                                
                             }else{
@@ -729,7 +733,7 @@
             ws.checkNetVal = [valueDN decimalNumberByRoundingAccordingToBehavior:behaviorD2];
 
             valueDN =[[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyTotalValue)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            NSLog(@"stratumSurveyCounter: %d", stratumSurveyCounter);
+           // NSLog(@"stratumSurveyCounter: %d", stratumSurveyCounter);
             if (stratumSurveyCounter != 0 && valueDN != 0){
                 valueDN = [valueDN decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:stratumSurveyCounter]];
             }
@@ -737,7 +741,7 @@
                 valueDN = [valueDN decimalNumberByDividingBy:ws.stratumSurveyArea];
             }
             ws.surveyNetVal = [valueDN decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            NSLog(@"Stratum Value: %@", ws.surveyNetVal);
+           // NSLog(@"Stratum Value: %@", ws.surveyNetVal);
         
             ws.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([ws.checkNetVal doubleValue] > 0.0 ? fabs((([ws.checkNetVal doubleValue] - [ws.surveyNetVal doubleValue])/ [ws.checkNetVal doubleValue]) * 100.0 ): 0.0)];
             ws.deltaNetVal = [ws.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
@@ -833,7 +837,7 @@
 
     wasteBlock.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:blockCheckTotalValue ]  decimalNumberByRoundingAccordingToBehavior:behaviorD2];
     wasteBlock.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:blockSurveyTotalValue ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-    NSLog(@"SURVEYNetVAl: %@", wasteBlock.surveyNetVal);
+    //NSLog(@"SURVEYNetVAl: %@", wasteBlock.surveyNetVal);
     
     wasteBlock.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkNetVal doubleValue] > 0.0 ? fabs((([wasteBlock.checkNetVal doubleValue] - [wasteBlock.surveyNetVal doubleValue])/ [wasteBlock.checkNetVal doubleValue]) * 100.0 ): 0.0)];
     wasteBlock.deltaNetVal = [wasteBlock.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
@@ -856,7 +860,8 @@
      NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
 
     for(NSString *key in [pieceDictionary allKeys]){
-        
+        //key is the combination of: PieceNo_Grade_Spieces
+        NSLog(@"At key: %@", key);
         NSDecimalNumber *rate = nil;
         
         //NSLog(@"key:%@ , volume:%.2f", key, [[pieceDictionary objectForKey:key] doubleValue]);
@@ -887,33 +892,41 @@
         }else{
             
             if([tm.timbermarkBlock.regionId integerValue] == InteriorRegion && [self isDeciduousSpecies:key]){
-                rate = tm.deciduousWMRF;
+                rate = tm.deciduousPrice;
                 
             }else if ([key rangeOfString:@"W_"].location != NSNotFound){
-                rate = tm.deciduousWMRF ;
+                rate = tm.deciduousPrice ;
                 
             }else if ([key rangeOfString:@"X_"].location != NSNotFound){
-                rate = tm.xWMRF ;
+                rate = tm.xPrice ;
                 
             }else if ([key rangeOfString:@"Y_"].location != NSNotFound || [key rangeOfString:@"_4_"].location != NSNotFound || [key rangeOfString:@"_5_"].location != NSNotFound ){
-                rate =tm.yWMRF ;
+                rate =tm.yPrice ;
                 
-            }else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound){
-                rate = tm.hembalWMRF ;
+            }else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound || [key rangeOfString:@"U_LA"].location != NSNotFound){
+                rate = tm.hembalPrice ;
                 
-            }else if ([key rangeOfString:@"_6_"].location != NSNotFound){
+            }else if ([key rangeOfString:@"_6_"].location != NSNotFound || [key rangeOfString:@"Z_"].location != NSNotFound){
                 rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
 
-            }else{
+            }else if ([key rangeOfString:@"U_"].location != NSNotFound || [key rangeOfString:@"J_"].location != NSNotFound){
+                rate =tm.coniferPrice ;
+                
+            }
+            else{
                 rate =tm.allSppJWMRF ;
             }
         }
         
-        //NSLog(@"rate:%.2f",  [rate doubleValue]);
+       
         //NSLog(@"total:%.2f", [[[[NSDecimalNumber alloc] initWithDouble:[[pieceDictionary objectForKey:key] doubleValue]] decimalNumberByMultiplyingBy:rate] doubleValue]);
         if( isnan([rate floatValue])) rate = [[NSDecimalNumber alloc] initWithInt:0];
+        
+        NSLog(@"rate:%.2f",  [rate doubleValue]);
 
         total  = total + [[[[[NSDecimalNumber alloc] initWithDouble:[[pieceDictionary objectForKey:key] doubleValue]] decimalNumberByMultiplyingBy:rate] decimalNumberByRoundingAccordingToBehavior:behaviorD2] doubleValue];
+        
+        NSLog(@"total:%.2f",  total );
     }
     return total;
 }

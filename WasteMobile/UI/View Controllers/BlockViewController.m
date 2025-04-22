@@ -740,32 +740,59 @@ UITextField *activeTextField;
 	[alert show];
 }
 
-- (IBAction)deleteStratum:(id)sender{
+- (IBAction) deleteStratum:(id)sender {
+    NSString *title = NSLocalizedString(@"Delete Stratum Confirmation", nil);
+    NSString *message = NSLocalizedString(@"", nil);
+    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+    NSString *otherButtonTitleOne = NSLocalizedString(@"Confirm", nil);
     
-        NSString *title = NSLocalizedString(@"Delete New Stratum", nil);
-        NSString *message = NSLocalizedString(@"", nil);
-        NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-        NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
-        alert.tag = ((UIButton *)sender).tag;
-        //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
-        //[alert show];
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
     
-    //if([self.wasteBlock.ratioSamplingEnabled intValue] == 1)
-    //{
-        DataEndorsementViewController *devc = [self.storyboard instantiateViewControllerWithIdentifier:@"dataEndorsementViewController"];
-        devc.wasteBlock = self.wasteBlock;
-        devc.blockVC = self;
-        devc.endorsementType = @"Delete Stratum";
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:otherButtonTitleOne style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
         UIButton *button = (UIButton *)sender;
-        devc.stratumNumber = [NSNumber numberWithInt:button.tag];
-        [self.navigationController pushViewController:devc animated:YES];
-    /*}
-    else
-    {
-        [alert show];
-    }*/
+        NSLog(@"StratumID: %ld",button.tag);
+        
+        [self deleteStratumFrmCoreData:alert stratumIndex:button.tag];
+    }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:cancelButtonTitle style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+    }];
+    
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void) deleteStratumFrmCoreData:(UIAlertController*)alert stratumIndex:(int)stratumIndex {
+    
+    WasteStratum *targetStratum = [self.sortedStratums objectAtIndex:stratumIndex];
+    
+    [WasteBlockDAO deleteStratum:targetStratum usingWB:wasteBlock];
+    
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"stratum" ascending:YES]; // is key ok ? does it actually sort according to it
+    NSSortDescriptor *sort2 = [[NSSortDescriptor alloc ] initWithKey:@"stratumID" ascending:YES];
+    
+    self.sortedStratums = [[[self.wasteBlock blockStratum] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:sort, sort2, nil]];
+    
+    [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
+    [WasteCalculator calculateRate:self.wasteBlock ];
+    [WasteCalculator calculatePiecesValue:self.wasteBlock];
+    
+    if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
+        [WasteCalculator calculateEFWStat:self.wasteBlock];
+        [self.efwFooterView setBlockViewValue:self.wasteBlock];
+    }else{
+        [self.footerStatView setViewValue:self.wasteBlock];
+    }
+    
+    [self saveData];
+    [self.stratumTableView reloadData];
+    [self viewDidLoad];
+    [self checkStratum];
 }
 
 - (IBAction)deleteBlock:(id)sender{
@@ -2162,12 +2189,12 @@ UITextField *activeTextField;
     self.returnNumber.text = wasteBlock.returnNumber && [wasteBlock.returnNumber intValue] > 0 ? [wasteBlock.returnNumber stringValue] : @"";
     self.surveyorLicence.text = wasteBlock.surveyorLicence ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.surveyorLicence] : @"";
     
-    // WASTE CHECKER
-    self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
-    self.professionalDesignation.text = wasteBlock.professional ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.professional] : @"";
-    
-    self.registrationNumber.text = wasteBlock.registrationNumber ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.registrationNumber] : @"";
-    self.position.text = wasteBlock.position ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.position] : @"";
+    // WASTE CHECKER: Default to blank
+//    self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
+//    self.professionalDesignation.text = wasteBlock.professional ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.professional] : @"";
+//    self.registrationNumber.text = wasteBlock.registrationNumber ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.registrationNumber] : @"";
+//    self.position.text = wasteBlock.position ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.position] : @"";
+
     
     self.notes.text = wasteBlock.notes ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.notes] : @"";
     
