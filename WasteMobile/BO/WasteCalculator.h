@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class WastePiece;
+@class WastePiece, WastePlot;
 @class WasteBlock;
 @class Timbermark;
 @class WasteStratum;
@@ -18,7 +18,7 @@
 @interface WasteCalculator : NSObject
 
 //shared functions
-+(void) calculatePieceStat:(WastePiece *)wastePiece wasteStratum:(WasteStratum *)ws;
++(void) calculatePieceStat:(WastePiece *)wastePiece wastePlot:(WastePlot *) plot;
 +(void) calculateRate:(WasteBlock *) wasteBlock;
 +(void) calculateWMRF:(WasteBlock *) wasteBlock updateOriginal:(BOOL) updateOriginal;
 +(void) calculatePiecesValue:(WasteBlock *) wasteBlock;

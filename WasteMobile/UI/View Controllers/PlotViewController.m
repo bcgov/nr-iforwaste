@@ -492,6 +492,18 @@
         double  totalestimatedvolume = 0.0;
         for(WastePlot *wp in [ws.stratumPlot allObjects]){
             totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
+            
+            if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && ![wp.checkVolume isEqualToNumber:wp.plotEstimatedVolume]) {
+                for(WastePiece *wpiece in [wp.plotPiece allObjects]) {
+                    
+                    double estimatedPercent = [wpiece.estimatedPercent floatValue] / 100.0;
+                    NSDecimalNumber *percentEstimate = [[NSDecimalNumber alloc] initWithDouble:estimatedPercent];
+                    NSDecimalNumber *checkVolume = [NSDecimalNumber decimalNumberWithDecimal:[wp.checkVolume decimalValue]];
+                    
+                    wpiece.checkPieceVolume = [percentEstimate decimalNumberByMultiplyingBy:checkVolume];
+                }
+            }
+            
         }
         ws.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
         NSLog(@"Total Estimated Volume %@", ws.totalEstimatedVolume);
@@ -521,6 +533,8 @@
     if( error != nil){
         NSLog(@" Error when saving waste plot into Core Data: %@", error);
     }
+    
+    [self.pieceTableView reloadData];
     
 }
 
@@ -850,7 +864,7 @@
         if (textField == self.totalEstimateVolume || textField == self.plotEstimatedVolume){
             for(WastePiece *wp in self.wastePieces){
                 //if ([wp.pieceNumber rangeOfString:@"C"].location != NSNotFound){
-                    [WasteCalculator calculatePieceStat:wp wasteStratum:self.wastePlot.plotStratum];
+                    [WasteCalculator calculatePieceStat:wp wastePlot:self.wastePlot];
                     pieceDidChange = YES;
                 //}
             }
@@ -1256,7 +1270,9 @@
     //NSLog(@"assessment method code: %@", self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode);
     
 
-    [cell bindCell:currentPiece wasteBlock:self.wasteBlock assessmentMethodCode:self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode userCreatedBlock:([self.wasteBlock.userCreated intValue] == 1)];
+    //[cell bindCell:currentPiece wasteBlock:self.wasteBlock assessmentMethodCode:self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode userCreatedBlock:([self.wasteBlock.userCreated intValue] == 1)];
+    
+    [cell bindCell:currentPiece wasteBlock:self.wasteBlock wastePlot:self.wastePlot userCreatedBlock:([self.wasteBlock.userCreated intValue] == 1)];
 
     return cell;
 }

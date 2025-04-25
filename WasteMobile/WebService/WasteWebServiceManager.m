@@ -284,7 +284,7 @@
                             wpiece.sortNumber = [NSNumber numberWithInt: [wpiece.pieceNumber intValue] * 10];
                             
                             //calculate the piece volume
-                            [WasteCalculator calculatePieceStat:wpiece wasteStratum:ws];
+                            [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot];
                             
                             //add tje piece to plot
                             [wplot addPlotPieceObject:wpiece];
@@ -322,7 +322,7 @@
                         wpiece.sortNumber = [NSNumber numberWithInt: [wpiece.pieceNumber intValue] * 10];
                         
                         //calculate the piece volume
-                        [WasteCalculator calculatePieceStat:wpiece wasteStratum:ws];
+                        [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot];
                         
                         //add tje piece to plot
                         [wplot addPlotPieceObject:wpiece];
