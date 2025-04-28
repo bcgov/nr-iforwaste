@@ -280,7 +280,6 @@
     
     for (Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
         
-
         if([wasteBlock.userCreated intValue] == 1){
             if (([wasteBlock.surveyArea doubleValue] - ignoreExtraStratumArea) == 0 || blockBenchmark == 0 ){
                 tm.avoidable = [[NSDecimalNumber alloc] initWithDouble:0.0];
@@ -328,10 +327,6 @@
             }
         }
 
-        //NSLog(@"block average = %f /",[tm.avoidable floatValue]);
-        
-
-        
         float benchmark = [tm.benchmark floatValue];
         float wmrf = 0;
         
@@ -356,8 +351,6 @@
             tm.orgWMRF = [[NSDecimalNumber alloc] initWithDouble: [tm.wmrf doubleValue]];
         }
     }
-    
-    
 }
 
 +(NSString *) convertDecimalNumberToString:(NSDecimalNumber *) decimalNo {
@@ -403,7 +396,6 @@
     
     int blockCheckCounter = 0;
     int blockSurveyCounter = 0;
-   
     
     for (WasteStratum *ws in [wasteBlock.blockStratum allObjects]){
         NSLog(@" stratum  = %@, assessment method code = %@", ws.stratum, ws.stratumAssessmentMethodCode.assessmentMethodCode);
@@ -524,11 +516,6 @@
                                     
                                     plotCheckBillCounter = plotCheckBillCounter + 1;
                                     
-                                    //add to benchmark
-                                    if (![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"]) {
-                                       // plotBenchmark = plotBenchmark + ([wpiece.pieceVolume doubleValue]* ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
-                                    }
-
                                     if ([plotCheckPieceSpeciesGradeVolume objectForKey:key]) {
                                         NSDecimalNumber *newDN = nil;
 
@@ -586,7 +573,7 @@
                    //------------------------------------------------------------------
                    //   ***---For Plot Level Value Calculation---***
                    //------------------------------------------------------------------
-                    for(Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
+                    for (Timbermark *tm in [wasteBlock.blockTimbermark allObjects]) {
                         if ([tm.primaryInd integerValue] == 1){
                             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: Packing Ratio
                                 plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
@@ -755,7 +742,7 @@
                 blockSurveyTotalValue = blockSurveyTotalValue + [valueDN doubleValue];
             }
         }
-    }
+    } //End of for:WasteStratum
     
     wasteBlock.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(blockCheckBillTotalVol / [wasteBlock.netArea doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
     wasteBlock.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(blockCheckCutControlTotalVol / [wasteBlock.netArea doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
