@@ -372,6 +372,15 @@
     return [[NSDecimalNumber alloc] initWithDouble:(billableTotalVol * billableVolFormula) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]];
 }
 
++(BOOL) checkIfPlotAudited:(WastePlot *) wplot {
+    for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
+        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 +(void) calculatePiecesValue:(WasteBlock *) wasteBlock{
 
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -387,7 +396,7 @@
     double blockSurveyBillTotalVol = 0.0;
     double blockSurveyCutControlTotalVol = 0.0;
     
-    double blockBenchmark = 0.0;
+    //double blockBenchmark = 0.0;
     
     double blockCheckTotalValue = 0.0;
     double blockSurveyTotalValue = 0.0;
@@ -407,7 +416,7 @@
             double stratumSurveyBillTotalVol = 0.0;
             double stratumSurveyCutControlTotalVol = 0.0;
             
-            double stratumBenchmark = 0.0;
+           // double stratumBenchmark = 0.0;
 
             int stratumCheckCounter = 0;
             int stratumSurveyCounter = 0;
@@ -419,13 +428,13 @@
             double stratumSurveyTotalValue = 0.0;
             double stratumCheckTotalValue = 0.0;
             
-            for (WastePlot *wplot in [ws.stratumPlot allObjects]){
+            for (WastePlot *wplot in [ws.stratumPlot allObjects]) {
                 //if it is ratio stratum plot, it has to be marked as measure plot
                 double plotCheckBillTotalVol = 0.0;
                 double plotCheckCutControlTotalVol = 0.0;
                 double plotSurveyBillTotalVol = 0.0;
                 double plotSurveyCutControlTotalVol = 0.0;
-                double plotBenchmark = 0.0;
+                //double plotBenchmark = 0.0;
 
                 int plotCheckBillCounter = 0;
                 int plotSurveyBillCounter = 0;
@@ -468,7 +477,9 @@
                                 }
                             }
                             
-                            //---Calculation:Original---
+                            //------------------------------------------------------------------
+                            //   ***---For Plot Level Volume Calculation---***
+                            //------------------------------------------------------------------
                             if (isSurvey) {
                                 // For Cut Control Volume
                                 plotSurveyCutControlTotalVol = plotSurveyCutControlTotalVol + [wpiece.pieceVolume doubleValue];
@@ -493,7 +504,6 @@
                                 }
                             }
 
-                            //---Calculation:Original---
                             if (isCheck) {
                                 // For Cut Control Volume
                                 if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]) {
@@ -516,7 +526,7 @@
                                     
                                     //add to benchmark
                                     if (![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"4"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] && ![wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"6"]) {
-                                        plotBenchmark = plotBenchmark + ([wpiece.pieceVolume doubleValue]* ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
+                                       // plotBenchmark = plotBenchmark + ([wpiece.pieceVolume doubleValue]* ([ws.stratumPlotSizeCode.plotMultipler doubleValue]));
                                     }
 
                                     if ([plotCheckPieceSpeciesGradeVolume objectForKey:key]) {
@@ -542,7 +552,7 @@
                             }
                         }
                     }
-                    
+                   
                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: Packing Ratio
                        double surveyBillableVolFormula = 100.0/([wplot.surveyedMeasurePercent integerValue]);
                        double checkBillableVolFormula = 100.0/([wplot.checkerMeasurePercent integerValue]);
@@ -560,7 +570,6 @@
                        wplot.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:plotCheckBillTotalVol] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                        wplot.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:plotCheckCutControlTotalVol] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                    }
-                   
 
                     wplot.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkAvoidX doubleValue] > 0.0 ? fabs((([wplot.checkAvoidX doubleValue] - [wplot.surveyAvoidX doubleValue])/ [wplot.checkAvoidX doubleValue]) * 100.0) : 0.0)];
                     wplot.deltaAvoidX = [wplot.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
@@ -573,18 +582,17 @@
                     double plotSurveyTotalValue = 0.0;
                     double plotCheckTotalValue = 0.0;
                     
-                    // for total value at plot level, only use primary TM
-                    //---Value(per ha) Calculation---
+                   // for total value at plot level, only use primary TM
+                   //------------------------------------------------------------------
+                   //   ***---For Plot Level Value Calculation---***
+                   //------------------------------------------------------------------
                     for(Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
                         if ([tm.primaryInd integerValue] == 1){
-                            //Note: Logic updated based on IFORWASTE-137
                             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: Packing Ratio
-                                //---For standard stratum---
                                 plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
                                 plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
                                
                             } else {
-                                //---For Percent, Ocular, 100% Scale Stratum---
                                 double surveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
                                 double surveyArea = [[self convertDecimalNumberToString:ws.stratumSurveyArea] doubleValue];
                                 plotSurveyTotalValue = surveyTotalValue / surveyArea;
@@ -605,9 +613,9 @@
                     wplot.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkNetVal doubleValue] > 0.0 ? fabs((([wplot.surveyNetVal doubleValue] - [wplot.checkNetVal doubleValue])/ [wplot.checkNetVal doubleValue]) * 100.0 ): 0.0)];
                     wplot.deltaNetVal = [wplot.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
                     
-                    
-                   
-                   
+                   //------------------------------------------------------------------
+                   //   ***---For Stratum Level Volume Calculation---***
+                   //------------------------------------------------------------------
                    
                     //store the piece species grade volume array in stratum and block level for calculating the total value
                     for(NSString *key in [plotCheckPieceSpeciesGradeVolume allKeys]){
@@ -658,185 +666,114 @@
                         }
                     }
                     
-                    //add to the stratum stats
-                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                        stratumCheckBillTotalVol = stratumCheckBillTotalVol + [wplot.checkAvoidY doubleValue];
-                        stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + [wplot.checkAvoidX doubleValue];
-                    }else{
-                        stratumCheckBillTotalVol = stratumCheckBillTotalVol + (ws.stratumArea == 0 || [wplot.checkAvoidY doubleValue] == 0.0 ? 0.0 : ([wplot.checkAvoidY doubleValue]/[ws.stratumArea doubleValue]));
-                        stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + (ws.stratumArea == 0 || [wplot.checkAvoidX doubleValue] == 0.0 ? 0.0 : ([wplot.checkAvoidX doubleValue]/[ws.stratumArea doubleValue]));
-                    }
-
-                    stratumCheckCounter = stratumCheckCounter + 1;
+                   stratumCheckBillTotalVol = stratumCheckBillTotalVol + ([wplot.checkAvoidY doubleValue] > 0 ? [wplot.checkAvoidX doubleValue] : 0.0);
+                   stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + ([wplot.checkAvoidX doubleValue] > 0 ? [wplot.checkAvoidX doubleValue] : 0.0);
+                   if ([self checkIfPlotAudited:wplot])
+                       stratumCheckCounter = stratumCheckCounter + 1;
+                   
+                   //don't count the new plot into the survey counters
+                   if (wplot.plotID) {
+                       stratumSurveyBillTotalVol = stratumSurveyBillTotalVol + ([wplot.surveyAvoidY doubleValue] > 0 ? [wplot.surveyAvoidY doubleValue] : 0.0);
+                       stratumSurveyCutControlTotalVol = stratumSurveyCutControlTotalVol + ([wplot.surveyAvoidX doubleValue] > 0 ? [wplot.surveyAvoidX doubleValue] : 0.0);
+                       
+                       if ([self checkIfPlotAudited:wplot])
+                           stratumSurveyCounter = stratumSurveyCounter + 1;
+                   }
                     
                     //benchmark
-                    stratumBenchmark = stratumBenchmark + (wplot.checkerMeasurePercent > 0 ? plotBenchmark * (100.0/[wplot.checkerMeasurePercent integerValue]) : plotBenchmark);
-                    
-                    //don't count the new plot into the survey counters
-                    if(wplot.plotID){
-                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                            stratumSurveyBillTotalVol = stratumSurveyBillTotalVol + [wplot.surveyAvoidY doubleValue];
-                            stratumSurveyCutControlTotalVol = stratumSurveyCutControlTotalVol + [wplot.surveyAvoidX doubleValue];
-                        }else{
-                            stratumSurveyBillTotalVol = stratumSurveyBillTotalVol + ( ws.stratumSurveyArea == 0 || [wplot.surveyAvoidY doubleValue] == 0.0 ? 0.0 :([wplot.surveyAvoidY doubleValue]/[ws.stratumSurveyArea doubleValue]));
-                            stratumSurveyCutControlTotalVol = stratumSurveyCutControlTotalVol + (ws.stratumSurveyArea == 0 || [wplot.surveyAvoidX doubleValue] == 0.0 ? 0.0 :([wplot.surveyAvoidX doubleValue]/[ws.stratumSurveyArea doubleValue]));
-                        }
-
-                        stratumSurveyCounter = stratumSurveyCounter + 1;
-                    }
+                   // stratumBenchmark = stratumBenchmark + (wplot.checkerMeasurePercent > 0 ? plotBenchmark * (100.0/[wplot.checkerMeasurePercent integerValue]) : plotBenchmark);
                 }
-                
             }
-        
+    
+            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
+                ws.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyBillTotalVol / stratumSurveyCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                ws.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyCutControlTotalVol / stratumSurveyCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                    
+                ws.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCounter > 0 ? stratumCheckBillTotalVol / stratumCheckCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCounter > 0 ? stratumCheckCutControlTotalVol / stratumCheckCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                 
-            ws.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCounter > 0 ? stratumCheckBillTotalVol / stratumCheckCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-            ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCounter > 0 ? stratumCheckCutControlTotalVol / stratumCheckCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-            
-            ws.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyBillTotalVol / stratumSurveyCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-            ws.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyCutControlTotalVol / stratumSurveyCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            } else {
+                ws.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyBillTotalVol / [ws.stratumSurveyArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                ws.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCutControlTotalVol / [ws.stratumSurveyArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                
+                ws.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckBillTotalVol / [ws.stratumArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCutControlTotalVol / [ws.stratumArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            }
             
             ws.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidX doubleValue] > 0.0 ? fabsf((([ws.checkAvoidX floatValue] - [ws.surveyAvoidX floatValue])/ [ws.checkAvoidX floatValue]) * 100): 0.0)];
             ws.deltaAvoidX = [ws.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
             ws.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidY doubleValue] > 0.0 ? fabsf((([ws.checkAvoidY floatValue] - [ws.surveyAvoidY floatValue])/ [ws.checkAvoidY floatValue]) * 100): 0.0)];
             ws.deltaAvoidY = [ws.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
-
-
-            //calculate the total value with timebermarks
-            //*** calculate the total value again with the pieces data to avoid the rounding problem
             
-            //at the strutam level, the total value will be the average of the total value of the plots within the stratum
             //DEV: because of the rounding issue: 0.1 + 0.1 + 0.1 = 0.2999999 etc
-            // use NSDecimalNumber to do the division
+            //Note: use NSDecimalNumber to do the division
 
-            //---Value calculation within startum---
-            NSDecimalNumber *valueDN =[[[NSDecimalNumber alloc] initWithDouble:(stratumCheckTotalValue)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            if ( stratumCheckCounter != 0){
-                valueDN = [valueDN decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:stratumCheckCounter]];
+            //------------------------------------------------------------------
+            //   ***---For Stratum Level Value Calculation---***
+            //------------------------------------------------------------------
+            NSDecimalNumber *checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckTotalValue)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            NSDecimalNumber *originalNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyTotalValue)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            
+            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
+                if (stratumSurveyCounter != 0 && originalNetVal != 0)
+                    originalNetVal = [originalNetVal decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:stratumSurveyCounter]];
+                
+                ws.surveyNetVal = [originalNetVal decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                
+                if (stratumCheckCounter != 0 && checkNetVal != 0)
+                    checkNetVal = [checkNetVal decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:stratumCheckCounter]];
+                
+                ws.checkNetVal = [checkNetVal decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                
+            } else {
+                ws.checkNetVal = checkNetVal;
+                ws.surveyNetVal = originalNetVal;
             }
-            if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] && [ws.stratumArea floatValue] != 0.0){
-                valueDN = [valueDN decimalNumberByDividingBy:ws.stratumArea];
-            }
-            ws.checkNetVal = [valueDN decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-
-            valueDN =[[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyTotalValue)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-           // NSLog(@"stratumSurveyCounter: %d", stratumSurveyCounter);
-            if (stratumSurveyCounter != 0 && valueDN != 0){
-                valueDN = [valueDN decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:stratumSurveyCounter]];
-            }
-            if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] && [ws.stratumSurveyArea floatValue] != 0.0){
-                valueDN = [valueDN decimalNumberByDividingBy:ws.stratumSurveyArea];
-            }
-            ws.surveyNetVal = [valueDN decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-           // NSLog(@"Stratum Value: %@", ws.surveyNetVal);
-        
+            
             ws.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([ws.checkNetVal doubleValue] > 0.0 ? fabs((([ws.checkNetVal doubleValue] - [ws.surveyNetVal doubleValue])/ [ws.checkNetVal doubleValue]) * 100.0 ): 0.0)];
             ws.deltaNetVal = [ws.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
             
-            //add to the block stats
-            //if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                blockCheckBillTotalVol = blockCheckBillTotalVol + ([ws.checkAvoidY doubleValue] * [ws.stratumArea doubleValue]);
-                blockCheckCutControlTotalVol = blockCheckCutControlTotalVol + ([ws.checkAvoidX doubleValue] * [ws.stratumArea doubleValue]);
-            //}else{
-            //    blockCheckBillTotalVol = blockCheckBillTotalVol + ([ws.checkAvoidY doubleValue] * [ws.stratumArea doubleValue]);
-             //   blockCheckCutControlTotalVol = blockCheckCutControlTotalVol + ([ws.checkAvoidX doubleValue] * [ws.stratumArea doubleValue]);
-            //}
-        
-            blockCheckCounter = blockCheckCounter + 1;
+            //------------------------------------------------------------------
+            //   ***---For Block Level Volume & Value Calculation---***
+            //------------------------------------------------------------------
+            blockCheckBillTotalVol = blockCheckBillTotalVol + ([ws.checkAvoidY doubleValue] * [ws.stratumArea doubleValue]);
+            blockCheckCutControlTotalVol = blockCheckCutControlTotalVol + ([ws.checkAvoidX doubleValue] * [ws.stratumArea doubleValue]);
             
-            //benchmark
-            blockBenchmark = blockBenchmark + (stratumBenchmark * [ws.stratumArea doubleValue]);
-
-            valueDN = [[[NSDecimalNumber alloc] initWithDouble:([ws.checkNetVal doubleValue] * [ws.stratumArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            //NSLog(@"add to Block original value :%0.2f", [valueDN floatValue]);
+            blockCheckCounter = blockCheckCounter + 1;
+           // blockBenchmark = blockBenchmark + (stratumBenchmark * [ws.stratumArea doubleValue]);
+            
+            NSDecimalNumber *valueDN = [[[NSDecimalNumber alloc] initWithDouble:([ws.checkNetVal doubleValue] * [ws.stratumArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             blockCheckTotalValue = blockCheckTotalValue + [valueDN doubleValue];
             
+            //don't count the new stratum into the survey counters
             if(ws.stratumID > 0){
-                //if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                    blockSurveyBillTotalVol = blockSurveyBillTotalVol + ([ws.surveyAvoidY doubleValue] * [ws.stratumSurveyArea doubleValue]);
-                    blockSurveyCutControlTotalVol = blockSurveyCutControlTotalVol + ([ws.surveyAvoidX doubleValue] * [ws.stratumSurveyArea doubleValue]);
-                //}else{
-                //    blockSurveyBillTotalVol = blockSurveyBillTotalVol + ([ws.surveyAvoidY doubleValue]);
-                //    blockSurveyCutControlTotalVol = blockSurveyCutControlTotalVol + ([ws.surveyAvoidX doubleValue]);
-                //}
-
-                
+                blockSurveyBillTotalVol = blockSurveyBillTotalVol + ([ws.surveyAvoidY doubleValue] * [ws.stratumSurveyArea doubleValue]);
+                blockSurveyCutControlTotalVol = blockSurveyCutControlTotalVol + ([ws.surveyAvoidX doubleValue] * [ws.stratumSurveyArea doubleValue]);
                 blockSurveyCounter = blockSurveyCounter + 1;
-
+                
                 valueDN = [[[NSDecimalNumber alloc] initWithDouble:([ws.surveyNetVal doubleValue] * [ws.stratumSurveyArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                //NSLog(@"add to Block check value :%0.2f", [valueDN floatValue]);
                 blockSurveyTotalValue = blockSurveyTotalValue + [valueDN doubleValue];
-
             }
-        
-            //DEBUG OUTPUT
-            //NSLog(@" block bill volume = %0.4f", ([ws.surveyAvoidY doubleValue] * [ws.stratumSurveyArea doubleValue]));
-            //NSLog(@" block cut control volume = %0.4f", ([ws.surveyAvoidX doubleValue] * [ws.stratumSurveyArea doubleValue]));
-            //}
         }
-
-    }//End of for:WasteStratum
+    }
     
-    //DEBUG OUTPUT
-    //NSLog(@" block check bill volume = %0.4f", blockCheckBillTotalVol);
-    //NSLog(@" block cut control volume = %0.4f", blockCheckCutControlTotalVol);
-
-    
-    // formula: sum( stratum check total volume x stratum check area) / block check area
-    // * assume the stratum check area added up to block check area
     wasteBlock.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(blockCheckBillTotalVol / [wasteBlock.netArea doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
     wasteBlock.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(blockCheckCutControlTotalVol / [wasteBlock.netArea doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
 
-    // formula: sum( stratum survey total volume x stratum survey area) / block survey area
-    // * assume the stratum survey area added up to block survey area
     wasteBlock.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(blockSurveyBillTotalVol / [wasteBlock.surveyArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
     wasteBlock.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(blockSurveyCutControlTotalVol/ [wasteBlock.surveyArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-
 
     wasteBlock.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkAvoidX doubleValue] > 0.0 ? fabsf((([wasteBlock.checkAvoidX floatValue] - [wasteBlock.surveyAvoidX floatValue])/ [wasteBlock.checkAvoidX floatValue]) * 100): 0.0)];
     wasteBlock.deltaAvoidX = [wasteBlock.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
     wasteBlock.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkAvoidY doubleValue] > 0.0 ? fabsf((([wasteBlock.checkAvoidY floatValue] - [wasteBlock.surveyAvoidY floatValue])/ [wasteBlock.checkAvoidY floatValue]) * 100): 0.0)];
     wasteBlock.deltaAvoidY = [wasteBlock.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
 
-    //again, calculate the total value with timebermarks
-    
-    /* 
-    //DEV: 2015 04 21 - don't care about the mulit-timbermark calculation.
-    float blockSurveyTotalValue = 0.0;
-    float blockCheckTotalValue = 0.0;
-    float timbermarkTotalArea = 0.0;
-    
-    for(Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
-        
-        blockSurveyTotalValue = blockSurveyTotalValue + ([self getValueFromPieceDictionary:blockSurveyPieceSpeciesGradeVolume timbermark:tm] * [tm.area doubleValue]);
-        blockCheckTotalValue = blockCheckTotalValue + ([self  getValueFromPieceDictionary:blockCheckPieceSpeciesGradeVolume timbermark:tm] * [tm.area doubleValue]);
-        timbermarkTotalArea = timbermarkTotalArea + [tm.area floatValue];
-    }
-    
-    wasteBlock.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:(blockCheckTotalValue / timbermarkTotalArea)]  decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-    wasteBlock.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:(blockSurveyTotalValue / timbermarkTotalArea)] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-    
-    wasteBlock.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkNetVal doubleValue] > 0.0 ? fabsf((([wasteBlock.checkNetVal doubleValue] - [wasteBlock.surveyNetVal doubleValue])/ [wasteBlock.checkNetVal doubleValue]) * 100.0 ): 0.0)];
-    wasteBlock.deltaNetVal = [wasteBlock.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
-    */
-    
-    //DEV: 2015 04 21 - formula for total value = SUM( stratum area X stratum total value)
 
     wasteBlock.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:blockCheckTotalValue ]  decimalNumberByRoundingAccordingToBehavior:behaviorD2];
     wasteBlock.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:blockSurveyTotalValue ] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-    //NSLog(@"SURVEYNetVAl: %@", wasteBlock.surveyNetVal);
     
     wasteBlock.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkNetVal doubleValue] > 0.0 ? fabs((([wasteBlock.checkNetVal doubleValue] - [wasteBlock.surveyNetVal doubleValue])/ [wasteBlock.checkNetVal doubleValue]) * 100.0 ): 0.0)];
     wasteBlock.deltaNetVal = [wasteBlock.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
-    
-    
-    
-    //benchmark - store it back into timber mark
-    
-    //for (Timbermark *tm in [wasteBlock.blockTimbermark allObjects]){
-        //NSLog(@"block average = sum of volume %f / block area %d = %f",sumStratumVolume,[wasteBlock.netArea intValue], blockAverage);
-    //    tm.avoidable = [[[NSDecimalNumber alloc] initWithDouble:(blockBenchmark / [wasteBlock.netArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-    //}
-
     
 }
 
@@ -847,7 +784,7 @@
      NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
 
     for(NSString *key in [pieceDictionary allKeys]){
-        //key is the combination of: PieceNo_Grade_Spieces
+        //Note: key is the combination of: PieceNo_Grade_Spieces
         NSLog(@"At key: %@", key);
         NSDecimalNumber *rate = nil;
         
