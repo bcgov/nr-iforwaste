@@ -374,7 +374,7 @@
     return NO;
 }
 
-+(void) calculatePiecesValue:(WasteBlock *) wasteBlock{
++(void) calculatePiecesValue:(WasteBlock *) wasteBlock {
 
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -397,7 +397,7 @@
     int blockCheckCounter = 0;
     int blockSurveyCounter = 0;
     
-    for (WasteStratum *ws in [wasteBlock.blockStratum allObjects]){
+    for (WasteStratum *ws in [wasteBlock.blockStratum allObjects]) {
         NSLog(@" stratum  = %@, assessment method code = %@", ws.stratum, ws.stratumAssessmentMethodCode.assessmentMethodCode);
         
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
@@ -770,35 +770,35 @@
 
      NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
 
-    for(NSString *key in [pieceDictionary allKeys]){
+    for (NSString *key in [pieceDictionary allKeys]) {
         //Note: key is the combination of: PieceNo_Grade_Spieces
         NSLog(@"At key: %@", key);
         NSDecimalNumber *rate = nil;
         
-        if([tm.timbermarkBlock.regionId integerValue] == InteriorRegion){
-            if ([self isDeciduousSpeciesInterior:key]) {
+        if ([tm.timbermarkBlock.regionId integerValue] == InteriorRegion) {
+            if ([self isDeciduousSpeciesInterior:key])
                 rate = tm.deciduousPrice;
-            } else if ([self isConiferSpeciesInterior:key]) {
+            else if ([self isConiferSpeciesInterior:key])
                 rate = tm.coniferPrice;
-            } else if ([self isGrade4SpeciesInterior:key]) {
+            else if ([self isGrade4SpeciesInterior:key])
                 rate = tm.yPrice;
-            } else if ([self isDefaultSpeciesInterior:key]) {
+            else if ([self isDefaultSpeciesInterior:key])
                 rate =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-            }
+            
         } else {
-           if ([key rangeOfString:@"W_"].location != NSNotFound){
+            
+           if ([key rangeOfString:@"W_"].location != NSNotFound)
                 rate = tm.deciduousPrice ;
-            } else if ([key rangeOfString:@"X_"].location != NSNotFound){
+            else if ([key rangeOfString:@"X_"].location != NSNotFound)
                 rate = tm.xPrice ;
-            } else if ([key rangeOfString:@"Y_"].location != NSNotFound || [key rangeOfString:@"_4_"].location != NSNotFound || [key rangeOfString:@"_5_"].location != NSNotFound ){
+            else if ([key rangeOfString:@"Y_"].location != NSNotFound)
                 rate =tm.yPrice ;
-            } else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound || [key rangeOfString:@"U_LA"].location != NSNotFound){
+            else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound || [key rangeOfString:@"U_LA"].location != NSNotFound)
                 rate = tm.hembalPrice ;
-            } else if ([key rangeOfString:@"_6_"].location != NSNotFound || [key rangeOfString:@"Z_"].location != NSNotFound){
+            else if ([key rangeOfString:@"Z_"].location != NSNotFound)
                 rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-            } else if ([key rangeOfString:@"U_"].location != NSNotFound || [key rangeOfString:@"J_"].location != NSNotFound){
+            else if ([key rangeOfString:@"U_"].location != NSNotFound || [key rangeOfString:@"J_"].location != NSNotFound)
                 rate =tm.coniferPrice ;
-            }
         }
         
         //NSLog(@"total:%.2f", [[[[NSDecimalNumber alloc] initWithDouble:[[pieceDictionary objectForKey:key] doubleValue]] decimalNumberByMultiplyingBy:rate] doubleValue]);
