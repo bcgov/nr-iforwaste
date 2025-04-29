@@ -443,7 +443,7 @@
                         BOOL isSurvey = NO;
                         BOOL isCheck = NO;
                         if (![wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] &&
-                            wpiece.pieceNumber && wpiece.pieceScaleGradeCode && wpiece.pieceScaleSpeciesCode){
+                            wpiece.pieceNumber && wpiece.pieceScaleGradeCode && wpiece.pieceScaleSpeciesCode) {
                             
                             NSString *key = [NSString stringWithFormat:@"%@_%@_%@",wpiece.pieceNumber, wpiece.pieceScaleGradeCode.scaleGradeCode, wpiece.pieceScaleSpeciesCode.scaleSpeciesCode];
 
@@ -458,12 +458,12 @@
                                 if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]) {
                                     isCheck = YES;
                                     isSurvey = YES;
-                                } else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"]) {
+                                } else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"]) {
                                     isSurvey = YES;
-                                } else if([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
-                                    if([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound){
+                                } else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+                                    if ([wpiece.pieceNumber rangeOfString:@"C"].location !=NSNotFound) {
                                         isCheck = YES;
-                                    }else{
+                                    } else {
                                         isSurvey = YES;
                                     }
                                 }
@@ -687,9 +687,9 @@
                 ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCutControlTotalVol / [ws.stratumArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
             }
             
-            ws.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidX doubleValue] > 0.0 ? fabsf((([ws.checkAvoidX floatValue] - [ws.surveyAvoidX floatValue])/ [ws.checkAvoidX floatValue]) * 100): 0.0)];
+            ws.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidX doubleValue] > 0.0 ? fabsf((([ws.checkAvoidX floatValue] - [ws.surveyAvoidX floatValue]) / [ws.checkAvoidX floatValue]) * 100) : 0.0)];
             ws.deltaAvoidX = [ws.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
-            ws.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidY doubleValue] > 0.0 ? fabsf((([ws.checkAvoidY floatValue] - [ws.surveyAvoidY floatValue])/ [ws.checkAvoidY floatValue]) * 100): 0.0)];
+            ws.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidY doubleValue] > 0.0 ? fabsf((([ws.checkAvoidY floatValue] - [ws.surveyAvoidY floatValue]) / [ws.checkAvoidY floatValue]) * 100) : 0.0)];
             ws.deltaAvoidY = [ws.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
             
             //DEV: because of the rounding issue: 0.1 + 0.1 + 0.1 = 0.2999999 etc
