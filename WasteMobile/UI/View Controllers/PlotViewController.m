@@ -1299,7 +1299,7 @@
     self.weather.text = self.wastePlot.weather ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.weather] : @"";
     self.plotEstimatedVolume.text = self.wastePlot.plotEstimatedVolume ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.plotEstimatedVolume] : @"";
     self.checkVolume.text = [self.wastePlot.checkVolume isEqualToNumber:@0] ? [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.plotEstimatedVolume intValue]] : [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.checkVolume intValue]];
-    self.totalEstimateVolume.text = self.wastePlot.plotStratum.totalEstimatedVolume && [self.wastePlot.plotStratum.totalEstimatedVolume floatValue] > 0 ?  [[NSString alloc] initWithFormat:@"%.2f", [self.wastePlot.plotStratum.totalEstimatedVolume floatValue]] : @"";
+    self.greenVolume.text = self.wastePlot.greenVolume && [self.wastePlot.greenVolume floatValue] > 0 ?  [[NSString alloc] initWithFormat:@"%.2f", [self.wastePlot.greenVolume floatValue]] : @"";
     
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"MMM-dd-yyyy"];
@@ -1333,11 +1333,11 @@
         ![self.wastePlot.plotSizeCode.plotSizeCode isEqualToString:@"O"] &&
         [self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]) {
         
-        //Note: totalEstimatedVolume is mapped to Predicted Volume
-        [self.totalEstimatedVolumeLabel setHidden:NO];
-        [self.totalEstimateVolume setHidden:NO];
-        [self.totalEstimateVolume setEnabled:NO];
-        [self.totalEstimateVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        //Note: GreenVolume is mapped to Predicted Volume
+        [self.greenVolume setHidden:NO];
+        [self.greenVolumeLabel setHidden:NO];
+        [self.greenVolume setEnabled:NO];
+        [self.greenVolume setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         
         if ([self.wastePlot.isMeasurePlot integerValue] == 1 ) {
             self.isMeasurePlot.text =  @"YES";

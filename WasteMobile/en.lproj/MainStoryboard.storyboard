@@ -3363,6 +3363,8 @@
                         <outlet property="cuttingPermit" destination="xqp-wS-qNR" id="MOB-UW-6sG"/>
                         <outlet property="cuttingPermitLabel" destination="8jh-Ev-UUc" id="tAc-G2-JVe"/>
                         <outlet property="footerStatView" destination="Nlm-7K-SC2" id="njA-AE-jP3"/>
+                        <outlet property="greenVolume" destination="uLf-Tf-MCr" id="45t-uc-123"/>
+                        <outlet property="greenVolumeLabel" destination="bmi-9c-hPs" id="KiM-UF-NXy"/>
                         <outlet property="headerView" destination="ib5-S1-Flg" id="3rf-Ee-wjN"/>
                         <outlet property="isMeasurePlot" destination="gpi-UJ-4A0" id="ooH-FH-LIl"/>
                         <outlet property="isMeasurePlotLabel" destination="ufj-s9-d3K" id="2ii-CP-37G"/>
@@ -3383,8 +3385,6 @@
                         <outlet property="surveyDate" destination="RhE-mF-vbf" id="heV-ah-zPs"/>
                         <outlet property="totalCheckPercent" destination="xma-6u-Oel" id="sZd-H3-fie"/>
                         <outlet property="totalCheckPercentLabel" destination="FLR-fP-gLm" id="57c-DL-FUP"/>
-                        <outlet property="totalEstimateVolume" destination="uLf-Tf-MCr" id="M7n-2F-9bd"/>
-                        <outlet property="totalEstimatedVolumeLabel" destination="bmi-9c-hPs" id="pzp-um-C2f"/>
                         <outlet property="versionLabel" destination="eML-qs-vtc" id="eOb-rL-meP"/>
                         <outlet property="weather" destination="e3z-gL-k63" id="LdY-mV-KOZ"/>
                     </connections>
@@ -3974,7 +3974,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="2NT-KX-ffW"/>
+        <segue reference="JY6-XQ-rkC"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="rsi-Jo-9f6"/>
         <segue reference="GQ1-Xd-ei5"/>
