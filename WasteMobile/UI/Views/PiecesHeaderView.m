@@ -192,8 +192,8 @@
     }
     
     
-    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(896, 0, 100, 42)];
-    lblPieceVolumn.text = @" Piece Vol ";
+    UILabel *lblPieceVolumn = [[UILabel alloc] initWithFrame:CGRectMake(846, 0, 145, 42)];
+    lblPieceVolumn.text = @"Piece Vol";
     lblPieceVolumn.backgroundColor = [UIColor piecesHeaderRed];
     
     lblPieceVolumn.textColor = [UIColor blackColor];
