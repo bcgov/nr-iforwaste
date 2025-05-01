@@ -316,7 +316,13 @@
         [self.cutBlockLabel setHidden:NO];
     }
 
-
+    if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [self.wastePlot.checkVolume isEqualToNumber:self.wastePlot.plotEstimatedVolume]) {
+        NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+        for (WastePiece *wpiece in [self.wastePlot.plotPiece allObjects]) {
+            wpiece.checkPieceVolume =  [wpiece.pieceVolume decimalNumberByRoundingAccordingToBehavior:behaviorD3];
+        }
+    }
+    
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
 }
@@ -488,7 +494,7 @@
     self.wastePlot.checkDate = [dateFormat dateFromString:self.checkSurveyDate.text];
     self.wastePlot.checkVolume = [NSDecimalNumber decimalNumberWithString:self.checkVolume.text];
     
-    for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
+    for (WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]) {
         double  totalestimatedvolume = 0.0;
         for(WastePlot *wp in [ws.stratumPlot allObjects]){
             totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
@@ -503,11 +509,11 @@
                     wpiece.checkPieceVolume = [percentEstimate decimalNumberByMultiplyingBy:checkVolume];
                 }
             }
-            
         }
         ws.totalEstimatedVolume = [[NSDecimalNumber alloc] initWithDouble:totalestimatedvolume];
         NSLog(@"Total Estimated Volume %@", ws.totalEstimatedVolume);
     }
+    
     self.wastePlot.notes = self.notes.text;
     if ([self.wasteBlock.userCreated intValue] == 1){
         double plotEstimatedVolumeValue = [self.plotEstimatedVolume.text doubleValue];
@@ -585,14 +591,9 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     
-    
-    
-    
     NSLog(@"segue %@", segue.identifier);
     
-    
     if ( [segue.identifier isEqualToString:@"reportFromPlotSegue"]){
-        
         
         // our navigation controller has many segues, or views, but we need our ReportScreen
         ReportGeneratorTableViewController *reportGeneratorTableVC = (ReportGeneratorTableViewController *)[[[segue destinationViewController] viewControllers] objectAtIndex:0];
@@ -602,10 +603,6 @@
         
         //reportGeneratorTableVC.tallySwitchEnabled = YES; // plotTallySwitch is not initialized (maybe set an extra switch for reportGen to read)
     }
-    
-    
-    
-    
 }
 
 // SCREEN METHODS
@@ -1210,11 +1207,7 @@
             }
         }
     }
-    
-    
-    
 }
-
 
 
 // TABLE POPULATION

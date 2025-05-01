@@ -1039,14 +1039,9 @@
             }
             
             self.primaryAvoidableALabel.text = tm.avoidable ? [NSString stringWithFormat:@"%.4f", [tm.avoidable floatValue]] : @"";
-            //benchmark value for Interior and coast logic
-            if([self.wasteBlock.regionId intValue] == InteriorRegion){
-                self.primaryBenchmarkLabel.text = tm.benchmark ? [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]] : @"";
-            }else if([self.wasteBlock.regionId intValue] == CoastRegion){
-               self.primaryBenchmarkLabel.text = tm.benchmark ? [[NSString alloc ] initWithFormat:@"%0.4f",[tm.benchmark floatValue]] : @"";
-            }
             
-            self.primaryWMRFLabel.text = tm.wmrf ? [NSString stringWithFormat:@"%.4f", [tm.wmrf floatValue]] : @"";
+            self.primaryBenchmarkLabel.text = tm.benchmark && !isnan([tm.benchmark doubleValue]) ? [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]] : @"";
+            self.primaryWMRFLabel.text = tm.wmrf && !isnan([tm.wmrf doubleValue]) ? [NSString stringWithFormat:@"%.4f", [tm.wmrf floatValue]] : @"";
             NSDecimalNumber *NaN = [NSDecimalNumber notANumber];
             
             // Billing rate column

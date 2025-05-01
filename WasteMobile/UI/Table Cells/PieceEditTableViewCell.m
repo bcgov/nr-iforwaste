@@ -62,6 +62,8 @@
 //-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock {
 -(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock wastePlot:(WastePlot *)wastePlot userCreatedBlock:(BOOL)userCreatedBlock{
     
+    NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+
     self.cellWastePiece = wastePiece;
     self.wasteBlock = wasteBlock;
     
@@ -185,27 +187,21 @@
                 [self.displayObjectDictionary setObject:lbl forKey:[lbStrAry objectAtIndex:1]];
             }
             
-            if (![[lbStrAry objectAtIndex:1] isEqualToString: @""]){
-                
-                if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]) {
-                    
-                    
+            if (![[lbStrAry objectAtIndex:1] isEqualToString: @""]) {
+                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]) {
                     double estimatedPercent = [[wastePiece valueForKey: @"estimatedPercent"] floatValue] / 100.0;
                     NSDecimalNumber *percentEstimate = [[NSDecimalNumber alloc] initWithDouble:estimatedPercent];
                     NSDecimalNumber *checkVolume = [NSDecimalNumber decimalNumberWithDecimal:[wastePlot.checkVolume decimalValue]];
                    
-                    lbl.text = [[percentEstimate decimalNumberByMultiplyingBy:checkVolume] stringValue];
+                    lbl.text = [[[percentEstimate decimalNumberByMultiplyingBy:checkVolume] decimalNumberByRoundingAccordingToBehavior:behaviorD3] stringValue];
                     
-                }else {
-                    if([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
+                } else {
+                    if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]) {
                         lbl.text = [wastePiece valueForKey:[lbStrAry objectAtIndex:1]];
-                    }else if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
+                    } else if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]) {
                         lbl.text =[(NSNumber *)[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] stringValue];
                     }
-                    
                 }
-                
-               
             }
             
             if ([[lbStrAry objectAtIndex:2] isEqualToString:@"g"]){

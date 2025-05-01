@@ -2035,10 +2035,10 @@ UITextField *activeTextField;
         }else{
             cell.reductionFactor.text = @"";
         }
-        cell.aValue.text = tm.avoidable ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.avoidable floatValue]] : @"";
-        cell.bValue.text = tm.benchmark ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.benchmark floatValue]] : @"";
-        cell.wmrf.text =  tm.wmrf ? [[NSString alloc] initWithFormat:@"%0.4f",[tm.wmrf floatValue]] : @"";
-        cell.area.text = tm.area ? [NSString stringWithFormat:@"%0.2f", [tm.area floatValue] ] : @"";
+        cell.aValue.text = tm.avoidable && !isnan([tm.avoidable doubleValue]) ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.avoidable floatValue]] : @"";
+        cell.bValue.text = tm.benchmark && !isnan([tm.benchmark doubleValue]) ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.benchmark floatValue]] : @"";
+        cell.wmrf.text =  tm.wmrf && !isnan([tm.wmrf doubleValue]) ? [[NSString alloc] initWithFormat:@"%0.4f",[tm.wmrf floatValue]] : @"";
+        cell.area.text = tm.area && !isnan([tm.area doubleValue]) ? [NSString stringWithFormat:@"%0.2f", [tm.area floatValue] ] : @"";
         
         /*
         NSLog(@"TIMBERMARK = %@", cell.primary.text);

@@ -53,6 +53,8 @@
 //-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock{
 -(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock wastePlot:(WastePlot *)wastePlot userCreatedBlock:(BOOL)userCreatedBlock{
     
+    NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+
     NSMutableArray *labelArray = [[NSMutableArray alloc] init];
     int locationCounter = 43;
     
@@ -130,7 +132,6 @@
 
     }
     
-
     if (!self.displayObjectDictionary){
         self.displayObjectDictionary = [[NSMutableDictionary alloc] init];
     }
@@ -176,11 +177,10 @@
                             double estimatedPercent = [[wastePiece valueForKey: @"estimatedPercent"] floatValue] / 100.0;
                             NSDecimalNumber *percentEstimate = [[NSDecimalNumber alloc] initWithDouble:estimatedPercent];
                             NSDecimalNumber *checkVolume = [NSDecimalNumber decimalNumberWithDecimal:[wastePlot.checkVolume decimalValue]];
-                           
-                            lbl.text = [[percentEstimate decimalNumberByMultiplyingBy:checkVolume] stringValue];
-                            
+                            lbl.text = [[[percentEstimate decimalNumberByMultiplyingBy:checkVolume] decimalNumberByRoundingAccordingToBehavior:behaviorD3] stringValue];
+                        } else {
+                            lbl.text = [[wastePiece valueForKey:@"pieceVolume"] stringValue] ;
                         }
-                        //lbl.text = [wastePiece valueForKey:[lbStrAry objectAtIndex:1]] ?  [(NSDecimalNumber *)[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] stringValue] : @"";;
                     }
                 }else{
                     if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){

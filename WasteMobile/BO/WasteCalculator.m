@@ -519,7 +519,9 @@
                                     if ([plotCheckPieceSpeciesGradeVolume objectForKey:key]) {
                                         NSDecimalNumber *newDN = nil;
 
-                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
+                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
+                                            
+                                        //} && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
                                             newDN =[[plotCheckPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.checkPieceVolume];
                                         } else {
                                             newDN =[[plotCheckPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.pieceVolume];
@@ -529,7 +531,9 @@
                                         [plotCheckPieceSpeciesGradeVolume setObject:newDN forKey:key];
                                     } else {
                                         // for new key
-                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
+                                        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
+                                            
+                                        //[wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
                                             [plotCheckPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[wpiece.checkPieceVolume doubleValue]] forKey:key];
                                         } else {
                                             [plotCheckPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[wpiece.pieceVolume doubleValue]] forKey:key];
@@ -976,9 +980,6 @@
     return NO;
 }
     
-    
-
-
 +(void) calculateEFWStat:(WasteBlock *) wasteBlock{
     @try{
         // do something that might throw an exception
