@@ -1003,6 +1003,11 @@ NSInteger orignialWasteTypeRow;
         WastePlot *pt = ([self.sortedPlots count] == 1) ? [self.sortedPlots objectAtIndex:0] : [self.sortedPlots objectAtIndex:indexPath.row];
    
         if ([self.sortedPlots count] > 0) {
+            
+            if ([self isPlotAudited:pt])
+                cell.isPlotAudited.hidden = NO;
+            else
+                cell.isPlotAudited.hidden = YES;
             cell.plotNumber.text = pt.plotNumber ? [NSString stringWithFormat:@"%@", pt.plotNumber] : @"";
             if(pt.isMeasurePlot){
                 cell.plotNumber.textColor = [UIColor whiteColor];
@@ -1037,6 +1042,11 @@ NSInteger orignialWasteTypeRow;
         if ([self.sortedPlots count] > 0) {
             WastePlot *pt = ([self.sortedPlots count] == 1) ? [self.sortedPlots objectAtIndex:0] : [self.sortedPlots objectAtIndex:indexPath.row];
             
+            if ([self isPlotAudited:pt])
+                cell.isPlotAudited.hidden = NO;
+            else
+                cell.isPlotAudited.hidden = YES;
+            
             cell.plotNumber.text = pt.plotNumber ? [NSString stringWithFormat:@"%@", pt.plotNumber] : @"";
             if(pt.isMeasurePlot){
                 cell.plotNumber.textColor = [UIColor whiteColor];
@@ -1050,11 +1060,6 @@ NSInteger orignialWasteTypeRow;
                 cell.plotNumber.backgroundColor = [UIColor whiteColor];
                 cell.plotNumber.textColor = [UIColor blackColor];
             }
-            
-            if ([self isPlotAudited:pt])
-                cell.checked.hidden = NO;
-            else
-                cell.checked.hidden = YES;
             
             cell.baseline.text = pt.baseline ? pt.baseline : @"";
             cell.strip.text = pt.strip ? [NSString stringWithFormat:@"%@", pt.strip] : @"";
