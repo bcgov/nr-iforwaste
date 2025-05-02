@@ -365,7 +365,7 @@
     return [[NSDecimalNumber alloc] initWithDouble:(billableTotalVol * billableVolFormula) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]];
 }
 
-+(BOOL) checkIfPlotAudited:(WastePlot *) wplot {
++(BOOL) isPlotAudited:(WastePlot *) wplot {
     for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
         if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
             return YES;
@@ -659,7 +659,7 @@
                     
                    stratumCheckBillTotalVol = stratumCheckBillTotalVol + ([wplot.checkAvoidY doubleValue] > 0 ? [wplot.checkAvoidX doubleValue] : 0.0);
                    stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + ([wplot.checkAvoidX doubleValue] > 0 ? [wplot.checkAvoidX doubleValue] : 0.0);
-                   if ([self checkIfPlotAudited:wplot])
+                   if ([self isPlotAudited:wplot])
                        stratumCheckCounter = stratumCheckCounter + 1;
                    
                    //don't count the new plot into the survey counters
@@ -667,7 +667,7 @@
                        stratumSurveyBillTotalVol = stratumSurveyBillTotalVol + ([wplot.surveyAvoidY doubleValue] > 0 ? [wplot.surveyAvoidY doubleValue] : 0.0);
                        stratumSurveyCutControlTotalVol = stratumSurveyCutControlTotalVol + ([wplot.surveyAvoidX doubleValue] > 0 ? [wplot.surveyAvoidX doubleValue] : 0.0);
                        
-                       if ([self checkIfPlotAudited:wplot])
+                       if ([self isPlotAudited:wplot])
                            stratumSurveyCounter = stratumSurveyCounter + 1;
                    }
                     

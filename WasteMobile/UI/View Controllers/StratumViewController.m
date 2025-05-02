@@ -43,6 +43,7 @@
 #import "WasteBlockDAO.h"
 #import "WastePile+CoreDataClass.h"
 #import "WastePlotValidator.h"
+#import "CheckerStatusCode.h"
 
 @class UIAlertView;
 
@@ -934,6 +935,15 @@ NSInteger orignialWasteTypeRow;
     }
 }
 
+-(BOOL) isPlotAudited:(WastePlot *) wplot {
+    for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
+        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if(tableView==aggregatePackingRatioPlotTableView) {
@@ -1040,6 +1050,12 @@ NSInteger orignialWasteTypeRow;
                 cell.plotNumber.backgroundColor = [UIColor whiteColor];
                 cell.plotNumber.textColor = [UIColor blackColor];
             }
+            
+            if ([self isPlotAudited:pt])
+                cell.checked.hidden = NO;
+            else
+                cell.checked.hidden = YES;
+            
             cell.baseline.text = pt.baseline ? pt.baseline : @"";
             cell.strip.text = pt.strip ? [NSString stringWithFormat:@"%@", pt.strip] : @"";
             cell.measure.text = pt.surveyedMeasurePercent ? [NSString stringWithFormat:@"%@", pt.surveyedMeasurePercent] : @"";
@@ -1062,7 +1078,7 @@ NSInteger orignialWasteTypeRow;
             cell.shape.text = @"";
             cell.license.text = @"";
             cell.blockId.text = @"";
-            cell.cuttingPermit = @"";
+            cell.cuttingPermit.text = @"";
             cell.deleteButton.hidden = YES;
             return cell;
         }
