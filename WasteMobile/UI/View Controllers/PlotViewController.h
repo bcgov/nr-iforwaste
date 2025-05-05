@@ -125,6 +125,9 @@ typedef enum PlotAlertTypeCode{
 
 -(IBAction)hideKeyboard:(id)sender;
 
+-(IBAction) changeAllPiecesStatusApprove:(id)sender;
+-(IBAction) changeAllPiecesStatusNotChecked:(id)sender;
+
 -(IBAction)savePlot:(id)sender;
 -(IBAction)addNewPiece:(id)sender;
 -(IBAction)changePieceStatus:(id)sender;

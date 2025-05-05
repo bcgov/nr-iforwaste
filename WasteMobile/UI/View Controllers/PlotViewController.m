@@ -625,6 +625,64 @@
 
 }
 
+-(void) changePieceStatusByType:(NSString *) type {
+    for (WastePiece *wpiece in [self.wastePlot.plotPiece allObjects]) {
+        if ([type isEqualToString:@"approved"] ) {
+            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"])
+                wpiece.pieceCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
+        } else {
+            wpiece.pieceCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
+        }
+    }
+    
+    self.wastePieces = [self.wastePlot.plotPiece allObjects];
+    [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
+    [WasteCalculator calculateRate:self.wasteBlock ];
+    [WasteCalculator calculatePiecesValue:self.wasteBlock];
+    [WasteCalculator calculateEFWStat:self.wasteBlock];
+    
+    [self.footerStatView setViewValue:self.wastePlot];
+    [self updateCheckTotalPercent];
+    [self sortPiece];
+    [self.pieceTableView reloadData];
+}
+
+- (IBAction) changeAllPiecesStatusNotChecked:(id)sender {
+    NSString *title = NSLocalizedString(@"Piece Status Change Confirmation ", nil);
+    NSString *message = NSLocalizedString(@"Are you sure you want to change all checked status to 'Not Checked'?", nil);
+    NSString *cancelBtn = NSLocalizedString(@"No", nil);
+    NSString *confirmBtn = NSLocalizedString(@"Yes", nil);
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:confirmBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self changePieceStatusByType:@"notChecked"];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelBtn style:UIAlertActionStyleCancel handler:nil];
+   
+    [alert addAction:cancel];
+    [alert addAction:confirm];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (IBAction) changeAllPiecesStatusApprove:(id)sender {
+    NSString *title = NSLocalizedString(@"Piece Status Change Confirmation ", nil);
+    NSString *message = NSLocalizedString(@"Are you sure you want to approve all?", nil);
+    NSString *cancelBtn = NSLocalizedString(@"No", nil);
+    NSString *confirmBtn = NSLocalizedString(@"Yes", nil);
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:confirmBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self changePieceStatusByType:@"approved"];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelBtn style:UIAlertActionStyleCancel handler:nil];
+   
+    [alert addAction:cancel];
+    [alert addAction:confirm];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 - (IBAction)addNewPiece:(id)sender{
     
     self.currentEditingPiece = [self addWastePieceByPlot:self.wastePlot editPieceNumber:@"" statusCode:@"1"];
