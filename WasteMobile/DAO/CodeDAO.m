@@ -275,8 +275,11 @@
 // codeName - eg maturityCode, snowCode
 -(NSManagedObject *) getCodeByNameCode:(NSString *)codeName code:(NSString *)code{
     //NSLog(@"Search for codeName:%@ and code:%@", codeName, code );
-
+    
+    //Note: codeName should be lowercase. i.e. 'MaturityCode' needs to be 'maturityCode'
+    codeName = [[[codeName substringToIndex:1] lowercaseString] stringByAppendingString:[codeName substringFromIndex:1]];
     NSString *codeKey =[[[codeName substringToIndex:1] uppercaseString] stringByAppendingString:[codeName substringFromIndex:1]];
+    
     for (NSManagedObject *codeObj in [codeDictionary objectForKey:codeKey]){
         if ([[codeObj valueForKey:codeName] isEqualToString:code]){
             //NSLog(@"Code found!");

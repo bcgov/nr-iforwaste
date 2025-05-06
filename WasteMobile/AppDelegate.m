@@ -233,10 +233,7 @@
  sourceApplication:(NSString *)sourceApplication
         annotation:(id)annotation {
     
-    
     if (url != nil && [url isFileURL]) {
-
-        
         SWRevealViewController *svc = (SWRevealViewController *)self.window.rootViewController;
         UINavigationController * font = (UINavigationController *)svc.frontViewController;
         SidebarViewController * sv = (SidebarViewController * )svc.rearViewController;
@@ -251,14 +248,14 @@
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+    
     if (url != nil && [url isFileURL]) {
         
         SWRevealViewController *svc = (SWRevealViewController *)self.window.rootViewController;
         UINavigationController * font = (UINavigationController *)svc.frontViewController;
         SidebarViewController * sv = (SidebarViewController * )svc.rearViewController;
 
-        if([[[url pathExtension] lowercaseString] isEqualToString:@"efw"])
-        {
+        if([[[url pathExtension] lowercaseString] isEqualToString:@"efw"]) {
             UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Import EFW File?"
                                                                            message:@"The file you are trying to import is an '.efw' file type.\nWould you like to import this file?"
                                                                     preferredStyle:UIAlertControllerStyleAlert];
@@ -281,9 +278,8 @@
             [alert addAction:goToAction];
             [alert addAction:okAction];
             [font presentViewController:alert animated:YES completion:nil];
-        }
-        else
-        {
+            
+        }else {
             //navigate to the file view controller
             [sv performSegueWithIdentifier:@"fileSegue" sender:sv];
             
