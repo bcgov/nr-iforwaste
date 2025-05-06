@@ -1432,7 +1432,7 @@
     CGRect bounds = aScrollView.bounds;
     UIEdgeInsets inset = aScrollView.contentInset;
     float y = offset.y + bounds.size.height - inset.bottom;
-    long rowIndex = (long)[[self.pieceTableView indexPathForRowAtPoint: CGPointMake(10, y - 1)]     ];
+    long rowIndex = (long)[[self.pieceTableView indexPathForRowAtPoint: CGPointMake(10, y - 1)] row];
     
     if (rowIndex + 1 == [self.wastePlot.plotPiece count] || rowIndex == 0)
         [self.downArrow setHidden:YES];
