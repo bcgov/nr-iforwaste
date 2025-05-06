@@ -1420,9 +1420,25 @@
     self.licence.text = self.wastePlot.aggregateLicence;
     self.cuttingPermit.text = self.wastePlot.aggregateCuttingPermit;
     self.cutBlock.text = self.wastePlot.aggregateCutblock;
+    
+    if (self.wastePlot.plotPiece.count > 10)
+        [self.downArrow setHidden:NO];
+    else
+        [self.downArrow setHidden:YES];
 }
 
-
+- (void) scrollViewDidScroll:(UIScrollView *)aScrollView {
+    CGPoint offset = aScrollView.contentOffset;
+    CGRect bounds = aScrollView.bounds;
+    UIEdgeInsets inset = aScrollView.contentInset;
+    float y = offset.y + bounds.size.height - inset.bottom;
+    long rowIndex = (long)[[self.pieceTableView indexPathForRowAtPoint: CGPointMake(10, y - 1)]     ];
+    
+    if (rowIndex + 1 == [self.wastePlot.plotPiece count] || rowIndex == 0)
+        [self.downArrow setHidden:YES];
+    else
+        [self.downArrow setHidden:NO];
+}
 
 #pragma mark - Core Data functions
 

@@ -121,6 +121,7 @@ typedef enum PlotAlertTypeCode{
 
 @property (strong, nonatomic) NSNumber *originalMP;
 @property (strong, nonatomic) NSNumber *fromBackButton;
+@property (weak, nonatomic) IBOutlet UIImageView *downArrow;
 
 
 -(IBAction)hideKeyboard:(id)sender;
