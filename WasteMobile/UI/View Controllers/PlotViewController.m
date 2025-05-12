@@ -572,7 +572,9 @@
     for(WastePiece *wp in [self.wastePlot.plotPiece allObjects]){
         if(([wp.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] && [wp.pieceNumber rangeOfString:@"C"].location != NSNotFound)||
            [wp.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] ||
-           [wp.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || wp.pieceCheckerStatusCode == nil){
+           [wp.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] ||
+           [wp.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] ||
+           wp.pieceCheckerStatusCode == nil){
             
             percent= percent + [wp.estimatedPercent doubleValue];
         }

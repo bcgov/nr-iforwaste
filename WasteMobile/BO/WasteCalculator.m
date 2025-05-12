@@ -579,7 +579,8 @@
                    //------------------------------------------------------------------
                     for (Timbermark *tm in [wasteBlock.blockTimbermark allObjects]) {
                         if ([tm.primaryInd integerValue] == 1) {
-                            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: Packing Ratio
+                            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: multipy by plotmultipler
+                                
                                 plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
                                 plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
                                
