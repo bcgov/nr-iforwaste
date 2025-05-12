@@ -402,6 +402,7 @@
         
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
         
+            double plotMultipler = [ws.stratumPlotSizeCode.plotMultipler doubleValue];
             double stratumCheckBillTotalVol = 0.0;
             double stratumCheckCutControlTotalVol = 0.0;
             
@@ -579,10 +580,10 @@
                    //------------------------------------------------------------------
                     for (Timbermark *tm in [wasteBlock.blockTimbermark allObjects]) {
                         if ([tm.primaryInd integerValue] == 1) {
-                            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: multipy by plotmultipler
-                                
-                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
-                                plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
+                            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { 
+                                NSLog(@"plotMultipler: %f",plotMultipler );
+                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * plotMultipler;
+                                plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * plotMultipler;
                                
                             } else {
                                 double surveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
