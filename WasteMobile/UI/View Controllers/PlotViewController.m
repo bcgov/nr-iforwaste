@@ -224,6 +224,13 @@
     //
     [self populateFromObject];
     
+    if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [self.wastePlot.checkVolume isEqualToNumber:self.wastePlot.plotEstimatedVolume]) {
+        NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+        for (WastePiece *wpiece in [self.wastePlot.plotPiece allObjects]) {
+            wpiece.checkPieceVolume =  [wpiece.pieceVolume decimalNumberByRoundingAccordingToBehavior:behaviorD3];
+        }
+    }
+    
     if ([self.wasteBlock.userCreated intValue] == 1){
         // toggle some UI for user created cut block
         
@@ -316,13 +323,6 @@
         [self.cutBlockLabel setHidden:NO];
     }
 
-    if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [self.wastePlot.checkVolume isEqualToNumber:self.wastePlot.plotEstimatedVolume]) {
-        NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
-        for (WastePiece *wpiece in [self.wastePlot.plotPiece allObjects]) {
-            wpiece.checkPieceVolume =  [wpiece.pieceVolume decimalNumberByRoundingAccordingToBehavior:behaviorD3];
-        }
-    }
-    
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
 }
@@ -496,11 +496,11 @@
     
     for (WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]) {
         double  totalestimatedvolume = 0.0;
-        for(WastePlot *wp in [ws.stratumPlot allObjects]){
+        for (WastePlot *wp in [ws.stratumPlot allObjects]) {
             totalestimatedvolume = totalestimatedvolume + [wp.plotEstimatedVolume doubleValue];
             
-            if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && ![wp.checkVolume isEqualToNumber:wp.plotEstimatedVolume]) {
-                for(WastePiece *wpiece in [wp.plotPiece allObjects]) {
+            if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && ![wp.checkVolume isEqualToNumber:wp.plotEstimatedVolume]) {
+                for (WastePiece *wpiece in [wp.plotPiece allObjects]) {
                     
                     double estimatedPercent = [wpiece.estimatedPercent floatValue] / 100.0;
                     NSDecimalNumber *percentEstimate = [[NSDecimalNumber alloc] initWithDouble:estimatedPercent];
@@ -1351,7 +1351,9 @@
     self.residueSurveyor.text = self.wastePlot.surveyorName ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.surveyorName] : @"";
     self.weather.text = self.wastePlot.weather ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.weather] : @"";
     self.plotEstimatedVolume.text = self.wastePlot.plotEstimatedVolume ? [[NSString alloc] initWithFormat:@"%@", self.wastePlot.plotEstimatedVolume] : @"";
+    NSLog(@"Check VOL.: %@", self.wastePlot.checkVolume);
     self.checkVolume.text = [self.wastePlot.checkVolume isEqualToNumber:@0] ? [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.plotEstimatedVolume intValue]] : [[NSString alloc] initWithFormat:@"%d", [self.wastePlot.checkVolume intValue]];
+    self.wastePlot.checkVolume = [self.wastePlot.checkVolume isEqualToNumber:@0] ? self.wastePlot.plotEstimatedVolume : self.wastePlot.checkVolume;
     self.greenVolume.text = self.wastePlot.greenVolume && [self.wastePlot.greenVolume floatValue] > 0 ?  [[NSString alloc] initWithFormat:@"%.2f", [self.wastePlot.greenVolume floatValue]] : @"";
     
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];

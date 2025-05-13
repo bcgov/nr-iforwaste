@@ -155,34 +155,36 @@
             // for now, it only work when the property is string
 
             if ([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
-                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"notes"]){
-                    if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
+                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"notes"]) {
+                    if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]) {
                         lbl.text = @"*";
                     }
-                }else
+                } else
                 
                 // Insert placeholder of "*" if something exists in UserCode column
-                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"usercode"]){
+                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"usercode"]) {
                     if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
                         lbl.text = @"*";
                     }
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]){
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]) {
                     NSLog(@"checkStatusCode: %@", ((CheckerStatusCode *)[wastePiece valueForKey:@"pieceCheckerStatusCode"]).checkerStatusCode);
-                    
+                   
                     //for non-changed piece, show blank in the check piece valume
-                    if([((CheckerStatusCode *)[wastePiece valueForKey:@"pieceCheckerStatusCode"]).checkerStatusCode isEqualToString:@"4"]){
+                    if([((CheckerStatusCode *)[wastePiece valueForKey:@"pieceCheckerStatusCode"]).checkerStatusCode isEqualToString:@"4"]) {
                         lbl.text = @"";
-                    }else{
-                        if(![wastePlot.checkVolume isEqualToNumber:wastePlot.plotEstimatedVolume]) {
+                    } else {
+                        if (wastePlot.plotEstimatedVolume!= nil && ![wastePlot.checkVolume isEqualToNumber:wastePlot.plotEstimatedVolume]) {
                             double estimatedPercent = [[wastePiece valueForKey: @"estimatedPercent"] floatValue] / 100.0;
                             NSDecimalNumber *percentEstimate = [[NSDecimalNumber alloc] initWithDouble:estimatedPercent];
                             NSDecimalNumber *checkVolume = [NSDecimalNumber decimalNumberWithDecimal:[wastePlot.checkVolume decimalValue]];
                             lbl.text = [[[percentEstimate decimalNumberByMultiplyingBy:checkVolume] decimalNumberByRoundingAccordingToBehavior:behaviorD3] stringValue];
                         } else {
+                            NSLog(@"PIECEVol: %@",[wastePiece valueForKey:@"pieceVolume"]);
                             lbl.text = [[wastePiece valueForKey:@"pieceVolume"] stringValue] ;
                         }
                     }
-                }else{
+                    NSLog(@"TXT: %@",lbl.text);
+                } else {
                     if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
                         lbl.text = [wastePiece valueForKey:[lbStrAry objectAtIndex:1]] ?[(NSNumber *)[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] stringValue] : @"";
                     }else if([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
