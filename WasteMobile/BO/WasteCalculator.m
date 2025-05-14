@@ -478,24 +478,24 @@
                                 if ([key rangeOfString:@"Z_"].location == NSNotFound) {
                                     plotSurveyCutControlTotalVol = plotSurveyCutControlTotalVol + [wpiece.pieceVolume doubleValue];
                                     plotSurveyCutControlCounter = plotSurveyCutControlCounter + 1;
-                                }
-                                
-                                // For Billable Volume
-                                if ([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]) {
-                                    if ([key rangeOfString:@"Z_"].location == NSNotFound) {
+                                    
+                                    
+                                    // For Billable Volume
+                                    if ([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]) {
+                                       
                                         plotSurveyBillTotalVol = plotSurveyBillTotalVol + [wpiece.pieceVolume doubleValue];
                                         plotSurveyBillCounter = plotSurveyBillCounter + 1;
-                                    }
-                                    
-                                    // the mutable array is used to get the total value at the end
-                                    if ([plotSurveyPieceSpeciesGradeVolume objectForKey:key]) {
-                                        NSDecimalNumber *newDN =[[plotSurveyPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.pieceVolume];
                                         
-                                        [plotSurveyPieceSpeciesGradeVolume removeObjectForKey:key];
-                                        [plotSurveyPieceSpeciesGradeVolume setObject:newDN forKey:key];
-                                    } else {
-                                        // for new key
-                                        [plotSurveyPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[wpiece.pieceVolume doubleValue]] forKey:key];
+                                        // the mutable array is used to get the total value at the end
+                                        if ([plotSurveyPieceSpeciesGradeVolume objectForKey:key]) {
+                                            NSDecimalNumber *newDN =[[plotSurveyPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.pieceVolume];
+                                            
+                                            [plotSurveyPieceSpeciesGradeVolume removeObjectForKey:key];
+                                            [plotSurveyPieceSpeciesGradeVolume setObject:newDN forKey:key];
+                                        } else {
+                                            // for new key
+                                            [plotSurveyPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[wpiece.pieceVolume doubleValue]] forKey:key];
+                                        }
                                     }
                                 }
                             }
@@ -510,7 +510,6 @@
                                     }
                                     
                                     plotCheckCutControlCounter = plotCheckCutControlCounter + 1;
-                                    
                                     
                                     // For Billable Volume
                                     if ([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]) {

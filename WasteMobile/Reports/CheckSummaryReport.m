@@ -83,8 +83,7 @@
     
 
 }
-
-
+    
 -(GenerateOutcomeCode) generateReport:(WasteBlock *)wastBlock suffix:(NSString *)suffix replace:(BOOL)replace{
 
     NSLog(@"Genereate check summary report");
@@ -335,6 +334,26 @@
     return Successful;
 }
 
+-(BOOL) isStratumAudited:(WasteStratum *) wstratum {
+    for(WastePlot *wplot in [wstratum.stratumPlot allObjects]) {
+        for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
+            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
+-(BOOL) isPlotAudited:(WastePlot *) wplot {
+    for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
+        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 
 /*
  takes the object containing data
@@ -388,208 +407,212 @@
         // check everything else
         for(WasteStratum *stratum in sortedStratums)
         {
-            
-            sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
-            
-            //NSLog(@"STRATUM = %@", stratum.stratum);
-            
-            // TD2
-            td2 = stratum.stratum ? stratum.stratum : @"";
-         
-            for(WastePlot *plot in sortedPlots)
-            {
+            NSLog(@"Before Audited stratum: %@",stratum.stratum );
+            if ([self isStratumAudited:stratum]) {
+                NSLog(@"Audited stratum: %@",stratum.stratum );
                 
+                sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
                 
-                sortedPieces = [plot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPieces]];
+                //NSLog(@"STRATUM = %@", stratum.stratum);
                 
+                // TD2
+                td2 = stratum.stratum ? stratum.stratum : @"";
                 
-                // TD1
-                td1 = plot.plotNumber ? [plot.plotNumber stringValue] : @"";
-                //NSLog(@"PLOT = %@", td1);
-                
-                
-                for(WastePiece *piece in sortedPieces) // check every piece in this plot, for which columns can it be counted
+                for(WastePlot *plot in sortedPlots)
                 {
-                    
-                    /*
-                    NSLog(@"Piece \n");
-                    NSLog(@"pieceNumber = %@", piece.pieceNumber);
-                    NSLog(@"pieceID = %@", piece.piece);
-                    NSLog(@"piece status = %@", piece.pieceCheckerStatusCode.checkerStatusCode);
-                    NSLog(@"piece grade = %@", piece.pieceScaleGradeCode.scaleGradeCode);
-                    NSLog(@"piece species = %@", piece.pieceScaleSpeciesCode.scaleSpeciesCode);
-                    NSLog(@"piece waste = %@", piece.pieceWasteClassCode.wasteClassCode);
-                    NSLog(@"\n");
-                    */
-                    
-                    // TD3 - Survey pieces count = all pieces except those without pieceID
-                    if(piece.pieceCheckerStatusCode.checkerStatusCode != nil && ! [self stringHasC: piece.pieceNumber]){
-                        surveyPieces++;
-                    }
-                    
-                    
-                    // TD4 - Check pieces count // POTENTIAL BUG, comparing strings
-                    if( (piece.pieceCheckerStatusCode!=nil && [piece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]) && piece.piece ){
-                        // dont count
-                    }
-                    else{
-                        if( ! [self stringHasC: piece.pieceNumber  ] ){ // dont count changed pices, since they got accounted for in the "if" above
-                            checkPieces++;
-                        }
-                    }
-                    
-                    
-                    // if there arent any previousPieces then none are valid for adding
-                    if(previousPiece != nil)
-                    {
-                        // TD5 // POTENTIAL BUG, comparing strings
-                        // for the changed pieces - those with (c)
-                        if( piece.pieceNumber!=nil && [self stringHasC: piece.pieceNumber] )
-                        {
-                            
-                            
-                            if(!piece.pieceScaleGradeCode && !previousPiece.pieceScaleGradeCode){
-                                // dont count if both are nil, they havent changed
-                            }
-                            // counting nil cases too ( if original has code, and changed doesnt, then count it)
-                            else if( (!piece.pieceScaleGradeCode && previousPiece.pieceScaleGradeCode) ||  (piece.pieceScaleGradeCode && !previousPiece.pieceScaleGradeCode)  ){
-                                grades++;
-                            }
-                            // for those that have their grade changed
-                            else if( ! [piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:previousPiece.pieceScaleGradeCode.scaleGradeCode]){
-                                grades++;
-                            }
-                        }
-                    
-                        
-                        // TD6 // POTENTIAL BUG, comparing strings
-                        if( [self stringHasC: piece.pieceNumber] )
-                        {
-                            
-                            
-                            
-                            if( (!piece.pieceScaleSpeciesCode && !previousPiece.pieceScaleSpeciesCode) ){
-                                // dont count if both are nil, they havent changed
-                            }
-                            // counting nil cases too ( if original has code, and changed doesnt, then count it)
-                            else if( (!piece.pieceScaleSpeciesCode && previousPiece.pieceScaleSpeciesCode) ||  (piece.pieceScaleSpeciesCode && !previousPiece.pieceScaleSpeciesCode)  ){
-                                species++;
-                            }
-                            // for those that have their species changed
-                            else if( ![piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:previousPiece.pieceScaleSpeciesCode.scaleSpeciesCode] ){
-                                species++;
-                            }
-                        }
+                    if ([self isPlotAudited:plot]) {
                         
                         
-                        // TD7 // POTENTIAL BUG, comparing strings
-                        if( [self stringHasC: piece.pieceNumber] )
-                        {
-                            
-                            if( (!piece.pieceWasteClassCode && !previousPiece.pieceWasteClassCode) ){
-                                // dont count if both are nil, they havent changed
-                            }
-                            // counting nil cases too ( if original has code, and changed doesnt, then count it)
-                            else if( (!piece.pieceWasteClassCode && previousPiece.pieceWasteClassCode) ||  (piece.pieceWasteClassCode && !previousPiece.pieceWasteClassCode)  ){
-                                wasteClass++;
-                            }
-                            // for those that have their wasteclass changed
-                            else if( ! [piece.pieceWasteClassCode.wasteClassCode isEqualToString:previousPiece.pieceWasteClassCode.wasteClassCode] ){
-                                wasteClass++;
-                            }
-                        }
+                        sortedPieces = [plot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPieces]];
                         
-                        // TD8
-                        if( [self stringHasC: piece.pieceNumber] )
-                        {
-
-                            if( (!previousPiece.length && !piece.length) ){
-                                // dont count if both are nil, they havent changed
-                            }
-                            // for those that have their length changed
-                            else if( ! [piece.length isEqualToNumber: previousPiece.length] ){
-                                length++;
-                            }
-                        }
                         
-                        // TD9
-                        if( [self stringHasC: piece.pieceNumber] )
+                        // TD1
+                        td1 = plot.plotNumber ? [plot.plotNumber stringValue] : @"";
+                        //NSLog(@"PLOT = %@", td1);
+                        
+                        
+                        for(WastePiece *piece in sortedPieces) // check every piece in this plot, for which columns can it be counted
                         {
-
-
                             
+                            /*
+                             NSLog(@"Piece \n");
+                             NSLog(@"pieceNumber = %@", piece.pieceNumber);
+                             NSLog(@"pieceID = %@", piece.piece);
+                             NSLog(@"piece status = %@", piece.pieceCheckerStatusCode.checkerStatusCode);
+                             NSLog(@"piece grade = %@", piece.pieceScaleGradeCode.scaleGradeCode);
+                             NSLog(@"piece species = %@", piece.pieceScaleSpeciesCode.scaleSpeciesCode);
+                             NSLog(@"piece waste = %@", piece.pieceWasteClassCode.wasteClassCode);
+                             NSLog(@"\n");
+                             */
                             
-                            
-                            if( (!previousPiece.topDiameter && !piece.topDiameter) && (!previousPiece.buttDiameter && !piece.buttDiameter) ){
-                                // dont count if both are nil, they havent changed
-                            }
-                            // one of the pieces was initialy nil, and now it has a value
-                            else if( ((!previousPiece.topDiameter && piece.topDiameter) || (previousPiece.topDiameter && !piece.topDiameter)) ||
-                                    ((!previousPiece.buttDiameter && piece.buttDiameter) || (previousPiece.buttDiameter && !piece.buttDiameter))
-                            ){
-                                radii++;
-                            }
-                            // for those that have their diameter value changed
-                            // note: isEqualToNumber CANNOT accept nil values, if it does, the behavior is undefined
-                            else if( (piece.topDiameter && previousPiece.topDiameter) && ![piece.topDiameter isEqualToNumber: previousPiece.topDiameter] ){
-                                radii++;
-                            }
-                            else if( (piece.buttDiameter && previousPiece.buttDiameter) && ![piece.buttDiameter isEqualToNumber: previousPiece.buttDiameter]  ){
-                                radii++;
+                            // TD3 - Survey pieces count = all pieces except those without pieceID
+                            if(piece.pieceCheckerStatusCode.checkerStatusCode != nil && ! [self stringHasC: piece.pieceNumber]){
+                                surveyPieces++;
                             }
                             
                             
+                            // TD4 - Check pieces count // POTENTIAL BUG, comparing strings
+                            if( (piece.pieceCheckerStatusCode!=nil && [piece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]) && piece.piece ){
+                                // dont count
+                            } else {
+                                if( ! [self stringHasC: piece.pieceNumber  ] ){ // dont count changed pices, since they got accounted for in the "if" above
+                                    checkPieces++;
+                                }
+                            }
                             
-                        }
+                            
+                            // if there arent any previousPieces then none are valid for adding
+                            if(previousPiece != nil)
+                            {
+                                // TD5 // POTENTIAL BUG, comparing strings
+                                // for the changed pieces - those with (c)
+                                if( piece.pieceNumber!=nil && [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    
+                                    if(!piece.pieceScaleGradeCode && !previousPiece.pieceScaleGradeCode){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // counting nil cases too ( if original has code, and changed doesnt, then count it)
+                                    else if( (!piece.pieceScaleGradeCode && previousPiece.pieceScaleGradeCode) ||  (piece.pieceScaleGradeCode && !previousPiece.pieceScaleGradeCode)  ){
+                                        grades++;
+                                    }
+                                    // for those that have their grade changed
+                                    else if( ! [piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:previousPiece.pieceScaleGradeCode.scaleGradeCode]){
+                                        grades++;
+                                    }
+                                }
+                                
+                                
+                                // TD6 // POTENTIAL BUG, comparing strings
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    
+                                    
+                                    if( (!piece.pieceScaleSpeciesCode && !previousPiece.pieceScaleSpeciesCode) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // counting nil cases too ( if original has code, and changed doesnt, then count it)
+                                    else if( (!piece.pieceScaleSpeciesCode && previousPiece.pieceScaleSpeciesCode) ||  (piece.pieceScaleSpeciesCode && !previousPiece.pieceScaleSpeciesCode)  ){
+                                        species++;
+                                    }
+                                    // for those that have their species changed
+                                    else if( ![piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:previousPiece.pieceScaleSpeciesCode.scaleSpeciesCode] ){
+                                        species++;
+                                    }
+                                }
+                                
+                                
+                                // TD7 // POTENTIAL BUG, comparing strings
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    if( (!piece.pieceWasteClassCode && !previousPiece.pieceWasteClassCode) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // counting nil cases too ( if original has code, and changed doesnt, then count it)
+                                    else if( (!piece.pieceWasteClassCode && previousPiece.pieceWasteClassCode) ||  (piece.pieceWasteClassCode && !previousPiece.pieceWasteClassCode)  ){
+                                        wasteClass++;
+                                    }
+                                    // for those that have their wasteclass changed
+                                    else if( ! [piece.pieceWasteClassCode.wasteClassCode isEqualToString:previousPiece.pieceWasteClassCode.wasteClassCode] ){
+                                        wasteClass++;
+                                    }
+                                }
+                                
+                                // TD8
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    if( (!previousPiece.length && !piece.length) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // for those that have their length changed
+                                    else if( ! [piece.length isEqualToNumber: previousPiece.length] ){
+                                        length++;
+                                    }
+                                }
+                                
+                                // TD9
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    if( (!previousPiece.topDiameter && !piece.topDiameter) && (!previousPiece.buttDiameter && !piece.buttDiameter) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // one of the pieces was initialy nil, and now it has a value
+                                    else if( ((!previousPiece.topDiameter && piece.topDiameter) || (previousPiece.topDiameter && !piece.topDiameter)) ||
+                                            ((!previousPiece.buttDiameter && piece.buttDiameter) || (previousPiece.buttDiameter && !piece.buttDiameter))
+                                            ){
+                                        radii++;
+                                    }
+                                    // for those that have their diameter value changed
+                                    // note: isEqualToNumber CANNOT accept nil values, if it does, the behavior is undefined
+                                    else if( (piece.topDiameter && previousPiece.topDiameter) && ![piece.topDiameter isEqualToNumber: previousPiece.topDiameter] ){
+                                        radii++;
+                                    }
+                                    else if( (piece.buttDiameter && previousPiece.buttDiameter) && ![piece.buttDiameter isEqualToNumber: previousPiece.buttDiameter]  ){
+                                        radii++;
+                                    }
+                                    
+                                    
+                                    
+                                }
+                            }
+                            
+                            
+                            
+                            // TD10
+                            if(piece.pieceCheckerStatusCode.checkerStatusCode == nil){ // if nil, count him too
+                                // POTENTIAL BUG, comparing strings
+                                missedPiece++;
+                            }
+                            
+                            
+                            
+                            previousPiece = piece;
+                        }// end of pieces
+                        
+                        previousPiece = nil; // test
+                        
+                        td3 = [NSString stringWithFormat:@"%d", surveyPieces];
+                        td4 = [NSString stringWithFormat:@"%d", checkPieces];
+                        td5 = [NSString stringWithFormat:@"%d", grades];
+                        td6 = [NSString stringWithFormat:@"%d", species];
+                        td7 = [NSString stringWithFormat:@"%d", wasteClass];
+                        td8 = [NSString stringWithFormat:@"%d", length];
+                        td9 = [NSString stringWithFormat:@"%d", radii];
+                        td10 = [NSString stringWithFormat:@"%d", missedPiece];
+                        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, nil];
+                        [rows addObject:row];
+                        
+                        // compound values for total calc
+                        sumSurveyPieces += surveyPieces;
+                        sumCheckPieces += checkPieces;
+                        sumGrades += grades;
+                        sumSpecies += species;
+                        sumWasteClass += wasteClass;
+                        sumLength += length;
+                        sumRadii += radii;
+                        sumMissedPiece += missedPiece;
+                        
+                        // reset counters for the next pieces (next row)
+                        surveyPieces = 0;
+                        checkPieces = 0;
+                        grades = 0;
+                        species = 0;
+                        wasteClass = 0;
+                        length = 0;
+                        radii = 0;
+                        missedPiece = 0;
                     }
-                    
-                    
-                    
-                    // TD10
-                    if(piece.pieceCheckerStatusCode.checkerStatusCode == nil){ // if nil, count him too
-                        // POTENTIAL BUG, comparing strings
-                        missedPiece++;
-                    }
-                    
-                
-                    
-                    previousPiece = piece;
-                }// end of pieces
-                
-                previousPiece = nil; // test
-                
-                td3 = [NSString stringWithFormat:@"%d", surveyPieces];
-                td4 = [NSString stringWithFormat:@"%d", checkPieces];
-                td5 = [NSString stringWithFormat:@"%d", grades];
-                td6 = [NSString stringWithFormat:@"%d", species];
-                td7 = [NSString stringWithFormat:@"%d", wasteClass];
-                td8 = [NSString stringWithFormat:@"%d", length];
-                td9 = [NSString stringWithFormat:@"%d", radii];
-                td10 = [NSString stringWithFormat:@"%d", missedPiece];
-                row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, nil];
-                [rows addObject:row];
-                
-                // compound values for total calc
-                sumSurveyPieces += surveyPieces;
-                sumCheckPieces += checkPieces;
-                sumGrades += grades;
-                sumSpecies += species;
-                sumWasteClass += wasteClass;
-                sumLength += length;
-                sumRadii += radii;
-                sumMissedPiece += missedPiece;
-                
-                // reset counters for the next pieces (next row)
-                surveyPieces = 0;
-                checkPieces = 0;
-                grades = 0;
-                species = 0;
-                wasteClass = 0;
-                length = 0;
-                radii = 0;
-                missedPiece = 0;
-                
-            }// end of plots
+                }// end of plots
+            }
         }// end for stratum
         
         
@@ -642,81 +665,83 @@
         NSString *passFail = @"";
         for(WasteStratum *stratum in sortedStratums)
         {
-            sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
-            
-            //NSLog(@"STRATUM = %@", stratum.stratum);
-            
-            // TD1
-            td1 = stratum.stratum ? stratum.stratum : @"";
-            for(WastePlot *plot in sortedPlots)
-            {
+            if ([self isStratumAudited:stratum]) {
+                sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
                 
-                sortedPieces = [plot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPieces]];
+                //NSLog(@"STRATUM = %@", stratum.stratum);
                 
-                
-                //NSLog(@"PLOT NUMBER = %@", [plot.plotNumber stringValue]);
-                
-                // TD2
-                td2 = plot.plotNumber ? [plot.plotNumber stringValue] : @"";
-
-                // calc pass/fail
-                passFail = @"P";
-                //NSDecimalNumber *absDiff = [self abs:diff];
-                NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
-                NSComparisonResult result = [plot.deltaAvoidY compare:limit];
-                if (result == NSOrderedDescending)
+                // TD1
+                td1 = stratum.stratum ? stratum.stratum : @"";
+                for(WastePlot *plot in sortedPlots)
                 {
-                    //NSLog(@"diff > limit");
-                    
-                    // FAIL
-                    passFail = @"F";
+                    if ([self isPlotAudited:plot]) {
+                        
+                        sortedPieces = [plot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPieces]];
+                        
+                        
+                        //NSLog(@"PLOT NUMBER = %@", [plot.plotNumber stringValue]);
+                        
+                        // TD2
+                        td2 = plot.plotNumber ? [plot.plotNumber stringValue] : @"";
+                        
+                        // calc pass/fail
+                        passFail = @"P";
+                        //NSDecimalNumber *absDiff = [self abs:diff];
+                        NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
+                        NSComparisonResult result = [plot.deltaAvoidY compare:limit];
+                        if (result == NSOrderedDescending)
+                        {
+                            //NSLog(@"diff > limit");
+                            
+                            // FAIL
+                            passFail = @"F";
+                        }
+                        td5 = [NSString stringWithFormat:@"%.1f%%", [plot.deltaAvoidY floatValue]];
+                        td6 = [NSString stringWithFormat:@"%@", passFail];
+                        td3 = [NSString stringWithFormat:@"%.03f", plot.surveyAvoidY.floatValue];
+                        td4 = [NSString stringWithFormat:@"%.03f", plot.checkAvoidY.floatValue];
+                        
+                        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
+                        [rows addObject:row];
+                        
+                    }
+                }// end of plots
+                
+                
+                if(stratum.checkAvoidY.floatValue < 0.005){
+                    td5 = @"";
+                    td6 = @"";
                 }
-                td5 = [NSString stringWithFormat:@"%.1f%%", [plot.deltaAvoidY floatValue]];
-                td6 = [NSString stringWithFormat:@"%@", passFail];
-                td3 = [NSString stringWithFormat:@"%.03f", plot.surveyAvoidY.floatValue];
-                td4 = [NSString stringWithFormat:@"%.03f", plot.checkAvoidY.floatValue];
-
+                else{
+                    // calc pass/fail
+                    passFail = @"P";
+                    NSDecimalNumber *absDiff = [self abs:stratum.deltaAvoidY];
+                    NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
+                    NSComparisonResult result = [absDiff compare:limit];
+                    if (result == NSOrderedDescending)
+                    {
+                        //NSLog(@"diff > limit");
+                        
+                        // FAIL
+                        passFail = @"F";
+                    }
+                    
+                    td5 = [NSString stringWithFormat:@"%.1f%%", stratum.deltaAvoidY.floatValue];
+                    td6 = [NSString stringWithFormat:@"%@", passFail];
+                    
+                }
+                
+                
+                td2 = @"TOTAL";
+                td3 = [NSString stringWithFormat:@"%.03f", stratum.surveyAvoidY.floatValue];
+                td4 = [NSString stringWithFormat:@"%.03f", stratum.checkAvoidY.floatValue];
+                
                 row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
-                [rows addObject:row];
                 
-                
-            }// end of plots
-
-            
-            if(stratum.checkAvoidY.floatValue < 0.005){
-                td5 = @"";
-                td6 = @"";
-            }
-            else{
-                // calc pass/fail
-                passFail = @"P";
-                NSDecimalNumber *absDiff = [self abs:stratum.deltaAvoidY];
-                NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
-                NSComparisonResult result = [absDiff compare:limit];
-                if (result == NSOrderedDescending)
-                {
-                    //NSLog(@"diff > limit");
-                    
-                    // FAIL
-                    passFail = @"F";
+                if( sortedPlots.count != 0 ){
+                    [rows addObject:row]; // if no plots dont add
                 }
-                
-                td5 = [NSString stringWithFormat:@"%.1f%%", stratum.deltaAvoidY.floatValue];
-                td6 = [NSString stringWithFormat:@"%@", passFail];
-                
             }
-            
-            
-            td2 = @"TOTAL";
-            td3 = [NSString stringWithFormat:@"%.03f", stratum.surveyAvoidY.floatValue];
-            td4 = [NSString stringWithFormat:@"%.03f", stratum.checkAvoidY.floatValue];
-            
-            row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
-            
-            if( sortedPlots.count != 0 ){
-                [rows addObject:row]; // if no plots dont add
-            }
-
         }// end for stratum
         
         
@@ -785,29 +810,67 @@
         NSString *passFail = @"";
         for(WasteStratum *stratum in sortedStratums)
         {
-            sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
-            
-            //NSLog(@"STRATUM = %@", stratum.stratum);
-            
-            // TD1
-            td1 = stratum.stratum ? stratum.stratum : @"";
-            for(WastePlot *plot in sortedPlots)
-            {
+            if ([self isStratumAudited:stratum]) {
+                sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
                 
-                sortedPieces = [plot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPieces]];
+                //NSLog(@"STRATUM = %@", stratum.stratum);
                 
-                // TD2
-                td2 = plot.plotNumber ? [plot.plotNumber stringValue] : @"";
+                // TD1
+                td1 = stratum.stratum ? stratum.stratum : @"";
+                for(WastePlot *plot in sortedPlots)
+                {
+                    if ([self isPlotAudited:plot]) {
+                        sortedPieces = [plot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPieces]];
+                        
+                        // TD2
+                        td2 = plot.plotNumber ? [plot.plotNumber stringValue] : @"";
+                        
+                        if(plot.checkAvoidY.floatValue < 0.005){
+                            td5 = @"";
+                            td6 = @"";
+                        }else{
+                            
+                            
+                            // calc pass/fail
+                            passFail = @"P";
+                            NSDecimalNumber *absDiff = [self abs:plot.deltaNetVal];
+                            NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
+                            NSComparisonResult result = [absDiff compare:limit];
+                            if (result == NSOrderedDescending)
+                            {
+                                //NSLog(@"diff > limit");
+                                
+                                // FAIL
+                                passFail = @"F";
+                            }
+                            
+                            td5 = [NSString stringWithFormat:@"%.1f%%", plot.deltaNetVal.floatValue];
+                            td6 = [NSString stringWithFormat:@"%@", passFail];
+                            
+                        }
+                        
+                        
+                        
+                        
+                        
+                        
+                        td3 = [NSString stringWithFormat:@"$%.03f", plot.surveyNetVal.floatValue];
+                        td4 = [NSString stringWithFormat:@"$%.03f", plot.checkNetVal.floatValue];
+                        
+                        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
+                        [rows addObject:row];
+                    }
+                }// end of plots
                 
-                if(plot.checkAvoidY.floatValue < 0.005){
+                
+                if(stratum.checkAvoidY.floatValue < 0.005){
                     td5 = @"";
                     td6 = @"";
-                }else{
-
-                    
+                }
+                else{
                     // calc pass/fail
                     passFail = @"P";
-                    NSDecimalNumber *absDiff = [self abs:plot.deltaNetVal];
+                    NSDecimalNumber *absDiff = [self abs:stratum.deltaNetVal];
                     NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
                     NSComparisonResult result = [absDiff compare:limit];
                     if (result == NSOrderedDescending)
@@ -818,60 +881,23 @@
                         passFail = @"F";
                     }
                     
-                    td5 = [NSString stringWithFormat:@"%.1f%%", plot.deltaNetVal.floatValue];
+                    td5 = [NSString stringWithFormat:@"%.1f%%", stratum.deltaNetVal.floatValue];
                     td6 = [NSString stringWithFormat:@"%@", passFail];
                     
                 }
-
                 
                 
-
+                td2 = @"TOTAL";
+                td3 = [NSString stringWithFormat:@"$%.03f", stratum.surveyNetVal.floatValue];
+                td4 = [NSString stringWithFormat:@"$%.03f", stratum.checkNetVal.floatValue];
                 
-                
-                td3 = [NSString stringWithFormat:@"$%.03f", plot.surveyNetVal.floatValue];
-                td4 = [NSString stringWithFormat:@"$%.03f", plot.checkNetVal.floatValue];
-
                 row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
-                [rows addObject:row];
                 
-            }// end of plots
-            
-            
-            if(stratum.checkAvoidY.floatValue < 0.005){
-                td5 = @"";
-                td6 = @"";
-            }
-            else{
-                // calc pass/fail
-                passFail = @"P";
-                NSDecimalNumber *absDiff = [self abs:stratum.deltaNetVal];
-                NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
-                NSComparisonResult result = [absDiff compare:limit];
-                if (result == NSOrderedDescending)
-                {
-                    //NSLog(@"diff > limit");
-                    
-                    // FAIL
-                    passFail = @"F";
+                if( sortedPlots.count != 0 ){
+                    [rows addObject:row]; // if no plots dont add
                 }
                 
-                td5 = [NSString stringWithFormat:@"%.1f%%", stratum.deltaNetVal.floatValue];
-                td6 = [NSString stringWithFormat:@"%@", passFail];
-            
             }
-            
-            
-            td2 = @"TOTAL";
-            td3 = [NSString stringWithFormat:@"$%.03f", stratum.surveyNetVal.floatValue];
-            td4 = [NSString stringWithFormat:@"$%.03f", stratum.checkNetVal.floatValue];
-
-            row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
-            
-            if( sortedPlots.count != 0 ){
-                [rows addObject:row]; // if no plots dont add
-            }
-            
-            
             
         }// end for stratum
         
