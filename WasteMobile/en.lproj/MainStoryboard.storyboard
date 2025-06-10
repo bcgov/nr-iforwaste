@@ -2101,7 +2101,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xWK-Y5-BIN">
-                                            <rect key="frame" x="73" y="29" width="135" height="37"/>
+                                            <rect key="frame" x="76" y="29" width="135" height="37"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <accessibility key="accessibilityConfiguration" identifier="sortPlotNumber" label="Plot Number"/>
                                             <state key="normal" title="Button"/>
@@ -2152,9 +2152,9 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Checked" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J5D-EB-mpT">
-                                            <rect key="frame" x="7" y="37" width="70" height="21"/>
+                                            <rect key="frame" x="8" y="37" width="83" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -4027,7 +4027,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="JY6-XQ-rkC"/>
+        <segue reference="2NT-KX-ffW"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="rsi-Jo-9f6"/>
         <segue reference="GQ1-Xd-ei5"/>
