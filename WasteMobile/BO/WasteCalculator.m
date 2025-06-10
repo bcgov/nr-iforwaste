@@ -361,8 +361,8 @@
     return [formatter stringFromNumber:decimalNo];
 }
 
-+(NSDecimalNumber *) calculateTotalBillableVolume:(double)billableVolFormula billableTotalVol:(double) billableTotalVol wasteStratum:(WasteStratum *) ws {
-    return [[NSDecimalNumber alloc] initWithDouble:(billableTotalVol * billableVolFormula) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]];
++(NSDecimalNumber *) calculateTotalBillableVolume:(double)measurePercent billableTotalVol:(double) billableTotalVol wasteStratum:(WasteStratum *) ws {
+    return [[NSDecimalNumber alloc] initWithDouble:(billableTotalVol * measurePercent) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]];
 }
 
 +(BOOL) isPlotAudited:(WastePlot *) wplot {
@@ -428,6 +428,9 @@
                 double plotSurveyBillTotalVol = 0.0;
                 double plotSurveyCutControlTotalVol = 0.0;
                 //double plotBenchmark = 0.0;
+                
+                double surveyMeasurePercent = [wplot.surveyedMeasurePercent doubleValue] > 0.0 ? 100.0/([wplot.surveyedMeasurePercent integerValue]) : 0.0;
+                double checkMeasurePercent = [wplot.checkerMeasurePercent doubleValue] > 0.0 ? 100.0/([wplot.checkerMeasurePercent integerValue]) : 0.0;
 
                 int plotCheckBillCounter = 0;
                 int plotSurveyBillCounter = 0;
@@ -551,14 +554,11 @@
                     }
                    
                    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: Packing Ratio
-                       double surveyBillableVolFormula = 100.0/([wplot.surveyedMeasurePercent integerValue]);
-                       double checkBillableVolFormula = 100.0/([wplot.checkerMeasurePercent integerValue]);
+                       wplot.surveyAvoidY = [[self calculateTotalBillableVolume:surveyMeasurePercent billableTotalVol:plotSurveyBillTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                       wplot.surveyAvoidX = [[self calculateTotalBillableVolume:surveyMeasurePercent billableTotalVol:plotSurveyCutControlTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                        
-                       wplot.surveyAvoidY = [[self calculateTotalBillableVolume:surveyBillableVolFormula billableTotalVol:plotSurveyBillTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                       wplot.surveyAvoidX = [[self calculateTotalBillableVolume:surveyBillableVolFormula billableTotalVol:plotSurveyCutControlTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                       
-                       wplot.checkAvoidY = [[self calculateTotalBillableVolume:checkBillableVolFormula billableTotalVol:plotCheckBillTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                       wplot.checkAvoidX =[[self calculateTotalBillableVolume:checkBillableVolFormula billableTotalVol:plotCheckCutControlTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                       wplot.checkAvoidY = [[self calculateTotalBillableVolume:checkMeasurePercent billableTotalVol:plotCheckBillTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                       wplot.checkAvoidX =[[self calculateTotalBillableVolume:checkMeasurePercent billableTotalVol:plotCheckCutControlTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                        
                    } else {
                        wplot.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:plotSurveyBillTotalVol] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
@@ -586,8 +586,8 @@
                     for (Timbermark *tm in [wasteBlock.blockTimbermark allObjects]) {
                         if ([tm.primaryInd integerValue] == 1) {
                             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
-                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * plotMultipler;
-                                plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * plotMultipler;
+                                plotSurveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * plotMultipler * surveyMeasurePercent;
+                                plotCheckTotalValue = [self  getValueFromPieceDictionary:plotCheckPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO] * plotMultipler * checkMeasurePercent;
                                
                             } else {
                                 double surveyTotalValue = [self getValueFromPieceDictionary:plotSurveyPieceSpeciesGradeVolume timbermark:tm useOriginalRate:NO];
@@ -778,7 +778,7 @@
     double total = 0;
     
 
-     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    // NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
 
     for (NSString *key in [pieceDictionary allKeys]) {
         //Note: key is the combination of: PieceNo_Grade_Spieces
@@ -798,17 +798,17 @@
         } else {
             
            if ([key rangeOfString:@"W_"].location != NSNotFound)
-                rate = tm.deciduousPrice ;
+                rate = tm.deciduousPrice;
             else if ([key rangeOfString:@"X_"].location != NSNotFound)
-                rate = tm.xPrice ;
+                rate = tm.xPrice;
             else if ([key rangeOfString:@"Y_"].location != NSNotFound)
-                rate =tm.yPrice ;
+                rate =tm.yPrice;
             else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound || [key rangeOfString:@"U_LA"].location != NSNotFound)
-                rate = tm.hembalPrice ;
+                rate = tm.hembalPrice;
             else if ([key rangeOfString:@"Z_"].location != NSNotFound)
                 rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
             else if ([key rangeOfString:@"U_"].location != NSNotFound || [key rangeOfString:@"J_"].location != NSNotFound)
-                rate =tm.coniferPrice ;
+                rate =tm.coniferPrice;
         }
         
         //NSLog(@"total:%.2f", [[[[NSDecimalNumber alloc] initWithDouble:[[pieceDictionary objectForKey:key] doubleValue]] decimalNumberByMultiplyingBy:rate] doubleValue]);
@@ -816,9 +816,10 @@
         
         NSLog(@"rate:%.2f",  [rate doubleValue]);
 
-        total  = total + [[[[[NSDecimalNumber alloc] initWithDouble:[[pieceDictionary objectForKey:key] doubleValue]] decimalNumberByMultiplyingBy:rate] decimalNumberByRoundingAccordingToBehavior:behaviorD2] doubleValue];
+        //total  = total + [[[[[NSDecimalNumber alloc] initWithDouble:[[pieceDictionary objectForKey:key] doubleValue]] decimalNumberByMultiplyingBy:rate] decimalNumberByRoundingAccordingToBehavior:behaviorD2] doubleValue];
+        total  = total + [[[[NSDecimalNumber alloc] initWithDouble:[[pieceDictionary objectForKey:key] doubleValue]] decimalNumberByMultiplyingBy:rate] doubleValue];
         
-        NSLog(@"total:%.2f",  total );
+        NSLog(@"total:%.2f",  total);
     }
     return total;
 }
