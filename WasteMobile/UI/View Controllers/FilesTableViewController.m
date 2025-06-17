@@ -63,6 +63,7 @@
     if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"iFORWASTE"] ){
         
         [self addFilesForExtension:@".ifw"];
+        [self addFilesForExtension:@".efw"];
         
     } else if ([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]) {
         
