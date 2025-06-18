@@ -18,7 +18,7 @@
 @interface WasteCalculator : NSObject
 
 //shared functions
-+(void) calculatePieceStat:(WastePiece *)wastePiece wastePlot:(WastePlot *) plot;
++(void) calculatePieceStat:(WastePiece *)wastePiece wastePlot:(WastePlot *) plot wasteStratum:(WasteStratum *) ws;
 +(void) calculateRate:(WasteBlock *) wasteBlock;
 +(void) calculateWMRF:(WasteBlock *) wasteBlock updateOriginal:(BOOL) updateOriginal;
 +(void) calculatePiecesValue:(WasteBlock *) wasteBlock;

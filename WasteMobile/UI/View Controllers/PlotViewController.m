@@ -921,7 +921,7 @@
         if (textField == self.totalEstimateVolume || textField == self.plotEstimatedVolume){
             for(WastePiece *wp in self.wastePieces){
                 //if ([wp.pieceNumber rangeOfString:@"C"].location != NSNotFound){
-                    [WasteCalculator calculatePieceStat:wp wastePlot:self.wastePlot];
+                [WasteCalculator calculatePieceStat:wp wastePlot:self.wastePlot wasteStratum:self.wastePlot.plotStratum];
                     pieceDidChange = YES;
                 //}
             }

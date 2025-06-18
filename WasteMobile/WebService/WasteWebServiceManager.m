@@ -111,7 +111,8 @@
 -(void) downloadCutBlock:(NSString *)wasteAssessmentAreaId{
     
     //start a new thread to download the cut block data
-    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+ ^{
     
         NSError *error;
         WasteBlock *wb;
@@ -284,7 +285,7 @@
                             wpiece.sortNumber = [NSNumber numberWithInt: [wpiece.pieceNumber intValue] * 10];
                             
                             //calculate the piece volume
-                            [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot];
+                            [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot wasteStratum:ws];
                             
                             //add tje piece to plot
                             [wplot addPlotPieceObject:wpiece];
@@ -322,7 +323,7 @@
                         wpiece.sortNumber = [NSNumber numberWithInt: [wpiece.pieceNumber intValue] * 10];
                         
                         //calculate the piece volume
-                        [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot];
+                        [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot wasteStratum:ws];
                         
                         //add tje piece to plot
                         [wplot addPlotPieceObject:wpiece];

@@ -30,7 +30,7 @@
 
 @implementation WasteCalculator
 
-+(void) calculatePieceStat:(WastePiece *)wastePiece wastePlot:(WastePlot *) plot{
++(void) calculatePieceStat:(WastePiece *)wastePiece wastePlot:(WastePlot *) plot wasteStratum:(WasteStratum *)ws{
     int t = [wastePiece.topDiameter intValue];
     int b = [wastePiece.buttDiameter intValue];
     int l = [wastePiece.length intValue];
@@ -43,7 +43,8 @@
     float k = 0.0001571;
     float pi = 3.141592;
     float volume = 0;
-    WasteStratum *ws = plot.plotStratum;
+    NSLog(@"PLOT checkVolume: %@", plot.checkVolume);
+    //WasteStratum *ws = plot.plotStratum;
     //NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     //NSLog(@"assessment method code = %@", wastePiece.piecePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode);

@@ -415,7 +415,7 @@
     WastePlot *plot =[self.wastePiece valueForKey:@"piecePlot"];
     
     //[WasteCalculator calculatePieceStat:(WastePiece *)self.wastePiece wasteStratum:plot.plotStratum];
-    [WasteCalculator calculatePieceStat:(WastePiece *)self.wastePiece wastePlot:plot];
+    [WasteCalculator calculatePieceStat:(WastePiece *)self.wastePiece wastePlot:plot wasteStratum:plot.plotStratum];
     
     //NSLog(@"waste block : %@", ((WastePiece *)self.wastePiece ).piecePlot.plotStratum.stratumBlock);
     [WasteCalculator calculateWMRF:((WastePiece *)self.wastePiece ).piecePlot.plotStratum.stratumBlock updateOriginal:NO];
