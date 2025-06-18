@@ -50,24 +50,23 @@
     NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     //NSLog(@"assessment method code = %@", wastePiece.piecePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode);
     
-    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] ||
-        [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-        if ([wastePiece.pieceMaterialKindCode.materialKindCode isEqualToString:@"S"]){
+    if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]) {
+        
+        if ([wastePiece.pieceMaterialKindCode.materialKindCode isEqualToString:@"S"]) {
             volume = ((((((t - td) * (t - td)) * pi) / 10000) + ((((t - td) * (t - td)) * pi) / 10000)) / 2) * (l - ld) / 10;
             //volume =(((t - td) *(t - td)) + ((t - td) * (t - td))) * ((l - ld)/10.0) * k;
-        }else{
+        } else {
             volume = ((((((t - td) * (t - td)) * pi) / 10000) + ((((b - bd) * (b - bd)) * pi) / 10000)) / 2) * (l - ld) / 10;
             //volume =(((t - td) *(t - td)) + ((b - bd) * (b - bd))) * ((l - ld)/10.0) * k;
         }
     } else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]) {
-        //volume = [wastePiece.estimatedVolume floatValue];
+        volume = [wastePiece.estimatedVolume floatValue];
         
     } else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
         float totalEstimate = 0;
-
-        if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
+        if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound) {
             totalEstimate = [ws.checkTotalEstimatedVolume floatValue];
-        }else{
+        } else {
             totalEstimate = [ws.totalEstimatedVolume floatValue];
             // totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
             //we need to calculate the check estimated volume for original waste piece object
@@ -76,14 +75,10 @@
            //wastePiece.checkPieceVolume = [[[NSDecimalNumber alloc] initWithFloat:([plot.checkVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
         }
         volume = totalEstimate * ([wastePiece.estimatedPercent floatValue] / 100.0);
-
         wastePiece.estimatedVolume = [[[NSDecimalNumber alloc] initWithFloat:volume] decimalNumberByRoundingAccordingToBehavior:behavior];
     }
     
-    
-    
     wastePiece.pieceVolume = [[NSDecimalNumber alloc] initWithFloat:volume];
-    
     
     wastePiece.pieceVolume = [wastePiece.pieceVolume decimalNumberByRoundingAccordingToBehavior:behavior];
     
