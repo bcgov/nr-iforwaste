@@ -50,6 +50,8 @@
     NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     //NSLog(@"assessment method code = %@", wastePiece.piecePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode);
     
+    
+    //----Revert logic back to 1.2.8v----
     if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]) {
         
         if ([wastePiece.pieceMaterialKindCode.materialKindCode isEqualToString:@"S"]) {
@@ -77,6 +79,8 @@
         volume = totalEstimate * ([wastePiece.estimatedPercent floatValue] / 100.0);
         wastePiece.estimatedVolume = [[[NSDecimalNumber alloc] initWithFloat:volume] decimalNumberByRoundingAccordingToBehavior:behavior];
     }
+    
+    //----End: Revert logic back to 1.2.8v----
     
     wastePiece.pieceVolume = [[NSDecimalNumber alloc] initWithFloat:volume];
     
