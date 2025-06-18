@@ -44,6 +44,7 @@
     float pi = 3.141592;
     float volume = 0;
     NSLog(@"PLOT checkVolume: %@", plot.checkVolume);
+    NSLog(@"WS  %@", ws.stratumPlot);
     //WasteStratum *ws = plot.plotStratum;
     //NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -58,22 +59,22 @@
             volume = ((((((t - td) * (t - td)) * pi) / 10000) + ((((b - bd) * (b - bd)) * pi) / 10000)) / 2) * (l - ld) / 10;
             //volume =(((t - td) *(t - td)) + ((b - bd) * (b - bd))) * ((l - ld)/10.0) * k;
         }
-    }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
+    } else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]) {
         //volume = [wastePiece.estimatedVolume floatValue];
         
-    }else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
+    } else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
         float totalEstimate = 0;
 
-        /*if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
+        if ([wastePiece.pieceNumber rangeOfString:@"C"].location != NSNotFound){
             totalEstimate = [ws.checkTotalEstimatedVolume floatValue];
-        }else{*/
-            //totalEstimate = [ws.totalEstimatedVolume floatValue];
-            totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
+        }else{
+            totalEstimate = [ws.totalEstimatedVolume floatValue];
+            // totalEstimate = [wastePiece.piecePlot.plotEstimatedVolume floatValue];
             //we need to calculate the check estimated volume for original waste piece object
-           // wastePiece.checkPieceVolume =[[[NSDecimalNumber alloc] initWithFloat:([ws.checkTotalEstimatedVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
+            wastePiece.checkPieceVolume =[[[NSDecimalNumber alloc] initWithFloat:([ws.checkTotalEstimatedVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
         
-        wastePiece.checkPieceVolume = [[[NSDecimalNumber alloc] initWithFloat:([plot.checkVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
-        //}
+           //wastePiece.checkPieceVolume = [[[NSDecimalNumber alloc] initWithFloat:([plot.checkVolume floatValue] * ([wastePiece.estimatedPercent floatValue] / 100.0))] decimalNumberByRoundingAccordingToBehavior:behavior];
+        }
         volume = totalEstimate * ([wastePiece.estimatedPercent floatValue] / 100.0);
 
         wastePiece.estimatedVolume = [[[NSDecimalNumber alloc] initWithFloat:volume] decimalNumberByRoundingAccordingToBehavior:behavior];
