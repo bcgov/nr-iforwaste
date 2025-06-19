@@ -649,38 +649,25 @@
     [self.pieceTableView reloadData];
 }
 
-- (IBAction) changeAllPiecesStatusNotChecked:(id)sender {
-    NSString *title = NSLocalizedString(@"Piece Status Change Confirmation ", nil);
-    NSString *message = NSLocalizedString(@"Are you sure you want to change all checked status to 'Not Checked'?", nil);
-    NSString *cancelBtn = NSLocalizedString(@"No", nil);
-    NSString *confirmBtn = NSLocalizedString(@"Yes", nil);
+- (IBAction) changeStatus:(id)sender {
+    NSString *title = NSLocalizedString(@"Piece Status Change ", nil);
+    NSString *message = NSLocalizedString(@"Please select a status.", nil);
+    NSString *cancelBtn = NSLocalizedString(@"Cancel", nil);
+    NSString *approveBtn = NSLocalizedString(@"Approve All", nil);
+    NSString *notCheckedAllBtn = NSLocalizedString(@"Not Checked All", nil);
     
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *confirm = [UIAlertAction actionWithTitle:confirmBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *approve = [UIAlertAction actionWithTitle:approveBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self changePieceStatusByType:@"approved"];
+    }];
+    UIAlertAction *notChecked = [UIAlertAction actionWithTitle:notCheckedAllBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self changePieceStatusByType:@"notChecked"];
     }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelBtn style:UIAlertActionStyleCancel handler:nil];
    
     [alert addAction:cancel];
-    [alert addAction:confirm];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (IBAction) changeAllPiecesStatusApprove:(id)sender {
-    NSString *title = NSLocalizedString(@"Piece Status Change Confirmation ", nil);
-    NSString *message = NSLocalizedString(@"Are you sure you want to approve all?", nil);
-    NSString *cancelBtn = NSLocalizedString(@"No", nil);
-    NSString *confirmBtn = NSLocalizedString(@"Yes", nil);
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *confirm = [UIAlertAction actionWithTitle:confirmBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self changePieceStatusByType:@"approved"];
-    }];
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelBtn style:UIAlertActionStyleCancel handler:nil];
-   
-    [alert addAction:cancel];
-    [alert addAction:confirm];
+    [alert addAction:notChecked];
+    [alert addAction:approve];
     
     [self presentViewController:alert animated:YES completion:nil];
 }
