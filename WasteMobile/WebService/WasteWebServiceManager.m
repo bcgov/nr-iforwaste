@@ -309,6 +309,8 @@
                         NSLog(@"Error when getting Piece: %@", error);
                         
                     }
+                    wplot.plotEstimatedVolume = ws.totalEstimatedVolume;
+                    wplot.checkVolume = ws.checkTotalEstimatedVolume;
                     
                     NSArray *wpieceAry = [WastePieceDTOAdaptor wastePieceDTOFromJSON:responseData error:&error];
                     

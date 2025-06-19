@@ -43,8 +43,7 @@
     float k = 0.0001571;
     float pi = 3.141592;
     float volume = 0;
-    NSLog(@"PLOT checkVolume: %@", plot.checkVolume);
-    NSLog(@"WS  %@", ws.stratumPlot);
+
     //WasteStratum *ws = plot.plotStratum;
     //NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
