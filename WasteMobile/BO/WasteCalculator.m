@@ -311,13 +311,13 @@
                 tm.avoidable = [[[NSDecimalNumber alloc] initWithDouble:(blockBenchmark / ([wasteBlock.netArea doubleValue] - ignoreExtraStratumArea))] decimalNumberByRoundingAccordingToBehavior:behavior];
             }
             //update the benchmark
-            /*if (wasteBlock.blockCheckMaturityCode){
+            if (wasteBlock.blockCheckMaturityCode){
                 if ( [wasteBlock.blockCheckMaturityCode.maturityCode isEqualToString:@"I"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"10"];
                 }else if ([wasteBlock.blockCheckMaturityCode.maturityCode isEqualToString:@"M"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"35"];
                 }
-            }else */if(wasteBlock.blockCheckSiteCode){
+            }else if(wasteBlock.blockCheckSiteCode){
                 if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"DB"]){
                     tm.benchmark = [NSDecimalNumber decimalNumberWithString:@"4"];
                 }else if ([wasteBlock.blockCheckSiteCode.siteCode isEqualToString:@"TZ"]){
@@ -1259,6 +1259,7 @@
                                         //Calculate the piece value and the piece volume in per ha
                                         NSDecimalNumber *pieceRateDN = [[[NSDecimalNumber alloc] initWithDouble:[self pieceRate:piece.pieceScaleSpeciesCode.scaleSpeciesCode withGrade:piece.pieceScaleGradeCode.scaleGradeCode
                                                                                                                       withAvoid:[piece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"] forBlock:wasteBlock withTimbermark:timbermark]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                                        
                                         NSDecimalNumber *piecePriceDN =[[[NSDecimalNumber alloc] initWithDouble:[pieceRateDN doubleValue] * [piece.pieceVolume doubleValue]] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                                         NSDecimalNumber *valueDN = [[[NSDecimalNumber alloc] initWithDouble:[piecePriceDN doubleValue] * (100.0/[wp.surveyedMeasurePercent integerValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
                                         NSDecimalNumber *valueHaDN = nil;
@@ -1540,11 +1541,11 @@
     stat.totalControlVolumeHa = [[NSDecimalNumber alloc] initWithInt:0];
 }
 
-+(float)pieceRate:(NSString*)species withGrade:(NSString*)grade withAvoid:(BOOL)avoid forBlock:(WasteBlock*)wasteBlock withTimbermark:(Timbermark*)timbermark{
++(float)pieceRate:(NSString*)species withGrade:(NSString*)grade withAvoid:(BOOL)avoid forBlock:(WasteBlock*)wasteBlock withTimbermark:(Timbermark*)timbermark {
     
  
      //NSLog(@"PIECE");
-     //NSLog(@"\n species = %@ \n grade = %@", species, grade);
+    // NSLog(@"\n species = %@ \n grade = %@", species, grade);
      //NSLog(@"TIMBERMARK \n");
      //NSLog(@"\nH/B U = %@ \n Decidous = %@ All_X = %@ \n All_Y = %@ All Spp J+ = %@", primaryTimbermark.hembalWMRF, primaryTimbermark.deciduousWMRF, primaryTimbermark.xWMRF,primaryTimbermark.yWMRF, primaryTimbermark.allSppJWMRF );
  
@@ -1552,7 +1553,7 @@
         return 0.0;
     }else{
         
-        if(!timbermark){
+        if (!timbermark || grade == nil) {
             //NSLog(@"Missing primary timbermark");
             return 0.0;
         }
@@ -1560,34 +1561,65 @@
         NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
         [f setNumberStyle:NSNumberFormatterDecimalStyle];
         
+        NSMutableString *key = [[NSMutableString alloc] initWithString:grade];
+        [key appendString:@"_"];
+        [key appendString:species];
         
-        if(( [species isEqualToString:@"HE"] && [grade isEqualToString:@"U"] ) ||
-           ([species isEqualToString:@"BA"] && [grade isEqualToString:@"U"])){
-            return [timbermark.hembalWMRF floatValue];
+        //NSLog(@"KEY: %@", key);
+        
+
+        if ([wasteBlock.regionId integerValue] == InteriorRegion) {
+            if ([self isDeciduousSpeciesInterior:key])
+                return [timbermark.deciduousPrice floatValue];
+            else if ([self isConiferSpeciesInterior:key])
+                return [timbermark.coniferPrice floatValue];
+            else if ([self isGrade4SpeciesInterior:key])
+                return [timbermark.yPrice floatValue];
+            else if ([self isDefaultSpeciesInterior:key])
+                return 0.0;
+            
+        } else {
+            
+           if ([key rangeOfString:@"W_"].location != NSNotFound)
+               return [timbermark.deciduousPrice floatValue];
+            else if ([key rangeOfString:@"X_"].location != NSNotFound)
+                return [timbermark.xPrice floatValue];
+            else if ([key rangeOfString:@"Y_"].location != NSNotFound)
+                return [timbermark.yPrice floatValue];
+            else if ([key rangeOfString:@"U_HE"].location != NSNotFound || [key rangeOfString:@"U_BA"].location != NSNotFound || [key rangeOfString:@"U_LA"].location != NSNotFound)
+                return [timbermark.hembalPrice floatValue];
+            else if ([key rangeOfString:@"Z_"].location != NSNotFound)
+                return 0.0;
+            else if ([key rangeOfString:@"U_"].location != NSNotFound || [key rangeOfString:@"J_"].location != NSNotFound)
+                return [timbermark.coniferPrice floatValue];
         }
-            else if( [grade isEqualToString:@"W"] ||
-                    (![grade isEqualToString:@"4"] && ![grade isEqualToString:@"5"] && [wasteBlock.regionId integerValue] == InteriorRegion && ([species isEqualToString:@"AS"]||
-                                                                                                                                                [species isEqualToString:@"BI"]||
-                                                                                                                                                [species isEqualToString:@"CO"]||
-                                                                                                                                                [species isEqualToString:@"AL"]||
-                                                                                                                                                [species isEqualToString:@"MA"]||
-                                                                                                                                                [species isEqualToString:@"OT"]||
-                                                                                                                                                [species isEqualToString:@"AR"]||
-                                                                                                                                                [species isEqualToString:@"WI"])) ){
-                return [timbermark.deciduousWMRF floatValue];
-        }
-        else if( [grade isEqualToString:@"X"] ){
-            return [timbermark.xWMRF floatValue];
-        }
-        else if( [grade isEqualToString:@"Y"] || [grade isEqualToString:@"4"] || [grade isEqualToString:@"5"]){
-            return [timbermark.yWMRF floatValue];
-        }
-        else if( [grade isEqualToString:@"6"] ){
-            return 0.0;
-        }
-        else{
-            return [timbermark.allSppJWMRF floatValue];
-        }
+        
+        return 0.0;
+        
+        
+//----Old logic----
+//        if(( [species isEqualToString:@"HE"] && [grade isEqualToString:@"U"] ) || ([species isEqualToString:@"BA"] && [grade isEqualToString:@"U"])) {
+//            return [timbermark.hembalWMRF floatValue];
+//        } else if( [grade isEqualToString:@"W"] ||
+//                    (![grade isEqualToString:@"4"] && ![grade isEqualToString:@"5"] && [wasteBlock.regionId integerValue] == InteriorRegion && ([species isEqualToString:@"AS"]||
+//                                                                                                                                                [species isEqualToString:@"BI"]||
+//                                                                                                                                                [species isEqualToString:@"CO"]||
+//                                                                                                                                                [species isEqualToString:@"AL"]||
+//                                                                                                                                                [species isEqualToString:@"MA"]||
+//                                                                                                                                                [species isEqualToString:@"OT"]||
+//                                                                                                                                                [species isEqualToString:@"AR"]||
+//                                                                                                                                                [species isEqualToString:@"WI"])) ) {
+//            return [timbermark.deciduousWMRF floatValue];
+//        } else if( [grade isEqualToString:@"X"] ) {
+//            return [timbermark.xWMRF floatValue];
+//        } else if( [grade isEqualToString:@"Y"] || [grade isEqualToString:@"4"] || [grade isEqualToString:@"5"]){
+//            return [timbermark.yWMRF floatValue];
+//        } else if( [grade isEqualToString:@"6"] || [grade isEqualToString:@"Z"] ){
+//            return 0.0;
+//        }
+//        else{
+//            return [timbermark.allSppJWMRF floatValue];
+//        }
     }
 }
 

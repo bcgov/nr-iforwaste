@@ -270,7 +270,6 @@
                         
                         if (error != nil){
                             NSLog(@"Error when getting Piece: %@", error);
-                            
                         }
                         
                         NSArray *wpieceAry = [WastePieceDTOAdaptor wastePieceDTOFromJSON:responseData error:&error];
@@ -294,7 +293,7 @@
                         //add plot to stratum after adding the piece to plot
                         [ws addStratumPlotObject:wplot];
                     }
-                }else{
+                } else {
                     //if stratum is not using plot assessment method, create a empty plot to hold the pieces
                     WastePlot *wplot = [self createEmptyPlot];
                     
