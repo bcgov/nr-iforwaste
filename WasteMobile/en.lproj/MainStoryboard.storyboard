@@ -2853,11 +2853,11 @@
                                                 <rect key="frame" x="0.0" y="600" width="1024" height="180"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cc7-HE-QbK">
-                                                        <rect key="frame" x="0.0" y="54" width="47" height="34"/>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cc7-HE-QbK">
+                                                        <rect key="frame" x="8" y="93" width="37" height="79"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <state key="normal" title="Button"/>
-                                                        <buttonConfiguration key="configuration" style="plain" image="arrow.down.document" catalog="system" title=""/>
+                                                        <buttonConfiguration key="configuration" style="plain" image="arrow.down.document" catalog="system" imagePlacement="top" title="" buttonSize="small"/>
                                                         <connections>
                                                             <action selector="changeStatus:" destination="9Gp-a2-4z6" eventType="touchUpInside" id="5Xl-Y4-pbX"/>
                                                         </connections>
@@ -3095,7 +3095,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Original" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RiR-Nk-u3f">
-                                                        <rect key="frame" x="352" y="33" width="69" height="23"/>
+                                                        <rect key="frame" x="352" y="33" width="77" height="23"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
                                                         <nil key="highlightedColor"/>
