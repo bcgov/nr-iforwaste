@@ -367,7 +367,7 @@
 
 +(BOOL) isPlotAudited:(WastePlot *) wplot {
     for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
-        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpiece.pieceCheckerStatusCode.checkerStatusCode == nil ) {
             return YES;
         }
     }
