@@ -367,7 +367,7 @@
 
 +(BOOL) isPlotAudited:(WastePlot *) wplot {
     for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
-        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
+        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
             return YES;
         }
     }
@@ -553,7 +553,7 @@
                         }
                     }
                    
-                   if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) { //TODO: Packing Ratio
+                   if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
                        wplot.surveyAvoidY = [[self calculateTotalBillableVolume:surveyMeasurePercent billableTotalVol:plotSurveyBillTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                        wplot.surveyAvoidX = [[self calculateTotalBillableVolume:surveyMeasurePercent billableTotalVol:plotSurveyCutControlTotalVol wasteStratum:ws] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                        
@@ -568,10 +568,10 @@
                        wplot.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:plotCheckCutControlTotalVol] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                    }
 
-                    wplot.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkAvoidX doubleValue] > 0.0 ? fabs((([wplot.checkAvoidX doubleValue] - [wplot.surveyAvoidX doubleValue])/ [wplot.checkAvoidX doubleValue]) * 100.0) : 0.0)];
-                    wplot.deltaAvoidX = [wplot.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
+                   wplot.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkAvoidX doubleValue] > 0.0 ? fabs((([wplot.checkAvoidX doubleValue] - [wplot.surveyAvoidX doubleValue])/ [wplot.checkAvoidX doubleValue]) * 100.0) : ([wplot.surveyAvoidX doubleValue] > 0.0 ? 100.0 : 0.0))];
+                   wplot.deltaAvoidX = [wplot.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
 
-                    wplot.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkAvoidY doubleValue] > 0.0 ? fabs((([wplot.checkAvoidY doubleValue] - [wplot.surveyAvoidY doubleValue])/ [wplot.checkAvoidY doubleValue]) * 100.0) : 0.0)];
+                   wplot.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkAvoidY doubleValue] > 0.0 ? fabs((([wplot.checkAvoidY doubleValue] - [wplot.surveyAvoidY doubleValue])/ [wplot.checkAvoidY doubleValue]) * 100.0) : ([wplot.surveyAvoidY doubleValue] > 0.0 ? 100.0 : 0.0))];
                     wplot.deltaAvoidY = [wplot.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
 
                     
@@ -697,9 +697,9 @@
                 ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCutControlTotalVol / [ws.stratumArea doubleValue])]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
             }
             
-            ws.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidX doubleValue] > 0.0 ? fabsf((([ws.checkAvoidX floatValue] - [ws.surveyAvoidX floatValue]) / [ws.checkAvoidX floatValue]) * 100) : 0.0)];
+            ws.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidX doubleValue] > 0.0 ? fabsf((([ws.checkAvoidX floatValue] - [ws.surveyAvoidX floatValue]) / [ws.checkAvoidX floatValue]) * 100) : ([ws.surveyAvoidX doubleValue] > 0.0 ? 100.0 : 0.0))];
             ws.deltaAvoidX = [ws.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
-            ws.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidY doubleValue] > 0.0 ? fabsf((([ws.checkAvoidY floatValue] - [ws.surveyAvoidY floatValue]) / [ws.checkAvoidY floatValue]) * 100) : 0.0)];
+            ws.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([ws.checkAvoidY doubleValue] > 0.0 ? fabsf((([ws.checkAvoidY floatValue] - [ws.surveyAvoidY floatValue]) / [ws.checkAvoidY floatValue]) * 100) : ([ws.surveyAvoidY doubleValue] > 0.0 ? 100.0 : 0.0))];
             ws.deltaAvoidY = [ws.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
             
             //DEV: because of the rounding issue: 0.1 + 0.1 + 0.1 = 0.2999999 etc
@@ -760,9 +760,9 @@
     wasteBlock.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(blockSurveyBillTotalVol / [wasteBlock.surveyArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
     wasteBlock.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(blockSurveyCutControlTotalVol/ [wasteBlock.surveyArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
 
-    wasteBlock.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkAvoidX doubleValue] > 0.0 ? fabsf((([wasteBlock.checkAvoidX floatValue] - [wasteBlock.surveyAvoidX floatValue])/ [wasteBlock.checkAvoidX floatValue]) * 100): 0.0)];
+    wasteBlock.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkAvoidX doubleValue] > 0.0 ? fabsf((([wasteBlock.checkAvoidX floatValue] - [wasteBlock.surveyAvoidX floatValue])/ [wasteBlock.checkAvoidX floatValue]) * 100): ([wasteBlock.surveyAvoidX doubleValue] > 0.0 ? 100.0 : 0.0))];
     wasteBlock.deltaAvoidX = [wasteBlock.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
-    wasteBlock.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkAvoidY doubleValue] > 0.0 ? fabsf((([wasteBlock.checkAvoidY floatValue] - [wasteBlock.surveyAvoidY floatValue])/ [wasteBlock.checkAvoidY floatValue]) * 100): 0.0)];
+    wasteBlock.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([wasteBlock.checkAvoidY doubleValue] > 0.0 ? fabsf((([wasteBlock.checkAvoidY floatValue] - [wasteBlock.surveyAvoidY floatValue])/ [wasteBlock.checkAvoidY floatValue]) * 100): ([wasteBlock.surveyAvoidY doubleValue] > 0.0 ? 100.0 : 0.0))];
     wasteBlock.deltaAvoidY = [wasteBlock.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
 
 
