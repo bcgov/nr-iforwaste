@@ -2189,11 +2189,10 @@ UITextField *activeTextField;
     self.returnNumber.text = wasteBlock.returnNumber && [wasteBlock.returnNumber intValue] > 0 ? [wasteBlock.returnNumber stringValue] : @"";
     self.surveyorLicence.text = wasteBlock.surveyorLicence ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.surveyorLicence] : @"";
     
-    // WASTE CHECKER: Default to blank
-//    self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
-//    self.professionalDesignation.text = wasteBlock.professional ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.professional] : @"";
-//    self.registrationNumber.text = wasteBlock.registrationNumber ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.registrationNumber] : @"";
-//    self.position.text = wasteBlock.position ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.position] : @"";
+    self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
+    self.professionalDesignation.text = wasteBlock.professional ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.professional] : @"";
+    self.registrationNumber.text = wasteBlock.registrationNumber ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.registrationNumber] : @"";
+    self.position.text = wasteBlock.position ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.position] : @"";
 
     
     self.notes.text = wasteBlock.notes ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.notes] : @"";

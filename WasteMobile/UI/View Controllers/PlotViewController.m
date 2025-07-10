@@ -629,11 +629,13 @@
 
 -(void) changePieceStatusByType:(NSString *) type {
     for (WastePiece *wpiece in [self.wastePlot.plotPiece allObjects]) {
+        NSLog(@"piece status code %@", wpiece.pieceCheckerStatusCode.checkerStatusCode);
         if ([type isEqualToString:@"approved"] ) {
-            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"])
+            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"])
                 wpiece.pieceCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
         } else {
-            wpiece.pieceCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
+            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"])
+                wpiece.pieceCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
         }
     }
     
