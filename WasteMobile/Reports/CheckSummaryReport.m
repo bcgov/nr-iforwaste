@@ -9,6 +9,7 @@
 #import "CheckSummaryReport.h"
 #import "WasteBlock.h"
 #import "WasteStratum.h"
+#import "AssessmentMethodCode.h"
 
 #import "WastePlot.h"
 #import "WastePiece.h"
@@ -337,7 +338,7 @@
 -(BOOL) isStratumAudited:(WasteStratum *) wstratum {
     for(WastePlot *wplot in [wstratum.stratumPlot allObjects]) {
         for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
-            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
+            if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpiece.pieceCheckerStatusCode.checkerStatusCode == nil) {
                 return YES;
             }
         }
@@ -347,7 +348,7 @@
 
 -(BOOL) isPlotAudited:(WastePlot *) wplot {
     for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
-        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"5"]) {
+        if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpiece.pieceCheckerStatusCode.checkerStatusCode == nil) {
             return YES;
         }
     }
@@ -422,14 +423,11 @@
                 {
                     if ([self isPlotAudited:plot]) {
                         
-                        
                         sortedPieces = [plot.plotPiece sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPieces]];
-                        
                         
                         // TD1
                         td1 = plot.plotNumber ? [plot.plotNumber stringValue] : @"";
                         //NSLog(@"PLOT = %@", td1);
-                        
                         
                         for(WastePiece *piece in sortedPieces) // check every piece in this plot, for which columns can it be counted
                         {
@@ -446,18 +444,14 @@
                              */
                             
                             // TD3 - Survey pieces count = all pieces except those without pieceID
-                            if(piece.pieceCheckerStatusCode.checkerStatusCode != nil && ! [self stringHasC: piece.pieceNumber]){
+                            if(piece.pieceCheckerStatusCode.checkerStatusCode != nil && ![self stringHasC: piece.pieceNumber]){
                                 surveyPieces++;
                             }
                             
                             
-                            // TD4 - Check pieces count // POTENTIAL BUG, comparing strings
-                            if( (piece.pieceCheckerStatusCode!=nil && [piece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]) && piece.piece ){
-                                // dont count
-                            } else {
-                                if( ! [self stringHasC: piece.pieceNumber  ] ){ // dont count changed pices, since they got accounted for in the "if" above
-                                    checkPieces++;
-                                }
+                            // TD4 - Check pieces count
+                            if (![self stringHasC: piece.pieceNumber] && ![piece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
+                                checkPieces++;
                             }
                             
                             
@@ -663,6 +657,9 @@
         NSArray *sortedPieces = [[NSArray alloc] init];
         
         NSString *passFail = @"";
+        double stratumTotalOriginalCutCtrlVol = 0.0;
+        double stratumTotalCheckCutCtrlVol = 0.0;
+        
         for(WasteStratum *stratum in sortedStratums)
         {
             if ([self isStratumAudited:stratum]) {
@@ -672,6 +669,9 @@
                 
                 // TD1
                 td1 = stratum.stratum ? stratum.stratum : @"";
+                double totalOriginalCutCtrlVol = 0.0;
+                double totalCheckCutCtrlVol = 0.0;
+                
                 for(WastePlot *plot in sortedPlots)
                 {
                     if ([self isPlotAudited:plot]) {
@@ -698,11 +698,32 @@
                         }
                         td5 = [NSString stringWithFormat:@"%.1f%%", [plot.deltaAvoidY floatValue]];
                         td6 = [NSString stringWithFormat:@"%@", passFail];
-                        td3 = [NSString stringWithFormat:@"%.03f", plot.surveyAvoidY.floatValue];
-                        td4 = [NSString stringWithFormat:@"%.03f", plot.checkAvoidY.floatValue];
+                        if ([stratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] || [stratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]) {
+                            double totalPieceVol = 0.0;
+                            double totalCheckPieceVol = 0.0;
+                            
+                            for (WastePiece *wpiece in [plot.plotPiece allObjects]) {
+                                
+                                if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpiece.pieceCheckerStatusCode.checkerStatusCode == nil) {
+                                    
+                                    totalPieceVol += [wpiece.pieceVolume doubleValue];
+                                    totalCheckPieceVol += [wpiece.checkPieceVolume doubleValue];
+                                }
+                            }
+                            
+                            td3 = [NSString stringWithFormat:@"%.03f", totalPieceVol];
+                            td4 = [NSString stringWithFormat:@"%.03f", totalCheckPieceVol];
+                           
+                        } else {
+                            td3 = [NSString stringWithFormat:@"%.03f",  plot.surveyAvoidX.floatValue * [stratum.stratumSurveyArea floatValue]];
+                            td4 = [NSString stringWithFormat:@"%.03f",  plot.checkAvoidX.floatValue * [stratum.stratumArea floatValue]];
+                        }
                         
                         row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
                         [rows addObject:row];
+                        
+                        totalOriginalCutCtrlVol += [plot.surveyAvoidX doubleValue];
+                        totalCheckCutCtrlVol += [plot.checkAvoidX doubleValue];
                         
                     }
                 }// end of plots
@@ -733,26 +754,34 @@
                 
                 
                 td2 = @"TOTAL";
-                td3 = [NSString stringWithFormat:@"%.03f", stratum.surveyAvoidY.floatValue];
-                td4 = [NSString stringWithFormat:@"%.03f", stratum.checkAvoidY.floatValue];
+                if ([stratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] || [stratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]) {
+                    td3 = [NSString stringWithFormat:@"%.03f", totalOriginalCutCtrlVol];
+                    td4 = [NSString stringWithFormat:@"%.03f", totalCheckCutCtrlVol];
+                    
+                } else {
+                    td3 = [NSString stringWithFormat:@"%.03f", stratum.surveyAvoidX.floatValue * [stratum.stratumSurveyArea doubleValue]];
+                    td4 = [NSString stringWithFormat:@"%.03f", stratum.checkAvoidX.floatValue * [stratum.stratumArea doubleValue]];
+                }
+                
                 
                 row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
                 
                 if( sortedPlots.count != 0 ){
                     [rows addObject:row]; // if no plots dont add
                 }
+                
+                stratumTotalOriginalCutCtrlVol += [stratum.surveyAvoidX doubleValue];
+                stratumTotalCheckCutCtrlVol += [stratum.checkAvoidX doubleValue];
             }
         }// end for stratum
         
         
         // TOTAL ROW
-        if(wastBlock.deltaAvoidY.floatValue < 0.005){
+        if (wastBlock.deltaAvoidY.floatValue < 0.005) {
             td5 = @"";
             td6 = @"";
-        }
-        else{
+        } else {
            
-            
             // calc pass/fail
             passFail = @"P";
             NSDecimalNumber *absDiff = [self abs:wastBlock.deltaAvoidY];
@@ -769,8 +798,9 @@
         
         td1 = [NSString stringWithFormat:@"<b>BLOCK</b>"];
         td2 = [NSString stringWithFormat:@"<b>TOTAL</b>"];
-        td3 = [NSString stringWithFormat:@"<b>%.03f</b>", wastBlock.surveyAvoidY.floatValue];
-        td4 = [NSString stringWithFormat:@"<b>%.03f</b>", wastBlock.checkAvoidY.floatValue];
+        
+        td3 = [NSString stringWithFormat:@"<b>%.03f</b>", stratumTotalOriginalCutCtrlVol];
+        td4 = [NSString stringWithFormat:@"<b>%.03f</b>", stratumTotalCheckCutCtrlVol];
 
         row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
         [rows addObject:row];

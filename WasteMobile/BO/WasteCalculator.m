@@ -506,9 +506,13 @@
                             if (isCheck) {
                                 // For Cut Control Volume
                                 if ([key rangeOfString:@"Z_"].location == NSNotFound) {
+                                    
                                     if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]) {
+                                        
                                         plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.pieceVolume doubleValue]);
+                                        
                                     } else if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
+                                        
                                         plotCheckCutControlTotalVol = plotCheckCutControlTotalVol + ([wpiece.checkPieceVolume doubleValue]);
                                     }
                                     
@@ -516,19 +520,23 @@
                                     
                                     // For Billable Volume
                                     if ([wpiece.pieceWasteClassCode.wasteClassCode isEqualToString:@"A"]) {
+                                        
                                         if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"] || [ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]) {
+                                            
                                             plotCheckBillTotalVol = plotCheckBillTotalVol + ([wpiece.pieceVolume doubleValue]);
+                                            
                                         } else  if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
+                                            
                                             plotCheckBillTotalVol = plotCheckBillTotalVol + ([wpiece.checkPieceVolume doubleValue]);
                                         }
                                         
                                         plotCheckBillCounter = plotCheckBillCounter + 1;
                                         
                                         if ([plotCheckPieceSpeciesGradeVolume objectForKey:key]) {
+                                            
                                             NSDecimalNumber *newDN = nil;
                                             
                                             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]) {
-                                                
                                                 //} && [wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
                                                 newDN =[[plotCheckPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:wpiece.checkPieceVolume];
                                             } else {
@@ -607,7 +615,7 @@
                     stratumCheckTotalValue = stratumCheckTotalValue + [wplot.checkNetVal doubleValue];
                     stratumSurveyTotalValue =  stratumSurveyTotalValue + [wplot.surveyNetVal doubleValue];
                     
-                    wplot.deltaNetVal = [[NSDecimalNumber alloc] initWithDouble:([wplot.checkNetVal doubleValue] > 0.0 ? fabs((([wplot.surveyNetVal doubleValue] - [wplot.checkNetVal doubleValue])/ [wplot.checkNetVal doubleValue]) * 100.0 ): ([wplot.surveyNetVal doubleValue] > 0.0 ? 100.0 : 0.0))];
+                    wplot.deltaNetVal =  [[NSDecimalNumber alloc] initWithDouble:([wplot.checkNetVal doubleValue] > 0.0 ? fabs((([wplot.surveyNetVal doubleValue] - [wplot.checkNetVal doubleValue])/ [wplot.checkNetVal doubleValue]) * 100.0 ): ([wplot.surveyNetVal doubleValue] > 0.0 ? 100.0 : 0.0))];
                     wplot.deltaNetVal = [wplot.deltaNetVal decimalNumberByRoundingAccordingToBehavior:behaviorND];
                     
                    //------------------------------------------------------------------
@@ -615,25 +623,25 @@
                    //------------------------------------------------------------------
                    
                     //store the piece species grade volume array in stratum and block level for calculating the total value
-                    for(NSString *key in [plotCheckPieceSpeciesGradeVolume allKeys]){
-                        if ([stratumCheckPieceSpeciesGradeVolume objectForKey:key]){
+                    for (NSString *key in [plotCheckPieceSpeciesGradeVolume allKeys]) {
+                        if ([stratumCheckPieceSpeciesGradeVolume objectForKey:key]) {
                             
                             NSDecimalNumber *newDN =[[stratumCheckPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:[plotCheckPieceSpeciesGradeVolume objectForKey:key]];
                             
                             [stratumCheckPieceSpeciesGradeVolume removeObjectForKey:key];
                             [stratumCheckPieceSpeciesGradeVolume setObject:newDN forKey:key];
-                        }else{
+                        } else {
                             // for new key
                             [stratumCheckPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[[plotCheckPieceSpeciesGradeVolume objectForKey:key] doubleValue]] forKey:key];
                         }
 
-                        if ([blockCheckPieceSpeciesGradeVolume objectForKey:key]){
+                        if ([blockCheckPieceSpeciesGradeVolume objectForKey:key]) {
                             
                             NSDecimalNumber *newDN =[[blockCheckPieceSpeciesGradeVolume objectForKey:key] decimalNumberByAdding:[plotCheckPieceSpeciesGradeVolume objectForKey:key]];
                             
                             [blockCheckPieceSpeciesGradeVolume removeObjectForKey:key];
                             [blockCheckPieceSpeciesGradeVolume setObject:newDN forKey:key];
-                        }else{
+                        } else {
                             // for new key
                             [blockCheckPieceSpeciesGradeVolume setObject:[[NSDecimalNumber alloc] initWithDouble:[[plotCheckPieceSpeciesGradeVolume objectForKey:key] doubleValue]] forKey:key];
                         }
@@ -663,8 +671,9 @@
                         }
                     }
                     
-                   stratumCheckBillTotalVol = stratumCheckBillTotalVol + ([wplot.checkAvoidY doubleValue] > 0 ? [wplot.checkAvoidX doubleValue] : 0.0);
+                   stratumCheckBillTotalVol = stratumCheckBillTotalVol + ([wplot.checkAvoidY doubleValue] > 0 ? [wplot.checkAvoidY doubleValue] : 0.0);
                    stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + ([wplot.checkAvoidX doubleValue] > 0 ? [wplot.checkAvoidX doubleValue] : 0.0);
+                   
                    if ([self isPlotAudited:wplot])
                        stratumCheckCounter = stratumCheckCounter + 1;
                    

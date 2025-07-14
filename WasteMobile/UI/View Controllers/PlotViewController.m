@@ -540,7 +540,12 @@
         NSLog(@" Error when saving waste plot into Core Data: %@", error);
     }
     
+
+    [WasteCalculator calculatePiecesValue:self.wasteBlock];
+    [self.footerStatView setViewValue:self.wastePlot];
+    
     [self.pieceTableView reloadData];
+
     
 }
 
