@@ -224,7 +224,7 @@
     //
     [self populateFromObject];
     
-    if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [self.wastePlot.checkVolume isEqualToNumber:self.wastePlot.plotEstimatedVolume]) {
+    if ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"] || ([self.wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] && [self.wastePlot.checkVolume isEqualToNumber:self.wastePlot.plotEstimatedVolume])) {
         NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
         for (WastePiece *wpiece in [self.wastePlot.plotPiece allObjects]) {
             wpiece.checkPieceVolume =  [wpiece.pieceVolume decimalNumberByRoundingAccordingToBehavior:behaviorD3];

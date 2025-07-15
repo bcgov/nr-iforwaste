@@ -103,7 +103,7 @@
         [labelArray addObject:@"IN;pieceCommentCode;w;50"];
         [labelArray addObject:@"*;notes;w;50"];
         [labelArray addObject:@"9.999;pieceVolume;r;71"];
-        [labelArray addObject:@"0.000;;r;73"];
+        [labelArray addObject:@"0.000;checkPieceVolume;r;73"];
         
     }else if ([assessmentMethodCode isEqualToString:@"E"]){
     
