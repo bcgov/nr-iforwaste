@@ -672,11 +672,16 @@
                             double totalCheckPieceVol = 0.0;
                             
                             for (WastePiece *wpiece in [plot.plotPiece allObjects]) {
-                                
-                                if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpiece.pieceCheckerStatusCode.checkerStatusCode == nil) {
+                                if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] ||  wpiece.pieceCheckerStatusCode.checkerStatusCode == nil) {
                                     
                                     totalPieceVol += [wpiece.pieceVolume doubleValue];
                                     totalCheckPieceVol += [wpiece.checkPieceVolume doubleValue];
+                                } else if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+                                    if([self stringHasC: wpiece.pieceNumber]) {
+                                        totalCheckPieceVol += [wpiece.checkPieceVolume doubleValue];
+                                    } else {
+                                        totalPieceVol += [wpiece.pieceVolume doubleValue];
+                                    }
                                 }
                             }
                             
@@ -685,8 +690,7 @@
                             
                             td3 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:totalPieceVol] fractionDigit:3 isCurrency:false];
                             td4 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:totalCheckPieceVol] fractionDigit:3 isCurrency:false];
-                            
-                           
+                
                         } else {
                            // td3 = [NSString stringWithFormat:@"%.03f",  plot.surveyAvoidX.floatValue * [stratum.stratumSurveyArea floatValue]];
                            // td4 = [NSString stringWithFormat:@"%.03f",  plot.checkAvoidX.floatValue * [stratum.stratumArea floatValue]];

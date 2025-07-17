@@ -293,6 +293,7 @@ UITextField *activeTextField;
             }
         }
     }*/
+    
     // LOAD VIEW WITH OBJECT DATA
     [self populateFromObject];
 
@@ -524,6 +525,7 @@ UITextField *activeTextField;
 
         self.wasteBlock.returnNumber = [NSNumber numberWithInt:[self.returnNumber.text intValue]];//[[NSDecimalNumber alloc] initWithString:self.returnNumber.text]; This would hold a value −2,147,483,648 but won't be displayed on screen,when try to merge causes issue
         self.wasteBlock.surveyorLicence = self.surveyorLicence.text;
+        
         self.wasteBlock.professional = self.professionalDesignation.text;
         self.wasteBlock.registrationNumber = self.registrationNumber.text;
         self.wasteBlock.position = self.position.text;
@@ -2189,17 +2191,15 @@ UITextField *activeTextField;
     self.returnNumber.text = wasteBlock.returnNumber && [wasteBlock.returnNumber intValue] > 0 ? [wasteBlock.returnNumber stringValue] : @"";
     self.surveyorLicence.text = wasteBlock.surveyorLicence ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.surveyorLicence] : @"";
     
-    self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
     self.professionalDesignation.text = wasteBlock.professional ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.professional] : @"";
     self.registrationNumber.text = wasteBlock.registrationNumber ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.registrationNumber] : @"";
     self.position.text = wasteBlock.position ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.position] : @"";
 
-    
     self.notes.text = wasteBlock.notes ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.notes] : @"";
     
-    if ([self.wasteBlock.userCreated intValue] == 1){
+    if ([self.wasteBlock.userCreated intValue] == 1) {
         self.wasteCheckerName.text = wasteBlock.surveyorName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.surveyorName] : @"";
-    }else{
+    } else {
         self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
     }
     

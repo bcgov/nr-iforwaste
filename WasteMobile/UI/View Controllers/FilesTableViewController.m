@@ -909,6 +909,9 @@
     
     [self importResultPrompt:[imp ImportDataByURL:url wasteBlock:&wb ignoreExisting:NO]];
     if(wb){
+        wb.position = nil;
+        wb.registrationNumber = nil;
+        wb.professional = nil;
         self.targetWasteBlock = wb;
     }
 }
