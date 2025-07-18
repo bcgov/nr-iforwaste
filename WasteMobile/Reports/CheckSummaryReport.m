@@ -685,15 +685,10 @@
                                 }
                             }
                             
-                           // td3 = [NSString stringWithFormat:@"%.03f", totalPieceVol];
-                            //td4 = [NSString stringWithFormat:@"%.03f", totalCheckPieceVol];
-                            
                             td3 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:totalPieceVol] fractionDigit:3 isCurrency:false];
                             td4 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:totalCheckPieceVol] fractionDigit:3 isCurrency:false];
                 
                         } else {
-                           // td3 = [NSString stringWithFormat:@"%.03f",  plot.surveyAvoidX.floatValue * [stratum.stratumSurveyArea floatValue]];
-                           // td4 = [NSString stringWithFormat:@"%.03f",  plot.checkAvoidX.floatValue * [stratum.stratumArea floatValue]];
                             
                             NSDecimalNumber *surveyVol = [plot.surveyAvoidX decimalNumberByMultiplyingBy:stratum.stratumSurveyArea];
                             NSDecimalNumber *checkVol = [plot.checkAvoidX decimalNumberByMultiplyingBy:stratum.stratumArea];
@@ -702,7 +697,7 @@
                             td4 = [self currencyFormat:checkVol fractionDigit:3 isCurrency:false];
                         }
                         
-                        td5 = [NSString stringWithFormat:@"%.1f%%", [plot.deltaAvoidY floatValue]];
+                        td5 = [NSString stringWithFormat:@"%.1f%%", [plot.deltaAvoidX floatValue]];
                         td6 = [NSString stringWithFormat:@"%@", passFail];
                         
                         row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
@@ -715,14 +710,14 @@
                 }// end of plots
                 
                 
-                if(stratum.checkAvoidY.floatValue < 0.005){
+                if(stratum.checkAvoidX.floatValue < 0.005){
                     td5 = @"";
                     td6 = @"";
                 }
                 else{
                     // calc pass/fail
                     passFail = @"P";
-                    NSDecimalNumber *absDiff = [self abs:stratum.deltaAvoidY];
+                    NSDecimalNumber *absDiff = [self abs:stratum.deltaAvoidX];
                     NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
                     NSComparisonResult result = [absDiff compare:limit];
                     if (result == NSOrderedDescending)
@@ -733,42 +728,36 @@
                         passFail = @"F";
                     }
                     
-                    td5 = [NSString stringWithFormat:@"%.1f%%", stratum.deltaAvoidY.floatValue];
+                    td5 = [NSString stringWithFormat:@"%.1f%%", stratum.deltaAvoidX.floatValue];
                     td6 = [NSString stringWithFormat:@"%@", passFail];
-                    
                 }
-                
                 
                 td2 = @"TOTAL";
                 
                 if ([stratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] || [stratum.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]) {
-                    //td3 = [NSString stringWithFormat:@"%.03f", totalOriginalCutCtrlVol];
-                    //td4 = [NSString stringWithFormat:@"%.03f", totalCheckCutCtrlVol];
-                    
+      
                     td3 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:totalOriginalCutCtrlVol] fractionDigit:3 isCurrency:false];
                     td4 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:totalCheckCutCtrlVol] fractionDigit:3 isCurrency:false];
-                    
-                    
+                    stratumTotalOriginalCutCtrlVol += totalOriginalCutCtrlVol;
+                    stratumTotalCheckCutCtrlVol += totalCheckCutCtrlVol;
                 } else {
-                   // td3 = [NSString stringWithFormat:@"%.03f", stratum.surveyAvoidX.floatValue * [stratum.stratumSurveyArea doubleValue]];
-                   // td4 = [NSString stringWithFormat:@"%.03f", stratum.checkAvoidX.floatValue * [stratum.stratumArea doubleValue]];
-                    
+
                     NSDecimalNumber *totalSurveyVol = [stratum.surveyAvoidX decimalNumberByMultiplyingBy:stratum.stratumSurveyArea];
                     NSDecimalNumber *totalCheckVol = [stratum.checkAvoidX decimalNumberByMultiplyingBy:stratum.stratumArea];
                     
                     td3 = [self currencyFormat:totalSurveyVol fractionDigit:3 isCurrency:false];
                     td4 = [self currencyFormat:totalCheckVol fractionDigit:3 isCurrency:false];
+                    
+                    stratumTotalOriginalCutCtrlVol += [totalSurveyVol doubleValue];
+                    stratumTotalCheckCutCtrlVol += [totalCheckVol doubleValue];
+                    
                 }
-                
                 
                 row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
                 
                 if( sortedPlots.count != 0 ){
                     [rows addObject:row]; // if no plots dont add
                 }
-                
-                stratumTotalOriginalCutCtrlVol += [stratum.surveyAvoidX doubleValue];
-                stratumTotalCheckCutCtrlVol += [stratum.checkAvoidX doubleValue];
             }
         }// end for stratum
         
@@ -788,10 +777,9 @@
             {
                 passFail = @"F";
             }
-            td5 = [NSString stringWithFormat:@"<b>%.1f%%</b>", wastBlock.deltaAvoidY.floatValue];
+            td5 = [NSString stringWithFormat:@"<b>%.1f%%</b>", wastBlock.deltaAvoidX.floatValue];
             td6 = [NSString stringWithFormat:@"<b>%@</b>", passFail];
         }
-
         
         td1 = [NSString stringWithFormat:@"<b>BLOCK</b>"];
         td2 = [NSString stringWithFormat:@"<b>TOTAL</b>"];
@@ -799,8 +787,6 @@
         td3 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:stratumTotalOriginalCutCtrlVol] fractionDigit:3 isCurrency:false];
         td4 = [self currencyFormat:[[NSDecimalNumber alloc] initWithDouble:stratumTotalCheckCutCtrlVol] fractionDigit:3 isCurrency:false];
         
-       // td3 = [NSString stringWithFormat:@"<b>%.03f</b>", stratumTotalOriginalCutCtrlVol];
-        //td4 = [NSString stringWithFormat:@"<b>%.03f</b>", stratumTotalCheckCutCtrlVol];
 
         row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
         [rows addObject:row];
