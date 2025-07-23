@@ -8,7 +8,6 @@
 //
 
 #import "WastePile+CoreDataClass.h"
-#import "StratumPile+CoreDataClass.h"
 
 @implementation WastePile
 

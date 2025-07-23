@@ -20,7 +20,7 @@
 
 -(void) generateReportByBlock:(WasteBlock *)wasteBlock
 {
-    
+
     [super checkReportFolder];
     NSError *error = nil;
     
@@ -45,37 +45,31 @@
     
     // Write to disk
     [data writeToFile:zippedPath atomically:YES];
-    
 }
 
 
--(GenerateOutcomeCode) generateReport:(WasteBlock *)wastBlock suffix:(NSString *)suffix replace:(BOOL)replace{
+-(GenerateOutcomeCode) generateReport:(WasteBlock *)wasteBlock suffix:(NSString *)suffix replace:(BOOL)replace{
     
-    NSLog(@"Genereate plot prediction report (CSV)");
     
     [super checkReportFolder];
     NSError *error = nil;
     
     // check if we got WasteBlock
-    if(wastBlock==nil){
+    if(wasteBlock==nil){
         NSLog(@"PlotPredictionReport-wasteBlock=nil");
         return Fail_Unknown;
     }
-    
     
     // Figure out destination name (in public docs dir)
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *tempFilePath =[documentsDirectory stringByAppendingString:@"/ReportTemplate/"];
 
-    
-    
-    
     if( ![suffix isEqualToString:@""]){
         suffix = [NSString stringWithFormat:@"_%@", [suffix stringByReplacingOccurrencesOfString:@" " withString:@"_"]];
     }
     
-    NSString *zippedName = [NSString stringWithFormat: @"%@PlotPredictionReport%@.csv",[super getReportFilePrefix:wastBlock], suffix];
+    NSString *zippedName = [NSString stringWithFormat: @"%@PlotPredictionReport%@.csv",[super getReportFilePrefix:wasteBlock], suffix];
     NSString *zippedPath = [documentsDirectory stringByAppendingPathComponent:zippedName];
     
     NSLog(@" zippedPath = %@ ", zippedPath ); // test
@@ -87,164 +81,185 @@
     }
 
     
-    NSSet *tmpStratums = [wastBlock blockStratum];
+    NSSet *tmpStratums = [wasteBlock blockStratum];
     NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"stratum" ascending:YES]; // is key ok ? does it actually sort according to it
     NSArray *sortedStratums = [tmpStratums sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     //header based on interior and coast region
-    NSString* mainbody;
-    if([wastBlock.regionId integerValue] == InteriorRegion){
-        //initial the body with column header
-        mainbody = @"\"IPad identifier\",\"Surveyor\",\"Reporting Unit\",\"License\",\"CP\",\"Block\",\"Stratum\",\"Plot No\",\"Time stamp\",\"GPS coordinate\","
-        "\"Random Selection indicator\",\"Predicted Green Volume\",\"Predicted Dry Volume\",\"Attribute Changed\"\n";
-    }else if ([wastBlock.regionId integerValue] == CoastRegion){
-        //initial the body with column header
-        mainbody = @"\"IPad identifier\",\"Surveyor\",\"Reporting Unit\",\"License\",\"CP\",\"Block\",\"Stratum\",\"Plot No\",\"Time stamp\",\"GPS coordinate\","
-        "\"Random Selection indicator\",\"Predicted Plot Volume\",\"Attribute Changed\"\n";
-    }
+    NSString* mainBody;
+    //initial the body with column header
+    mainBody = @"\"IPad identifier\",\"Surveyor\",\"Reporting Unit\",\"License\",\"CP\",\"Block\",\"Stratum\",\"Plot No\",\"Time stamp\",\"GPS coordinate\","
+        "\"Random Selection indicator\",\"Predicted Volume\",\"Measure %\",\"Plot Data Tracker\",\"Signing Professional\",\"Designation\",\"License No.\",\"Signature\",\"Rationale\"\n";
 
-    NSArray *roratioSamplingLogItems;
+
+    NSArray *roRatioSamplingLogEntries;
+    NSArray *roRatioSamplingLogItems;
     NSMutableArray *ratioSamplingLogItems = [NSMutableArray new];
-    NSString *buildmainbody;
-    NSInteger substitutionloopcouter, ratioSamplingLogItemscounter, attemptcount, ratioSamplingLogoffset, numoffieldsinauditlog;
+    NSString *buildMainBody;
+    NSInteger substitutionLoopCounter, ratioSamplingLogItemsCounter, attemptCount, ratioSamplingLogOffset, numOfFieldsInAuditLog;
     
-    for(WasteStratum* ws in sortedStratums){
-        // Pulls header data from Cut Block in preparation for substituting data into audit log (ratioSamplingLog)
-        if(![ws.ratioSamplingLog isEqualToString:@""]){
-        roratioSamplingLogItems = [ws.ratioSamplingLog componentsSeparatedByString:@";;"];
-        attemptcount = roratioSamplingLogItems.count-1;                                                                 // counts number of audit records
-        roratioSamplingLogItems = [ws.ratioSamplingLog componentsSeparatedByString:@"\",\""];
-        ratioSamplingLogItemscounter = roratioSamplingLogItems.count-1;                                                 // counter number of fields
-        numoffieldsinauditlog = ratioSamplingLogItemscounter / attemptcount;
+    BOOL *hasData = FALSE;
+    // Pulls header data from Cut Block in preparation for substituting data into audit log (ratioSamplingLog)
+    if(![wasteBlock.ratioSamplingLog isEqualToString:@""]){
+        // logic to convert old coast ratiosamplinglogs
+//        NSString *testLog = @"\"40851923-E9C1-49D8-9BE1-F563C660ED26\",\"\",\"3\",\"3\",\"3\",\"3\",\"PBRX\",\"1\",\"2023-09-13 11:31:06\",\"N/A\",\"YES\",\"7.07\",\"\",\"New Plot Added\";;\"40851923-E9C1-49D8-9BE1-F563C660ED26\",\"\",\"3\",\"3\",\"3\",\"3\",\"PBRX\",\"2\",\"2023-09-13 11:31:26\",\"N/A\",\"YES\",\"21.21\",\"\",\"New Plot Added\";;";
+//        NSLog(@"%@", testLog);
+        
+//        if([wasteBlock.regionId integerValue] == CoastRegion){
+            NSArray *components = [wasteBlock.ratioSamplingLog componentsSeparatedByString:@";;"];
+//            NSArray *components = [testLog componentsSeparatedByString:@";;"];
+            NSMutableArray *outputComponents = [NSMutableArray array];
+            NSInteger i = 1;
+            for (NSString *component in components) {
+                NSArray *subComponents = [component componentsSeparatedByString:@",\""];
+                if ([subComponents count] == 0 || [subComponents count] == 1) {
+                    continue;
+                }
+                NSMutableArray *newSubComponents = [subComponents mutableCopy];
+                
+                // fix certain test files
+                if (newSubComponents.count == 20) {
+                    BOOL lastSixEmpty = YES;
+                    for (NSInteger j = 14; j < 20; j++) {
+                        NSString *value = newSubComponents[j];
+                        if (![value isEqualToString:@"\""]) {
+                            lastSixEmpty = NO;
+                            break;
+                        }
+                    }
+                    if (lastSixEmpty) {
+                        NSRange rangeToRemove = NSMakeRange(14, 6);
+                        [newSubComponents removeObjectsInRange:rangeToRemove];
+                    }
+                }
+                
+                // old file logs didn't have measure percent values, add an empty string at the appropriate index
+                if (newSubComponents.count == 14) {
+                    [newSubComponents insertObject:@"\"" atIndex:12];
+                }
+                
+                if (newSubComponents.count < 20) {
+                    // Add extra empty fields to make it 20 elements
+                    while (newSubComponents.count < 20) {
+                        if (newSubComponents.count < 19) {
+                            [newSubComponents addObject:@"\""];
+                        } else {
+                            [newSubComponents addObject:@""];
+                        }
+                    }
+                    
+                    NSString *newComponent = [newSubComponents componentsJoinedByString:@",\""];
+                    NSString *outputComponent;
+                    if (i < components.count-1) {
+                        outputComponent = [NSString stringWithFormat:@"%@\"", newComponent];
+                    } else {
+                        outputComponent = [NSString stringWithFormat:@"%@\";;", newComponent];
+                    }
+                    
+                    [outputComponents addObject:outputComponent];
+                    i++;
+                } else {
+                    NSString *outputComponent = [newSubComponents componentsJoinedByString:@",\""];
+                    [outputComponents addObject:outputComponent];
+                    i++;
+                }
+            }
+            NSString *outputString = [outputComponents componentsJoinedByString:@";;"];
+            outputString = [outputString stringByAppendingString:@";;"];
+            if (outputString.length >= 4 && [outputString hasSuffix:@";;;;"]) {
+                outputString = [outputString substringToIndex:outputString.length - 2];
+            }
+            NSLog(@"Updating Coast block sampling log");
+            wasteBlock.ratioSamplingLog = outputString;
+//        }
+        
+        // continue with report generation
+        roRatioSamplingLogItems  = [wasteBlock.ratioSamplingLog componentsSeparatedByString:@";;"];
+        NSMutableArray *roRatioSamplingLogEntries = [roRatioSamplingLogItems mutableCopy];
+        attemptCount = roRatioSamplingLogItems.count-1;                                                                 // counts number of audit records
+        roRatioSamplingLogItems = [wasteBlock.ratioSamplingLog componentsSeparatedByString:@"\",\""];
+        ratioSamplingLogItemsCounter = roRatioSamplingLogItems.count-1;                                                 // counter number of fields
+        numOfFieldsInAuditLog = ratioSamplingLogItemsCounter / attemptCount;
         
         // test for divide by 0 or, total number of fields in ratioSamplingLog not evenly divisible by number of fields in one record
-        if ((attemptcount == 0) || (ratioSamplingLogItemscounter % attemptcount != 0)){
+        if ((attemptCount == 0) || (ratioSamplingLogItemsCounter % attemptCount != 0)){
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unexpected Application Error" message:@"PlotPrediction Divide Error" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
             return Fail_Unknown;
         }
         
-        ratioSamplingLogItems = [NSMutableArray arrayWithArray:roratioSamplingLogItems];
+        ratioSamplingLogItems = [NSMutableArray arrayWithArray:roRatioSamplingLogItems];
         // Loop through each record of the auditlog (rationSamplingLog) and substitute surveyorName, Reporting Unit Number, License, Cutting Permit Number and Cut Block fields
         // using cut block header information
-        if([wastBlock.regionId integerValue] == InteriorRegion){
-            for(substitutionloopcouter=0; substitutionloopcouter <attemptcount; substitutionloopcouter++){
-                ratioSamplingLogoffset = substitutionloopcouter*numoffieldsinauditlog;
-                [ratioSamplingLogItems removeObjectAtIndex:                                         1+ratioSamplingLogoffset]; // surveyorName
-                [ratioSamplingLogItems insertObject:wastBlock.surveyorName atIndex:                 1+ratioSamplingLogoffset];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         2+ratioSamplingLogoffset]; // reporting unit number
-                [ratioSamplingLogItems insertObject:[wastBlock.reportingUnit stringValue] atIndex:  2+ratioSamplingLogoffset];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         3+ratioSamplingLogoffset]; // License
-                [ratioSamplingLogItems insertObject:wastBlock.licenceNumber atIndex:                3+ratioSamplingLogoffset];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         4+ratioSamplingLogoffset]; // Cutting Permit Number
-                [ratioSamplingLogItems insertObject:wastBlock.cuttingPermitId atIndex:              4+ratioSamplingLogoffset];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         5+ratioSamplingLogoffset]; // Cut Block
-                [ratioSamplingLogItems insertObject:wastBlock.cutBlockId atIndex:                   5+ratioSamplingLogoffset];
-            }
-        }else if([wastBlock.regionId integerValue] == CoastRegion){
-            int counter = 0;
-            for(substitutionloopcouter=0; substitutionloopcouter <attemptcount; substitutionloopcouter++){
-                ratioSamplingLogoffset = substitutionloopcouter*numoffieldsinauditlog;
-                [ratioSamplingLogItems removeObjectAtIndex:                                         1+(ratioSamplingLogoffset-counter)]; // surveyorName
-                [ratioSamplingLogItems insertObject:wastBlock.surveyorName atIndex:                 1+(ratioSamplingLogoffset-counter)];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         2+(ratioSamplingLogoffset-counter)]; // reporting unit number
-                [ratioSamplingLogItems insertObject:[wastBlock.reportingUnit stringValue] atIndex:  2+(ratioSamplingLogoffset-counter)];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         3+(ratioSamplingLogoffset-counter)]; // License
-                [ratioSamplingLogItems insertObject:wastBlock.licenceNumber atIndex:                3+(ratioSamplingLogoffset-counter)];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         4+(ratioSamplingLogoffset-counter)]; // Cutting Permit Number
-                [ratioSamplingLogItems insertObject:wastBlock.cuttingPermitId atIndex:              4+(ratioSamplingLogoffset-counter)];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         5+(ratioSamplingLogoffset-counter)]; // Cut Block
-                [ratioSamplingLogItems insertObject:wastBlock.cutBlockId atIndex:                   5+(ratioSamplingLogoffset-counter)];
-                [ratioSamplingLogItems removeObjectAtIndex:                                         12+(ratioSamplingLogoffset-counter)];
-                counter = counter+1;
+        ratioSamplingLogOffset = 0;
+        
+        
+        
+        if([wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
+            NSLog(@"Non-Aggregate!");
+            for(substitutionLoopCounter=0; substitutionLoopCounter <attemptCount; substitutionLoopCounter++){
+                [ratioSamplingLogItems removeObjectAtIndex:                                         2+ratioSamplingLogOffset]; // reporting unit number
+                [ratioSamplingLogItems insertObject:[wasteBlock.reportingUnit stringValue] atIndex:  2+ratioSamplingLogOffset];
+                [ratioSamplingLogItems removeObjectAtIndex:                                         12+ratioSamplingLogOffset]; // Predicted Dry Volume
+            
+                NSArray *currentItem = [[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""];
+                if([[[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""] count] == 14)//Pre-1.4.3 report
+                {
+                    [ratioSamplingLogItems insertObject:@"" atIndex:                   13+ratioSamplingLogOffset];
+                    ratioSamplingLogOffset += [[[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""] count];
+                }
+                else
+                {
+                    ratioSamplingLogOffset += [[[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""] count] - 2;
+                }
             }
         }
-        buildmainbody = [ratioSamplingLogItems componentsJoinedByString:@"\",\""];
+        else
+        {
+            NSLog(@"Aggregate!");
+            for(substitutionLoopCounter=0; substitutionLoopCounter <attemptCount; substitutionLoopCounter++){
+                [ratioSamplingLogItems removeObjectAtIndex:                                         12+ratioSamplingLogOffset]; // Dry Volume
 
-        if(buildmainbody && ![buildmainbody isEqualToString:@""]){
-            mainbody = [mainbody stringByAppendingString:buildmainbody];
+                NSArray *currentItem = [[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""];
+
+                if([[[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""] count] == 14)//Pre-1.4.3 report
+                {
+                    [ratioSamplingLogItems insertObject:@"" atIndex:                   13+ratioSamplingLogOffset];
+                    ratioSamplingLogOffset += [[[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""] count];
+                }
+                else
+                {
+                    ratioSamplingLogOffset += [[[roRatioSamplingLogEntries objectAtIndex:substitutionLoopCounter] componentsSeparatedByString:@"\",\""] count] - 2;
+                }
+            }
+        }
+
+        buildMainBody = [ratioSamplingLogItems componentsJoinedByString:@"\",\""];
+        
+        if(buildMainBody && ![buildMainBody isEqualToString:@""]){
+            mainBody = [mainBody stringByAppendingString:buildMainBody];
             
         }
+        
+        //initial the body with column header
+        mainBody = [mainBody stringByAppendingString:@"\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\","
+                "\"\",\"\",\"\",\"* measurement data deleted\",\"\",\"\",\"\",\"\",\"\"\n"];
+
         ratioSamplingLogItems = nil;  // deallocates memory
     }
-    }
     
-        // Pulls header data from Cut Block in preparation for substituting data into audit log (ratioSamplingLog)
-        if(![wastBlock.ratioSamplingLog isEqualToString:@""]){
-            roratioSamplingLogItems = [wastBlock.ratioSamplingLog componentsSeparatedByString:@";;"];
-            attemptcount = roratioSamplingLogItems.count-1;                                                                 // counts number of audit records
-            roratioSamplingLogItems = [wastBlock.ratioSamplingLog componentsSeparatedByString:@"\",\""];
-            ratioSamplingLogItemscounter = roratioSamplingLogItems.count-1;                                                 // counter number of fields
-            numoffieldsinauditlog = ratioSamplingLogItemscounter / attemptcount;
-            
-            // test for divide by 0 or, total number of fields in ratioSamplingLog not evenly divisible by number of fields in one record
-            if ((attemptcount == 0) || (ratioSamplingLogItemscounter % attemptcount != 0)){
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unexpected Application Error" message:@"PlotPrediction Divide Error" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-                [alert show];
-                return Fail_Unknown;
-            }
-            
-            ratioSamplingLogItems = [NSMutableArray arrayWithArray:roratioSamplingLogItems];
-            // Loop through each record of the auditlog (rationSamplingLog) and substitute surveyorName, Reporting Unit Number, License, Cutting Permit Number and Cut Block fields
-            // using cut block header information
-            if([wastBlock.regionId integerValue] == InteriorRegion){
-                if([wastBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                    for(substitutionloopcouter=0; substitutionloopcouter <attemptcount; substitutionloopcouter++){
-                        ratioSamplingLogoffset = substitutionloopcouter*numoffieldsinauditlog;
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         1+ratioSamplingLogoffset]; // surveyorName
-                        [ratioSamplingLogItems insertObject:wastBlock.surveyorName atIndex:                 1+ratioSamplingLogoffset];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         2+ratioSamplingLogoffset]; // reporting unit number
-                        [ratioSamplingLogItems insertObject:[wastBlock.reportingUnit stringValue] atIndex:  2+ratioSamplingLogoffset];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         3+ratioSamplingLogoffset]; // License
-                        [ratioSamplingLogItems insertObject:wastBlock.licenceNumber atIndex:                3+ratioSamplingLogoffset];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         4+ratioSamplingLogoffset]; // Cutting Permit Number
-                        [ratioSamplingLogItems insertObject:wastBlock.cuttingPermitId atIndex:              4+ratioSamplingLogoffset];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         5+ratioSamplingLogoffset]; // Cut Block
-                        [ratioSamplingLogItems insertObject:wastBlock.cutBlockId atIndex:                   5+ratioSamplingLogoffset];
-                    }
-                }
-            }else if([wastBlock.regionId integerValue] == CoastRegion){
-                if([wastBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                    int counter = 0;
-                    for(substitutionloopcouter=0; substitutionloopcouter <attemptcount; substitutionloopcouter++){
-                        ratioSamplingLogoffset = substitutionloopcouter*numoffieldsinauditlog;
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         1+(ratioSamplingLogoffset-counter)]; // surveyorName
-                        [ratioSamplingLogItems insertObject:wastBlock.surveyorName atIndex:                 1+(ratioSamplingLogoffset-counter)];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         2+(ratioSamplingLogoffset-counter)]; // reporting unit number
-                        [ratioSamplingLogItems insertObject:[wastBlock.reportingUnit stringValue] atIndex:  2+(ratioSamplingLogoffset-counter)];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         3+(ratioSamplingLogoffset-counter)]; // License
-                        [ratioSamplingLogItems insertObject:wastBlock.licenceNumber atIndex:                3+(ratioSamplingLogoffset-counter)];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         4+(ratioSamplingLogoffset-counter)]; // Cutting Permit Number
-                        [ratioSamplingLogItems insertObject:wastBlock.cuttingPermitId atIndex:              4+(ratioSamplingLogoffset-counter)];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         5+(ratioSamplingLogoffset-counter)]; // Cut Block
-                        [ratioSamplingLogItems insertObject:wastBlock.cutBlockId atIndex:                   5+(ratioSamplingLogoffset-counter)];
-                        [ratioSamplingLogItems removeObjectAtIndex:                                         12+(ratioSamplingLogoffset-counter)];
-                        counter = counter+1;
-                    }
-                }
-            }
-            buildmainbody = [ratioSamplingLogItems componentsJoinedByString:@"\",\""];
-            
-            if(buildmainbody && ![buildmainbody isEqualToString:@""]){
-                mainbody = [mainbody stringByAppendingString:buildmainbody];
-                
-            }
-            ratioSamplingLogItems = nil;  // deallocates memory
-        }
+    mainBody = [mainBody stringByReplacingOccurrencesOfString:@";;" withString:@"\n"];
     
-    mainbody = [mainbody stringByReplacingOccurrencesOfString:@";;" withString:@"\n"];
-
     if(error != nil)
     {
         NSLog(@"Failed to create persistent store. Error %@.", error);
-        //abort();
         return Fail_Unknown;
     }
     
     // data should not be nil
-    if (mainbody == nil) abort();
+    if (mainBody == nil) abort();
     
     // Write to disk
-    [mainbody writeToFile:zippedPath atomically:YES];
+    [mainBody writeToFile:zippedPath atomically:YES];
     
     NSLog(@"Plot Prediciton report is generated");
     

@@ -1856,8 +1856,8 @@
                         <outlet property="position" destination="v2V-IL-9U6" id="8gZ-wC-Mh2"/>
                         <outlet property="professionalDesignation" destination="xwj-xZ-RUE" id="dVu-Tq-t95"/>
                         <outlet property="registrationNumber" destination="foW-6E-AhJ" id="8mC-x9-HOG"/>
-                        <outlet property="reporintUnitNo" destination="Rww-RF-lOD" id="fyx-EH-XPg"/>
                         <outlet property="reportButton" destination="5nt-ke-gGy" id="YiV-cO-RiN"/>
+                        <outlet property="reportingUnitNo" destination="Rww-RF-lOD" id="fyx-EH-XPg"/>
                         <outlet property="returnNumber" destination="VWz-m3-WYP" id="Kun-Vb-7M2"/>
                         <outlet property="sidebarButton" destination="moX-Rm-TsD" id="FGk-ut-c1x"/>
                         <outlet property="stratumTableView" destination="MIa-1e-c0W" id="cEh-Ui-ypa"/>
@@ -4828,7 +4828,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="1024" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ReporintUnitNo" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aOF-xc-pFe">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ReportingUnitNo" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aOF-xc-pFe">
                                             <rect key="frame" x="45" y="11" width="174" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="19"/>
@@ -7146,7 +7146,7 @@ RG91Z2xhcyAQRmlyA
                         <outlet property="position" destination="Gvh-dK-M2t" id="onC-mb-yvC"/>
                         <outlet property="professionalDesignation" destination="Al4-XH-ayI" id="uub-zw-i3f"/>
                         <outlet property="registrationNumber" destination="bGM-ed-TG2" id="I1x-uM-jxc"/>
-                        <outlet property="reporintUnitNo" destination="7oJ-XJ-S12" id="g0q-mS-npt"/>
+                        <outlet property="reportingUnitNo" destination="7oJ-XJ-S12" id="g0q-mS-npt"/>
                         <outlet property="returnNumber" destination="EAy-vK-6n5" id="VRE-GZ-ePS"/>
                         <outlet property="sidebarButton" destination="dvy-Q7-Oo0" id="AO1-hA-Ui6"/>
                         <outlet property="stratumTableView" destination="bOF-vY-sN9" id="UmU-YA-vTQ"/>

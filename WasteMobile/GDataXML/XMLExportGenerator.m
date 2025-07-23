@@ -39,9 +39,8 @@
 #import "ExportUserData+CoreDataClass.h"
 #import "ExportUserDataDAO.h"
 #import "PileShapeCode+CoreDataClass.h"
+#import "MeasuredPileShapeCode+CoreDataClass.h"
 #import "WastePile+CoreDataClass.h"
-#import "StratumPile+CoreDataClass.h"
-#import "AggregateCutblock+CoreDataClass.h"
 
 @implementation XMLExportGenerator
 
@@ -60,6 +59,7 @@
     NSString *exportFileName = @"";
     NSString *extension = @"";
     NSString *baseFileName = @"";
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
     
     switch(type) {
         case IFW:
@@ -178,8 +178,16 @@
         }
     }
     
+    // I don't think this statement is ever true
+    if (wasteBlock.ratioSamplingEnabled == 0) {
+        GDataXMLElement * subEle = [GDataXMLNode elementWithName: @"versionNumber" stringValue:version];
+        [waElement addChild:subEle];
+    }
+    
     //Construct data elements
     for (NSString *ele in [mappingDAO getWasteAssessmentTypeMapping]) {
+        
+        
         NSArray *strAry = [ele componentsSeparatedByString:@":"];
         
         NSString *entityFieldName = strAry[1];
@@ -375,11 +383,8 @@
            if( [ws.stratumPlot count] > 0){
                [self addPlotFrom:ws.stratumPlot toElement:&wsElement withMapping:mappingDAO forType:type];
            }
-           if(ws.strPile != nil){
-               [self addStratumPileFrom:ws.strPile toElement:&wsElement withMapping:mappingDAO forType:type];
-           }
-           if([ws.stratumAgg count] > 0){
-               [self addAggregateCBFrom:ws.stratumAgg toElement:&wsElement withMapping:mappingDAO forType:type];
+            if ([ws.stratumPile count] > 0){
+                [self addPileFrom:ws.stratumPile toElement:&wsElement withMapping:mappingDAO forType:type];
             }
         }
         [*waElement addChild:wsElement];
@@ -565,43 +570,11 @@
     }
 }
 
-- (void) addAggregateCBFrom:(NSSet<AggregateCutblock *> *) stratumAggregateCB toElement:(GDataXMLElement **)wsElement withMapping:(id) mappingDAO forType:(ExportTypeCode) type{
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"aggregateCutblock" ascending:YES];
-    NSArray* stored_aggCB = [[stratumAggregateCB allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-    
-    for(AggregateCutblock *aggCB in stored_aggCB){
-        
-        GDataXMLElement *aggCBElement = [GDataXMLNode elementWithName:@"AggregateCutblock"];
-        [self addChildrenTo:&aggCBElement usingChildren:[mappingDAO getAggregateCutblockMapping] andEntity: aggCB];
-        
-        if( aggCB.aggPile != nil ){
-            [self addStratumPileFrom:aggCB.aggPile toElement:&aggCBElement withMapping:mappingDAO forType:type];
-        }
-        [*wsElement addChild:aggCBElement];
-    }
-    
-}
-
-- (void) addStratumPileFrom:(StratumPile *)stratumPile toElement:(GDataXMLElement **)wsElement withMapping:(id) mappingDAO forType:(ExportTypeCode) type{
-    
-    GDataXMLElement *spileElement = [GDataXMLNode elementWithName:@"StratumPile"];
-    [self addChildrenTo:&spileElement usingChildren:[mappingDAO getStratumPileMapping] andEntity:stratumPile];
-    
-    if([stratumPile.pileData count] > 0){
-        [self addPileFrom:stratumPile toElement:&spileElement withMapping:mappingDAO];
-    }
-    [*wsElement addChild:spileElement];
-}
-
-- (void) addPileFrom:(StratumPile *)strPile toElement:(GDataXMLElement **)spileElement withMapping:(id) mappingDAO {
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"pileId" ascending:YES];
-    NSArray* stored_pile = [strPile.pileData sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-    
-    for (WastePile *wp in stored_pile){
+- (void) addPileFrom:(NSSet<WastePile *> *) stratumPile toElement:(GDataXMLElement **)wsElement withMapping:(id) mappingDAO forType:(ExportTypeCode) type{
+    for(WastePile *wpile in stratumPile){
         GDataXMLElement *wpileElement = [GDataXMLNode elementWithName:@"WastePile"];
-        [self addChildrenTo:&wpileElement usingChildren:[mappingDAO getWastePileMapping] andEntity:wp];
-        
-        [*spileElement addChild:wpileElement];
+        [self addChildrenTo:&wpileElement usingChildren:[mappingDAO getWastePileMapping] andEntity: wpile];
+        [*wsElement addChild:wpileElement];
     }
 }
 
@@ -685,6 +658,8 @@
             valueStr = [(MonetaryReductionFactorCode *) valueObj monetaryReductionFactorCode];
         }else if([valueObj isKindOfClass:[PileShapeCode class]]) {
             valueStr = [(PileShapeCode *) valueObj pileShapeCode];
+        }else if([valueObj isKindOfClass:[MeasuredPileShapeCode class]]) {
+            valueStr = [(MeasuredPileShapeCode *) valueObj measuredPileShapeCode];
         }
     }
     return [valueStr stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];

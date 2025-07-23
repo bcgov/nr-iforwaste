@@ -14,7 +14,7 @@
 #import "PileHeaderView.h"
 #import "EFWFooterView.h"
 
-@class WasteBlock, WasteStratum, WastePile, StratumPile, AggregateCutblock;
+@class WasteBlock, WasteStratum, WastePile, StratumPile;
 
 typedef enum PileAlertTypeCode{
     SavePileEnum = -1,
@@ -28,11 +28,24 @@ typedef enum PileAlertTypeCode{
 }
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
-@property (weak, nonatomic) IBOutlet UITextField *sizeField;
+@property (weak, nonatomic) IBOutlet UITextField *plotNumber;
+@property (weak, nonatomic) IBOutlet UITextField *returnNumber;
+@property (weak, nonatomic) IBOutlet UITextField *surveyorLicence;
+@property (weak, nonatomic) IBOutlet UITextField *licence;
+@property (weak, nonatomic) IBOutlet UITextField *cuttingPermit;
+@property (weak, nonatomic) IBOutlet UITextField *block;
+@property (weak, nonatomic) IBOutlet UITextField *assistant;
+@property (weak, nonatomic) IBOutlet UITextField *weather;
 @property (weak, nonatomic) IBOutlet UITextField *residueSurveyor;
 @property (weak, nonatomic) IBOutlet UITextField *surveyDate;
+@property (weak, nonatomic) IBOutlet UILabel *isMeasurePlotLabel;
+@property (weak, nonatomic) IBOutlet UILabel *isMeasurePlot;
 @property (weak, nonatomic) IBOutlet UITextView *note;
 @property (weak, nonatomic) IBOutlet UIButton *addPileButton;
+
+@property (weak, nonatomic) IBOutlet UILabel *licenceLabel;
+@property (weak, nonatomic) IBOutlet UILabel *cuttingPermitLabel;
+@property (weak, nonatomic) IBOutlet UILabel *blockLabel;
 
 @property (weak, nonatomic) IBOutlet FooterStatView *footerStatView;
 @property (weak, nonatomic) IBOutlet EFWFooterView *efwFooterView;
@@ -52,11 +65,10 @@ typedef enum PileAlertTypeCode{
 
 @property (strong, nonatomic) WasteBlock *wasteBlock;
 @property (strong, nonatomic) WasteStratum *wasteStratum;
-@property (strong, nonatomic) StratumPile *strpile;
-@property (strong, nonatomic) AggregateCutblock *aggregatecutblock;
 @property (strong, nonatomic) WastePile *currentEditingPile;
 @property (strong, nonatomic) NSString* currentEditingPileElement;
 @property (strong, nonatomic) NSArray *wastePiles;
+@property (strong, nonatomic) WastePile *wastePile;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) UITextField *activeTF;
 -(IBAction)hideKeyboard:(id)sender;
@@ -67,6 +79,8 @@ typedef enum PileAlertTypeCode{
 
 -(void) removeCurrentPile;
 -(void) updateCurrentPileProperty:(WastePile*)wp property:(NSString*)property;
+
+-(void) calculatePileAreaAndVolume:(WastePile *)wastePile srsOrRatio:(NSInteger)ratio;
 
 @end
 

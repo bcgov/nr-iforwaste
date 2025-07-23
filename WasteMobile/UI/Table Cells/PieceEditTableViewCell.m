@@ -23,6 +23,9 @@
 #import "CodeDAO.h"
 #import "WasteBlock.h"
 #import "Constants.h"
+#import "WastePlot.h"
+#import "WasteStratum.h"
+#import "AssessmentMethodCode.h"
 
 @implementation PieceEditTableViewCell
 
@@ -56,14 +59,17 @@
 }
 
 
--(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock {
+//-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock {
+-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock wastePlot:(WastePlot *)wastePlot userCreatedBlock:(BOOL)userCreatedBlock{
     
+    NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+
     self.cellWastePiece = wastePiece;
     self.wasteBlock = wasteBlock;
     
     NSMutableArray *labelArray = [[NSMutableArray alloc] init];
     int locationCounter = 43;
-   
+    NSString *assessmentMethodCode =  wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode;
     if ([assessmentMethodCode isEqualToString:@"P"]){
 
         [labelArray addObject:@";pieceNumber;w;43;l;"];
@@ -126,19 +132,20 @@
     }else if ([assessmentMethodCode isEqualToString:@"E"]){
         
         [labelArray addObject:@";pieceNumber;w;44;l;"];
-        [labelArray addObject:@";pieceScaleSpeciesCode;w;110;b;2"];
-        [labelArray addObject:@";pieceMaterialKindCode;w;110;b;3"];
-        [labelArray addObject:@";pieceWasteClassCode;w;110;b;4"];
-        [labelArray addObject:@";pieceScaleGradeCode;w;110;b;10"];
-        [labelArray addObject:@"#;usercode;w;110;b;22"];  // mchu
-        [labelArray addObject:@"*;notes;w;110;b;18"];
-        [labelArray addObject:@";estimatedPercent;w;110;b;21"];
+        [labelArray addObject:@";pieceScaleSpeciesCode;w;120;b;2"];
+        [labelArray addObject:@";pieceMaterialKindCode;w;120;b;3"];
+        [labelArray addObject:@";pieceWasteClassCode;w;120;b;4"];
+        [labelArray addObject:@";pieceScaleGradeCode;w;120;b;10"];
+        [labelArray addObject:@"#;usercode;w;120;b;22"];  // mchu
+        //[labelArray addObject:@"*;notes;w;110;b;18"];
+        [labelArray addObject:@";estimatedPercent;w;120;b;21"];
         
         if (userCreatedBlock){
             [labelArray addObject:@";pieceVolume;r;139;l;"];
         }else{
             [labelArray addObject:@";;r;90;l;"];
-            [labelArray addObject:@";pieceVolume;r;90;l;"];
+            //[labelArray addObject:@";pieceVolume;r;90;l;"];
+            [labelArray addObject:@";checkPieceVolume;r;90;l;"];
         }
     }else if ([assessmentMethodCode isEqualToString:@"O"]){
         
@@ -147,7 +154,7 @@
         [labelArray addObject:@";pieceMaterialKindCode;w;100;b;3"];
         [labelArray addObject:@";pieceWasteClassCode;w;100;b;4"];
         [labelArray addObject:@";pieceScaleGradeCode;w;100;b;10"];
-        [labelArray addObject:@";notes;w;100;b;18"];
+        //[labelArray addObject:@";notes;w;100;b;18"];
         [labelArray addObject:@";densityEstimate;w;100;b;19"];
         [labelArray addObject:@";estimatedVolume;w;100;b;20"];
         
@@ -180,11 +187,20 @@
                 [self.displayObjectDictionary setObject:lbl forKey:[lbStrAry objectAtIndex:1]];
             }
             
-            if (![[lbStrAry objectAtIndex:1] isEqualToString: @""]){
-                if([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
-                    lbl.text = [wastePiece valueForKey:[lbStrAry objectAtIndex:1]];
-                }else if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
-                    lbl.text =[(NSNumber *)[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] stringValue];
+            if (![[lbStrAry objectAtIndex:1] isEqualToString: @""]) {
+                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]) {
+                    double estimatedPercent = [[wastePiece valueForKey: @"estimatedPercent"] floatValue] / 100.0;
+                    NSDecimalNumber *percentEstimate = [[NSDecimalNumber alloc] initWithDouble:estimatedPercent];
+                    NSDecimalNumber *checkVolume = [NSDecimalNumber decimalNumberWithDecimal:[wastePlot.checkVolume decimalValue]];
+                   
+                    lbl.text = [[[percentEstimate decimalNumberByMultiplyingBy:checkVolume] decimalNumberByRoundingAccordingToBehavior:behaviorD3] stringValue];
+                    
+                } else {
+                    if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]) {
+                        lbl.text = [wastePiece valueForKey:[lbStrAry objectAtIndex:1]];
+                    } else if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]) {
+                        lbl.text =[(NSNumber *)[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] stringValue];
+                    }
                 }
             }
             

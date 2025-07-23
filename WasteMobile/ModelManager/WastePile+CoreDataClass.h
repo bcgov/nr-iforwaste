@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class PileShapeCode, WasteStratum, StratumPile;
+@class PileShapeCode, WasteStratum, StratumPile, MeasuredPileShapeCode;
 
 NS_ASSUME_NONNULL_BEGIN
 

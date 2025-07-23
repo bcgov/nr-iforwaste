@@ -11,7 +11,7 @@
 
 @class WastePiece;
 @class PlotViewController;
-@class WasteBlock;
+@class WasteBlock, WastePlot;
 
 @interface PieceEditTableViewCell : PieceTableViewCell
 <UIAlertViewDelegate>
@@ -24,6 +24,8 @@
 
 @property (strong, nonatomic) NSMutableDictionary *displayObjectDictionary;
 
--(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock;
+//-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock;
+-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock  wastePlot:(WastePlot *) wastePlot userCreatedBlock:(BOOL)userCreatedBlock;
+
 
 @end

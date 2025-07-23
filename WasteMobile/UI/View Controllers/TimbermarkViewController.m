@@ -660,7 +660,7 @@
                 }
             }
             
-            tm.coniferWMRF = [self.primaryConifer.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryConifer.text];
+            tm.coniferPrice = [self.primaryConifer.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryConifer.text];
             tm.deciduousPrice = [self.primaryDeciduous.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryDeciduous.text];
             tm.xPrice = [self.primaryXgrade.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryXgrade.text];
             tm.yPrice = [self.primaryYgrade.text isEqualToString:@""] ? [[NSDecimalNumber alloc] initWithFloat:0.0] : [[NSDecimalNumber alloc] initWithString:self.primaryYgrade.text];
@@ -1039,28 +1039,25 @@
             }
             
             self.primaryAvoidableALabel.text = tm.avoidable ? [NSString stringWithFormat:@"%.4f", [tm.avoidable floatValue]] : @"";
-            //benchmark value for Interior and coast logic
-            if([self.wasteBlock.regionId intValue] == InteriorRegion){
-                self.primaryBenchmarkLabel.text = isnan([tm.benchmark floatValue]) ? @"0.0000" : [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]];
-            }else if([self.wasteBlock.regionId intValue] == CoastRegion){
-               self.primaryBenchmarkLabel.text = isnan([tm.benchmark floatValue]) ? @"0.0000" : [[NSString alloc ] initWithFormat:@"%0.4f",[tm.benchmark floatValue]];
-            }
             
-            self.primaryWMRFLabel.text = isnan([tm.wmrf floatValue]) ? @"0.0000" : [NSString stringWithFormat:@"%.4f", [tm.wmrf floatValue]];
+            self.primaryBenchmarkLabel.text = tm.benchmark && !isnan([tm.benchmark doubleValue]) ? [NSString stringWithFormat:@"%.4f", [tm.benchmark floatValue]] : @"";
+            self.primaryWMRFLabel.text = tm.wmrf && !isnan([tm.wmrf doubleValue]) ? [NSString stringWithFormat:@"%.4f", [tm.wmrf floatValue]] : @"";
+           
             
-            // stumpage rate column
-            self.primaryConifer.text = tm.coniferWMRF && [tm.coniferWMRF floatValue] > 0 ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.coniferWMRF floatValue]] : @"";
-            self.primaryBillingDeciduous.text = [[NSString alloc ] initWithFormat:@"%0.2f", [tm.deciduousWMRF floatValue]];
-            self.primaryBillingHembal.text = isnan([tm.hembalWMRF floatValue])? @"0.00" : [[NSString alloc ] initWithFormat:@"%0.2f", [tm.hembalWMRF floatValue]];
-            self.primaryBillingXgrade.text = isnan([tm.xWMRF floatValue])? @"0.00" : [[NSString alloc ] initWithFormat:@"%0.2f", [tm.xWMRF floatValue]];
-            self.primaryBillingYgrade.text = [[NSString alloc ] initWithFormat:@"%0.2f", [tm.yWMRF floatValue]];
+            // Billing rate column
+            self.primaryBillingConifer.text = tm.coniferWMRF && !isnan([tm.coniferWMRF doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.coniferWMRF floatValue]] : @"0.00";
+            self.primaryBillingDeciduous.text = tm.deciduousWMRF && !isnan([tm.deciduousWMRF doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f", [tm.deciduousWMRF floatValue]]: @"0.00";
+            self.primaryBillingHembal.text = tm.hembalWMRF && !isnan([tm.hembalWMRF doubleValue]) ?  [[NSString alloc ] initWithFormat:@"%0.2f", [tm.hembalWMRF floatValue]]: @"0.00";
+            self.primaryBillingXgrade.text = tm.xWMRF && !isnan([tm.xWMRF doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f", [tm.xWMRF floatValue]]: @"0.00";
+            self.primaryBillingYgrade.text = tm.yWMRF && !isnan([tm.yWMRF doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f", [tm.yWMRF floatValue]]: @"0.00";
             
-            // billing rate column
-            self.primaryBillingConifer.text = isnan([tm.allSppJWMRF floatValue]) ? @"0.00" : [[NSString alloc ] initWithFormat:@"%0.2f",[tm.allSppJWMRF floatValue]];
-            self.primaryDeciduous.text = tm.deciduousPrice ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.deciduousPrice floatValue]] : @"0.00";
-            self.primaryHembal.text = tm.hembalPrice ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.hembalPrice floatValue]] : @"0.00";
-            self.primaryXgrade.text = tm.xPrice ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.xPrice floatValue]] : @"0.00";
-            self.primaryYgrade.text = tm.yPrice ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.yPrice floatValue]] : @"0.00";
+           
+            // Stumpage rate column
+            self.primaryConifer.text = tm.coniferPrice && !isnan([tm.coniferPrice doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.coniferPrice floatValue]] : @"";
+            self.primaryDeciduous.text = tm.deciduousPrice && !isnan([tm.deciduousPrice doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.deciduousPrice floatValue]] : @"";
+            self.primaryHembal.text = tm.hembalPrice && !isnan([tm.hembalPrice doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.hembalPrice floatValue]] : @"";
+            self.primaryXgrade.text = tm.xPrice && !isnan([tm.xPrice doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.xPrice floatValue]] : @"";
+            self.primaryYgrade.text = tm.yPrice && !isnan([tm.yPrice doubleValue]) ? [[NSString alloc ] initWithFormat:@"%0.2f",[tm.yPrice floatValue]] : @"";
             
         }
         

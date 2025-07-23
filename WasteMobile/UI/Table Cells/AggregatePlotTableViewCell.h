@@ -10,6 +10,7 @@
 
 @interface AggregatePlotTableViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UIImageView *isPlotAudited;
 @property (weak, nonatomic) IBOutlet UILabel *plotNumber;
 @property (weak, nonatomic) IBOutlet UILabel *license;
 @property (weak, nonatomic) IBOutlet UILabel *blockId;

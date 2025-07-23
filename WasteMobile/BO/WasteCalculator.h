@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class WastePiece;
+@class WastePiece, WastePlot;
 @class WasteBlock;
 @class Timbermark;
 @class WasteStratum;
@@ -18,7 +18,7 @@
 @interface WasteCalculator : NSObject
 
 //shared functions
-+(void) calculatePieceStat:(WastePiece *)wastePiece wasteStratum:(WasteStratum *)ws;
++(void) calculatePieceStat:(WastePiece *)wastePiece wastePlot:(WastePlot *) plot wasteStratum:(WasteStratum *) ws;
 +(void) calculateRate:(WasteBlock *) wasteBlock;
 +(void) calculateWMRF:(WasteBlock *) wasteBlock updateOriginal:(BOOL) updateOriginal;
 +(void) calculatePiecesValue:(WasteBlock *) wasteBlock;
@@ -28,5 +28,5 @@
 +(void) resetEFWCoastStat:(EFWCoastStat *) stat;
 +(void) resetEFWInteriorStat:(EFWInteriorStat *) stat;
 +(float)pieceRate:(NSString*)species withGrade:(NSString*)grade withAvoid:(BOOL)avoid forBlock:(WasteBlock*)wasteBlock withTimbermark:(Timbermark*)timbermark;
-
++(NSString *) convertDecimalNumberToString:(NSDecimalNumber *) decimalNo;
 @end

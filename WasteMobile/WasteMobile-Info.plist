@@ -18,6 +18,16 @@
 				<string>iforwaste.ifw</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>eForWaste XML Document</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>eforwaste.efw</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
@@ -94,8 +104,34 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>EForWaste XML Document</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>eforwaste.efw</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>efw</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>applicion/eforwaste</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 	<key>iForWasteVersionNumber</key>
-	<string>iForWaste - Version 1.2.8</string>
+	<string>iForWaste 1.3.0</string>
 	<key>iForWasteWebServiceEndPoint</key>
 	<string>http://apps.nrs.gov.bc.ca/int/wastews/</string>
 </dict>

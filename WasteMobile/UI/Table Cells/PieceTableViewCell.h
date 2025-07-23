@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class WastePiece, WasteBlock;
+@class WastePiece, WasteBlock, WastePlot;
 
 @interface PieceTableViewCell : UITableViewCell
 /*
@@ -36,6 +36,7 @@
 
 @property (strong, nonatomic) NSMutableDictionary *displayObjectDictionary;
 
--(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock  assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock;
+//-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock  assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock;
+-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock  wastePlot:(WastePlot *) wastePlot userCreatedBlock:(BOOL)userCreatedBlock;
 
 @end

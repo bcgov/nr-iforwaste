@@ -22,10 +22,8 @@
 #import "MaturityCode.h"
 #import "SiteCode+CoreDataClass.h"
 #import "Constants.h"
-#import "StratumPile+CoreDataClass.h"
 #import "WastePile+CoreDataClass.h"
 #import "PileShapeCode+CoreDataClass.h"
-#import "AggregateCutblock+CoreDataClass.h"
 #import "WastePiece.h"
 #import "WasteClassCode.h"
 #import "MaterialKindCode.h"
@@ -44,6 +42,11 @@
 
     //reporting unit number, cut block ID, licence number and cutting permit ID should be the same
     NSMutableArray *warning = [[NSMutableArray alloc] init];
+ 
+    if(wb1.versionNumber == nil || [wb1.versionNumber caseInsensitiveCompare:@""] == NSOrderedSame || wb2.versionNumber == nil || [wb2.versionNumber caseInsensitiveCompare:@""] == NSOrderedSame)
+    {
+        [warning addObject:@"Cannot merge blocks created with application versions before 1.4.3"];
+    }
     
     //comparing Cut Block Fields
     if(wb1.yearLoggedTo && wb2.yearLoggedTo && [wb1.yearLoggedTo integerValue] != [wb2.yearLoggedTo integerValue]){
@@ -180,97 +183,19 @@
     
     for(WastePlot* plot_st1 in st1.stratumPlot){
         for(WastePlot* plot_st2 in st2.stratumPlot){
-            if([st1.stratumBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                if([plot_st1.plotNumber integerValue] == [plot_st2.plotNumber integerValue]){
-                    //[warning addObject: [NSString stringWithFormat:@"Stratum (%@) has duplicate plot %@", stratum, plot_st1.plotNumber]];
-                    //break;
-                    BOOL found_match = FALSE;
-                    for(WastePiece *wp1 in plot_st1.plotPiece){
-                        for(WastePiece *wp2 in plot_st2.plotPiece){
-                            if([wp1.pieceNumber isEqualToString:wp2.pieceNumber]){
-                                found_match = TRUE;
-                                if([st1.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                                    if([wp1.pieceBorderlineCode.borderlineCode isEqualToString:wp2.pieceBorderlineCode.borderlineCode] && [wp1.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:wp2.pieceScaleSpeciesCode.scaleSpeciesCode] && [wp1.pieceMaterialKindCode.materialKindCode isEqualToString:wp2.pieceMaterialKindCode.materialKindCode] && [wp1.pieceWasteClassCode.wasteClassCode isEqualToString:wp2.pieceWasteClassCode.wasteClassCode] && [wp1.length intValue] == [wp2.length intValue] && [wp1.topDiameter intValue] == [wp2.topDiameter intValue] && [wp1.pieceTopEndCode.topEndCode isEqualToString:wp2.pieceTopEndCode.topEndCode] && [wp1.buttDiameter intValue] == [wp2.buttDiameter intValue] && [wp1.pieceButtEndCode.buttEndCode isEqualToString:wp2.pieceButtEndCode.buttEndCode] && [wp1.pieceScaleGradeCode.scaleGradeCode isEqualToString:wp2.pieceScaleGradeCode.scaleGradeCode] && [wp1.lengthDeduction intValue] == [wp2.lengthDeduction intValue] && [wp1.topDeduction intValue] == [wp2.topDeduction intValue] && [wp1.buttDeduction intValue] == [wp2.buttDeduction intValue] /*&& [wp1.pieceDecayTypeCode.decayTypeCode isEqualToString:wp2.pieceDecayTypeCode.decayTypeCode] && [wp1.farEnd intValue] == [wp2.farEnd intValue] && [wp1.addLength intValue] == [wp2.addLength intValue] && [wp1.pieceCommentCode.commentCode isEqualToString:wp2.pieceCommentCode.commentCode]*/){
-                                        break;
-                                    }else{
-                                        [warning addObject: [NSString stringWithFormat:@"Stratum (%@), Plot (%@) has duplicate piece %@",stratum, plot_st1.plotNumber, wp1.pieceNumber]];
-                                        break;
-                                    }
-                                }else if([st1.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-                                    if([wp1.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:wp2.pieceScaleSpeciesCode.scaleSpeciesCode] && [wp1.pieceMaterialKindCode.materialKindCode isEqualToString:wp2.pieceMaterialKindCode.materialKindCode] && [wp1.pieceWasteClassCode.wasteClassCode isEqualToString:wp2.pieceWasteClassCode.wasteClassCode] && [wp1.length intValue] == [wp2.length intValue] && [wp1.topDiameter intValue] == [wp2.topDiameter intValue] && [wp1.pieceTopEndCode.topEndCode isEqualToString:wp2.pieceTopEndCode.topEndCode] && [wp1.buttDiameter intValue] == [wp2.buttDiameter intValue] && [wp1.pieceButtEndCode.buttEndCode isEqualToString:wp2.pieceButtEndCode.buttEndCode] && [wp1.pieceScaleGradeCode.scaleGradeCode isEqualToString:wp2.pieceScaleGradeCode.scaleGradeCode] && [wp1.lengthDeduction intValue] == [wp2.lengthDeduction intValue] && [wp1.topDeduction intValue] == [wp2.topDeduction intValue] && [wp1.buttDeduction intValue] == [wp2.buttDeduction intValue] /*&& [wp1.pieceDecayTypeCode.decayTypeCode isEqualToString:wp2.pieceDecayTypeCode.decayTypeCode] && [wp1.pieceCommentCode.commentCode isEqualToString:wp2.pieceCommentCode.commentCode]*/){
-                                        break;
-                                    }else{
-                                        [warning addObject: [NSString stringWithFormat:@"Stratum (%@), Plot (%@) has duplicate piece %@", stratum, plot_st1.plotNumber, wp1.pieceNumber]];
-                                        break;
-                                    }
-                                }else if([st1.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
-                                    if([wp1.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:wp2.pieceScaleSpeciesCode.scaleSpeciesCode] && [wp1.pieceMaterialKindCode.materialKindCode isEqualToString:wp2.pieceMaterialKindCode.materialKindCode] && [wp1.pieceWasteClassCode.wasteClassCode isEqualToString:wp2.pieceWasteClassCode.wasteClassCode] && [wp1.pieceScaleGradeCode.scaleGradeCode isEqualToString:wp2.pieceScaleGradeCode.scaleGradeCode] && [wp1.estimatedPercent doubleValue] == [wp2.estimatedPercent doubleValue]){
-                                        break;
-                                    }else{
-                                        [warning addObject: [NSString stringWithFormat:@"Stratum (%@), Plot (%@) has duplicate piece %@", stratum, plot_st1.plotNumber, wp1.pieceNumber]];
-                                        break;
-                                    }
-                                }
-                            }/*else{
-                                [warning addObject: [NSString stringWithFormat:@"Plot (%@) has no piece %@", stratum, wp1.pieceNumber?wp1.pieceNumber:wp2.pieceNumber]];
-                                break;
-                            }*/
-                        }
-                        if(!found_match){
-                            [warning addObject: [NSString stringWithFormat:@"Plot (%@) has new piece", plot_st1.plotNumber]];
-                            break;
-
-                        }
-                        found_match = NO;
-                    }
-                }
-            }else{
-                BOOL found_match = FALSE;
-                if([plot_st1.plotNumber integerValue] == [plot_st2.plotNumber integerValue]){
-                    if([plot_st1.aggregateCutblock intValue] == [plot_st2.aggregateCutblock intValue] && [plot_st1.aggregateCuttingPermit intValue] == [plot_st2.aggregateCuttingPermit intValue] && [plot_st1.aggregateLicence intValue] == [plot_st2.aggregateLicence intValue]){
-                        for(WastePiece *wp1 in plot_st1.plotPiece){
-                            for(WastePiece *wp2 in plot_st2.plotPiece){
-                                if([wp1.pieceNumber isEqualToString:wp2.pieceNumber]){
-                                    found_match = TRUE;
-                                    if([st1.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]){
-                                        if([wp1.pieceBorderlineCode.borderlineCode isEqualToString:wp2.pieceBorderlineCode.borderlineCode] && [wp1.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:wp2.pieceScaleSpeciesCode.scaleSpeciesCode] && [wp1.pieceMaterialKindCode.materialKindCode isEqualToString:wp2.pieceMaterialKindCode.materialKindCode] && [wp1.pieceWasteClassCode.wasteClassCode isEqualToString:wp2.pieceWasteClassCode.wasteClassCode] && [wp1.length intValue] == [wp2.length intValue] && [wp1.topDiameter intValue] == [wp2.topDiameter intValue] && [wp1.pieceTopEndCode.topEndCode isEqualToString:wp2.pieceTopEndCode.topEndCode] && [wp1.buttDiameter intValue] == [wp2.buttDiameter intValue] && [wp1.pieceButtEndCode.buttEndCode isEqualToString:wp2.pieceButtEndCode.buttEndCode] && [wp1.pieceScaleGradeCode.scaleGradeCode isEqualToString:wp2.pieceScaleGradeCode.scaleGradeCode] && [wp1.lengthDeduction intValue] == [wp2.lengthDeduction intValue] && [wp1.topDeduction intValue] == [wp2.topDeduction intValue] && [wp1.buttDeduction intValue] == [wp2.buttDeduction intValue] /*&& [wp1.pieceDecayTypeCode.decayTypeCode isEqualToString:wp2.pieceDecayTypeCode.decayTypeCode] && [wp1.farEnd intValue] == [wp2.farEnd intValue] && [wp1.addLength intValue] == [wp2.addLength intValue] && [wp1.pieceCommentCode.commentCode isEqualToString:wp2.pieceCommentCode.commentCode]*/){
-                                            break;
-                                        }else{
-                                            [warning addObject: [NSString stringWithFormat:@"Stratum (%@), Plot (%@) has duplicate piece %@",stratum, plot_st1.plotNumber, wp1.pieceNumber]];
-                                            break;
-                                        }
-                                    }else if([st1.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-                                        if([wp1.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:wp2.pieceScaleSpeciesCode.scaleSpeciesCode] && [wp1.pieceMaterialKindCode.materialKindCode isEqualToString:wp2.pieceMaterialKindCode.materialKindCode] && [wp1.pieceWasteClassCode.wasteClassCode isEqualToString:wp2.pieceWasteClassCode.wasteClassCode] && [wp1.length intValue] == [wp2.length intValue] && [wp1.topDiameter intValue] == [wp2.topDiameter intValue] && [wp1.pieceTopEndCode.topEndCode isEqualToString:wp2.pieceTopEndCode.topEndCode] && [wp1.buttDiameter intValue] == [wp2.buttDiameter intValue] && [wp1.pieceButtEndCode.buttEndCode isEqualToString:wp2.pieceButtEndCode.buttEndCode] && [wp1.pieceScaleGradeCode.scaleGradeCode isEqualToString:wp2.pieceScaleGradeCode.scaleGradeCode] && [wp1.lengthDeduction intValue] == [wp2.lengthDeduction intValue] && [wp1.topDeduction intValue] == [wp2.topDeduction intValue] && [wp1.buttDeduction intValue] == [wp2.buttDeduction intValue] /*&& [wp1.pieceDecayTypeCode.decayTypeCode isEqualToString:wp2.pieceDecayTypeCode.decayTypeCode] && [wp1.pieceCommentCode.commentCode isEqualToString:wp2.pieceCommentCode.commentCode]*/){
-                                            break;
-                                        }else{
-                                            [warning addObject: [NSString stringWithFormat:@"Stratum (%@), Plot (%@) has duplicate piece %@", stratum, plot_st1.plotNumber, wp1.pieceNumber]];
-                                            break;
-                                        }
-                                    }else if([st1.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
-                                        if([wp1.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:wp2.pieceScaleSpeciesCode.scaleSpeciesCode] && [wp1.pieceMaterialKindCode.materialKindCode isEqualToString:wp2.pieceMaterialKindCode.materialKindCode] && [wp1.pieceWasteClassCode.wasteClassCode isEqualToString:wp2.pieceWasteClassCode.wasteClassCode] && [wp1.pieceScaleGradeCode.scaleGradeCode isEqualToString:wp2.pieceScaleGradeCode.scaleGradeCode] && [wp1.estimatedPercent doubleValue] == [wp2.estimatedPercent doubleValue]){
-                                            break;
-                                        }else{
-                                            [warning addObject: [NSString stringWithFormat:@"Stratum (%@), Plot (%@) has duplicate piece %@", stratum, plot_st1.plotNumber, wp1.pieceNumber]];
-                                            break;
-                                        }
-                                    }
-                                }/*else{
-                                    [warning addObject: [NSString stringWithFormat:@"Plot (%@) has no piece %@", stratum, wp1.pieceNumber?wp1.pieceNumber:wp2.pieceNumber]];
-                                    break;
-                                }*/
-                            }
-                            if(!found_match){
-                                [warning addObject: [NSString stringWithFormat:@"Plot (%@) has new piece", plot_st1.plotNumber]];
-                                break;
-
-                            }
-                            found_match = NO;
-                        }
-                    }else{
-                        [warning addObject: [NSString stringWithFormat:@"Cannot have the same plot with different CB, CP, licence #"]];
-                        break;
-                    }
-                }
+            if([plot_st1.plotNumber integerValue] == [plot_st2.plotNumber integerValue]){
+                [warning addObject: [NSString stringWithFormat:@"Stratum (%@) has duplicate plot %@", stratum, plot_st1.plotNumber]];
+                break;
+            }
+        }
+    }
+    
+    // Packing Ratio logic
+    for(WastePile* pile_st1 in st1.stratumPile){
+        for(WastePile* pile_st2 in st2.stratumPile){
+            if([pile_st1.pileNumber integerValue] == [pile_st2.pileNumber integerValue]){
+                [warning addObject: [NSString stringWithFormat:@"Stratum (%@) has duplicate plot %@", stratum, pile_st1.pileNumber]];
+                break;
             }
         }
     }
@@ -357,77 +282,39 @@
                         [warning addObject: [NSString stringWithFormat:@"Stratum (%@) %@", st1.stratum, @"Waste Level Code"]];
                     }
                 }
-                /*if((st1.stratumSurveyArea == nil && st2.stratumSurveyArea != nil) || (st1.stratumSurveyArea != nil && st2.stratumSurveyArea == nil) || (st1.stratumSurveyArea != nil && st2.stratumSurveyArea != nil)){
-                    if([st1.stratumSurveyArea floatValue] != [st2.stratumSurveyArea floatValue]){
-                        [warning addObject: [NSString stringWithFormat:@"Stratum (%@) %@", st1.stratum, @"Area"]];
-                    }
-                }*/
                 
-                if([wb1.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                    // comparing Stratum
-                    if([st2.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                        NSSet* pile_set = [NSSet setWithSet:st2.strPile.pileData];
+                if([st2.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
+                    NSSet* pile_set = [NSSet setWithSet:st2.stratumPile];
+                    for(WastePile *swb_pile in pile_set){
+                        for(WastePile *pwb_pile in st1.stratumPile){
+                            if(pwb_pile.pileNumber == swb_pile.pileNumber){
+                                if([pwb_pile.measuredWidth isEqualToNumber:0] && [pwb_pile.measuredHeight isEqualToNumber:0] && [pwb_pile.measuredLength isEqualToNumber:0])
+                                {
+                                 if([pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] != [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] != [swb_pile.measuredPileVolume doubleValue]){
+                                     [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
+                                 }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    if(st2.stratumPile == st1.stratumPile){
+                        NSSet* pile_set = [NSSet setWithSet:st2.stratumPile];
                         for(WastePile *swb_pile in pile_set){
-                            for(WastePile *pwb_pile in st1.strPile.pileData){
+                            for(WastePile *pwb_pile in st1.stratumPile){
                                 if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                     if([pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] != [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] != [swb_pile.measuredPileVolume doubleValue]){
-                                         [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
-                                     }
+                                    if([pwb_pile.measuredWidth isEqualToNumber:0] && [pwb_pile.measuredHeight isEqualToNumber:0] && [pwb_pile.measuredLength isEqualToNumber:0])
+                                    {
+                                        if([pwb_pile.length doubleValue] != [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] !=  [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] != [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode]){
+                                             [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
+                                         }
+                                    }
                                     break;
                                 }
                             }
                         }
-                    }else{
-                        if(st2.strPile.stratumPileId == st1.strPile.stratumPileId){
-                            NSSet* pile_set = [NSSet setWithSet:st2.strPile.pileData];
-                            for(WastePile *swb_pile in pile_set){
-                                for(WastePile *pwb_pile in st1.strPile.pileData){
-                                    if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                         if([pwb_pile.length doubleValue] != [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] != [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] != [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode]){
-                                             [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
-                                         }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
                     }
-                }else if([wb1.isAggregate intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-                    // comparing Stratum
-                        for (AggregateCutblock *swb_aggCB in st2.stratumAgg){
-                            for(AggregateCutblock *pwb_aggCB in st1.stratumAgg){
-                                if(pwb_aggCB.aggregateCuttingPermit == swb_aggCB.aggregateCuttingPermit && pwb_aggCB.aggregateCutblock == swb_aggCB.aggregateCutblock && pwb_aggCB.aggregateLicense == swb_aggCB.aggregateLicense){
-                                   if([st2.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                                        NSSet* pile_set = [NSSet setWithSet:st2.strPile.pileData];
-                                        for(WastePile *swb_pile in pile_set){
-                                            for(WastePile *pwb_pile in st1.strPile.pileData){
-                                                if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                                     if([pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] != [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] != [swb_pile.measuredPileVolume doubleValue]){
-                                                         [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
-                                                     }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }else{
-                                       if(swb_aggCB.aggPile.stratumPileId == pwb_aggCB.aggPile.stratumPileId){
-                                        NSSet* pile_set = [NSSet setWithSet:swb_aggCB.aggPile.pileData];
-                                        for(WastePile *swb_pile in pile_set){
-                                            for(WastePile *pwb_pile in pwb_aggCB.aggPile.pileData){
-                                                if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                                    if([pwb_pile.length doubleValue] != [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] != [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] != [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode]){
-                                                        [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
                 }
             }
         }
@@ -528,71 +415,38 @@
                         }
                     }
                     
-                    if([wb1.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                        // comparing Stratum
-                        if([st2.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                            NSSet* pile_set = [NSSet setWithSet:st2.strPile.pileData];
-                            for(WastePile *swb_pile in pile_set){
-                                for(WastePile *pwb_pile in st1.strPile.pileData){
-                                    if(pwb_pile.pileNumber == swb_pile.pileNumber){
+                    if([st2.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
+                        NSSet* pile_set = [NSSet setWithSet:st2.stratumPile];
+                        for(WastePile *swb_pile in pile_set){
+                            for(WastePile *pwb_pile in st1.stratumPile){
+                                if(pwb_pile.pileNumber == swb_pile.pileNumber){
+                                    if(pwb_pile.measuredWidth != 0 && pwb_pile.measuredHeight != 0 && pwb_pile.measuredLength != 0)
+                                    {
                                          if([pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] != [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] != [swb_pile.measuredPileVolume doubleValue]){
                                              [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
                                          }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        if(st2.stratumPile == st1.stratumPile){
+                            NSSet* pile_set = [NSSet setWithSet:st2.stratumPile];
+                            for(WastePile *swb_pile in pile_set){
+                                for(WastePile *pwb_pile in st1.stratumPile){
+                                    if(pwb_pile.pileNumber == swb_pile.pileNumber){
+                                        if(pwb_pile.measuredWidth != 0 && pwb_pile.measuredHeight != 0 && pwb_pile.measuredLength != 0)
+                                        {
+                                             if([pwb_pile.length doubleValue] != [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] != [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] != [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode]){
+                                                 [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
+                                             }
+                                        }
                                         break;
                                     }
                                 }
                             }
-                        }else{
-                            if(st2.strPile.stratumPileId == st1.strPile.stratumPileId){
-                                NSSet* pile_set = [NSSet setWithSet:st2.strPile.pileData];
-                                for(WastePile *swb_pile in pile_set){
-                                    for(WastePile *pwb_pile in st1.strPile.pileData){
-                                        if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                             if([pwb_pile.length doubleValue] != [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] != [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] != [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode]){
-                                                 [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
-                                             }
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
                         }
-                    }else if([wb1.isAggregate intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-                        // comparing Stratum
-                            for (AggregateCutblock *swb_aggCB in st2.stratumAgg){
-                                for(AggregateCutblock *pwb_aggCB in st1.stratumAgg){
-                                    if(pwb_aggCB.aggregateCuttingPermit == swb_aggCB.aggregateCuttingPermit && pwb_aggCB.aggregateCutblock == swb_aggCB.aggregateCutblock && pwb_aggCB.aggregateLicense == swb_aggCB.aggregateLicense){
-                                       if([st2.stratumBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]){
-                                            NSSet* pile_set = [NSSet setWithSet:st2.strPile.pileData];
-                                            for(WastePile *swb_pile in pile_set){
-                                                for(WastePile *pwb_pile in st1.strPile.pileData){
-                                                    if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                                         if([pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode] && [pwb_pile.measuredPileArea doubleValue] != [swb_pile.measuredPileArea doubleValue] && [pwb_pile.measuredPileVolume doubleValue] != [swb_pile.measuredPileVolume doubleValue]){
-                                                             [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
-                                                         }
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }else{
-                                           if(swb_aggCB.aggPile.stratumPileId == pwb_aggCB.aggPile.stratumPileId){
-                                            NSSet* pile_set = [NSSet setWithSet:swb_aggCB.aggPile.pileData];
-                                            for(WastePile *swb_pile in pile_set){
-                                                for(WastePile *pwb_pile in pwb_aggCB.aggPile.pileData){
-                                                    if(pwb_pile.pileNumber == swb_pile.pileNumber){
-                                                        if([pwb_pile.length doubleValue] != [swb_pile.length doubleValue] && [pwb_pile.width doubleValue] != [swb_pile.width doubleValue] && [pwb_pile.height doubleValue] != [swb_pile.height doubleValue] && [pwb_pile.measuredLength doubleValue] != [swb_pile.measuredLength doubleValue] && [pwb_pile.measuredWidth doubleValue] != [swb_pile.measuredWidth doubleValue] && [pwb_pile.measuredHeight doubleValue] != [swb_pile.measuredHeight doubleValue] && ![pwb_pile.pilePileShapeCode.pileShapeCode isEqual:swb_pile.pilePileShapeCode.pileShapeCode]){
-                                                            [warning addObject: [NSString stringWithFormat:@"RU (%@), Stratum (%@), Block (%@), CP (%@), License (%@), Pile Number (%@), the measure dimensions on the incoming file do not match the receiving file.",wb2.reportingUnit, st1.stratum, wb2.blockNumber, wb2.cuttingPermitId, wb2.licenceNumber, swb_pile.pileNumber]];
-                                                        }
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break;
                     }
                 }
             }

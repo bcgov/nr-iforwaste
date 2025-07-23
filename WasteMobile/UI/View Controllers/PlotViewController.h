@@ -71,7 +71,6 @@ typedef enum PlotAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *totalEstimatedVolumeLabel;
 @property (weak, nonatomic) IBOutlet UITextField *totalEstimateVolume;
 @property (weak, nonatomic) IBOutlet UILabel *surveyTotalEstimateVolume;
-@property (weak, nonatomic) IBOutlet UITextField *surveyTotalEstimateVolumeText;
 @property (weak, nonatomic) IBOutlet UILabel *checkSurveyDateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *checkMeasureLabel;
 @property (weak, nonatomic) IBOutlet UILabel *checkByLabel;
@@ -80,7 +79,7 @@ typedef enum PlotAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *totalCheckPercent;
 
 @property (weak, nonatomic) IBOutlet UILabel *isMeasurePlotLabel;
-@property (weak, nonatomic) IBOutlet UILabel *isMeasurePlot;
+@property (weak, nonatomic) IBOutlet UITextField *isMeasurePlot;
 @property (weak, nonatomic) IBOutlet UILabel *greenVolumeLabel;
 @property (weak, nonatomic) IBOutlet UITextField *greenVolume;
 @property (weak, nonatomic) IBOutlet UILabel *dryVolumeLabel;
@@ -88,6 +87,9 @@ typedef enum PlotAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *predictionOnlyWarningLabel;
 
 @property (strong, nonatomic) IBOutlet PiecesHeaderView *headerView;
+
+@property (weak, nonatomic) IBOutlet UILabel *checkVolumeLabel;
+@property (weak, nonatomic) IBOutlet UITextField *checkVolume;
 
 // spinner for fields
 @property (strong, nonatomic) IBOutlet UIView *pickerViewContainer;
@@ -117,8 +119,14 @@ typedef enum PlotAlertTypeCode{
 
 @property (weak, nonatomic) UITextField *activeTF;
 
+@property (strong, nonatomic) NSNumber *originalMP;
+@property (strong, nonatomic) NSNumber *fromBackButton;
+@property (weak, nonatomic) IBOutlet UIImageView *downArrow;
+
 
 -(IBAction)hideKeyboard:(id)sender;
+
+-(IBAction) changeStatus:(id)sender;
 
 -(IBAction)savePlot:(id)sender;
 -(IBAction)addNewPiece:(id)sender;
@@ -128,6 +136,7 @@ typedef enum PlotAlertTypeCode{
 -(void) initNewPieceProperty:(NSString*)piece_number;
 -(void) removeCurrentPiece;
 -(void) updateCurrentPieceProperty:(WastePiece*)wp property:(NSString*)property;
+
 
 @end
 

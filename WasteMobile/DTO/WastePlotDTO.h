@@ -16,4 +16,5 @@
 @property  NSNumber * strip;
 @property  NSNumber * surveyedMeasurePercent;
 
+
 @end

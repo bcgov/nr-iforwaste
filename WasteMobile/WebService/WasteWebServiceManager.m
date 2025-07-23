@@ -111,7 +111,8 @@
 -(void) downloadCutBlock:(NSString *)wasteAssessmentAreaId{
     
     //start a new thread to download the cut block data
-    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+ ^{
     
         NSError *error;
         WasteBlock *wb;
@@ -269,7 +270,6 @@
                         
                         if (error != nil){
                             NSLog(@"Error when getting Piece: %@", error);
-                            
                         }
                         
                         NSArray *wpieceAry = [WastePieceDTOAdaptor wastePieceDTOFromJSON:responseData error:&error];
@@ -284,7 +284,7 @@
                             wpiece.sortNumber = [NSNumber numberWithInt: [wpiece.pieceNumber intValue] * 10];
                             
                             //calculate the piece volume
-                            [WasteCalculator calculatePieceStat:wpiece wasteStratum:ws];
+                            [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot wasteStratum:ws];
                             
                             //add tje piece to plot
                             [wplot addPlotPieceObject:wpiece];
@@ -293,7 +293,7 @@
                         //add plot to stratum after adding the piece to plot
                         [ws addStratumPlotObject:wplot];
                     }
-                }else{
+                } else {
                     //if stratum is not using plot assessment method, create a empty plot to hold the pieces
                     WastePlot *wplot = [self createEmptyPlot];
                     
@@ -305,10 +305,12 @@
                     
                     responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
                     
-                   if (error != nil){
+                    if (error != nil){
                         NSLog(@"Error when getting Piece: %@", error);
                         
                     }
+                    wplot.plotEstimatedVolume = ws.totalEstimatedVolume;
+                    wplot.checkVolume = ws.checkTotalEstimatedVolume;
                     
                     NSArray *wpieceAry = [WastePieceDTOAdaptor wastePieceDTOFromJSON:responseData error:&error];
                     
@@ -322,7 +324,7 @@
                         wpiece.sortNumber = [NSNumber numberWithInt: [wpiece.pieceNumber intValue] * 10];
                         
                         //calculate the piece volume
-                        [WasteCalculator calculatePieceStat:wpiece wasteStratum:ws];
+                        [WasteCalculator calculatePieceStat:wpiece wastePlot:wplot wasteStratum:ws];
                         
                         //add tje piece to plot
                         [wplot addPlotPieceObject:wpiece];
@@ -343,7 +345,7 @@
         
             NSManagedObjectContext *context = [self managedObjectContext];
             
-          if (error == nil){
+            if (error == nil){
                 
                 [WasteCalculator calculateWMRF:wb  updateOriginal:YES];
                 
@@ -510,8 +512,8 @@
     free(propertyArray);
     
     if(isStandingTree){
-        ws.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"wasteTypeCode" code:@"S"];
-        ws.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"harvestMethodCode" code:@"T"];
+        ws.stratumWasteTypeCode = (WasteTypeCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"WasteTypeCode" code:@"S"];
+        ws.stratumHarvestMethodCode = (HarvestMethodCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"HarvestMethodCode" code:@"T"];
     }
     
     //copy the area to the survey area field
@@ -649,7 +651,6 @@
         //[last4numbers replaceCharactersInRange:NSMakeRange(1, 1) withString:tmp];
         
         // replace 3rd number of title
-        NSString *testVariable = ws.stratumAssessmentMethodCode.assessmentMethodCode;
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"] ){
             [stratumName replaceCharactersInRange:NSMakeRange(2, 1) withString:ws.stratumAssessmentMethodCode.assessmentMethodCode ];
         }

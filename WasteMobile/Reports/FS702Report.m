@@ -20,7 +20,6 @@
 #import "PlotSizeCode.h"
 #import "Constants.h"
 #import "AssessmentMethodCode.h"
-#import "StratumPile+CoreDataClass.h"
 #import "WastePile+CoreDataClass.h"
 
 @implementation FS702Report
@@ -514,89 +513,88 @@
                 }// if piece is appropriate
             }// for pieces
         }//for stratums
-        StratumPile* sp = stratum.strPile;
-          piles = sp.pileData;
+          piles = stratum.stratumPile;
           NSString* avoid = @"A";
           for(WastePile* pile in piles)
           {
               NSMutableArray *speciesArray = [[NSMutableArray alloc] init];
               NSMutableArray *speciesPercentArray  = [[NSMutableArray alloc] init];
-              if(pile.alPercent != 0 ){
-                  [speciesArray addObject: @"AL"];
-                  [speciesPercentArray addObject: pile.alPercent];
-              }
-                if(pile.arPercent != 0 ){
-                   [speciesArray addObject: @"AR"];
-                   [speciesPercentArray addObject: pile.arPercent];
-                }
-                if(pile.asPercent != 0 ){
-                   [speciesArray addObject: @"AS"];
-                   [speciesPercentArray addObject: pile.asPercent];
-                }
-                if(pile.baPercent != 0 ){
-                   [speciesArray addObject: @"BA"];
-                   [speciesPercentArray addObject: pile.baPercent];
-                }
-                if(pile.biPercent != 0 ){
-                   [speciesArray addObject: @"BI"];
-                   [speciesPercentArray addObject: pile.biPercent];
-                }
-                if(pile.cePercent != 0 ){
-                   [speciesArray addObject: @"CE"];
-                   [speciesPercentArray addObject: pile.cePercent];
-                }
-                if(pile.coPercent != 0 ){
-                   [speciesArray addObject: @"CO"];
-                     [speciesPercentArray addObject: pile.coPercent];
-                }
-                if(pile.cyPercent != 0 ){
-                   [speciesArray addObject: @"CY"];
-                     [speciesPercentArray addObject: pile.cyPercent];
-                }
-                if(pile.fiPercent != 0 ){
-                   [speciesArray addObject: @"FI"];
-                     [speciesPercentArray addObject: pile.fiPercent];
-                }
-                if(pile.hePercent != 0 ){
-                   [speciesArray addObject: @"HE"];
-                     [speciesPercentArray addObject: pile.hePercent];
-                }
-                if(pile.laPercent != 0 ){
-                   [speciesArray addObject: @"LA"];
-                     [speciesPercentArray addObject: pile.laPercent];
-                }
-                if(pile.loPercent != 0 ){
-                   [speciesArray addObject: @"LO"];
-                     [speciesPercentArray addObject: pile.loPercent];
-                }
-                if(pile.maPercent != 0 ){
-                   [speciesArray addObject: @"MA"];
-                     [speciesPercentArray addObject: pile.maPercent];
-                }
-                if(pile.spPercent != 0 ){
-                    [speciesArray addObject: @"SP"];
-                      [speciesPercentArray addObject: pile.spPercent];
-                }
-                if(pile.uuPercent != 0 ){
-                   [speciesArray addObject: @"UU"];
-                     [speciesPercentArray addObject: pile.uuPercent];
-                }
-                if(pile.wbPercent != 0 ){
-                   [speciesArray addObject: @"WB"];
-                     [speciesPercentArray addObject: pile.wbPercent];
-                }
-                if(pile.whPercent != 0 ){
-                   [speciesArray addObject: @"WH"];
-                     [speciesPercentArray addObject: pile.whPercent];
-                }
-                if(pile.wiPercent != 0 ){
-                   [speciesArray addObject: @"WI"];
-                     [speciesPercentArray addObject: pile.wiPercent];
-                }
-                if(pile.yePercent != 0 ){
-                   [speciesArray addObject: @"YE"];
-                     [speciesPercentArray addObject: pile.yePercent];
-                }
+//              if(pile.alPercent != 0 ){
+//                  [speciesArray addObject: @"AL"];
+//                  [speciesPercentArray addObject: pile.alPercent];
+//              }
+//                if(pile.arPercent != 0 ){
+//                   [speciesArray addObject: @"AR"];
+//                   [speciesPercentArray addObject: pile.arPercent];
+//                }
+//                if(pile.asPercent != 0 ){
+//                   [speciesArray addObject: @"AS"];
+//                   [speciesPercentArray addObject: pile.asPercent];
+//                }
+//                if(pile.baPercent != 0 ){
+//                   [speciesArray addObject: @"BA"];
+//                   [speciesPercentArray addObject: pile.baPercent];
+//                }
+//                if(pile.biPercent != 0 ){
+//                   [speciesArray addObject: @"BI"];
+//                   [speciesPercentArray addObject: pile.biPercent];
+//                }
+//                if(pile.cePercent != 0 ){
+//                   [speciesArray addObject: @"CE"];
+//                   [speciesPercentArray addObject: pile.cePercent];
+//                }
+//                if(pile.coPercent != 0 ){
+//                   [speciesArray addObject: @"CO"];
+//                     [speciesPercentArray addObject: pile.coPercent];
+//                }
+//                if(pile.cyPercent != 0 ){
+//                   [speciesArray addObject: @"CY"];
+//                     [speciesPercentArray addObject: pile.cyPercent];
+//                }
+//                if(pile.fiPercent != 0 ){
+//                   [speciesArray addObject: @"FI"];
+//                     [speciesPercentArray addObject: pile.fiPercent];
+//                }
+//                if(pile.hePercent != 0 ){
+//                   [speciesArray addObject: @"HE"];
+//                     [speciesPercentArray addObject: pile.hePercent];
+//                }
+//                if(pile.laPercent != 0 ){
+//                   [speciesArray addObject: @"LA"];
+//                     [speciesPercentArray addObject: pile.laPercent];
+//                }
+//                if(pile.loPercent != 0 ){
+//                   [speciesArray addObject: @"LO"];
+//                     [speciesPercentArray addObject: pile.loPercent];
+//                }
+//                if(pile.maPercent != 0 ){
+//                   [speciesArray addObject: @"MA"];
+//                     [speciesPercentArray addObject: pile.maPercent];
+//                }
+//                if(pile.spPercent != 0 ){
+//                    [speciesArray addObject: @"SP"];
+//                      [speciesPercentArray addObject: pile.spPercent];
+//                }
+//                if(pile.uuPercent != 0 ){
+//                   [speciesArray addObject: @"UU"];
+//                     [speciesPercentArray addObject: pile.uuPercent];
+//                }
+//                if(pile.wbPercent != 0 ){
+//                   [speciesArray addObject: @"WB"];
+//                     [speciesPercentArray addObject: pile.wbPercent];
+//                }
+//                if(pile.whPercent != 0 ){
+//                   [speciesArray addObject: @"WH"];
+//                     [speciesPercentArray addObject: pile.whPercent];
+//                }
+//                if(pile.wiPercent != 0 ){
+//                   [speciesArray addObject: @"WI"];
+//                     [speciesPercentArray addObject: pile.wiPercent];
+//                }
+//                if(pile.yePercent != 0 ){
+//                   [speciesArray addObject: @"YE"];
+//                     [speciesPercentArray addObject: pile.yePercent];
+//                }
               
               NSMutableArray *gradeArray = [[NSMutableArray alloc] init];
               NSMutableArray *gradePercentArray = [[NSMutableArray alloc] init];
@@ -653,16 +651,35 @@
                           
                         NSInteger count = [[tmpDictDataForID objectAtIndex:0] integerValue];
 
-                        NSDecimalNumber *prGrade = [[NSDecimalNumber alloc] initWithDouble:([pile.measuredPileVolume doubleValue] * [gradePercent doubleValue])/100];
+                        NSDecimalNumber *prGrade = [[NSDecimalNumber alloc] initWithDouble:([pile.pileVolume doubleValue] * [gradePercent doubleValue])/100];
                             
                         NSDecimalNumber *volGrade = [[NSDecimalNumber alloc] initWithDouble: ([prGrade doubleValue] * [speciesPercent doubleValue])/100];
                             
                         float pieceRate = [self pieceRate:species withGrade:grade
                         withAvoid:[avoid isEqualToString:@"A"] forBlock:wastBlock withTimbermark:timbermark];
                         
-                        double newVolume = [[tmpDictDataForID objectAtIndex:1] doubleValue] + [volGrade doubleValue];
-                          
-                        float volHa = [[tmpDictDataForID objectAtIndex:2] floatValue] + [[prGrade decimalNumberByDividingBy:pile.measuredPileArea] floatValue];
+                          double newVolume = 0;
+                          float volHa = 0.0;
+                          NSDecimalNumberHandler *h = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain
+                                           scale:1
+                                raiseOnExactness:NO
+                                 raiseOnOverflow:NO
+                                raiseOnUnderflow:NO
+                             raiseOnDivideByZero:NO];
+                          if(tmpDictDataForID != nil)
+                          {
+                            newVolume = [[tmpDictDataForID objectAtIndex:1] doubleValue] + [volGrade doubleValue];
+                              volHa = [[tmpDictDataForID objectAtIndex:2] floatValue] + [[prGrade decimalNumberByDividingBy:pile.pileArea withBehavior:h] floatValue];
+                          }
+                          else
+                          {
+                             newVolume = [volGrade doubleValue];
+                             volHa = [[prGrade decimalNumberByDividingBy:pile.pileArea withBehavior:h] floatValue];
+                          }
+                          if(volHa != volHa)
+                          {
+                              volHa = 0.0;
+                          }
                         
                         float total = 0.0; // calculated at the end
                         
@@ -677,6 +694,188 @@
                   }
               }
           }//end of pile for loop
+        
+        for(WastePile* pile in stratum.stratumPile)
+                {
+                    NSMutableArray *speciesArray = [[NSMutableArray alloc] init];
+                    NSMutableArray *speciesPercentArray  = [[NSMutableArray alloc] init];
+//                    if(pile.alPercent != 0 ){
+//                        [speciesArray addObject: @"AL"];
+//                        [speciesPercentArray addObject: pile.alPercent];
+//                    }
+//                      if(pile.arPercent != 0 ){
+//                         [speciesArray addObject: @"AR"];
+//                         [speciesPercentArray addObject: pile.arPercent];
+//                      }
+//                      if(pile.asPercent != 0 ){
+//                         [speciesArray addObject: @"AS"];
+//                         [speciesPercentArray addObject: pile.asPercent];
+//                      }
+//                      if(pile.baPercent != 0 ){
+//                         [speciesArray addObject: @"BA"];
+//                         [speciesPercentArray addObject: pile.baPercent];
+//                      }
+//                      if(pile.biPercent != 0 ){
+//                         [speciesArray addObject: @"BI"];
+//                         [speciesPercentArray addObject: pile.biPercent];
+//                      }
+//                      if(pile.cePercent != 0 ){
+//                         [speciesArray addObject: @"CE"];
+//                         [speciesPercentArray addObject: pile.cePercent];
+//                      }
+//                      if(pile.coPercent != 0 ){
+//                         [speciesArray addObject: @"CO"];
+//                           [speciesPercentArray addObject: pile.coPercent];
+//                      }
+//                      if(pile.cyPercent != 0 ){
+//                         [speciesArray addObject: @"CY"];
+//                           [speciesPercentArray addObject: pile.cyPercent];
+//                      }
+//                      if(pile.fiPercent != 0 ){
+//                         [speciesArray addObject: @"FI"];
+//                           [speciesPercentArray addObject: pile.fiPercent];
+//                      }
+//                      if(pile.hePercent != 0 ){
+//                         [speciesArray addObject: @"HE"];
+//                           [speciesPercentArray addObject: pile.hePercent];
+//                      }
+//                      if(pile.laPercent != 0 ){
+//                         [speciesArray addObject: @"LA"];
+//                           [speciesPercentArray addObject: pile.laPercent];
+//                      }
+//                      if(pile.loPercent != 0 ){
+//                         [speciesArray addObject: @"LO"];
+//                           [speciesPercentArray addObject: pile.loPercent];
+//                      }
+//                      if(pile.maPercent != 0 ){
+//                         [speciesArray addObject: @"MA"];
+//                           [speciesPercentArray addObject: pile.maPercent];
+//                      }
+//                      if(pile.spPercent != 0 ){
+//                          [speciesArray addObject: @"SP"];
+//                            [speciesPercentArray addObject: pile.spPercent];
+//                      }
+//                      if(pile.uuPercent != 0 ){
+//                         [speciesArray addObject: @"UU"];
+//                           [speciesPercentArray addObject: pile.uuPercent];
+//                      }
+//                      if(pile.wbPercent != 0 ){
+//                         [speciesArray addObject: @"WB"];
+//                           [speciesPercentArray addObject: pile.wbPercent];
+//                      }
+//                      if(pile.whPercent != 0 ){
+//                         [speciesArray addObject: @"WH"];
+//                           [speciesPercentArray addObject: pile.whPercent];
+//                      }
+//                      if(pile.wiPercent != 0 ){
+//                         [speciesArray addObject: @"WI"];
+//                           [speciesPercentArray addObject: pile.wiPercent];
+//                      }
+//                      if(pile.yePercent != 0 ){
+//                         [speciesArray addObject: @"YE"];
+//                           [speciesPercentArray addObject: pile.yePercent];
+//                      }
+                    
+                    NSMutableArray *gradeArray = [[NSMutableArray alloc] init];
+                    NSMutableArray *gradePercentArray = [[NSMutableArray alloc] init];
+                    
+                    if(stratum.grade12Percent != 0 ){
+                        [gradeArray addObject: @"2"];
+                          [gradePercentArray addObject: stratum.grade12Percent];
+                    }
+                    if(stratum.grade4Percent != 0 ){
+                        [gradeArray addObject: @"4"];
+                          [gradePercentArray addObject: stratum.grade4Percent];
+                    }
+                    if(stratum.grade5Percent != 0 ){
+                        [gradeArray addObject: @"5"];
+                          [gradePercentArray addObject: stratum.grade5Percent];
+                    }
+                    if(stratum.gradeJPercent != 0 ){
+                        [gradeArray addObject: @"J"];
+                          [gradePercentArray addObject: stratum.gradeJPercent];
+                    }
+                    if(stratum.gradeYPercent != 0 ){
+                        [gradeArray addObject: @"Y"];
+                          [gradePercentArray addObject: stratum.gradeYPercent];
+                    }
+                    if(stratum.gradeXPercent != 0 ){
+                        [gradeArray addObject: @"X"];
+                          [gradePercentArray addObject: stratum.gradeXPercent];
+                    }
+                    if(stratum.gradeWPercent != 0 ){
+                        [gradeArray addObject: @"W"];
+                          [gradePercentArray addObject: stratum.gradeWPercent];
+                    }
+                    if(stratum.gradeUPercent != 0 ){
+                        [gradeArray addObject: @"U"];
+                          [gradePercentArray addObject: stratum.gradeUPercent];
+                    }
+                    
+                    int i;
+                    int j;
+                    int speciesCount = [speciesArray count];
+                    int gradeCount = [gradeArray count];
+                    
+                    for(i = 0; i < speciesCount; i++)
+                    {
+                        for(j = 0; j < gradeCount; j++)
+                        {
+                            NSString* species = [speciesArray objectAtIndex:i];
+                            NSString* grade = [gradeArray objectAtIndex:j];
+                            NSDecimalNumber* speciesPercent = [speciesPercentArray objectAtIndex:i];
+                            NSDecimalNumber* gradePercent = [gradePercentArray objectAtIndex:j];
+                            
+                              uniqueID = [NSString stringWithFormat:@"%@_%@_%@", species, grade, avoid];
+                              NSArray *tmpDictDataForID = [combinationsOfPieces valueForKey:uniqueID];
+                                
+                              NSInteger count = [[tmpDictDataForID objectAtIndex:0] integerValue];
+
+                              NSDecimalNumber *prGrade = [[NSDecimalNumber alloc] initWithDouble:([pile.pileVolume doubleValue] * [gradePercent doubleValue])/100];
+                                  
+                              NSDecimalNumber *volGrade = [[NSDecimalNumber alloc] initWithDouble: ([prGrade doubleValue] * [speciesPercent doubleValue])/100];
+                                  
+                              float pieceRate = [self pieceRate:species withGrade:grade
+                              withAvoid:[avoid isEqualToString:@"A"] forBlock:wastBlock withTimbermark:timbermark];
+                              
+                              double newVolume = 0;
+                              float volHa = 0.0;
+                              NSDecimalNumberHandler *h = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain
+                                               scale:1
+                                    raiseOnExactness:NO
+                                     raiseOnOverflow:NO
+                                    raiseOnUnderflow:NO
+                                 raiseOnDivideByZero:NO];
+                              if(tmpDictDataForID != nil)
+                              {
+                                newVolume = [[tmpDictDataForID objectAtIndex:1] doubleValue] + [volGrade doubleValue];
+                                  volHa = [[tmpDictDataForID objectAtIndex:2] floatValue] + [[prGrade decimalNumberByDividingBy:pile.pileArea withBehavior:h] floatValue];
+                              }
+                              else
+                              {
+                                 newVolume = [volGrade doubleValue];
+                                 volHa = [[prGrade decimalNumberByDividingBy:pile.pileArea withBehavior:h] floatValue];
+                              }
+                              if(volHa != volHa)
+                              {
+                                  volHa = 0.0;
+                              }
+                              
+                              float total = 0.0; // calculated at the end
+                              
+                              pieceData = [[NSArray alloc] initWithObjects:
+                                                 [[NSString alloc] initWithFormat:@"%ld",(long)count],
+                                                 [[NSString alloc] initWithFormat:@"%.02f", newVolume],
+                                                 [[NSString alloc] initWithFormat:@"%.003f", volHa] ,
+                                                 [[NSString alloc] initWithFormat:@"%.02f",pieceRate],
+                                                 [[NSString alloc] initWithFormat:@"%.02f", total], //total calulated at end
+                                                 nil];
+                              [combinationsOfPieces setObject:pieceData forKey:uniqueID];
+                        }
+                    }
+                }
+            
+            //end of aggregate pile for loop
     }
     
     // for the 2nd table  // BUG?? - is it initialized with elements 0 ?

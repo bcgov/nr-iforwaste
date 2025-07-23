@@ -25,6 +25,7 @@
 @dynamic measurePlot;
 @dynamic n1sample;
 @dynamic n2sample;
+@dynamic fixedSample;
 @dynamic notes;
 @dynamic orgMeasurePlot;
 @dynamic orgPredictionPlot;
@@ -49,7 +50,6 @@
 @dynamic stratumCoastStat;
 @dynamic stratumInteriorStat;
 @dynamic isPileStratum;
-@dynamic stratumAgg;
 @dynamic grade12Percent;
 @dynamic grade4Percent;
 @dynamic grade5Percent;
@@ -60,6 +60,14 @@
 @dynamic gradeWPercent;
 @dynamic measureSample;
 @dynamic totalNumPile;
-@dynamic strPile;
+@dynamic deletedStratumPlot;
+@dynamic isLocked;
+
+//data change variables
+@dynamic dcSurveyorName;
+@dynamic dcDesignation;
+@dynamic dcLicenseNumber;
+@dynamic dcSignature;
+@dynamic dcRationale;
 
 @end

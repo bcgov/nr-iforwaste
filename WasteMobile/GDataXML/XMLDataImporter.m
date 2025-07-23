@@ -17,9 +17,7 @@
 #import "CodeDAO.h"
 #import "WasteCalculator.h"
 #import "Timbermark.h"
-#import "StratumPile+CoreDataClass.h"
 #import "WastePile+CoreDataClass.h"
-#import "AggregateCutblock+CoreDataClass.h"
 
 @implementation XMLDataImporter
 
@@ -124,8 +122,9 @@
     //get the region ID first
     NSArray *regionId = [doc.rootElement elementsForName:@"regionId"];
     NSArray *isAggregate = [doc.rootElement elementsForName:@"isAggregate"];
-
-    *wb = [WasteBlockDAO createEmptyCutBlock:[[(GDataXMLElement *)[regionId objectAtIndex:0] stringValue] intValue] ratioSample:NO isAggregate:[[(GDataXMLElement *)[isAggregate objectAtIndex:0] stringValue] intValue]];
+    NSArray *ratioSample = [doc.rootElement elementsForName:@"isRatio"];
+    
+    *wb = [WasteBlockDAO createEmptyCutBlock:[[(GDataXMLElement *)[regionId objectAtIndex:0] stringValue] intValue] ratioSample:[[(GDataXMLElement *)[ratioSample objectAtIndex:0] stringValue] intValue] isAggregate:[[(GDataXMLElement *)[isAggregate objectAtIndex:0] stringValue] intValue]];
     
     Timbermark *ptm = [WasteBlockDAO createEmptyTimbermark];
     
@@ -151,7 +150,13 @@
                     attStrValue = @"M";
                 }
             }
+            //if importing an EFW file reset block userCreated value
+            if([strAry[1] isEqualToString:@"userCreated"] && [[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+            {
+                attStrValue = @"0";
+            }
             [self fillManagedObject:(NSManagedObject *)targetObj valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
+            
         }else{
             //some field need to set to nil
             if([strAry[2] isEqualToString:@"2"]){
@@ -159,6 +164,23 @@
             }
         }
     }
+    
+    if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+    {
+        if([(NSManagedObject *)*wb valueForKey:@"blockMaturityCode"] != nil)
+        {
+            [*wb setValue:[(NSManagedObject *)*wb valueForKey:@"blockMaturityCode"] forKey:@"blockCheckMaturityCode"];
+        }
+        if([(NSManagedObject *)*wb valueForKey:@"blockSiteCode"] != nil)
+        {
+            [*wb setValue:[(NSManagedObject *)*wb valueForKey:@"blockSiteCode"] forKey:@"blockCheckSiteCode"];
+        }
+        if([(NSManagedObject *)*wb valueForKey:@"surveyArea"] != nil)
+        {
+            [*wb setValue:[(NSManagedObject *)*wb valueForKey:@"surveyArea"] forKey:@"netArea"];
+        }
+    }
+
     
     NSArray *stratums = [doc.rootElement elementsForName:@"WasteStratum"];
     if (stratums.count > 0){
@@ -180,6 +202,14 @@
                     if([strAry[2] isEqualToString:@"2"]){
                         [(NSManagedObject *)ws setValue:nil forKey:strAry[1]];
                     }
+                }
+            }
+            
+            if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+            {
+                if([(NSManagedObject *)ws valueForKey:@"stratumSurveyArea"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"stratumSurveyArea"] forKey:@"stratumArea"];
                 }
             }
             
@@ -205,6 +235,14 @@
                     }
                 }
                 
+                if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+                {
+                    if([(NSManagedObject *)wp valueForKey:@"surveyedMeasurePercent"] != nil)
+                    {
+                        [wp setValue:[(NSManagedObject *)wp valueForKey:@"surveyedMeasurePercent"] forKey:@"checkerMeasurePercent"];
+                    }
+                }
+                
                 //get pieces
                 NSArray *pieces = [plot elementsForName:@"WastePiece"];
                 for(GDataXMLElement *piece in pieces){
@@ -226,6 +264,12 @@
                             }
                         }
                     }
+                    //manually set for import of EFW files
+                    if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+                    {
+                        wpi.pieceCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
+                    }
+                        
                     [wp addPlotPieceObject:wpi];
                 }
                 //TODO: remove after
@@ -233,123 +277,30 @@
                 [ws addStratumPlotObject:wp];
             }
             //get pile
-            if([[(GDataXMLElement *)[isAggregate objectAtIndex:0] stringValue] intValue] == [[NSNumber numberWithBool:FALSE] intValue] ){
-                NSArray *stratumPile = [stra elementsForName:@"StratumPile"];
-                for(GDataXMLElement *strPile in stratumPile){
-                    StratumPile *sp =[WasteBlockDAO createEmptyStratumPile];
-                    
-                    for( NSString *ele in [[XMLMappingDAO sharedInstance] getStratumPileMapping]){
-                        // for each mapping record, find the element and value in xml file
-                        NSArray *strAry = [ele componentsSeparatedByString:@":"];
-                        NSArray *att = [strPile elementsForName:([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4])];
+            NSArray *piles = [stra elementsForName:@"WastePile"];
+            for(GDataXMLElement *pile in piles){
+                WastePile *wpile = [WasteBlockDAO createEmptyWastePile];
 
-                        if([att count] > 0 ){
-                            NSString *attStrValue = [(GDataXMLElement *)att[0] stringValue];
-                            
-                            [self fillManagedObject:(NSManagedObject *)sp valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
-                        }else{
-                            //some field need to set to nil
-                            if([strAry[2] isEqualToString:@"2"]){
-                                [(NSManagedObject *)sp setValue:nil forKey:strAry[1]];
-                            }
-                        }
-                    }
+                for( NSString *ele in [[XMLMappingDAO sharedInstance] getWastePileMapping]){
+                    // for each mapping record, find the element and value in xml file
+                    NSArray *strAry = [ele componentsSeparatedByString:@":"];
+                    NSArray *att = [pile elementsForName:([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4])];
                     
-                    //get pile
-                    NSArray *piles = [strPile elementsForName:@"WastePile"];
-                    for(GDataXMLElement *pile in piles){
-                        WastePile *wpi =[WasteBlockDAO createEmptyWastePile];
+                    if([att count] > 0 ){
+                        NSString *attStrValue = [(GDataXMLElement *)att[0] stringValue];
                         
-                        for( NSString *ele in [[XMLMappingDAO sharedInstance] getWastePileMapping]){
-                            // for each mapping record, find the element and value in xml file
-                            NSArray *strAry = [ele componentsSeparatedByString:@":"];
-                            
-                            NSArray *att = [pile elementsForName:([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4])];
-                            if([att count] > 0 ){
-                                NSString *attStrValue = [(GDataXMLElement *)att[0] stringValue];
-                                
-                                [self fillManagedObject:(NSManagedObject *)wpi valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
-                            }else{
-                                //some field need to set to nil
-                                if([strAry[2] isEqualToString:@"2"]){
-                                    [(NSManagedObject *)wpi setValue:nil forKey:strAry[1]];
-                                }
-                            }
+                        [self fillManagedObject:(NSManagedObject *)wpile valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
+                    }else{
+                        //some field need to set to nil
+                        if([strAry[2] isEqualToString:@"2"]){
+                            [(NSManagedObject *)wpile setValue:nil forKey:strAry[1]];
                         }
-                        [sp addPileDataObject:wpi];
                     }
-                    [ws setStrPile:sp];
                 }
-            }else if([[(GDataXMLElement *)[isAggregate objectAtIndex:0] stringValue] intValue] == [[NSNumber numberWithBool:TRUE] intValue] ){
-                NSArray *aggregateCutblock = [stra elementsForName:@"AggregateCutblock"];
-                for(GDataXMLElement *aggCB in aggregateCutblock){
-                    AggregateCutblock *aggcb =[WasteBlockDAO createEmptyAggregateCutblock];
-                    
-                    for( NSString *ele in [[XMLMappingDAO sharedInstance] getAggregateCutblockMapping]){
-                        // for each mapping record, find the element and value in xml file
-                        NSArray *strAry = [ele componentsSeparatedByString:@":"];
-                        NSArray *att = [aggCB elementsForName:([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4])];
-
-                        if([att count] > 0 ){
-                            NSString *attStrValue = [(GDataXMLElement *)att[0] stringValue];
-                            
-                            [self fillManagedObject:(NSManagedObject *)aggcb valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
-                        }else{
-                            //some field need to set to nil
-                            if([strAry[2] isEqualToString:@"2"]){
-                                [(NSManagedObject *)aggcb setValue:nil forKey:strAry[1]];
-                            }
-                        }
-                    }
-                
-                    NSArray *stratumPile = [aggCB elementsForName:@"StratumPile"];
-                    for(GDataXMLElement *strPile in stratumPile){
-                        StratumPile *sp =[WasteBlockDAO createEmptyStratumPile];
-                        
-                        for( NSString *ele in [[XMLMappingDAO sharedInstance] getStratumPileMapping]){
-                            // for each mapping record, find the element and value in xml file
-                            NSArray *strAry = [ele componentsSeparatedByString:@":"];
-                            NSArray *att = [strPile elementsForName:([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4])];
-
-                            if([att count] > 0 ){
-                                NSString *attStrValue = [(GDataXMLElement *)att[0] stringValue];
-                                
-                                [self fillManagedObject:(NSManagedObject *)sp valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
-                            }else{
-                                //some field need to set to nil
-                                if([strAry[2] isEqualToString:@"2"]){
-                                    [(NSManagedObject *)sp setValue:nil forKey:strAry[1]];
-                                }
-                            }
-                        }
-                        
-                        //get pile
-                        NSArray *piles = [strPile elementsForName:@"WastePile"];
-                        for(GDataXMLElement *pile in piles){
-                            WastePile *wpi =[WasteBlockDAO createEmptyWastePile];
-                            
-                            for( NSString *ele in [[XMLMappingDAO sharedInstance] getWastePileMapping]){
-                                // for each mapping record, find the element and value in xml file
-                                NSArray *strAry = [ele componentsSeparatedByString:@":"];
-                                
-                                NSArray *att = [pile elementsForName:([strAry[4] isEqualToString:@""] ? strAry[1] :strAry[4])];
-                                if([att count] > 0 ){
-                                    NSString *attStrValue = [(GDataXMLElement *)att[0] stringValue];
-                                    
-                                    [self fillManagedObject:(NSManagedObject *)wpi valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
-                                }else{
-                                    //some field need to set to nil
-                                    if([strAry[2] isEqualToString:@"2"]){
-                                        [(NSManagedObject *)wpi setValue:nil forKey:strAry[1]];
-                                    }
-                                }
-                            }
-                            [sp addPileDataObject:wpi];
-                        }
-                        [aggcb setAggPile:sp];
-                    }
-                    [ws addStratumAggObject:aggcb];
-                }
+                NSLog(@"attempting to add pile data object");
+                NSLog(@"wpile class: %@", NSStringFromClass([wpile class]));
+                NSLog(@"ws class: %@", NSStringFromClass([ws class]));
+                [ws addStratumPileObject:wpile];
             }
             ///////////////////////////////
             [*wb addBlockStratumObject:ws];

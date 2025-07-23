@@ -48,11 +48,23 @@
 @dynamic plotShapeCode;
 @dynamic plotSizeCode;
 @dynamic plotStratum;
+@dynamic deletePlotStratum;
 @dynamic plotCoastStat;
 @dynamic plotInteriorStat;
 @dynamic sawlogPercent;
 @dynamic greenGradePercent;
 @dynamic dryGradePercent;
 @dynamic plotEstimatedVolume;
+
+//data change variables
+@dynamic dcSurveyorName;
+@dynamic dcDesignation;
+@dynamic dcLicenseNumber;
+@dynamic dcSignature;
+@dynamic dcRationale;
+
+@dynamic measurePctEdited;
+
+@dynamic checkVolume;
 
 @end

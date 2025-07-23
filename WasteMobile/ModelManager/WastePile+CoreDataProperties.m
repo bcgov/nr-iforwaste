@@ -17,6 +17,16 @@
 
 @dynamic pileId;
 @dynamic pileNumber;
+@dynamic surveyorName;
+@dynamic assistant;
+@dynamic block;
+@dynamic licence;
+@dynamic surveyorLicence;
+@dynamic surveyDate;
+@dynamic cuttingPermit;
+@dynamic returnNumber;
+@dynamic notes;
+@dynamic weather;
 @dynamic length;
 @dynamic width;
 @dynamic height;
@@ -27,30 +37,18 @@
 @dynamic measuredHeight;
 @dynamic measuredPileArea;
 @dynamic measuredPileVolume;
-@dynamic cePercent;
-@dynamic hePercent;
-@dynamic spPercent;
-@dynamic baPercent;
-@dynamic coPercent;
-@dynamic loPercent;
-@dynamic biPercent;
-@dynamic alPercent;
-@dynamic arPercent;
-@dynamic asPercent;
-@dynamic cyPercent;
-@dynamic fiPercent;
-@dynamic laPercent;
-@dynamic maPercent;
-@dynamic otPercent;
-@dynamic wbPercent;
-@dynamic whPercent;
-@dynamic wiPercent;
-@dynamic uuPercent;
-@dynamic yePercent;
+
 @dynamic comment;
 @dynamic isSample;
 @dynamic pilePileShapeCode;
+@dynamic pileMeasuredPileShapeCode;
 @dynamic pileStratum;
-@dynamic pileData;
+
+//Data change variables
+@dynamic dcSurveyorName;
+@dynamic dcDesignation;
+@dynamic dcLicenseNumber;
+@dynamic dcSignature;
+@dynamic dcRationale;
 
 @end

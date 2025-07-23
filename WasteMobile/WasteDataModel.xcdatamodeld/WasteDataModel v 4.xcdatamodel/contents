@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="18E226" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="21G115" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="AggregateCutblock" representedClassName="AggregateCutblock" syncable="YES">
         <attribute name="aggregateCutblock" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="aggregateCuttingPermit" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="aggregateID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="aggregateLicense" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fixedSample" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="measureSample" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="n1sample" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="n2sample" optional="YES" attributeType="String" syncable="YES"/>
@@ -330,6 +331,7 @@
         <attribute name="surveyXRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="surveyYRate" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="userCreated" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="versionNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="wasteAssessmentAreaID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="yearLoggedFrom" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="yearLoggedTo" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -454,6 +456,11 @@
         <attribute name="checkDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="checkerMeasurePercent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="checkNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="dcDesignation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcLicenseNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcRationale" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcSignature" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="dcSurveyorName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="deltaAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="deltaAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="deltaNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
@@ -463,6 +470,7 @@
         <attribute name="greenVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="isMeasurePlot" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isSurvey" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="measurePctEdited" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="plotEstimatedVolume" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="plotID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -477,6 +485,7 @@
         <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="surveyorName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="weather" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="deletePlotStratum" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="deleteStratumPlot" inverseEntity="WasteStratum" syncable="YES"/>
         <relationship name="plotCoastStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWCoastStat" syncable="YES"/>
         <relationship name="plotInteriorStat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EFWInteriorStat" syncable="YES"/>
         <relationship name="plotPiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="piecePlot" inverseEntity="WastePiece" syncable="YES"/>
@@ -489,9 +498,15 @@
         <attribute name="checkAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="checkNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="checkTotalEstimatedVolume" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="dcDesignation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcLicenseNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcRationale" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dcSignature" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="dcSurveyorName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="deltaAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="deltaAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="deltaNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="fixedSample" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="grade4Percent" optional="YES" attributeType="Decimal" syncable="YES"/>
         <attribute name="grade5Percent" optional="YES" attributeType="Decimal" syncable="YES"/>
         <attribute name="grade12Percent" optional="YES" attributeType="Decimal" syncable="YES"/>
@@ -520,6 +535,7 @@
         <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="totalEstimatedVolume" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="totalNumPile" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="deleteStratumPlot" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WastePlot" inverseName="deletePlotStratum" inverseEntity="WastePlot" syncable="YES"/>
         <relationship name="stratumAgg" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AggregateCutblock" inverseName="stratumAgg" inverseEntity="AggregateCutblock" syncable="YES"/>
         <relationship name="stratumAssessmentMethodCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AssessmentMethodCode" inverseName="assessmentMethodCodeStratum" inverseEntity="AssessmentMethodCode" syncable="YES"/>
         <relationship name="stratumBlock" maxCount="1" deletionRule="Nullify" destinationEntity="WasteBlock" inverseName="blockStratum" inverseEntity="WasteBlock" syncable="YES"/>
@@ -542,40 +558,4 @@
         <attribute name="wasteTypeCode" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="wasteTypeCodeStratum" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumWasteTypeCode" inverseEntity="WasteStratum" syncable="YES"/>
     </entity>
-    <elements>
-        <element name="AggregateCutblock" positionX="-1107" positionY="-144" width="128" height="193"/>
-        <element name="AssessmentMethodCode" positionX="-857" positionY="-25" width="128" height="133"/>
-        <element name="BorderlineCode" positionX="403" positionY="11" width="128" height="133"/>
-        <element name="ButtEndCode" positionX="412" positionY="155" width="128" height="135"/>
-        <element name="CheckerStatusCode" positionX="423" positionY="299" width="128" height="135"/>
-        <element name="CommentCode" positionX="-27" positionY="650" width="128" height="133"/>
-        <element name="DecayTypeCode" positionX="72" positionY="9" width="128" height="133"/>
-        <element name="EFWCoastStat" positionX="594" positionY="-252" width="128" height="465"/>
-        <element name="EFWInteriorStat" positionX="621" positionY="504" width="128" height="405"/>
-        <element name="ExportUserData" positionX="-1179" positionY="114" width="128" height="120"/>
-        <element name="HarvestMethodCode" positionX="-713" positionY="-54" width="173" height="133"/>
-        <element name="InteriorCedarMaturityCode" positionX="-1120" positionY="-157" width="128" height="135"/>
-        <element name="MaterialKindCode" positionX="-36" positionY="488" width="128" height="133"/>
-        <element name="MaturityCode" positionX="-603" positionY="648" width="128" height="135"/>
-        <element name="MonetaryReductionFactorCode" positionX="-1287" positionY="326" width="189" height="133"/>
-        <element name="PileShapeCode" positionX="-1098" positionY="-135" width="128" height="135"/>
-        <element name="PlotSizeCode" positionX="-254" positionY="567" width="128" height="150"/>
-        <element name="ScaleGradeCode" positionX="63" positionY="158" width="128" height="165"/>
-        <element name="ScaleSpeciesCode" positionX="421" positionY="446" width="128" height="148"/>
-        <element name="ShapeCode" positionX="-315" positionY="9" width="128" height="133"/>
-        <element name="SiteCode" positionX="-828" positionY="387" width="128" height="133"/>
-        <element name="SnowCode" positionX="-837" positionY="189" width="128" height="133"/>
-        <element name="StratumPile" positionX="-1107" positionY="-144" width="128" height="178"/>
-        <element name="StratumTypeCode" positionX="-630" positionY="378" width="128" height="133"/>
-        <element name="Timbermark" positionX="-1305" positionY="495" width="225" height="435"/>
-        <element name="TopEndCode" positionX="423" positionY="605" width="128" height="133"/>
-        <element name="WasteBlock" positionX="-1017" positionY="-45" width="153" height="1005"/>
-        <element name="WasteClassCode" positionX="180" positionY="695" width="128" height="133"/>
-        <element name="WasteLevelCode" positionX="-477" positionY="380" width="128" height="133"/>
-        <element name="WastePiece" positionX="234" positionY="9" width="137" height="660"/>
-        <element name="WastePile" positionX="-1107" positionY="-144" width="128" height="600"/>
-        <element name="WastePlot" positionX="-117" positionY="-99" width="155" height="645"/>
-        <element name="WasteStratum" positionX="-486" positionY="-288" width="153" height="763"/>
-        <element name="WasteTypeCode" positionX="-443" positionY="684" width="128" height="133"/>
-    </elements>
 </model>

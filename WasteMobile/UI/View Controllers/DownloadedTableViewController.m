@@ -107,11 +107,9 @@
     for( Timbermark *tm in [currentBlock.blockTimbermark allObjects]){
         
         if ([tm.primaryInd intValue] == 1){
-            timbermark = [[NSString stringWithFormat:@"P:%@ ", tm.timbermark] stringByAppendingString:timbermark] ;
-            
+            timbermark = [[NSString stringWithFormat:@"P:%@ ", tm.timbermark ? tm.timbermark : @""] stringByAppendingString:timbermark] ;
         } else {
-            
-            timbermark = [timbermark stringByAppendingString: [NSString stringWithFormat:@"S:%@ ", tm.timbermark]];
+            timbermark = [timbermark stringByAppendingString: [NSString stringWithFormat:@"S:%@ ", tm.timbermark ? tm.timbermark : @""]];
         }
     }
     cell.timberMarkLabel.text = timbermark;

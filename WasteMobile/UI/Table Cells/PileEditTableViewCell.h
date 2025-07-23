@@ -12,6 +12,7 @@
 @class WastePile;
 @class PileViewController;
 @class WasteBlock;
+@class WasteStratum;
 
 @interface PileEditTableViewCell : PileTableViewCell
 <UIAlertViewDelegate>
@@ -20,10 +21,11 @@
 
 @property (strong, nonatomic) WastePile *cellWastePile;
 @property (strong, nonatomic) WasteBlock *wasteBlock;
+@property (strong, nonatomic) WasteStratum *wasteStratum;
 
 @property (strong, nonatomic) NSMutableDictionary *displayObjectDictionary;
 
--(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock userCreatedBlock:(BOOL)userCreatedBlock;
+-(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock;
 
 @end
 

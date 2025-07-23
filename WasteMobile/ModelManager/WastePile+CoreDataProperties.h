@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSFetchRequest<WastePile *> *)fetchRequest;
 
 @property (nullable, nonatomic, copy) NSNumber *pileId;
-@property (nullable, nonatomic, copy) NSString *pileNumber;
+@property (nullable, nonatomic, copy) NSNumber *pileNumber;
 @property (nullable, nonatomic, copy) NSDecimalNumber *length;
 @property (nullable, nonatomic, copy) NSDecimalNumber *width;
 @property (nullable, nonatomic, copy) NSDecimalNumber *height;
@@ -28,31 +28,28 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDecimalNumber *measuredHeight;
 @property (nullable, nonatomic, copy) NSDecimalNumber *measuredPileArea;
 @property (nullable, nonatomic, copy) NSDecimalNumber *measuredPileVolume;
-@property (nullable, nonatomic, copy) NSNumber *cePercent;
-@property (nullable, nonatomic, copy) NSNumber *hePercent;
-@property (nullable, nonatomic, copy) NSNumber *spPercent;
-@property (nullable, nonatomic, copy) NSNumber *baPercent;
-@property (nullable, nonatomic, copy) NSNumber *coPercent;
-@property (nullable, nonatomic, copy) NSNumber *loPercent;
-@property (nullable, nonatomic, copy) NSNumber *biPercent;
-@property (nullable, nonatomic, copy) NSNumber *alPercent;
-@property (nullable, nonatomic, copy) NSNumber *arPercent;
-@property (nullable, nonatomic, copy) NSNumber *asPercent;
-@property (nullable, nonatomic, copy) NSNumber *yePercent;
-@property (nullable, nonatomic, copy) NSNumber *cyPercent;
-@property (nullable, nonatomic, copy) NSNumber *fiPercent;
-@property (nullable, nonatomic, copy) NSNumber *laPercent;
-@property (nullable, nonatomic, copy) NSNumber *maPercent;
-@property (nullable, nonatomic, copy) NSNumber *otPercent;
-@property (nullable, nonatomic, copy) NSNumber *wbPercent;
-@property (nullable, nonatomic, copy) NSNumber *whPercent;
-@property (nullable, nonatomic, copy) NSNumber *wiPercent;
-@property (nullable, nonatomic, copy) NSNumber *uuPercent;
 @property (nullable, nonatomic, copy) NSString *comment;
 @property (nullable, nonatomic, copy) NSNumber *isSample;
 @property (nullable, nonatomic, retain) PileShapeCode *pilePileShapeCode;
+@property (nullable, nonatomic, retain) MeasuredPileShapeCode *pileMeasuredPileShapeCode;
 @property (nullable, nonatomic, retain) WasteStratum *pileStratum;
-@property (nullable, nonatomic, retain) StratumPile *pileData;
+@property (nullable, nonatomic, copy) NSString *surveyorName;
+@property (nullable, nonatomic, copy) NSString *assistant;
+@property (nullable, nonatomic, copy) NSString *weather;
+@property (nullable, nonatomic, copy) NSString *returnNumber;
+@property (nullable, nonatomic, copy) NSString *surveyorLicence;
+@property (nullable, nonatomic, copy) NSString *licence;
+@property (nullable, nonatomic, copy) NSString *cuttingPermit;
+@property (nullable, nonatomic, copy) NSString *block;
+@property (nullable, nonatomic, copy) NSDate *surveyDate;
+@property (nullable, nonatomic, copy) NSString *notes;
+
+//Data change variables
+@property (nullable, nonatomic, copy) NSString *dcSurveyorName;
+@property (nullable, nonatomic, copy) NSString *dcDesignation;
+@property (nullable, nonatomic, copy) NSString *dcLicenseNumber;
+@property (nullable, nonatomic, copy) UIImage *dcSignature;
+@property (nullable, nonatomic, copy) NSString *dcRationale;
 
 @end
 

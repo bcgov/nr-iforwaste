@@ -61,10 +61,10 @@ static NSString *const DEFAULT_MEASURE_SAMPLE = @"4";
 -(void) setupLists
 {
     
-    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"PlotSizeCode" ascending:YES];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"plotSizeCode" ascending:YES];
     self.pileSizeArray = [[[CodeDAO sharedInstance] getPlotSizeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
-    sort = [[NSSortDescriptor alloc ] initWithKey:@"ShapeCode" ascending:YES];
+    sort = [[NSSortDescriptor alloc ] initWithKey:@"shapeCode" ascending:YES];
     self.pileShapeArray = [[[CodeDAO sharedInstance] getShapeCodeList] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
     
 }
@@ -802,10 +802,10 @@ static NSString *const DEFAULT_MEASURE_SAMPLE = @"4";
 {
     
     if (pickerView.tag == 1)
-        return [NSString stringWithFormat:@"%@ - %@",[self.pileSizeArray[row] valueForKey:@"PlotSizeCode"], [self.pileSizeArray[row] valueForKey:@"desc"]];
+        return [NSString stringWithFormat:@"%@ - %@",[self.pileSizeArray[row] valueForKey:@"plotSizeCode"], [self.pileSizeArray[row] valueForKey:@"desc"]];
     
     else if(pickerView.tag == 2)
-        return [NSString stringWithFormat:@"%@ - %@",[self.pileShapeArray[row] valueForKey:@"ShapeCode"],[self.pileShapeArray[row] valueForKey:@"desc"]];
+        return [NSString stringWithFormat:@"%@ - %@",[self.pileShapeArray[row] valueForKey:@"shapeCode"],[self.pileShapeArray[row] valueForKey:@"desc"]];
     
     else
         return nil;
@@ -816,11 +816,11 @@ static NSString *const DEFAULT_MEASURE_SAMPLE = @"4";
 {
     
     if (pickerView.tag == 1){
-        self.sizeField.text = [NSString stringWithFormat:@"%@ - %@",[self.pileSizeArray[row] valueForKey:@"PlotSizeCode"], [self.pileSizeArray[row] valueForKey:@"desc"]];
+        self.sizeField.text = [NSString stringWithFormat:@"%@ - %@",[self.pileSizeArray[row] valueForKey:@"plotSizeCode"], [self.pileSizeArray[row] valueForKey:@"desc"]];
         [self.sizeField resignFirstResponder];
         
     }else if(pickerView.tag == 2){
-        self.shape.text = [NSString stringWithFormat:@"%@ - %@",[self.pileShapeArray[row] valueForKey:@"ShapeCode"],[self.pileShapeArray[row] valueForKey:@"desc"]];
+        self.shape.text = [NSString stringWithFormat:@"%@ - %@",[self.pileShapeArray[row] valueForKey:@"shapeCode"],[self.pileShapeArray[row] valueForKey:@"desc"]];
         [self.shapePicker selectRow:row inComponent:0 animated:NO];
         [self.shape resignFirstResponder];
     }
@@ -1010,7 +1010,7 @@ static NSString *const DEFAULT_MEASURE_SAMPLE = @"4";
                 [self presentViewController:warningAlert animated:YES completion:nil];
             }
         UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Estimation", nil)
-                                                                              message:[NSString stringWithFormat:@"Accept volume esimates? \n Pile Number %d \n Length = %.2f \n Width = %.2f \n Height = %.2f \n Shape Code = %@",[pn intValue], [length floatValue], [width floatValue], [height floatValue], [code uppercaseString]]
+                                                                              message:[NSString stringWithFormat:@"Accept volume estimates? \n Pile Number %d \n Length = %.2f \n Width = %.2f \n Height = %.2f \n Shape Code = %@",[pn intValue], [length floatValue], [width floatValue], [height floatValue], [code uppercaseString]]
                                                                        preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault

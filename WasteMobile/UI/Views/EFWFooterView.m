@@ -12,7 +12,6 @@
 #import "WasteBlock.h"
 #import "WasteStratum.h"
 #import "WastePlot.h"
-#import "StratumPile+CoreDataClass.h"
 
 @implementation EFWFooterView
 
@@ -55,11 +54,12 @@
     
 }
 
--(void) setPileViewValue:(StratumPile *) sp{
-    if(sp.pileCoastStat){
-        [self setCoastViewValue:sp.pileCoastStat];
-    }else if(sp.pileInteriorStat){
-        [self setInteriorViewValue:sp.pileInteriorStat];
+// This is just for single block right now, aggregate still uses setPileViewValue
+-(void) setPileViewValue2:(WasteStratum *) ws{
+    if(ws.stratumCoastStat){
+        [self setCoastViewValue:ws.stratumCoastStat];
+    }else if(ws.stratumInteriorStat){
+        [self setInteriorViewValue:ws.stratumInteriorStat];
     }
     self.column1TitleLabel.text = @"Value ($/ha)";
     self.column2TitleLabel.text = @"Value ($)";

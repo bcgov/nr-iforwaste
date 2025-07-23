@@ -10,6 +10,7 @@
 
 @interface PlotTableViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UIImageView *isPlotAudited;
 @property (weak, nonatomic) IBOutlet UILabel *plotNumber;
 @property (weak, nonatomic) IBOutlet UILabel *baseline;
 @property (weak, nonatomic) IBOutlet UILabel *strip;

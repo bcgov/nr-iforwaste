@@ -8,13 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class WastePile, WasteBlock;
+@class WastePile, WasteBlock, WasteStratum;
 
 @interface PileTableViewCell : UITableViewCell
 
 @property (strong, nonatomic) NSMutableDictionary *displayObjectDictionary;
 
--(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock userCreatedBlock:(BOOL)userCreatedBlock;
+-(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock;
 
 @end
 

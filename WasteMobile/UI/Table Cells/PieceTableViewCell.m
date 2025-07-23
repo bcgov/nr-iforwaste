@@ -20,6 +20,9 @@
 #import "WasteClassCode.h"
 #import "CheckerStatusCode.h"
 #import "WasteBlock.h"
+#import "WastePlot.h"
+#import "WasteStratum.h"
+#import "AssessmentMethodCode.h"
 
 @implementation PieceTableViewCell
 
@@ -47,11 +50,15 @@
     // Configure the view for the selected state
 }
 
--(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock{
+//-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock assessmentMethodCode:(NSString *)assessmentMethodCode userCreatedBlock:(BOOL)userCreatedBlock{
+-(void)bindCell:(WastePiece *)wastePiece wasteBlock:(WasteBlock *)wasteBlock wastePlot:(WastePlot *)wastePlot userCreatedBlock:(BOOL)userCreatedBlock{
     
+    NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+
     NSMutableArray *labelArray = [[NSMutableArray alloc] init];
     int locationCounter = 43;
-
+    
+    NSString *assessmentMethodCode =  wastePlot.plotStratum.stratumAssessmentMethodCode.assessmentMethodCode;
     if ([assessmentMethodCode isEqualToString:@"P"]){
         
         [labelArray addObject:@";pieceNumber;w;43"];
@@ -96,18 +103,17 @@
         [labelArray addObject:@"IN;pieceCommentCode;w;50"];
         [labelArray addObject:@"*;notes;w;50"];
         [labelArray addObject:@"9.999;pieceVolume;r;71"];
-        [labelArray addObject:@"0.000;;r;73"];
+        [labelArray addObject:@"0.000;checkPieceVolume;r;73"];
         
     }else if ([assessmentMethodCode isEqualToString:@"E"]){
     
         [labelArray addObject:@";pieceNumber;w;44;l;"];
-        [labelArray addObject:@";pieceScaleSpeciesCode;w;110;b;2"];
-        [labelArray addObject:@";pieceMaterialKindCode;w;110;b;3"];
-        [labelArray addObject:@";pieceWasteClassCode;w;110;b;4"];
-        [labelArray addObject:@";pieceScaleGradeCode;w;110;b;10"];
-        [labelArray addObject:@";usercode;w;110;b;18"];
-        [labelArray addObject:@";notes;w;110;b;18"];
-        [labelArray addObject:@";estimatedPercent;w;110;b;21"];
+        [labelArray addObject:@";pieceScaleSpeciesCode;w;120;b;2"];
+        [labelArray addObject:@";pieceMaterialKindCode;w;120;b;3"];
+        [labelArray addObject:@";pieceWasteClassCode;w;120;b;4"];
+        [labelArray addObject:@";pieceScaleGradeCode;w;120;b;10"];
+        [labelArray addObject:@";notes;w;120;b;18"];
+        [labelArray addObject:@";estimatedPercent;w;120;b;21"];
         [labelArray addObject:@";pieceVolume;r;90;l;"];
         [labelArray addObject:@";checkPieceVolume;r;90;l;"];
         
@@ -126,7 +132,6 @@
 
     }
     
-
     if (!self.displayObjectDictionary){
         self.displayObjectDictionary = [[NSMutableDictionary alloc] init];
     }
@@ -150,29 +155,36 @@
             // for now, it only work when the property is string
 
             if ([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
-                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"notes"]){
-                    if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
+                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"notes"]) {
+                    if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]) {
                         lbl.text = @"*";
                     }
-                }else
+                } else
                 
                 // Insert placeholder of "*" if something exists in UserCode column
-                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"usercode"]){
+                if ([[lbStrAry objectAtIndex:1] isEqualToString:@"usercode"]) {
                     if([wastePiece valueForKey:[lbStrAry objectAtIndex:1]]){
                         lbl.text = @"*";
                     }
-                }
-                
-                
-                
-                else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]){
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkPieceVolume"]) {
+                    NSLog(@"checkStatusCode: %@", ((CheckerStatusCode *)[wastePiece valueForKey:@"pieceCheckerStatusCode"]).checkerStatusCode);
+                   
                     //for non-changed piece, show blank in the check piece valume
-                    if([((CheckerStatusCode *)[wastePiece valueForKey:@"pieceCheckerStatusCode"]).checkerStatusCode isEqualToString:@"4"]){
+                    if([((CheckerStatusCode *)[wastePiece valueForKey:@"pieceCheckerStatusCode"]).checkerStatusCode isEqualToString:@"4"]) {
                         lbl.text = @"";
-                    }else{
-                        lbl.text = [wastePiece valueForKey:[lbStrAry objectAtIndex:1]] ?  [(NSDecimalNumber *)[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] stringValue] : @"";;
+                    } else {
+                        if (wastePlot.plotEstimatedVolume!= nil && ![wastePlot.checkVolume isEqualToNumber:wastePlot.plotEstimatedVolume]) {
+                            double estimatedPercent = [[wastePiece valueForKey: @"estimatedPercent"] floatValue] / 100.0;
+                            NSDecimalNumber *percentEstimate = [[NSDecimalNumber alloc] initWithDouble:estimatedPercent];
+                            NSDecimalNumber *checkVolume = [NSDecimalNumber decimalNumberWithDecimal:[wastePlot.checkVolume decimalValue]];
+                            lbl.text = [[[percentEstimate decimalNumberByMultiplyingBy:checkVolume] decimalNumberByRoundingAccordingToBehavior:behaviorD3] stringValue];
+                        } else {
+                            NSLog(@"PIECEVol: %@",[wastePiece valueForKey:@"pieceVolume"]);
+                            lbl.text = [[wastePiece valueForKey:@"pieceVolume"] stringValue] ;
+                        }
                     }
-                }else{
+                    NSLog(@"TXT: %@",lbl.text);
+                } else {
                     if ([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
                         lbl.text = [wastePiece valueForKey:[lbStrAry objectAtIndex:1]] ?[(NSNumber *)[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] stringValue] : @"";
                     }else if([[wastePiece valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){

@@ -52,6 +52,7 @@
 #import "ScaleGradeCode.h"
 #import "WasteClassCode.h"
 #import "MaterialKindCode.h"
+#import "DataEndorsementViewController.h"
 
 @class UIAlertView;
 
@@ -80,6 +81,8 @@ static NSString *const STANDARD_STRATUM = @"Create Standard Stratum";
 static NSString *const STANDING_TREE = @"Create Standing Tree";
 static NSString *const STRE = @"(STRE) Percent Estimate";
 static NSString *const STRS = @"(STRS) 100% Scale";
+
+NSDate *orignialDate;
 
 UITextField *activeTextField;
 
@@ -206,15 +209,26 @@ UITextField *activeTextField;
         [self.interiorCedarMaturity setDelegate:self];
     }
     // COMPLETE DATE PICKER
-    self.datePicker = [[UIDatePicker alloc] initWithFrame:CGRectZero];
+    self.datePicker = [[UIDatePicker alloc] init];
+    if (@available(iOS 13.4, *)) {
+        self.datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
+    } else {
+        // Fallback on earlier versions
+    }
+    
     self.datePicker.datePickerMode = UIDatePickerModeDate;
     self.datePicker.backgroundColor = [UIColor whiteColor];
+    
+    [self.datePicker addTarget:self action:@selector(dateChanged:)
+       forControlEvents:UIControlEventValueChanged];
 
     self.loggingCompleteTextField.inputView = self.datePicker;
     [self.loggingCompleteTextField setDelegate:self];
     
     self.surveyDate.inputView = self.datePicker;
     [self.surveyDate setDelegate:self];
+    
+    orignialDate = self.datePicker.date;
 
     self.navigationController.toolbarHidden = NO;
     self.navigationController.toolbar.barTintColor = [UIColor whiteColor];
@@ -226,13 +240,13 @@ UITextField *activeTextField;
     
     NSString *tmp  = [[NSString alloc] initWithFormat:@"(IFOR 202) Cut Block - %@", self.wasteBlock.cutBlockId && ![self.wasteBlock.cutBlockId isEqualToString:@"" ]  ? self.wasteBlock.cutBlockId : @"New Block" ];
     if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-        tmp = [tmp stringByAppendingString:@" Aggregate Ratio Sampling"];
+        tmp = [tmp stringByAppendingString:@" Aggregate Ratio Survey"];
     }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
         tmp = [tmp stringByAppendingString:@" Aggregate SRS Survey"];
     }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
         tmp = [tmp stringByAppendingString:@" Single Block SRS Survey"];
     }else if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-        tmp = [tmp stringByAppendingString:@" Single Block Ratio Sampling"];
+        tmp = [tmp stringByAppendingString:@" Single Block Ratio Survey"];
     }
     [[self navigationItem] setTitle:tmp];
     
@@ -242,6 +256,9 @@ UITextField *activeTextField;
                                    action:@selector(dismissKeyboard)];
     tap.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tap];
+    
+    // Disable the Generate XML Button if a Packing Ratio Stratum is present
+    [self updateGenerateXMLButtonEnabledState];
     
     if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue])
     {
@@ -264,6 +281,7 @@ UITextField *activeTextField;
     if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
         [self.generateXMLButton setEnabled:NO];
     }
+    
     /*if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
         if([wasteBlock.blockStratum count] > 0){
             for(WasteStratum *ws in [self.wasteBlock.blockStratum allObjects]){
@@ -275,6 +293,7 @@ UITextField *activeTextField;
             }
         }
     }*/
+    
     // LOAD VIEW WITH OBJECT DATA
     [self populateFromObject];
 
@@ -286,9 +305,43 @@ UITextField *activeTextField;
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
 }
 
-
-
-
+  - (void) dateChanged:(id)sender{
+      if([wasteBlock.regionId integerValue] == InteriorRegion)
+      {
+         NSCalendar *calendar = [[NSCalendar alloc]initWithCalendarIdentifier:@"gregorian"];
+         NSDateComponents *comps = [[NSDateComponents alloc]init];
+         comps.year = 2020;
+         comps.month = 8;
+         comps.day = 31;
+         NSDate* date = [calendar dateFromComponents:comps];
+          int found = 0;
+          for(WasteStratum *ws in wasteBlock.blockStratum)
+             {
+                 for(WastePlot *wpl in ws.stratumPlot)
+                 {
+                     for(WastePiece *wp in wpl.plotPiece)
+                     {
+                         if( [wp.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"5"] &&
+                            (self.datePicker.date == nil || [self.datePicker.date compare:date] == NSOrderedDescending))
+                         {
+                             found = 1;
+                         }
+                     }
+                 }
+             }
+          if(found)
+          {
+               UIAlertView *alert = nil;
+                   alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Error - Grade 5 is not allowed for Interior blocks with Survey Dates that are blank or on or after September 1, 2020\n" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                     [alert show];
+              self.datePicker.date = orignialDate;
+          }
+          else
+          {
+              orignialDate = self.datePicker.date;
+          }
+      }
+  }
 
 // SAME ROW SELECT APPLY
 
@@ -388,6 +441,8 @@ UITextField *activeTextField;
         [self.footerStatView setViewValue:self.wasteBlock];
     }
     
+    // Disable the Generate XML Button if a Packing Ratio Stratum is present
+    [self updateGenerateXMLButtonEnabledState];
 }
 
 // AUTO-SAVE
@@ -470,6 +525,7 @@ UITextField *activeTextField;
 
         self.wasteBlock.returnNumber = [NSNumber numberWithInt:[self.returnNumber.text intValue]];//[[NSDecimalNumber alloc] initWithString:self.returnNumber.text]; This would hold a value −2,147,483,648 but won't be displayed on screen,when try to merge causes issue
         self.wasteBlock.surveyorLicence = self.surveyorLicence.text;
+        
         self.wasteBlock.professional = self.professionalDesignation.text;
         self.wasteBlock.registrationNumber = self.registrationNumber.text;
         self.wasteBlock.position = self.position.text;
@@ -482,7 +538,7 @@ UITextField *activeTextField;
         
         if([self.wasteBlock.userCreated intValue] == 1){
             //save extra field for user created block
-            self.wasteBlock.reportingUnit = [NSNumber numberWithInt:[self.reporintUnitNo.text intValue]];
+            self.wasteBlock.reportingUnit = [NSNumber numberWithInt:[self.reportingUnitNo.text intValue]];
             self.wasteBlock.surveyorName = self.wasteCheckerName.text;
         }else{
             self.wasteBlock.checkerName = self.wasteCheckerName.text;
@@ -589,14 +645,36 @@ UITextField *activeTextField;
         NSManagedObjectContext *context = [self managedObjectContext];
         [context save:&error];
         
+        // Disable the Generate XML Button if a Packing Ratio Stratum is present
+        [self updateGenerateXMLButtonEnabledState];
+        
         if( error != nil){
             NSLog(@" Error when saving waste block into Core Data: %@", error);
         }
     }
 }
 
-
-
+// Enables/Disables the Generate XML Button depending on whether or not a Packing Ratio Stratum is present
+- (void)updateGenerateXMLButtonEnabledState {
+    // disable the generate xml button if it packing ratio stratum is present
+    BOOL hasPackingRatioStratum = NO;
+    for (WasteStratum *wasteStratum in self.wasteBlock.blockStratum) {
+        PlotSizeCode *plotSizeCode = wasteStratum.stratumPlotSizeCode;
+        if ([plotSizeCode.plotSizeCode isEqualToString:@"R"] && ![self.wasteBlock.isAggregate boolValue]) {
+            hasPackingRatioStratum = YES;
+            break; // Exit the loop since a Packing Ratio Stratum is found
+        }
+    }
+    
+    [self.generateXMLButton setEnabled:!hasPackingRatioStratum];
+    
+    // also disable xml generation for all ratio blocks and all aggregate blocks (everything except single block srs)
+    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue] || [self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue])
+    {
+        [self.generateXMLButton setEnabled:NO];
+    }
+    
+}
 
 
 
@@ -624,7 +702,7 @@ UITextField *activeTextField;
     [self checkStratum];
     
     //Verify wasteblock is not a duplicate before attempting to save
-    if (![WasteBlockDAO checkDuplicateWasteBlockByRU:self.reporintUnitNo.text cutBlockId:self.cutBlock.text license:self.licence.text cutPermit:self.cuttingPermit.text assessmentAreaId:self.wasteBlock.wasteAssessmentAreaID]) {
+    if (![WasteBlockDAO checkDuplicateWasteBlockByRU:self.reportingUnitNo.text cutBlockId:self.cutBlock.text license:self.licence.text cutPermit:self.cuttingPermit.text assessmentAreaId:self.wasteBlock.wasteAssessmentAreaID]) {
         
         [self saveData];
         
@@ -664,17 +742,59 @@ UITextField *activeTextField;
 	[alert show];
 }
 
-- (IBAction)deleteStratum:(id)sender{
+- (IBAction) deleteStratum:(id)sender {
+    NSString *title = NSLocalizedString(@"Delete Stratum Confirmation", nil);
+    NSString *message = NSLocalizedString(@"", nil);
+    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+    NSString *otherButtonTitleOne = NSLocalizedString(@"Confirm", nil);
     
-        NSString *title = NSLocalizedString(@"Delete New Stratum", nil);
-        NSString *message = NSLocalizedString(@"", nil);
-        NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-        NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:otherButtonTitleOne style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+        UIButton *button = (UIButton *)sender;
+        NSLog(@"StratumID: %ld",button.tag);
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
-        alert.tag = ((UIButton *)sender).tag;
-        //NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
-        [alert show];
+        [self deleteStratumFrmCoreData:alert stratumIndex:button.tag];
+    }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:cancelButtonTitle style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+    }];
+    
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void) deleteStratumFrmCoreData:(UIAlertController*)alert stratumIndex:(int)stratumIndex {
+    
+    WasteStratum *targetStratum = [self.sortedStratums objectAtIndex:stratumIndex];
+    
+    [WasteBlockDAO deleteStratum:targetStratum usingWB:wasteBlock];
+    
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"stratum" ascending:YES]; // is key ok ? does it actually sort according to it
+    NSSortDescriptor *sort2 = [[NSSortDescriptor alloc ] initWithKey:@"stratumID" ascending:YES];
+    
+    self.sortedStratums = [[[self.wasteBlock blockStratum] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObjects:sort, sort2, nil]];
+    
+    [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
+    [WasteCalculator calculateRate:self.wasteBlock ];
+    [WasteCalculator calculatePiecesValue:self.wasteBlock];
+    
+    if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
+        [WasteCalculator calculateEFWStat:self.wasteBlock];
+        [self.efwFooterView setBlockViewValue:self.wasteBlock];
+    }else{
+        [self.footerStatView setViewValue:self.wasteBlock];
+    }
+    
+    [self saveData];
+    [self.stratumTableView reloadData];
+    [self viewDidLoad];
+    [self checkStratum];
 }
 
 - (IBAction)deleteBlock:(id)sender{
@@ -804,43 +924,77 @@ UITextField *activeTextField;
     [alert show];
 }
 
-- (IBAction) prepareForExport:(id) sender {
+- (IBAction)prepareForExport:(id)sender {
     NSMutableString *error = [[NSMutableString alloc] initWithString:@""];
     NSString *okTitle = NSLocalizedString(@"OK", nil);
-    NSString *title = NSLocalizedString(@"Entry Error : ", nil);
+    NSString *title = NSLocalizedString(@"Entry Error: ", nil);
     
     [self saveData];
     
-    //Validate data
+    // Validate data
     WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
-    [error appendString:[wpv validateBlock:self.wasteBlock]];
+    [error appendString:[wpv validateBlock:self.wasteBlock checkPlot:YES]];
     [error appendString:[self validateCutBlock:sender]];
     [error appendString:[self mandatoryFieldsForXML:sender]];
-    if(![error isEqualToString:@""]) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:error preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleDefault handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
-        
-    } else {
-        if([self.wasteBlock.cutBlockId isEqualToString:@""]){
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Cutblock id missing" preferredStyle:UIAlertControllerStyleAlert];
+    
+    if (![error isEqualToString:@""]) {
+        if ([error rangeOfString:@"Error"].location != NSNotFound || [error rangeOfString:@"mandatory"].location != NSNotFound) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:error preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:okTitle style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning" message:error preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [self promptForExportUserData:sender];
+                if ([self.wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue] && [self.wasteBlock.cutBlockId isEqualToString:@""]) {
+                    UIAlertController *cutBlockIdAlert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Cutblock id missing" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                        [self promptForExportUserData:sender];
+                        [cutBlockIdAlert dismissViewControllerAnimated:YES completion:nil];
+                    }];
+                    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action){
+                        // Dismiss
+                        [cutBlockIdAlert dismissViewControllerAnimated:YES completion:nil];
+                    }];
+                    
+                    [cutBlockIdAlert addAction:ok];
+                    [cutBlockIdAlert addAction:cancel];
+                    [self presentViewController:cutBlockIdAlert animated:YES completion:nil];
+                } else {
+                    [self promptForExportUserData:sender];
+                }
+                
                 [alert dismissViewControllerAnimated:YES completion:nil];
-            }];            
+            }];
             UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action){
-                //Dismiss
+                // Dismiss
                 [alert dismissViewControllerAnimated:YES completion:nil];
             }];
             
             [alert addAction:ok];
             [alert addAction:cancel];
             [self presentViewController:alert animated:YES completion:nil];
-        }else{
+        }
+    } else {
+        if ([self.wasteBlock.isAggregate intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue] && [self.wasteBlock.cutBlockId isEqualToString:@""]) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Cutblock id missing" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [self promptForExportUserData:sender];
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action){
+                // Dismiss
+                [alert dismissViewControllerAnimated:YES completion:nil];
+            }];
+            
+            [alert addAction:ok];
+            [alert addAction:cancel];
+            [self presentViewController:alert animated:YES completion:nil];
+        } else {
             [self promptForExportUserData:sender];
         }
     }
 }
+
 
 - (void)generateXML:(id)sender{
     XMLExportGenerator *xmlGen = [[XMLExportGenerator alloc] init];
@@ -872,6 +1026,7 @@ UITextField *activeTextField;
 }
 
 - (IBAction)generateEFW:(id)sender {
+    NSLog(@"generateEFW");
     XMLExportGenerator *xmlGen = [[XMLExportGenerator alloc] init];
     BOOL present = FALSE;
     if([wasteBlock.ratioSamplingEnabled intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
@@ -889,8 +1044,14 @@ UITextField *activeTextField;
     if(present){
         WastePlotValidator *wpv = [[WastePlotValidator alloc] init];
         NSString *errorMessage = [wpv validPile:self.wasteBlock];
+        NSString *errorHeader;
+        if ([errorMessage rangeOfString:@"plot"].location != NSNotFound) {
+            errorHeader = @"Plot Data Missing";
+        } else {
+            errorHeader = @"Pile Data Missing";
+        }
         if(![errorMessage isEqualToString:@""]){
-            UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Pile Data Missing", nil)
+            UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(errorHeader, nil)
                                                                                   message:[NSString stringWithFormat:@"%@ OK to proceed?",errorMessage]
                                                                            preferredStyle:UIAlertControllerStyleAlert];
             
@@ -1446,7 +1607,7 @@ UITextField *activeTextField;
             if(ws.stratumSurveyArea == nil || [ws.stratumSurveyArea doubleValue] == 0){
                 errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Stratum Area \n"];
             }
-            if([ws.stratumPlot count] == 0 && ws.strPile == nil ) {
+            if([ws.stratumPlot count] == 0 && [ws.stratumPile count] == 0 ) {
                 errorMessage = [errorMessage stringByAppendingString:@" Missing mandatory field: Plot data\n"];
             }else if([ws.stratumPlot count] > 0) {
                 for (WastePlot *wp in ws.stratumPlot){
@@ -1793,8 +1954,9 @@ UITextField *activeTextField;
         {
             
             //NSLog(@"cell stratum ID = %@, stratum.stratumID = %@, cell.stratum = %@, stratum.stratum = %@", cell.stratumID.text, stratum.stratumID, cell.stratum.text, stratum.stratum);
-            
-            if([stratum.stratum isEqualToString:cell.stratum.text] && [[stratum.stratumID stringValue] isEqualToString: cell.stratumID.text])
+            NSString *test =  cell.stratum.text;
+            NSString *test2 = cell.stratumID.text;
+            if(((stratum.stratum == nil && cell.stratum.text == nil) || [stratum.stratum isEqualToString:cell.stratum.text]) && [[stratum.stratumID stringValue] isEqualToString: cell.stratumID.text])
             {
                 
                 if([self.theSegue.identifier isEqualToString:@"selectStratumSegue"])
@@ -1802,6 +1964,7 @@ UITextField *activeTextField;
                     StratumViewController *stratumVC = self.theSegue.destinationViewController;
                     stratumVC.wasteStratum = stratum;
                     stratumVC.wasteBlock = self.wasteBlock;
+                    [self saveData];
                     break;
                 }
                 
@@ -1874,10 +2037,10 @@ UITextField *activeTextField;
         }else{
             cell.reductionFactor.text = @"";
         }
-        cell.aValue.text = tm.avoidable ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.avoidable floatValue]] : @"";
-        cell.bValue.text = isnan([tm.benchmark floatValue])? @"0.00" : [[NSString alloc] initWithFormat:@"%0.2f",[tm.benchmark floatValue]];
-        cell.wmrf.text =  isnan([tm.wmrf floatValue]) ? @"0.00" : [[NSString alloc] initWithFormat:@"%0.4f",[tm.wmrf floatValue]];
-        cell.area.text = tm.area ? [NSString stringWithFormat:@"%0.2f", [tm.area floatValue] ] : @"";
+        cell.aValue.text = tm.avoidable && !isnan([tm.avoidable doubleValue]) ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.avoidable floatValue]] : @"";
+        cell.bValue.text = tm.benchmark && !isnan([tm.benchmark doubleValue]) ? [[NSString alloc] initWithFormat:@"%0.2f",[tm.benchmark floatValue]] : @"";
+        cell.wmrf.text =  tm.wmrf && !isnan([tm.wmrf doubleValue]) ? [[NSString alloc] initWithFormat:@"%0.4f",[tm.wmrf floatValue]] : @"";
+        cell.area.text = tm.area && !isnan([tm.area doubleValue]) ? [NSString stringWithFormat:@"%0.2f", [tm.area floatValue] ] : @"";
         
         /*
         NSLog(@"TIMBERMARK = %@", cell.primary.text);
@@ -1987,7 +2150,7 @@ UITextField *activeTextField;
     
     // POPULATING FROM THE OBJECT
     //
-    self.reporintUnitNo.text = wasteBlock.reportingUnit && [wasteBlock.reportingUnit intValue] > 0? [wasteBlock.reportingUnit stringValue] : @"";
+    self.reportingUnitNo.text = wasteBlock.reportingUnit && [wasteBlock.reportingUnit intValue] > 0? [wasteBlock.reportingUnit stringValue] : @"";
     self.cutBlock.text = wasteBlock.cutBlockId ? wasteBlock.cutBlockId : @"";
     self.cuttingPermit.text = wasteBlock.cuttingPermitId ? wasteBlock.cuttingPermitId : @"";
     
@@ -2028,20 +2191,19 @@ UITextField *activeTextField;
     self.returnNumber.text = wasteBlock.returnNumber && [wasteBlock.returnNumber intValue] > 0 ? [wasteBlock.returnNumber stringValue] : @"";
     self.surveyorLicence.text = wasteBlock.surveyorLicence ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.surveyorLicence] : @"";
     
-    // WASTE CHECKER
-    self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
     self.professionalDesignation.text = wasteBlock.professional ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.professional] : @"";
-    
     self.registrationNumber.text = wasteBlock.registrationNumber ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.registrationNumber] : @"";
     self.position.text = wasteBlock.position ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.position] : @"";
-    
+
     self.notes.text = wasteBlock.notes ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.notes] : @"";
     
-    if ([self.wasteBlock.userCreated intValue] == 1){
+    if ([self.wasteBlock.userCreated intValue] == 1) {
         self.wasteCheckerName.text = wasteBlock.surveyorName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.surveyorName] : @"";
-    }else{
+    } else {
         self.wasteCheckerName.text = wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", wasteBlock.checkerName] : @"";
     }
+    
+    [self updateGenerateXMLButtonEnabledState];
     
     //check if the total area of the stratum added up to the block net area
     [self checkStratum];
@@ -2050,7 +2212,6 @@ UITextField *activeTextField;
         [WasteCalculator calculateEFWStat:self.wasteBlock];
         [self.efwFooterView setBlockViewValue:self.wasteBlock];
     }else{
-        [WasteCalculator calculatePiecesValue:self.wasteBlock ];
         [self.footerStatView setViewValue:self.wasteBlock];
     }
     
@@ -2370,6 +2531,7 @@ UITextField *activeTextField;
     stm.orgMeasurePlot = mp;
     stm.n1sample = @"";
     stm.n2sample = @"";
+    stm.fixedSample = @"";
     stm.ratioSamplingLog = @"";
     stm.stratumWasteLevelCode = nil;
     if ([self.wasteBlock.userCreated intValue] ==1){
@@ -2598,7 +2760,7 @@ UITextField *activeTextField;
         [self.returnNumber setEnabled:YES];
         [self.surveyorLicence setEnabled:YES];
         [self.surveyNetAreaTextField setEnabled:YES];
-        [self.reporintUnitNo setEnabled:YES];
+        [self.reportingUnitNo setEnabled:YES];
 
         [self.checkMaturityLabel setHidden:YES];
         [self.checkMaturity setHidden:YES];
@@ -2622,7 +2784,7 @@ UITextField *activeTextField;
         [self.returnNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         [self.surveyorLicence setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
         [self.surveyNetAreaTextField setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
-        [self.reporintUnitNo setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.reportingUnitNo setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     }
 }
 
