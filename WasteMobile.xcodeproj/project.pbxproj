@@ -1386,7 +1386,7 @@
 						};
 					};
 					F4EECF0D177C99F400778578 = {
-						DevelopmentTeam = TM6UEX2F65;
+						DevelopmentTeam = KH9MTRSDAZ;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -2019,12 +2019,12 @@
 		F4EECF32177C99F400778578 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-test";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-Prod";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = TM6UEX2F65;
+				DEVELOPMENT_TEAM = KH9MTRSDAZ;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
@@ -2033,7 +2033,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LIBRARY_SEARCH_PATHS = "";
 				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = iForWasteTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SalusSystem.WasteMobile;
 				PRODUCT_NAME = WasteMobile;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2046,12 +2046,12 @@
 		F4EECF33177C99F400778578 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-test";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iForWaste-Prod";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = TM6UEX2F65;
+				DEVELOPMENT_TEAM = KH9MTRSDAZ;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WasteMobile/WasteMobile-Prefix.pch";
@@ -2061,7 +2061,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LIBRARY_SEARCH_PATHS = "";
 				MARKETING_VERSION = 1.3.0;
-				PRODUCT_BUNDLE_IDENTIFIER = iForWasteTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SalusSystem.WasteMobile;
 				PRODUCT_NAME = WasteMobile;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
