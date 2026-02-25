@@ -2372,16 +2372,59 @@
                                 <rect key="frame" x="0.0" y="260" width="1024" height="245"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <label key="tableHeaderView" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checked" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ND3-V8-3QU">
-                                    <rect key="frame" x="0.0" y="0.0" width="1024" height="23"/>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="jLO-GH-9Gs">
+                                    <rect key="frame" x="0.0" y="121.5" width="1024" height="40"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checked" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ND3-V8-3QU">
+                                            <rect key="frame" x="0.0" y="8.5" width="1024" height="23"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="19"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ho8-ee-8QJ">
+                                            <rect key="frame" x="280" y="3" width="69" height="36"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                            <state key="normal" title="Licence"/>
+                                            <connections>
+                                                <action selector="sortPlots:" destination="Mkd-4v-F1V" eventType="touchUpInside" id="TQ6-Sy-eWg"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pGN-7R-ffp">
+                                            <rect key="frame" x="490" y="2" width="30" height="36"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                            <state key="normal" title="CP"/>
+                                            <connections>
+                                                <action selector="sortPlots:" destination="Mkd-4v-F1V" eventType="touchUpInside" id="C1n-DH-Qqq"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YP8-Ys-FhK">
+                                            <rect key="frame" x="650" y="1" width="51" height="38"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                            <state key="normal" title="Block"/>
+                                            <connections>
+                                                <action selector="sortPlots:" destination="Mkd-4v-F1V" eventType="touchUpInside" id="yk4-eh-xEj"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mD7-44-9vl">
+                                            <rect key="frame" x="60" y="4" width="130" height="36"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                            <state key="normal" title="Plot Number"/>
+                                            <connections>
+                                                <action selector="sortPlots:" destination="Mkd-4v-F1V" eventType="touchUpInside" id="k79-xa-1Hu"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="AggregatePackingRatioPlotTableCellId" id="pnF-al-eTS" userLabel="AggregatePackingRatioPlotTableCellId" customClass="AggregatePackingRatioPlotTableViewCell">
-                                        <rect key="frame" x="0.0" y="73" width="1024" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="50" width="1024" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pnF-al-eTS" id="oMw-fj-3fs">
                                             <rect key="frame" x="0.0" y="0.0" width="997.5" height="43.5"/>
@@ -2808,9 +2851,13 @@
                         <outlet property="predictionPlot" destination="biZ-78-s37" id="Vxf-ZN-T9c"/>
                         <outlet property="predictionPlotLabel" destination="40G-zj-CKf" id="XEZ-wV-od1"/>
                         <outlet property="sortCutblock" destination="D9R-2d-oYl" id="g91-fc-ScA"/>
+                        <outlet property="sortCutblockAPR" destination="YP8-Ys-FhK" id="6xg-Ww-4R8"/>
                         <outlet property="sortCuttingPermit" destination="JNl-lq-26L" id="KWx-Sa-p5j"/>
+                        <outlet property="sortCuttingPermitAPR" destination="pGN-7R-ffp" id="6ed-6L-EGy"/>
                         <outlet property="sortLicense" destination="hzb-fc-60T" id="uel-qN-m2T"/>
+                        <outlet property="sortLicenseAPR" destination="ho8-ee-8QJ" id="F51-cP-zFK"/>
                         <outlet property="sortPlotNumber" destination="xWK-Y5-BIN" id="KjP-kN-nPL"/>
+                        <outlet property="sortPlotNumberAPR" destination="mD7-44-9vl" id="BFj-uU-3YL"/>
                         <outlet property="surveyAreaLabel" destination="ErN-M6-utK" id="yZ4-2R-ltF"/>
                         <outlet property="versionLabel" destination="w19-wo-K73" id="Gzf-Hy-k4c"/>
                         <outlet property="wasteLevel" destination="caD-f2-zkT" id="Y3x-uL-COi"/>
@@ -4328,7 +4375,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="JY6-XQ-rkC"/>
+        <segue reference="IeM-N2-dmH"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="rsi-Jo-9f6"/>
         <segue reference="GQ1-Xd-ei5"/>
