@@ -2136,6 +2136,10 @@
                                                         <constraint firstAttribute="width" constant="35" id="Rp4-f9-K6s"/>
                                                     </constraints>
                                                 </imageView>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" image="Check-icon" translatesAutoresizingMaskIntoConstraints="NO" id="9XN-aw-UhI">
+                                                    <rect key="frame" x="21" y="6" width="32" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="RR3-xo-6Dc" firstAttribute="baseline" secondItem="Ken-v4-vsa" secondAttribute="firstBaseline" id="1He-yO-cCa"/>
@@ -2149,6 +2153,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="deleteButtonPR" destination="RR3-xo-6Dc" id="9g7-4O-sfg"/>
+                                            <outlet property="isPlotAudited" destination="9XN-aw-UhI" id="gyx-x8-ZPO"/>
                                             <outlet property="plotNumberPR" destination="Ken-v4-vsa" id="l0v-YI-UbC"/>
                                         </connections>
                                     </tableViewCell>
@@ -2471,12 +2476,17 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" image="Check-icon" translatesAutoresizingMaskIntoConstraints="NO" id="Oca-M1-mtW">
+                                                    <rect key="frame" x="22" y="5" width="32" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="blockIdAPR" destination="JjU-HX-aUN" id="woj-iu-MpJ"/>
                                             <outlet property="cuttingPermitAPR" destination="wfL-4j-H75" id="651-NI-I6j"/>
                                             <outlet property="deleteButtonAPR" destination="Wtb-s1-KIq" id="GMC-nT-cXd"/>
+                                            <outlet property="isPlotAudited" destination="Oca-M1-mtW" id="Fbm-4P-niQ"/>
                                             <outlet property="licenceAPR" destination="gqY-le-Gzt" id="q2k-Ik-SZX"/>
                                             <outlet property="plotNumberAPR" destination="8cV-4k-zXo" id="sAk-v2-Gc6"/>
                                         </connections>
@@ -4375,7 +4385,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="IeM-N2-dmH"/>
+        <segue reference="JY6-XQ-rkC"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="rsi-Jo-9f6"/>
         <segue reference="GQ1-Xd-ei5"/>
@@ -4403,7 +4413,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

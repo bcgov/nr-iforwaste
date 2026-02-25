@@ -10,6 +10,7 @@
 
 @interface PackingRatioTableViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UIImageView *isPlotAudited;
 @property (weak, nonatomic) IBOutlet UILabel *plotNumberPR;
 @property (weak, nonatomic) IBOutlet UIButton *deleteButtonPR;
 

@@ -171,7 +171,7 @@
         return _managedObjectModel;
     }
     NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"WasteDataModel" withExtension:@"momd"];
-    modelURL = [modelURL URLByAppendingPathComponent:@"WasteDataModel v5.mom"];
+    modelURL = [modelURL URLByAppendingPathComponent:@"WasteDataModel v6.mom"];
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }
