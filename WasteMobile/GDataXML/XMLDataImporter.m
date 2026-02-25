@@ -211,6 +211,30 @@
                 {
                     [ws setValue:[(NSManagedObject *)ws valueForKey:@"stratumSurveyArea"] forKey:@"stratumArea"];
                 }
+                if([(NSManagedObject *)ws valueForKey:@"grade12Percent"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"grade12Percent"] forKey:@"checkgrade12Percent"];
+                }
+                if([(NSManagedObject *)ws valueForKey:@"grade4Percent"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"grade4Percent"] forKey:@"checkgrade4Percent"];
+                }
+                if([(NSManagedObject *)ws valueForKey:@"gradeJPercent"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"gradeJPercent"] forKey:@"checkgradeJPercent"];
+                }
+                if([(NSManagedObject *)ws valueForKey:@"gradeUPercent"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"gradeUPercent"] forKey:@"checkgradeUPercent"];
+                }
+                if([(NSManagedObject *)ws valueForKey:@"gradeXPercent"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"gradeXPercent"] forKey:@"checkgradeXPercent"];
+                }
+                if([(NSManagedObject *)ws valueForKey:@"gradeYPercent"] != nil)
+                {
+                    [ws setValue:[(NSManagedObject *)ws valueForKey:@"gradeYPercent"] forKey:@"checkgradeYPercent"];
+                }
             }
             
             //get plot

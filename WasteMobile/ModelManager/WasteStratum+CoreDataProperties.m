@@ -70,4 +70,10 @@
 @dynamic dcSignature;
 @dynamic dcRationale;
 
+@dynamic checkgrade12Percent;
+@dynamic checkgrade4Percent;
+@dynamic checkgradeJPercent;
+@dynamic checkgradeUPercent;
+@dynamic checkgradeYPercent;
+@dynamic checkgradeXPercent;
 @end

@@ -2372,8 +2372,8 @@
                                 <rect key="frame" x="0.0" y="260" width="1024" height="245"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <view key="tableFooterView" contentMode="scaleToFill" id="jLO-GH-9Gs">
-                                    <rect key="frame" x="0.0" y="121.5" width="1024" height="40"/>
+                                <view key="tableHeaderView" contentMode="scaleToFill" id="jLO-GH-9Gs">
+                                    <rect key="frame" x="0.0" y="0.0" width="1024" height="40"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checked" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ND3-V8-3QU">
@@ -2411,7 +2411,7 @@
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mD7-44-9vl">
-                                            <rect key="frame" x="60" y="4" width="130" height="36"/>
+                                            <rect key="frame" x="76" y="4" width="130" height="36"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                             <state key="normal" title="Plot Number"/>
@@ -2424,7 +2424,7 @@
                                 </view>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="AggregatePackingRatioPlotTableCellId" id="pnF-al-eTS" userLabel="AggregatePackingRatioPlotTableCellId" customClass="AggregatePackingRatioPlotTableViewCell">
-                                        <rect key="frame" x="0.0" y="50" width="1024" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="90" width="1024" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pnF-al-eTS" id="oMw-fj-3fs">
                                             <rect key="frame" x="0.0" y="0.0" width="997.5" height="43.5"/>
