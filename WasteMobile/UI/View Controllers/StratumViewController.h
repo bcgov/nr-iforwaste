@@ -59,6 +59,14 @@ typedef enum StratumAlertTypeCode{
 @property (weak, nonatomic) IBOutlet UILabel *grade4Label;
 @property (weak, nonatomic) IBOutlet UILabel *gradeXLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gradeYLabel;
+@property (weak, nonatomic) IBOutlet UITextField *checkgrade12Percent;
+@property (weak, nonatomic) IBOutlet UITextField *checkgrade4Percent;
+@property (weak, nonatomic) IBOutlet UITextField *checkgradeXPercent;
+@property (weak, nonatomic) IBOutlet UITextField *checkgradeYPercent;
+@property (weak, nonatomic) IBOutlet UILabel *checkgrade12Label;
+@property (weak, nonatomic) IBOutlet UILabel *checkgrade4Label;
+@property (weak, nonatomic) IBOutlet UILabel *checkgradeXLabel;
+@property (weak, nonatomic) IBOutlet UILabel *checkgradeYLabel;
 
 @property (nonatomic, strong) UITextField *plotNumberTextField;
 @property (nonatomic, strong) UITextField *lengthTextField;

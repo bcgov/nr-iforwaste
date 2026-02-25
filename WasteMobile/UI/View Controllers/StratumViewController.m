@@ -2076,18 +2076,36 @@ NSInteger orignialWasteTypeRow;
             // SB-RATIO-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"SINGLE block RATIO COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2106,18 +2124,32 @@ NSInteger orignialWasteTypeRow;
             // SB-RATIO-INT
             else {
                 NSLog(@"SINGLE block RATIO INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2138,18 +2170,36 @@ NSInteger orignialWasteTypeRow;
             // SB-SRS-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"single block SRS COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
@@ -2163,18 +2213,32 @@ NSInteger orignialWasteTypeRow;
             // SB-SRS-INTERIOR
             else {
                 NSLog(@"single block SRS INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
@@ -2194,18 +2258,36 @@ NSInteger orignialWasteTypeRow;
             // AGG-RATIO-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"aggregate RATIO COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2223,18 +2305,32 @@ NSInteger orignialWasteTypeRow;
             // AGG-RATIO-INT
             else {
                 NSLog(@"aggregate RATIO INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2255,18 +2351,36 @@ NSInteger orignialWasteTypeRow;
             // AGG-SRS-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"aggregate SRS COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
@@ -2280,18 +2394,32 @@ NSInteger orignialWasteTypeRow;
             // AGG-SRS-INTERIOR
             if ([wasteBlock.regionId integerValue] == InteriorRegion) {
                 NSLog(@"aggregate SRS INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
