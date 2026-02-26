@@ -4522,7 +4522,24 @@
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Z5k-gd-MDT" id="dhD-M9-4kG">
                                                             <rect key="frame" x="0.0" y="0.0" width="1055" height="46"/>
                                                             <autoresizingMask key="autoresizingMask"/>
+                                                            <subviews>
+                                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GLr-44-7sU">
+                                                                    <rect key="frame" x="0.0" y="8" width="40" height="30"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                                    <state key="normal" title="NEW">
+                                                                        <color key="titleColor" red="0.80162154799999996" green="0.0" blue="0.103323648" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    </state>
+                                                                    <connections>
+                                                                        <action selector="deleteNewPiece:" destination="9Gp-a2-4z6" eventType="touchUpInside" id="Fpb-e7-zsj"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
                                                         </tableViewCellContentView>
+                                                        <connections>
+                                                            <outlet property="statusButton" destination="GLr-44-7sU" id="V7q-1c-Fkf"/>
+                                                        </connections>
                                                     </tableViewCell>
                                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="EditPileTableCell" rowHeight="46" id="MgB-M5-VY3" customClass="PileEditTableViewCell">
                                                         <rect key="frame" x="0.0" y="96" width="1055" height="46"/>
@@ -4530,7 +4547,22 @@
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MgB-M5-VY3" id="Def-nW-uIx">
                                                             <rect key="frame" x="0.0" y="0.0" width="1055" height="46"/>
                                                             <autoresizingMask key="autoresizingMask"/>
+                                                            <subviews>
+                                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2rd-n4-hzz">
+                                                                    <rect key="frame" x="0.0" y="6" width="36" height="33"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                                    <state key="normal" title="Button" image="edited_icon.png">
+                                                                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    </state>
+                                                                    <connections>
+                                                                        <action selector="changePieceStatus:" destination="9Gp-a2-4z6" eventType="touchUpInside" id="pNk-ty-mR0"/>
+                                                                    </connections>
+                                                                </button>
+                                                            </subviews>
                                                         </tableViewCellContentView>
+                                                        <connections>
+                                                            <outlet property="statusButton" destination="2rd-n4-hzz" id="iFw-YH-vu6"/>
+                                                        </connections>
                                                     </tableViewCell>
                                                 </prototypes>
                                                 <connections>
