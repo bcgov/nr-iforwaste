@@ -51,4 +51,5 @@
 @dynamic dcSignature;
 @dynamic dcRationale;
 
+@dynamic checkDate;
 @end

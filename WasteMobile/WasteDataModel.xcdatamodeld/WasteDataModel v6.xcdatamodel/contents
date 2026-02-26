@@ -392,6 +392,7 @@
     <entity name="WastePile" representedClassName="WastePile" syncable="YES">
         <attribute name="assistant" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="block" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="checkDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="cuttingPermit" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dcDesignation" optional="YES" attributeType="String" syncable="YES"/>

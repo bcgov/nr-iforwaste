@@ -19,6 +19,7 @@
 
 @property (weak, nonatomic) PileViewController *pileView;
 
+@property (weak, nonatomic) IBOutlet UIButton *statusButton;
 @property (strong, nonatomic) WastePile *cellWastePile;
 @property (strong, nonatomic) WasteBlock *wasteBlock;
 @property (strong, nonatomic) WasteStratum *wasteStratum;

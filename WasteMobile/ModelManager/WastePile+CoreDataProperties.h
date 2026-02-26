@@ -51,6 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) UIImage *dcSignature;
 @property (nullable, nonatomic, copy) NSString *dcRationale;
 
+
+@property (nullable, nonatomic, copy) NSDate *checkDate;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -122,7 +122,25 @@
         [self.plotNumber setEnabled:NO];
         [self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     }
-    
+    //disable soem fields
+    [self.plotNumber setEnabled:NO];
+    [self.plotNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    [self.returnNumber setEnabled:NO];
+    [self.returnNumber setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    [self.surveyorLicence setEnabled:NO];
+    [self.surveyorLicence setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    [self.residueSurveyor setEnabled:NO];
+    [self.residueSurveyor setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    [self.surveyDate setEnabled:NO];
+    [self.surveyDate setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
+        [self.licence setEnabled:NO];
+        [self.licence setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.block setEnabled:NO];
+        [self.block setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+        [self.cuttingPermit setEnabled:NO];
+        [self.cuttingPermit setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    }
 //    [self.sizeField setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
@@ -1021,11 +1039,14 @@
     self.licence.text = self.wastePile.licence ? [[NSString alloc] initWithFormat:@"%@", self.wastePile.licence] : @"";
     self.cuttingPermit.text = self.wastePile.cuttingPermit ? [[NSString alloc] initWithFormat:@"%@", self.wastePile.cuttingPermit] : @"";
     self.block.text = self.wastePile.block ? [[NSString alloc] initWithFormat:@"%@", self.wastePile.block] : @"";
+    self.checkedBy.text = self.wasteBlock.checkerName ? [[NSString alloc] initWithFormat:@"%@", self.wasteBlock.checkerName] : @"";
     
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"MMM-dd-yyyy"];
     self.surveyDate.text = [[NSString alloc] initWithFormat:@"%@", self.wastePile.surveyDate ? [dateFormat stringFromDate:self.wastePile.surveyDate] : [dateFormat stringFromDate:[NSDate date]]];
     self.note.text = self.wastePile.notes ? [[NSString alloc] initWithFormat:@"%@", self.wastePile.notes] : @"";
+    
+    self.checkSurveyDate.text = [[NSString alloc] initWithFormat:@"%@", self.wastePile.checkDate ? [dateFormat stringFromDate:self.wastePile.checkDate] : [dateFormat stringFromDate:[NSDate date]]];
     
     if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
         [WasteCalculator calculateEFWStat:self.wasteBlock];

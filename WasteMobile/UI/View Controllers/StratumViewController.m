@@ -564,6 +564,26 @@ NSInteger orignialWasteTypeRow;
             } else {
                 self.wasteStratum.grade5Percent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
             }
+            if(![self.checkgrade12Percent.text isEqualToString:@""]){
+                if([self.checkgrade12Percent.text doubleValue] >= 0.0 && [self.checkgrade12Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgrade12Percent = [[NSDecimalNumber alloc] initWithString:self.checkgrade12Percent.text];
+                }else{
+                    self.wasteStratum.checkgrade12Percent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade12Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgrade12Percent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
+            if(![self.checkgrade4Percent.text isEqualToString:@""]){
+                if([self.checkgrade4Percent.text doubleValue] >= 0.0 && [self.checkgrade4Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgrade4Percent = [[NSDecimalNumber alloc] initWithString:self.checkgrade4Percent.text];
+                }else{
+                    self.wasteStratum.checkgrade4Percent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade4Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgrade4Percent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
         }else if([self.wasteBlock.regionId intValue] == CoastRegion){
             if(![self.grade12Percent.text isEqualToString:@""]){
                 if([self.grade12Percent.text doubleValue] >= 0.0 && [self.grade12Percent.text doubleValue] <= 100.0 ){
@@ -595,6 +615,26 @@ NSInteger orignialWasteTypeRow;
             } else {
                 self.wasteStratum.gradeWPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
             }
+            if(![self.checkgrade12Percent.text isEqualToString:@""]){
+                if([self.checkgrade12Percent.text doubleValue] >= 0.0 && [self.checkgrade12Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgradeJPercent = [[NSDecimalNumber alloc] initWithString:self.checkgrade12Percent.text];
+                }else{
+                    self.wasteStratum.checkgradeJPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade12Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgradeJPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
+            if(![self.checkgrade4Percent.text isEqualToString:@""]){
+                if([self.checkgrade4Percent.text doubleValue] >= 0.0 && [self.checkgrade4Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgradeUPercent = [[NSDecimalNumber alloc] initWithString:self.checkgrade4Percent.text];
+                }else{
+                    self.wasteStratum.checkgradeUPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade4Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgradeUPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
         }
         if(![self.gradeXPercent.text isEqualToString:@""]){
             if([self.gradeXPercent.text doubleValue] >= 0.0 && [self.gradeXPercent.text doubleValue] <= 100.0 ){
@@ -615,6 +655,26 @@ NSInteger orignialWasteTypeRow;
             }
         } else {
             self.wasteStratum.gradeYPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+        }
+        if(![self.checkgradeXPercent.text isEqualToString:@""]){
+            if([self.checkgradeXPercent.text doubleValue] >= 0.0 && [self.checkgradeXPercent.text doubleValue] <= 100.0 ){
+                self.wasteStratum.checkgradeXPercent = [[NSDecimalNumber alloc] initWithString:self.checkgradeXPercent.text];
+            }else{
+                self.wasteStratum.checkgradeXPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                self.checkgradeXPercent.text = @"";
+            }
+        } else {
+            self.wasteStratum.checkgradeXPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+        }
+        if(![self.checkgradeYPercent.text isEqualToString:@""]){
+            if([self.checkgradeYPercent.text doubleValue] >= 0.0 && [self.checkgradeYPercent.text doubleValue] <= 100.0 ){
+                self.wasteStratum.checkgradeYPercent = [[NSDecimalNumber alloc] initWithString:self.checkgradeYPercent.text];
+            }else{
+                self.wasteStratum.checkgradeYPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                self.checkgradeYPercent.text = @"";
+            }
+        } else {
+            self.wasteStratum.checkgradeYPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
         }
         
         // Packing Ratio disable these fields on save if they are filled in
