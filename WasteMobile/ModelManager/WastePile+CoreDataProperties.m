@@ -53,4 +53,5 @@
 
 @dynamic checkDate;
 @dynamic pileCheckerStatusCode;
+@dynamic isChanged;
 @end

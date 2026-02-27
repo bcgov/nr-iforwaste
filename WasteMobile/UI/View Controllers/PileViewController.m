@@ -89,7 +89,7 @@
     
     [self setupLists];
     
-    // Set the plot header display mode according to waste stratum assessment method    
+    // Set the plot header display mode according to waste stratum assessment method
     self.headerView.displayMode = [wasteBlock.ratioSamplingEnabled stringValue];
     
     // DATE PICKER
@@ -142,7 +142,7 @@
         [self.cuttingPermit setEnabled:NO];
         [self.cuttingPermit setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     }
-//    [self.sizeField setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+    //    [self.sizeField setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
     // Populate version number
     [versionLabel setText:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"iForWasteVersionNumber"]];
 }
@@ -156,17 +156,17 @@
 
 - (void) sortPiles
 {
-//    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
-        self.wastePiles = [self.wasteStratum.stratumPile allObjects];
-        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileId" ascending:YES];
-        self.wastePiles = [self.wastePiles sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-//    }
-//    else
-//    {
-//        self.wastePiles = [self.wasteStratum.stratumPile allObjects];
-//        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileId" ascending:YES];
-//        self.wastePiles = [self.wastePiles sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-//    }
+    //    if([self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
+    self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileId" ascending:YES];
+    self.wastePiles = [self.wastePiles sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+    //    }
+    //    else
+    //    {
+    //        self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+    //        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileId" ascending:YES];
+    //        self.wastePiles = [self.wastePiles sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+    //    }
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -187,7 +187,7 @@
             [self.navigationController pushViewController:pvc animated:YES];
         }
     }
-
+    
     if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
         [self.addPileButton setHidden:NO];
     }
@@ -205,8 +205,8 @@
         }else{
             [WasteCalculator calculateEFWStat:self.wasteBlock];
             [self.efwFooterView setPileViewValue2:self.wasteStratum];
-//            [WasteCalculator calculateEFWStat:self.wasteBlock];
-//            [self.efwFooterView setPileViewValue:self.aggregatecutblock.aggPile];
+            //            [WasteCalculator calculateEFWStat:self.wasteBlock];
+            //            [self.efwFooterView setPileViewValue:self.aggregatecutblock.aggPile];
         }
     }
     
@@ -298,7 +298,7 @@
 - (NSString *)checkPileNumberValidity {
     NSString *pileNumber = self.plotNumber.text;
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-
+    
     // Only check pile numbers if the user can edit them on the page (SRS)
     if ([wasteBlock.ratioSamplingEnabled isEqual:@(0)]) {
         NSNumber *pileNumberValue = @([pileNumber integerValue]);
@@ -345,11 +345,11 @@
         if ([wasteBlock.ratioSamplingEnabled isEqual:@(1)] && wastePile.pileMeasuredPileShapeCode == nil) {
             [missingValues1 addObject:@"measured shape code"];
         }
-
+        
         if (missingValues1.count > 0) {
             [errorMessages addObject:[NSString stringWithFormat:@"Missing %@.", [self joinItemsWithAnd:missingValues1]]];
         }
-
+        
         if ([wastePile.measuredLength isEqualToNumber:[NSDecimalNumber zero]]) {
             [missingValues2 addObject:@"length"];
         }
@@ -359,7 +359,7 @@
         if ([wastePile.measuredHeight isEqualToNumber:[NSDecimalNumber zero]]) {
             [missingValues2 addObject:@"height"];
         }
-
+        
         if (missingValues2.count > 1) {
             [errorMessages addObject:[NSString stringWithFormat:@"Invalid values for %@.", [self joinItemsWithAnd:missingValues2]]];
         } else if (missingValues2.count > 0) {
@@ -418,11 +418,11 @@
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error"
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
-
+    
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
                                                        style:UIAlertActionStyleDefault
                                                      handler:nil];
-
+    
     [alert addAction:okAction];
     [self presentViewController:alert animated:YES completion:nil];
 }
@@ -454,7 +454,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     NSLog(@"segue %@", segue.identifier);
-
+    
     if ( [segue.identifier isEqualToString:@"reportFromPileSegue"]){
         
         // our navigation controller has many segues, or views, but we need our ReportScreen
@@ -476,7 +476,7 @@
         [self showAlertWithMessage:pileNumberError];
         return;
     }
-        
+    
     [self saveData];
     
     NSString *title = NSLocalizedString(@"Save Pile", nil);
@@ -505,7 +505,7 @@
         [self changePileStatusByType:@"notChecked"];
     }];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelBtn style:UIAlertActionStyleCancel handler:nil];
-   
+    
     [alert addAction:cancel];
     [alert addAction:notChecked];
     [alert addAction:approve];
@@ -599,30 +599,30 @@
         textField.delegate           = self;
     }];
     UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-             handler:^(UIAlertAction * action) {
-                 UIAlertController *alertt = [UIAlertController alertControllerWithTitle:@"Shape Code" message:@"" preferredStyle:UIAlertControllerStyleAlert];
-                 int i = 0;
-                 for(PileShapeCode *psc in [[CodeDAO sharedInstance] getPileShapeCodeList]){
-                     NSString *optionValue = [NSString stringWithFormat:@"%@%@%@", psc.pileShapeCode, @" - ", psc.desc];
-                     UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:optionValue style:UIAlertActionStyleDefault
-                               handler:^(UIAlertAction * action) {
-                                   [self didSelectRowInAlertController:i];
-                                   [self validatePileEstimate:alert pile:self.currentpile];
-                                   [self presentViewController:alert animated:YES completion:nil];
-                               }];
-                     [alertt addAction:defaultAction];
-                     i++;
-                 }
-                 UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
-                              handler:^(UIAlertAction * action) {
-                                  [self presentViewController:alert animated:YES completion:nil];
-                              }];
-                 [alertt addAction:cancelAction];
-                 [self presentViewController:alertt animated:YES completion:nil];
-             }];
+                                                     handler:^(UIAlertAction * action) {
+        UIAlertController *alertt = [UIAlertController alertControllerWithTitle:@"Shape Code" message:@"" preferredStyle:UIAlertControllerStyleAlert];
+        int i = 0;
+        for(PileShapeCode *psc in [[CodeDAO sharedInstance] getPileShapeCodeList]){
+            NSString *optionValue = [NSString stringWithFormat:@"%@%@%@", psc.pileShapeCode, @" - ", psc.desc];
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:optionValue style:UIAlertActionStyleDefault
+                                                                  handler:^(UIAlertAction * action) {
+                [self didSelectRowInAlertController:i];
+                [self validatePileEstimate:alert pile:self.currentpile];
+                [self presentViewController:alert animated:YES completion:nil];
+            }];
+            [alertt addAction:defaultAction];
+            i++;
+        }
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
+                                                             handler:^(UIAlertAction * action) {
+            [self presentViewController:alert animated:YES completion:nil];
+        }];
+        [alertt addAction:cancelAction];
+        [self presentViewController:alertt animated:YES completion:nil];
+    }];
     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
-                                 handler:^(UIAlertAction * action) {
-                                 }];
+                                                         handler:^(UIAlertAction * action) {
+    }];
     
     
     [alert addAction:okAction];
@@ -633,19 +633,19 @@
 -(void)didSelectRowInAlertController:(NSInteger)row {
     NSArray *text = [[CodeDAO sharedInstance] getPileShapeCodeList];
     self.currentpile = [text objectAtIndex:row ];
-
+    
 }
 #pragma mark - UITextField
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField{
     
     BOOL result = YES;
-
+    
     return result;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
     
-   
+    
     
     return YES;
 }
@@ -683,7 +683,7 @@
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
     NSCharacterSet *myCharSet = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
     NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
-
+    
     switch (textField.tag) {
         case 1:
             return (newLength > 256) ? NO : YES;
@@ -718,41 +718,41 @@
             return (newLength > 2) ? NO : YES;
             break;
         case 8:
-            {
-                NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-                NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
-
-                if ([newString rangeOfCharacterFromSet:charSet].location != NSNotFound) {
-                    return NO;
-                }
-                NSArray *arrSep = [newString componentsSeparatedByString:@"."];
-                if ([arrSep count] > 2) {
-                    return NO;
-                }
-                if ([arrSep count] >= 1) {
-                    NSString *integerPart = [arrSep objectAtIndex:0];
-                    if (integerPart.length > 3 || [integerPart floatValue] > 999) {
-                        return NO;
-                    }
-                }
-                if ([arrSep count] == 2) {
-                    NSString *fractionalPart = [arrSep objectAtIndex:1];
-                    if (fractionalPart.length > 1 || [fractionalPart floatValue] > 9) {
-                        return NO;
-                    }
-                }
-                return YES;
+        {
+            NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+            NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
+            
+            if ([newString rangeOfCharacterFromSet:charSet].location != NSNotFound) {
+                return NO;
             }
+            NSArray *arrSep = [newString componentsSeparatedByString:@"."];
+            if ([arrSep count] > 2) {
+                return NO;
+            }
+            if ([arrSep count] >= 1) {
+                NSString *integerPart = [arrSep objectAtIndex:0];
+                if (integerPart.length > 3 || [integerPart floatValue] > 999) {
+                    return NO;
+                }
+            }
+            if ([arrSep count] == 2) {
+                NSString *fractionalPart = [arrSep objectAtIndex:1];
+                if (fractionalPart.length > 1 || [fractionalPart floatValue] > 9) {
+                    return NO;
+                }
+            }
+            return YES;
+        }
             break;
         case 9:
-           for (int i = 0; i < [string length]; i++) {
-               unichar c = [string characterAtIndex:i];
-               if ([myCharSet characterIsMember:c]) {
-                   return (newLength > 4) ? NO : YES;
-               }
-           }
-           return [string isEqualToString:@""];
-           break;
+            for (int i = 0; i < [string length]; i++) {
+                unichar c = [string characterAtIndex:i];
+                if ([myCharSet characterIsMember:c]) {
+                    return (newLength > 4) ? NO : YES;
+                }
+            }
+            return [string isEqualToString:@""];
+            break;
         default:
             return NO; // NOT EDITABLE
     }
@@ -859,8 +859,8 @@
 {
     
     if (pickerView.tag == 1){
-//        self.sizeField.text = [NSString stringWithFormat:@"%@ - %@",[self.pileSizeArray[row] valueForKey:@"plotSizeCode"], [self.pileSizeArray[row] valueForKey:@"desc"]];
-//        [self.sizeField resignFirstResponder];
+        //        self.sizeField.text = [NSString stringWithFormat:@"%@ - %@",[self.pileSizeArray[row] valueForKey:@"plotSizeCode"], [self.pileSizeArray[row] valueForKey:@"desc"]];
+        //        [self.sizeField resignFirstResponder];
         
     }
 }
@@ -912,7 +912,7 @@
         }
     }
     BOOL duplicatePile = NO;
-
+    
     NSString *warningMsg = @"";
     
     if([pn_str isEqualToString:@""] || [length_str isEqualToString:@""] || [width_str isEqualToString:@""] || [height_str isEqualToString:@""]){
@@ -921,82 +921,82 @@
     if(duplicatePile){
         warningMsg = [warningMsg stringByAppendingString:@"Duplicate pile number, Select new pile number before proceeding.\n"];
     }
-        if([pn integerValue]<1 || [pn intValue] > ([wasteStratum.predictionPlot intValue])) {
-            warningMsg = [warningMsg stringByAppendingString:[NSString stringWithFormat:@"Pile number should be from 1 to %d\n", ([wasteStratum.totalNumPile intValue])]];
-            }
-            if([length floatValue] < 0.1 || [length floatValue] >= 10000) {
-                warningMsg = [warningMsg stringByAppendingString:@"Length should be from 0.1 to 9999.9\n"];
-            }
-            if([width floatValue] < 0.1 || [width floatValue] >= 10000) {
-                warningMsg = [warningMsg stringByAppendingString:@"Width should be from 0.1 to 9999.9\n"];
-            }
-            if([height floatValue] < 0.1 || [height floatValue] >= 100) {
-                warningMsg = [warningMsg stringByAppendingString:@"Height should be from 0.1 to 99.9\n"];
-            }
-         if(![warningMsg isEqualToString:@""])
-         {
-             UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", nil)
-                                                                                      message:warningMsg
-                                                                               preferredStyle:UIAlertControllerStyleAlert];
-                
-                UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
-                                                                 handler:^(UIAlertAction * action) {
-                                                                     [self presentViewController:alert animated:YES completion:nil];
-                                                                 }];
-                
-                [warningAlert addAction:okAction];
-                [self presentViewController:warningAlert animated:YES completion:nil];
-         }
-        
-        UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Estimation", nil)
-                                                                              message:[NSString stringWithFormat:@"Accept volume estimates? \n Length = %.2f \n Width = %.2f \n Height = %.2f \n Shape Code = %@", [length floatValue], [width floatValue], [height floatValue], [code uppercaseString]]
+    if([pn integerValue]<1 || [pn intValue] > ([wasteStratum.predictionPlot intValue])) {
+        warningMsg = [warningMsg stringByAppendingString:[NSString stringWithFormat:@"Pile number should be from 1 to %d\n", ([wasteStratum.totalNumPile intValue])]];
+    }
+    if([length floatValue] < 0.1 || [length floatValue] >= 10000) {
+        warningMsg = [warningMsg stringByAppendingString:@"Length should be from 0.1 to 9999.9\n"];
+    }
+    if([width floatValue] < 0.1 || [width floatValue] >= 10000) {
+        warningMsg = [warningMsg stringByAppendingString:@"Width should be from 0.1 to 9999.9\n"];
+    }
+    if([height floatValue] < 0.1 || [height floatValue] >= 100) {
+        warningMsg = [warningMsg stringByAppendingString:@"Height should be from 0.1 to 99.9\n"];
+    }
+    if(![warningMsg isEqualToString:@""])
+    {
+        UIAlertController* warningAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Error", nil)
+                                                                              message:warningMsg
                                                                        preferredStyle:UIAlertControllerStyleAlert];
         
-        UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
-              handler:^(UIAlertAction * action) {
-                  
-                if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
-                    self.currentEditingPile = [self addWastePile:self.wasteStratum pileNumber:[pn integerValue] length:length width:width height:height code:code];
-                    self.wastePiles = [self.wasteStratum.stratumPile allObjects];
-                    if (self.wastePiles.count == [self.wasteStratum.predictionPlot integerValue]){
-                        [self.addPileButton setEnabled:NO];
-                        [self.warningMsg setHidden:YES];
-                    }
-                    else
-                    {
-                        [self.warningMsg setHidden:NO];
-                        self.warningMsg.text = [NSString stringWithFormat:@"Number of records entered %ld is not equal to total number of piles %ld\n", (unsigned long)self.wastePiles.count, (long)[self.wasteStratum.predictionPlot integerValue]];
-                    }
-                }else{
-                    self.currentEditingPile = [self addWastePile:self.wasteStratum pileNumber:[pn integerValue] length:length width:width height:height code:code];
-                    self.wastePiles = [self.wasteStratum.stratumPile allObjects];
-                    if (self.wastePiles.count == [self.wasteStratum.totalNumPile integerValue]){
-                        [self.addPileButton setEnabled:NO];
-                        [self.warningMsg setHidden:YES];
-                    }
-                    else
-                    {
-                        [self.warningMsg setHidden:NO];
-                        self.warningMsg.text = [NSString stringWithFormat:@"Number of records entered %ld is not equal to total number of piles %ld\n", (unsigned long)self.wastePiles.count, (long)[self.wasteStratum.totalNumPile integerValue]];
-                    }
-                }
-                  [self sampleYesOrNo:self.currentEditingPile];
-                  [self calculatePileAreaAndVolume:self.currentEditingPile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
-                  [self sortPiles];
-                  [self.pileTableView reloadData];
-                  //scroll to the bottom to the newly added piece
-                  NSIndexPath* ipath = [NSIndexPath indexPathForRow:[self.wastePiles count] - 1 inSection:0];
-                  [self.pileTableView scrollToRowAtIndexPath:ipath atScrollPosition:UITableViewScrollPositionTop animated:YES];
-              }];
-        
-        UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", nil) style:UIAlertActionStyleDefault
                                                          handler:^(UIAlertAction * action) {
-                                                             [self presentViewController:alert animated:YES completion:nil];
-                                                         }];
-        [confirmAlert addAction:yesAction];
-        [confirmAlert addAction:noAction];
-        [self presentViewController:confirmAlert animated:YES completion:nil];
+            [self presentViewController:alert animated:YES completion:nil];
+        }];
+        
+        [warningAlert addAction:okAction];
+        [self presentViewController:warningAlert animated:YES completion:nil];
     }
+    
+    UIAlertController* confirmAlert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"Confirm Estimation", nil)
+                                                                          message:[NSString stringWithFormat:@"Accept volume estimates? \n Length = %.2f \n Width = %.2f \n Height = %.2f \n Shape Code = %@", [length floatValue], [width floatValue], [height floatValue], [code uppercaseString]]
+                                                                   preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* yesAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"YES", nil) style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction * action) {
+        
+        if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:TRUE] intValue]){
+            self.currentEditingPile = [self addWastePile:self.wasteStratum pileNumber:[pn integerValue] length:length width:width height:height code:code];
+            self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+            if (self.wastePiles.count == [self.wasteStratum.predictionPlot integerValue]){
+                [self.addPileButton setEnabled:NO];
+                [self.warningMsg setHidden:YES];
+            }
+            else
+            {
+                [self.warningMsg setHidden:NO];
+                self.warningMsg.text = [NSString stringWithFormat:@"Number of records entered %ld is not equal to total number of piles %ld\n", (unsigned long)self.wastePiles.count, (long)[self.wasteStratum.predictionPlot integerValue]];
+            }
+        }else{
+            self.currentEditingPile = [self addWastePile:self.wasteStratum pileNumber:[pn integerValue] length:length width:width height:height code:code];
+            self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+            if (self.wastePiles.count == [self.wasteStratum.totalNumPile integerValue]){
+                [self.addPileButton setEnabled:NO];
+                [self.warningMsg setHidden:YES];
+            }
+            else
+            {
+                [self.warningMsg setHidden:NO];
+                self.warningMsg.text = [NSString stringWithFormat:@"Number of records entered %ld is not equal to total number of piles %ld\n", (unsigned long)self.wastePiles.count, (long)[self.wasteStratum.totalNumPile integerValue]];
+            }
+        }
+        [self sampleYesOrNo:self.currentEditingPile];
+        [self calculatePileAreaAndVolume:self.currentEditingPile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
+        [self sortPiles];
+        [self.pileTableView reloadData];
+        //scroll to the bottom to the newly added piece
+        NSIndexPath* ipath = [NSIndexPath indexPathForRow:[self.wastePiles count] - 1 inSection:0];
+        [self.pileTableView scrollToRowAtIndexPath:ipath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }];
+    
+    UIAlertAction* noAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"NO", nil) style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+        [self presentViewController:alert animated:YES completion:nil];
+    }];
+    [confirmAlert addAction:yesAction];
+    [confirmAlert addAction:noAction];
+    [self presentViewController:confirmAlert animated:YES completion:nil];
+}
 
 -(void)sampleYesOrNo:(WastePile *)currentPile{
     NSArray* numberOfRows = [self.wasteStratum.n1sample componentsSeparatedByString:@","];
@@ -1026,33 +1026,34 @@
         NSNumber *targetPileNumber =[(WastePile *)[self.wastePiles objectAtIndex:alertView.tag] pileNumber];
         //get the original piece number
         //targetPileNumber = [targetPileNumber stringByReplacingOccurrencesOfString:@"C" withString:@""];
-
+        
         if (alertView.cancelButtonIndex == buttonIndex) {
             //NSLog(@"Alert view clicked with the cancel button index.");
         }else {
-             if((long)buttonIndex ==4){
-               
+            if((long)buttonIndex ==4){
+                
                 //1 - check if the edit piece record exit, if not, create a edit record with "C" append to the original piece number
                 BOOL isEditRecordCreated = NO;
                 WastePile *orgPile = nil;
                 for (WastePile *wp in self.wastePiles){
-                   // if ([wp.pileNumber isEqualToString:[targetPileNumber stringByAppendingString:@"C"]]){
+                    if ([self.wastePile.isChanged integerValue] == 1){
                         isEditRecordCreated = YES;
-                        
-                    //}
+                    }
                     if ([wp.pileNumber isEqual:targetPileNumber]){
                         orgPile = wp;
                     }
                 }
                 if (!isEditRecordCreated){
-                   /* [self editWastePile:self.wastePlot editPieceNumber:targetPieceNumber statusCode:@"4"];*/
+                    [self editWastePile:self.wastePile editPileNumber:targetPileNumber statusCode:@"4"];
                     orgPile.pileCheckerStatusCode =(CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"4"];
                 }
-
-
+                NSLog(@"*******self.wastePiles******* %@",self.wastePiles);
+                NSLog(@"*******stratumPile******* %@",self.wasteStratum.stratumPile);
+                NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 //2 - refresh the local piece array
-                 self.wastePiles = [self.wasteStratum.stratumPile allObjects];
-
+                // self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+                NSLog(@"*******self.wastePiles******* %@",self.wastePiles);
+                NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 [self sortPiles];
                 
                 [self.pileTableView reloadData];
@@ -1070,8 +1071,8 @@
                         p = wp;
                     }
                     /*if ([wp.pieceNumber isEqualToString:[targetPieceNumber stringByAppendingString:@"C"]]){
-                        [self deletePieceFromPlot:wp targetWastePlot:self.wastePlot];
-                    }*/
+                     [self deletePieceFromPlot:wp targetWastePlot:self.wastePlot];
+                     }*/
                 }
                 // 2 - change the status to the new status
                 if ((long)buttonIndex == 1){
@@ -1094,7 +1095,7 @@
                 
                 [WasteCalculator calculateEFWStat:self.wasteBlock];
                 [self.footerStatView setViewValue:self.wastePile];
-                }
+            }
         }
     }
 }
@@ -1110,15 +1111,32 @@
 #pragma mark - Table View
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if ([self.wastePile.isChanged integerValue] == 1) {
+        return 2;
+    }
     return 1;
 }
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    self.wastePile.isChanged = @(self.wastePile.isChanged.boolValue == NO);
+    [tableView beginUpdates];
+    
+    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    
+    if ([self.wastePile.isChanged boolValue]) {
+        NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
+        [tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else {
+        NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:indexPath.row + 1 inSection:indexPath.section];
+        [tableView deleteRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    [tableView endUpdates];
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellStr = @"";
     WastePile *currentPileCell = self.wastePile;
     
-    //cellStr = @"EditPileTableCell";
     if ([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
         cellStr = @"NotCheckedTableCell";
     }else if([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
@@ -1126,25 +1144,25 @@
     }else if([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"]){
         cellStr = @"NoTallyTableCell";
     }else if([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]){
-        //if([currentPileCell.pileNumber rangeOfString:@"C"].location != NSNotFound){
-           // cellStr = @"EditPileTableCell";
-        //}else{
-            cellStr = @"EditOriginalPieceTableCell";
-        //}
+        if ([currentPileCell.isChanged integerValue] == 1) {
+            if (indexPath.row == 0) {
+                cellStr = @"EditOriginalPieceTableCell";
+            }else if (indexPath.row == 1) {
+                cellStr = @"EditPileTableCell";
+            }
+        }else{
+         cellStr = @"EditOriginalPieceTableCell";
+        }
     }else{
         cellStr = @"NewPileTableCell";
     }
     
     
-    PileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
-    if( [cell isKindOfClass:[PileEditTableViewCell class]]){
-        ((PileEditTableViewCell *) cell).pileView = self;
-    }
-    
-    cell.statusButton.tag = indexPath.row;
+    PileEditTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
+
     
     [cell bindCell:currentPileCell wasteBlock:self.wasteBlock wasteStratum:self.wasteStratum userCreatedBlock:([self.wasteBlock.userCreated intValue] == 1)];
-
+    
     return cell;
 }
 
@@ -1244,8 +1262,8 @@
         }
         // set measured area / volume to 0 if length, width, or height is missing
         if ([wastePile.measuredLength isEqualToNumber:[NSDecimalNumber zero]] || wastePile.measuredLength == nil ||
-                   [wastePile.measuredWidth isEqualToNumber:[NSDecimalNumber zero]] || wastePile.measuredWidth == nil ||
-                   [wastePile.measuredHeight isEqualToNumber:[NSDecimalNumber zero]] || wastePile.measuredHeight == nil) {
+            [wastePile.measuredWidth isEqualToNumber:[NSDecimalNumber zero]] || wastePile.measuredWidth == nil ||
+            [wastePile.measuredHeight isEqualToNumber:[NSDecimalNumber zero]] || wastePile.measuredHeight == nil) {
             wastePile.measuredPileArea = [NSDecimalNumber zero];
             wastePile.measuredPileVolume = [NSDecimalNumber zero];
         }
@@ -1254,7 +1272,7 @@
             wastePile.measuredPileArea = 0;
             wastePile.measuredPileVolume = 0;
         }else if([wastePile.pilePileShapeCode.pileShapeCode isEqual:@"CN"]){
-             wastePile.measuredPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.measuredWidth doubleValue] + [wastePile.measuredLength doubleValue]) / 2) / 2, 2) * pi)] ;
+            wastePile.measuredPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.measuredWidth doubleValue] + [wastePile.measuredLength doubleValue]) / 2) / 2, 2) * pi)] ;
             wastePile.measuredPileVolume = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.measuredWidth doubleValue] + [wastePile.measuredLength doubleValue]) / 2) / 2, 2) * pi) * ([wastePile.measuredHeight doubleValue]/3)] ;
         }else if ([wastePile.pilePileShapeCode.pileShapeCode isEqual:@"CY"]) {
             wastePile.measuredPileArea = [[NSDecimalNumber alloc] initWithDouble:[wastePile.measuredLength doubleValue] * [wastePile.measuredWidth doubleValue]] ;
@@ -1292,7 +1310,7 @@
     newWp.height = height;
     newWp.pilePileShapeCode = self.currentpile;
     [self sampleYesOrNo:newWp];
-
+    
     // Packing Ratio logs need the calculated pile volume so calculate it here
     [self calculatePileAreaAndVolume:newWp srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
     
@@ -1300,8 +1318,29 @@
         targetWasteStratum.ratioSamplingLog = [wasteStratum.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPileSelectorLog:newWp stratum:targetWasteStratum actionDec:@"New Pile Added"]];
         wasteBlock.ratioSamplingLog = [wasteBlock.ratioSamplingLog stringByAppendingString:[PlotSelectorLog getPileSelectorLog:newWp stratum:wasteStratum actionDec:@"New Pile Added"]];
     }
-
+    
     return newWp;
+}
+
+-(WastePile *) editWastePile:(WastePile *)targetWastePile editPileNumber:(NSNumber *)editPileNumber statusCode:(NSString *)statusCode{
+
+    NSManagedObjectContext *context = [self managedObjectContext];
+    
+    //WastePile *newWp = [NSEntityDescription insertNewObjectForEntityForName:@"WastePile" inManagedObjectContext:context];
+    
+    WastePile *originalPile = nil;
+    if([targetWastePile.pileNumber isEqual:editPileNumber]){
+        originalPile = targetWastePile;
+    }
+    if (!originalPile) {
+        return nil;
+    }
+    
+    originalPile.isChanged = [[NSNumber alloc] initWithBool:YES];
+    
+    originalPile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"4"];
+    
+    return originalPile;
 }
 
 #pragma mark - BackButtonHandler protocol
