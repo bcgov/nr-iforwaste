@@ -36,7 +36,7 @@
     // Configure the view for the selected state
 }
 
--(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock userCreatedBlock:(BOOL)userCreatedBlock{
+-(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock{
     
     if([wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:NO] intValue]){
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];

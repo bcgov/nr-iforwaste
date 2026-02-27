@@ -28,6 +28,7 @@
 #import "MeasuredPileShapeCode+CoreDataClass.h"
 #import "SpeciesPercentViewController.h"
 #import "PlotSelectorLog.h"
+#import "CheckerStatusCode.h"
 
 @class UIAlertView;
 
@@ -488,6 +489,65 @@
     
     
 }
+
+- (IBAction) changeStatus:(id)sender {
+    NSString *title = NSLocalizedString(@"Pile Status Change ", nil);
+    NSString *message = NSLocalizedString(@"Please select a status.", nil);
+    NSString *cancelBtn = NSLocalizedString(@"Cancel", nil);
+    NSString *approveBtn = NSLocalizedString(@"Approve All", nil);
+    NSString *notCheckedAllBtn = NSLocalizedString(@"Not Checked All", nil);
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *approve = [UIAlertAction actionWithTitle:approveBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self changePileStatusByType:@"approved"];
+    }];
+    UIAlertAction *notChecked = [UIAlertAction actionWithTitle:notCheckedAllBtn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self changePileStatusByType:@"notChecked"];
+    }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:cancelBtn style:UIAlertActionStyleCancel handler:nil];
+   
+    [alert addAction:cancel];
+    [alert addAction:notChecked];
+    [alert addAction:approve];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+-(void) changePileStatusByType:(NSString *) type {
+    for (WastePile *wpile in [self.wasteStratum.stratumPile allObjects]){
+        NSLog(@"piece status code %@", wpile.pileCheckerStatusCode.checkerStatusCode);
+        if ([type isEqualToString:@"approved"] ) {
+            if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"])
+                wpile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
+        } else {
+            if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"])
+                wpile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
+        }
+    }
+    
+    self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+    [WasteCalculator calculateEFWStat:self.wasteBlock];
+    
+    [self.footerStatView setViewValue:self.wastePile];
+    [self sortPiles];
+    [self.pileTableView reloadData];
+}
+
+- (IBAction)changePileStatus:(id)sender{
+    NSString *title = NSLocalizedString(@"Pile Status Change", nil);
+    NSString *message = NSLocalizedString(@"Please select a status.", nil);
+    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+    NSString *otherButtonTitleOne = NSLocalizedString(@"Not Checked", nil);
+    NSString *otherButtonTitleTwo = NSLocalizedString(@"Approved", nil);
+    NSString *otherButtonTitleThree = NSLocalizedString(@"No Tally", nil);
+    NSString *otherButtonTitleFour = NSLocalizedString(@"Edit", nil);
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, otherButtonTitleTwo, otherButtonTitleThree, otherButtonTitleFour, nil];
+    alert.tag = ((UIButton *)sender).tag;
+    NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
+    [alert show];
+}
+
 
 - (IBAction)addPile:(id)sender{
     [self saveData];
@@ -962,7 +1022,80 @@
     }else if(alertView.tag == SavePileEnum){
         //NSLog(@"Save Plot - ok click");
     }else{
-        
+        //other alertview
+        NSNumber *targetPileNumber =[(WastePile *)[self.wastePiles objectAtIndex:alertView.tag] pileNumber];
+        //get the original piece number
+        //targetPileNumber = [targetPileNumber stringByReplacingOccurrencesOfString:@"C" withString:@""];
+
+        if (alertView.cancelButtonIndex == buttonIndex) {
+            //NSLog(@"Alert view clicked with the cancel button index.");
+        }else {
+             if((long)buttonIndex ==4){
+               
+                //1 - check if the edit piece record exit, if not, create a edit record with "C" append to the original piece number
+                BOOL isEditRecordCreated = NO;
+                WastePile *orgPile = nil;
+                for (WastePile *wp in self.wastePiles){
+                   // if ([wp.pileNumber isEqualToString:[targetPileNumber stringByAppendingString:@"C"]]){
+                        isEditRecordCreated = YES;
+                        
+                    //}
+                    if ([wp.pileNumber isEqual:targetPileNumber]){
+                        orgPile = wp;
+                    }
+                }
+                if (!isEditRecordCreated){
+                   /* [self editWastePile:self.wastePlot editPieceNumber:targetPieceNumber statusCode:@"4"];*/
+                    orgPile.pileCheckerStatusCode =(CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"4"];
+                }
+
+
+                //2 - refresh the local piece array
+                 self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+
+                [self sortPiles];
+                
+                [self.pileTableView reloadData];
+                
+                [WasteCalculator calculateEFWStat:self.wasteBlock];
+                [self.footerStatView setViewValue:self.wastePile];
+                
+            } else {
+                
+                // 1 - check if a edit piece with "C" exit, delete it if exists
+                WastePile *p;
+                
+                for (WastePile *wp in self.wastePiles){
+                    if ([wp.pileNumber isEqual:targetPileNumber]){
+                        p = wp;
+                    }
+                    /*if ([wp.pieceNumber isEqualToString:[targetPieceNumber stringByAppendingString:@"C"]]){
+                        [self deletePieceFromPlot:wp targetWastePlot:self.wastePlot];
+                    }*/
+                }
+                // 2 - change the status to the new status
+                if ((long)buttonIndex == 1){
+                    //not checked
+                    p.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
+                }else if((long)buttonIndex ==2) {
+                    //approved
+                    p.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
+                }else if((long)buttonIndex ==3) {
+                    //no tally
+                    p.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"3"];
+                }
+                
+                //NSLog(@" plot size %d", self.wastePieces.count);
+                self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+                //NSLog(@" plot size %d", self.wastePieces.count);
+                [self sortPiles];
+                
+                [self.pileTableView reloadData];
+                
+                [WasteCalculator calculateEFWStat:self.wasteBlock];
+                [self.footerStatView setViewValue:self.wastePile];
+                }
+        }
     }
 }
 
@@ -985,13 +1118,30 @@
     NSString *cellStr = @"";
     WastePile *currentPileCell = self.wastePile;
     
-    cellStr = @"EditPileTableCell";
+    //cellStr = @"EditPileTableCell";
+    if ([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
+        cellStr = @"NotCheckedTableCell";
+    }else if([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]){
+        cellStr = @"ApproveTableCell";
+    }else if([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"]){
+        cellStr = @"NoTallyTableCell";
+    }else if([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]){
+        //if([currentPileCell.pileNumber rangeOfString:@"C"].location != NSNotFound){
+           // cellStr = @"EditPileTableCell";
+        //}else{
+            cellStr = @"EditOriginalPieceTableCell";
+        //}
+    }else{
+        cellStr = @"NewPileTableCell";
+    }
     
     
     PileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
     if( [cell isKindOfClass:[PileEditTableViewCell class]]){
         ((PileEditTableViewCell *) cell).pileView = self;
     }
+    
+    cell.statusButton.tag = indexPath.row;
     
     [cell bindCell:currentPileCell wasteBlock:self.wasteBlock wasteStratum:self.wasteStratum userCreatedBlock:([self.wasteBlock.userCreated intValue] == 1)];
 

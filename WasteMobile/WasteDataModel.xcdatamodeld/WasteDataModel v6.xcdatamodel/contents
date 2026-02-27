@@ -31,6 +31,7 @@
         <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="checkerStatusCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceCheckerStatusCode" inverseEntity="WastePiece" syncable="YES"/>
+        <relationship name="checkerStatusCodePile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WastePile" inverseName="pileCheckerStatusCode" inverseEntity="WastePile" syncable="YES"/>
     </entity>
     <entity name="CommentCode" representedClassName="CommentCode" syncable="YES">
         <attribute name="commentCode" optional="YES" attributeType="String" syncable="YES"/>
@@ -420,6 +421,7 @@
         <attribute name="surveyorName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="weather" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="width" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="pileCheckerStatusCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CheckerStatusCode" inverseName="checkerStatusCodePile" inverseEntity="CheckerStatusCode" syncable="YES"/>
         <relationship name="pileMeasuredPileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeasuredPileShapeCode" inverseName="measuredPileShapeCodePile" inverseEntity="MeasuredPileShapeCode" syncable="YES"/>
         <relationship name="pilePileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PileShapeCode" inverseName="pileShapeCodePile" inverseEntity="PileShapeCode" syncable="YES"/>
         <relationship name="pileStratum" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumPile" inverseEntity="WasteStratum" syncable="YES"/>

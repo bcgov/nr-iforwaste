@@ -1005,6 +1005,15 @@ NSInteger orignialWasteTypeRow;
     return NO;
 }
 
+-(BOOL) isPileAudited:(WastePile *) wpile {
+  
+    NSLog(@"pileCheckerStatusCode: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
+    if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpile.pileCheckerStatusCode.checkerStatusCode == nil) {
+        return YES;
+    }
+    return NO;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if(tableView==aggregatePackingRatioPlotTableView) {
@@ -1035,6 +1044,10 @@ NSInteger orignialWasteTypeRow;
                 cell.plotNumberAPR.backgroundColor = [UIColor whiteColor];
                 cell.plotNumberAPR.textColor = [UIColor blackColor];
             }
+            if ([self isPileAudited:pl])
+                cell.isPileAudited.hidden = NO;
+            else
+                cell.isPileAudited.hidden = YES;
             return cell;
         }
     } else if (tableView == packingRatioTableView) {
@@ -1056,6 +1069,10 @@ NSInteger orignialWasteTypeRow;
             cell.plotNumberPR.backgroundColor = [UIColor whiteColor];
             cell.plotNumberPR.textColor = [UIColor blackColor];
         }
+        if ([self isPileAudited:pl])
+            cell.isPileAudited.hidden = NO;
+        else
+            cell.isPileAudited.hidden = YES;
         return cell;
     } else if (tableView == plotTableView) {
         NSLog(@"plotTableView");

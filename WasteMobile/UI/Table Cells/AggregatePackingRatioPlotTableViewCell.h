@@ -10,7 +10,7 @@
 
 @interface AggregatePackingRatioPlotTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *isPlotAudited;
+@property (weak, nonatomic) IBOutlet UIImageView *isPileAudited;
 @property (weak, nonatomic) IBOutlet UILabel *plotNumberAPR;
 @property (weak, nonatomic) IBOutlet UILabel *licenceAPR;
 @property (weak, nonatomic) IBOutlet UILabel *cuttingPermitAPR;

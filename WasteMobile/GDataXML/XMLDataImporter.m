@@ -321,6 +321,12 @@
                         }
                     }
                 }
+                
+                //manually set for import of EFW files
+                if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
+                {
+                    wpile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
+                }
                 NSLog(@"attempting to add pile data object");
                 NSLog(@"wpile class: %@", NSStringFromClass([wpile class]));
                 NSLog(@"ws class: %@", NSStringFromClass([ws class]));

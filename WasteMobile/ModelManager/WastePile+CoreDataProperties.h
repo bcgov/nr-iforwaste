@@ -53,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @property (nullable, nonatomic, copy) NSDate *checkDate;
+@property (nullable, nonatomic, retain) CheckerStatusCode *pileCheckerStatusCode;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -14,6 +14,7 @@
 
 @property (strong, nonatomic) NSMutableDictionary *displayObjectDictionary;
 
+@property (weak, nonatomic) IBOutlet UIButton *statusButton;
 -(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock;
 
 @end

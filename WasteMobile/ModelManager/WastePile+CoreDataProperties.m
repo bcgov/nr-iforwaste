@@ -52,4 +52,5 @@
 @dynamic dcRationale;
 
 @dynamic checkDate;
+@dynamic pileCheckerStatusCode;
 @end
