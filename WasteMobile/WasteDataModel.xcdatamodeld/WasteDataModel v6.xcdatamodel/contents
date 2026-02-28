@@ -394,6 +394,11 @@
         <attribute name="assistant" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="block" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="checkDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="checkmHeight" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkmLength" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkmPileArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkmPileVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkmWidth" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="cuttingPermit" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dcDesignation" optional="YES" attributeType="String" syncable="YES"/>
@@ -423,6 +428,7 @@
         <attribute name="weather" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="width" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <relationship name="pileCheckerStatusCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CheckerStatusCode" inverseName="checkerStatusCodePile" inverseEntity="CheckerStatusCode" syncable="YES"/>
+        <relationship name="pilecheckmPileShapecode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeasuredPileShapeCode" syncable="YES"/>
         <relationship name="pileMeasuredPileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeasuredPileShapeCode" inverseName="measuredPileShapeCodePile" inverseEntity="MeasuredPileShapeCode" syncable="YES"/>
         <relationship name="pilePileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PileShapeCode" inverseName="pileShapeCodePile" inverseEntity="PileShapeCode" syncable="YES"/>
         <relationship name="pileStratum" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumPile" inverseEntity="WasteStratum" syncable="YES"/>

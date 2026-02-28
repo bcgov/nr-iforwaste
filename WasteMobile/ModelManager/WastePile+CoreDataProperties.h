@@ -55,6 +55,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDate *checkDate;
 @property (nullable, nonatomic, retain) CheckerStatusCode *pileCheckerStatusCode;
 @property (nullable, nonatomic, copy) NSNumber *isChanged;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkmLength;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkmWidth;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkmHeight;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkmPileArea;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkmPileVolume;
+@property (nullable, nonatomic, retain) MeasuredPileShapeCode *pilecheckmPileShapecode;
 @end
 
 NS_ASSUME_NONNULL_END

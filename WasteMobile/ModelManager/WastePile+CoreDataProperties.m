@@ -50,8 +50,14 @@
 @dynamic dcLicenseNumber;
 @dynamic dcSignature;
 @dynamic dcRationale;
-
+//fields added for IFW-145 and IFW-146
 @dynamic checkDate;
 @dynamic pileCheckerStatusCode;
 @dynamic isChanged;
+@dynamic checkmLength;
+@dynamic checkmWidth;
+@dynamic checkmHeight;
+@dynamic checkmPileArea;
+@dynamic checkmPileVolume;
+@dynamic pilecheckmPileShapecode;
 @end

@@ -1051,7 +1051,7 @@
                 NSLog(@"*******stratumPile******* %@",self.wasteStratum.stratumPile);
                 NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 //2 - refresh the local piece array
-                // self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+                 self.wastePiles = [self.wasteStratum.stratumPile allObjects];
                 NSLog(@"*******self.wastePiles******* %@",self.wastePiles);
                 NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 [self sortPiles];
@@ -1116,7 +1116,7 @@
     }
     return 1;
 }
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+/*- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     self.wastePile.isChanged = @(self.wastePile.isChanged.boolValue == NO);
     [tableView beginUpdates];
@@ -1131,7 +1131,7 @@
         [tableView deleteRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
     [tableView endUpdates];
-}
+}*/
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellStr = @"";
@@ -1158,8 +1158,13 @@
     }
     
     
-    PileEditTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
-
+    //PileEditTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
+    PileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
+        if( [cell isKindOfClass:[PileEditTableViewCell class]]){
+            ((PileEditTableViewCell *) cell).pileView = self;
+        }
+        
+        //cell.statusButton.tag = indexPath.row;
     
     [cell bindCell:currentPileCell wasteBlock:self.wasteBlock wasteStratum:self.wasteStratum userCreatedBlock:([self.wasteBlock.userCreated intValue] == 1)];
     

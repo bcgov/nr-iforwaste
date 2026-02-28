@@ -4527,7 +4527,7 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <prototypes>
-                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NotCheckedTableCell" rowHeight="46" id="bAz-WR-Tgm" customClass="PileEditTableViewCell">
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NotCheckedTableCell" rowHeight="46" id="bAz-WR-Tgm" customClass="PileTableViewCell">
                                                         <rect key="frame" x="0.0" y="50" width="1055" height="46"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bAz-WR-Tgm" id="WZB-ZR-B4m">
@@ -4550,7 +4550,7 @@
                                                             <outlet property="statusButton" destination="u8L-dD-soD" id="SxF-bC-slm"/>
                                                         </connections>
                                                     </tableViewCell>
-                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NoTallyTableCell" rowHeight="45" id="NBk-iS-BWr" customClass="PileEditTableViewCell">
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="NoTallyTableCell" rowHeight="45" id="NBk-iS-BWr" customClass="PileTableViewCell">
                                                         <rect key="frame" x="0.0" y="96" width="1055" height="45"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NBk-iS-BWr" id="frX-nb-DnT">
@@ -4573,7 +4573,7 @@
                                                             <outlet property="statusButton" destination="l2r-Dn-wpQ" id="422-Ic-m3Q"/>
                                                         </connections>
                                                     </tableViewCell>
-                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="EditOriginalPieceTableCell" rowHeight="45" id="qbz-4f-vCv" customClass="PileEditTableViewCell">
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="EditOriginalPieceTableCell" rowHeight="45" id="qbz-4f-vCv" customClass="PileTableViewCell">
                                                         <rect key="frame" x="0.0" y="141" width="1055" height="45"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="qbz-4f-vCv" id="NQG-oW-Yat">
@@ -4619,7 +4619,7 @@
                                                             <outlet property="statusButton" destination="2rd-n4-hzz" id="iFw-YH-vu6"/>
                                                         </connections>
                                                     </tableViewCell>
-                                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="ApproveTableCell" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ApproveTableCell" rowHeight="45" id="AFW-1L-nDz" customClass="PileEditTableViewCell">
+                                                    <tableViewCell contentMode="scaleToFill" restorationIdentifier="ApproveTableCell" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ApproveTableCell" rowHeight="45" id="AFW-1L-nDz" customClass="PileTableViewCell">
                                                         <rect key="frame" x="0.0" y="232" width="1055" height="45"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="AFW-1L-nDz" id="myS-84-hW9">
@@ -5126,7 +5126,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
