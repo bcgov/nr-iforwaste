@@ -429,6 +429,7 @@
         <attribute name="width" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <relationship name="pileCheckerStatusCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CheckerStatusCode" inverseName="checkerStatusCodePile" inverseEntity="CheckerStatusCode" syncable="YES"/>
         <relationship name="pilecheckmPileShapecode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeasuredPileShapeCode" syncable="YES"/>
+        <relationship name="pileCheckPileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PileShapeCode" syncable="YES"/>
         <relationship name="pileMeasuredPileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeasuredPileShapeCode" inverseName="measuredPileShapeCodePile" inverseEntity="MeasuredPileShapeCode" syncable="YES"/>
         <relationship name="pilePileShapeCode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PileShapeCode" inverseName="pileShapeCodePile" inverseEntity="PileShapeCode" syncable="YES"/>
         <relationship name="pileStratum" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WasteStratum" inverseName="stratumPile" inverseEntity="WasteStratum" syncable="YES"/>

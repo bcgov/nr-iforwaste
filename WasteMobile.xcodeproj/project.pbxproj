@@ -370,6 +370,8 @@
 		CA19384B2D52E65700AFC14C /* PackingRatioTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CA19384A2D52E65700AFC14C /* PackingRatioTableViewCell.m */; };
 		CA23CC5528E744A100293E33 /* WasteMobile-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4EECF19177C99F400778578 /* WasteMobile-Info.plist */; };
 		CA667A052D5EB6A500C8440A /* AggregatePlotTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 961B114022720ADB0088283A /* AggregatePlotTableViewCell.m */; };
+		D084D46D2F55FBC300568CE0 /* PileEditCheckTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D084D46C2F55FBC300568CE0 /* PileEditCheckTableViewCell.m */; };
+		D084D46E2F55FBC300568CE0 /* PileEditCheckTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D084D46C2F55FBC300568CE0 /* PileEditCheckTableViewCell.m */; };
 		F4EECF12177C99F400778578 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF11177C99F400778578 /* UIKit.framework */; };
 		F4EECF14177C99F400778578 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF13177C99F400778578 /* Foundation.framework */; };
 		F4EECF16177C99F400778578 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4EECF15177C99F400778578 /* CoreGraphics.framework */; };
@@ -704,6 +706,8 @@
 		CAECBABD2D52E7770061A73F /* DataEndorsementViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataEndorsementViewController.m; sourceTree = "<group>"; };
 		CAECBABE2D52E7A20061A73F /* SignatureView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SignatureView.m; sourceTree = "<group>"; };
 		CAECBABF2D52E7B60061A73F /* SignatureView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SignatureView.h; sourceTree = "<group>"; };
+		D084D46B2F55FBC300568CE0 /* PileEditCheckTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PileEditCheckTableViewCell.h; sourceTree = "<group>"; };
+		D084D46C2F55FBC300568CE0 /* PileEditCheckTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PileEditCheckTableViewCell.m; sourceTree = "<group>"; };
 		D0B82CB22F4E7F1800517E84 /* WasteDataModel v6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "WasteDataModel v6.xcdatamodel"; sourceTree = "<group>"; };
 		F4EECF0E177C99F400778578 /* WasteMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WasteMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4EECF11177C99F400778578 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -983,6 +987,8 @@
 				8B5A9E23222DD3C600AFD8FC /* PileTableViewCell.m */,
 				8B5A9E25222DD3DA00AFD8FC /* PileEditTableViewCell.h */,
 				8B5A9E26222DD3DA00AFD8FC /* PileEditTableViewCell.m */,
+				D084D46B2F55FBC300568CE0 /* PileEditCheckTableViewCell.h */,
+				D084D46C2F55FBC300568CE0 /* PileEditCheckTableViewCell.m */,
 				961B114022720ADB0088283A /* AggregatePlotTableViewCell.m */,
 				961B114222720AEB0088283A /* AggregatePlotTableViewCell.h */,
 				8B6DA7BB240733C7009F2A1E /* AggregatePileTableViewCell.h */,
@@ -1628,6 +1634,7 @@
 				15BF98341E2EDC8E004D8F12 /* SearchResultsTableViewController.m in Sources */,
 				15BF98351E2EDC8E004D8F12 /* WastePlotDTOAdaptor.m in Sources */,
 				15BF98361E2EDC8E004D8F12 /* WasteBlockCellTableViewCell.m in Sources */,
+				D084D46E2F55FBC300568CE0 /* PileEditCheckTableViewCell.m in Sources */,
 				15BF98371E2EDC8E004D8F12 /* WasteDataModel.xcdatamodeld in Sources */,
 				15BF98381E2EDC8E004D8F12 /* WastePieceDTOAdaptor.m in Sources */,
 				15BF98391E2EDC8E004D8F12 /* CheckerStatusCode.m in Sources */,
@@ -1728,6 +1735,7 @@
 				15B587D41E7C9CC7009E2DBB /* PlotPredictionReport.m in Sources */,
 				15CD54A21DC7F6CF00DDEC17 /* XMLExportGenerator.m in Sources */,
 				15CFC28219FB168B0079228A /* WasteTypeCode.m in Sources */,
+				D084D46D2F55FBC300568CE0 /* PileEditCheckTableViewCell.m in Sources */,
 				15CFC25219FAF7A80079228A /* DecayTypeCode.m in Sources */,
 				15ECDF5D1DA46D190077B7F8 /* WastePiece+CoreDataProperties.m in Sources */,
 				15ECDF5E1DA46D190077B7F8 /* WastePiece.m in Sources */,

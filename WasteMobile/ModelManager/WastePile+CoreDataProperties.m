@@ -60,4 +60,5 @@
 @dynamic checkmPileArea;
 @dynamic checkmPileVolume;
 @dynamic pilecheckmPileShapecode;
+@dynamic pileCheckPileShapeCode;
 @end

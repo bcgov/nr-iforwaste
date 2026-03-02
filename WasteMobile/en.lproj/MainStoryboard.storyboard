@@ -4596,7 +4596,7 @@
                                                             <outlet property="statusButton" destination="iaa-Cx-uI0" id="grl-fL-pgF"/>
                                                         </connections>
                                                     </tableViewCell>
-                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="EditPileTableCell" rowHeight="46" id="MgB-M5-VY3" customClass="PileEditTableViewCell">
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="EditPileTableCell" rowHeight="46" id="MgB-M5-VY3" customClass="PileEditCheckTableViewCell">
                                                         <rect key="frame" x="0.0" y="186" width="1055" height="46"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MgB-M5-VY3" id="Def-nW-uIx">
@@ -4604,7 +4604,7 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2rd-n4-hzz">
-                                                                    <rect key="frame" x="0.0" y="6" width="36" height="33"/>
+                                                                    <rect key="frame" x="6" y="6" width="36" height="33"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <state key="normal" title="Button" image="edited_icon.png">
                                                                         <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -4616,7 +4616,7 @@
                                                             </subviews>
                                                         </tableViewCellContentView>
                                                         <connections>
-                                                            <outlet property="statusButton" destination="2rd-n4-hzz" id="iFw-YH-vu6"/>
+                                                            <outlet property="statusButton" destination="2rd-n4-hzz" id="8n9-hK-Anu"/>
                                                         </connections>
                                                     </tableViewCell>
                                                     <tableViewCell contentMode="scaleToFill" restorationIdentifier="ApproveTableCell" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ApproveTableCell" rowHeight="45" id="AFW-1L-nDz" customClass="PileTableViewCell">

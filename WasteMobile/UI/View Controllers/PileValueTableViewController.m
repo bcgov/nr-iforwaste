@@ -88,6 +88,33 @@
         self.displayMode= TextMode;
         self.propertyName = @"comment";
         self.originalValue = [[self.wastePile valueForKey:@"comment"] isKindOfClass:[NSNull class]] ? @"" :[self.wastePile valueForKey:@"comment"] ;
+    }if([self.propertyName isEqualToString:@"checkmLength"]){
+        self.title = @"(IFOR 205-1) Check Length";
+        self.displayMode = DecimalNumberMode;
+        self.propertyName = @"checkmLength";
+        self.existingNumberValue = [self.wastePile valueForKey:self.propertyName];
+    }else if([self.propertyName isEqualToString:@"checkmWidth"]){
+        self.title = @"(IFOR 205-2) Width";
+        self.displayMode = DecimalNumberMode;
+        self.propertyName = @"checkmWidth";
+        self.existingNumberValue = [self.wastePile valueForKey:self.propertyName];
+    }else if([self.propertyName isEqualToString:@"checkmHeight"]){
+        self.title = @"(IFOR 205-3) Height";
+        self.displayMode = DecimalNumberMode;
+        self.propertyName = @"checkmHeight";
+        self.existingNumberValue = [self.wastePile valueForKey:self.propertyName];
+    }else if([self.propertyName isEqualToString:@"pilecheckmPileShapecode"]){
+        self.title = @"(IFOR 205-4) Measured Pile Shape Code";
+        self.lookupValues = [[CodeDAO sharedInstance] getMeasuredPileShapeCodeList];
+        self.displayMode = LookupMode;
+        self.propertyName = @"pileMeasuredPileShapeCode";
+        self.codeName = @"measuredPileShapeCode";
+    } else if([self.propertyName isEqualToString:@"pileCheckPileShapeCode"]){
+        self.title = @"(IFOR 205-4) Pile Shape Code";
+        self.lookupValues = [[CodeDAO sharedInstance] getPileShapeCodeList];
+        self.displayMode = LookupMode;
+        self.propertyName = @"pileCheckPileShapeCode";
+        self.codeName = @"pileShapeCode";
     }
 }
 
@@ -263,6 +290,35 @@
         }
         
         if ([propertyName isEqualToString:@"measuredHeight"]) {
+            // Limit the value to the range 0.1 - 99.9
+            NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
+            
+            if ([string rangeOfCharacterFromSet:charSet].location != NSNotFound) {
+                return NO;
+            }
+            
+            NSMutableString *newString = [NSMutableString stringWithString:[textField.text stringByReplacingCharactersInRange:range withString:string]];
+            
+            
+            if ([newString isEqualToString:@"."]) {
+                return NO;
+            }
+            
+            if ([newString isEqualToString:@"0.0"]) {
+                return NO;
+            }
+            
+            // Limit to one decimal place
+            NSRange dotRange = [newString rangeOfString:@"."];
+            if (dotRange.location != NSNotFound && newString.length - dotRange.location > 2) {
+                return NO;
+            }
+            
+            CGFloat floatValue = [newString floatValue];
+            if (floatValue < 0.01 || floatValue > 99.99) {
+                return NO;
+            }
+        } else if ([propertyName isEqualToString:@"checkmHeight"]) {
             // Limit the value to the range 0.1 - 99.9
             NSCharacterSet *charSet = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
             

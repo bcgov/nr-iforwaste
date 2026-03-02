@@ -61,6 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDecimalNumber *checkmPileArea;
 @property (nullable, nonatomic, copy) NSDecimalNumber *checkmPileVolume;
 @property (nullable, nonatomic, retain) MeasuredPileShapeCode *pilecheckmPileShapecode;
+@property (nullable, nonatomic, retain) PileShapeCode *pileCheckPileShapeCode;
 @end
 
 NS_ASSUME_NONNULL_END

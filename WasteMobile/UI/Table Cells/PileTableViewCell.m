@@ -131,7 +131,7 @@
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
         int locationCounter = 0;
         NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
-        [labelArray addObject:@";pileNumber;w;45"];
+        
         [labelArray addObject:@";length;e;70"];
         [labelArray addObject:@";width;e;70"];
         [labelArray addObject:@";height;e;70"];
