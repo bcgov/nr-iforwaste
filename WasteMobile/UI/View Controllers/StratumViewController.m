@@ -1008,7 +1008,7 @@ NSInteger orignialWasteTypeRow;
 -(BOOL) isPileAudited:(WastePile *) wpile {
   
     NSLog(@"pileCheckerStatusCode: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
-    if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpile.pileCheckerStatusCode.checkerStatusCode == nil) {
+    if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
         return YES;
     }
     return NO;
@@ -3924,7 +3924,7 @@ NSInteger orignialWasteTypeRow;
 }
 
 - (IBAction)deletePileShow:(id)sender{
-    NSString *title = NSLocalizedString(@"Endorsement of Data Changes", nil);
+    /*NSString *title = NSLocalizedString(@"Endorsement of Data Changes", nil);
     NSString *message = NSLocalizedString(@"Delete Pile", nil);
     NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
     NSString *otherButtonTitleOne = NSLocalizedString(@"Confirm Deletion", nil);
@@ -3988,7 +3988,54 @@ NSInteger orignialWasteTypeRow;
     devc.endorsementType = @"Delete Pile";
     UIButton *button = (UIButton *)sender;
     devc.plotNumber = [NSNumber numberWithInt:button.tag];
-    [self.navigationController pushViewController:devc animated:YES];
+    [self.navigationController pushViewController:devc animated:YES];*/
+    NSString *title = NSLocalizedString(@"Delete Pile", nil);
+    NSString *message = NSLocalizedString(@"", nil);
+    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+    NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    //UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
+
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:otherButtonTitleOne style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+        UIButton *button = (UIButton *)sender;
+        [self deletePile:alert pileNumber:button.tag];
+    }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:cancelButtonTitle style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+    }];
+    
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+-(void)deletePile:(UIAlertController*)alert pileNumber:(int)pileNumber{
+   
+        WastePile *targetPile = [self.sortedPiles objectAtIndex:pileNumber];
+        [PlotSampleGenerator deletePlot2:wasteStratum plotNumber:[targetPile.pileNumber intValue]]; // this function works with piles as well
+        [self deletePile:targetPile targetWastePile:wasteStratum];
+        
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES];
+        self.sortedPiles = [[[self.wasteStratum stratumPile] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+        
+        // may want to skip calculations / set to 0
+        [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
+        [WasteCalculator calculateRate:self.wasteBlock ];
+        [WasteCalculator calculatePiecesValue:self.wasteBlock];
+        if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
+            [WasteCalculator calculateEFWStat:self.wasteBlock];
+            [self.efwFooterView setStratumViewValue:self.wasteStratum];
+        }else{
+            [self.footerStatView setViewValue:self.wasteStratum];
+        }
+        
+        [self.packingRatioTableView reloadData];
+        [self.aggregatePackingRatioPlotTableView reloadData];
+    
 }
 
 -(void)validateAndDeletePile:(UIAlertController*)alert pileNumber:(int)pileNumber{

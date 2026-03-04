@@ -129,7 +129,7 @@
         }
     }else if([wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:YES] intValue]){
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
-        int locationCounter = 0;
+        int locationCounter = 45;
         NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
         
         [labelArray addObject:@";length;e;70"];

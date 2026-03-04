@@ -83,6 +83,7 @@ typedef enum PileAlertTypeCode{
 -(void) updateCurrentPileProperty:(WastePile*)wp property:(NSString*)property;
 
 -(void) calculatePileAreaAndVolume:(WastePile *)wastePile srsOrRatio:(NSInteger)ratio;
+-(void) calculateCheckPileAreaAndVolume:(WastePile *)wastePile srsOrRatio:(NSInteger)ratio;
 
 @end
 

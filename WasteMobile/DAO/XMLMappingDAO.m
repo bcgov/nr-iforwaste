@@ -251,6 +251,7 @@
 
         [wastePileMappingAry addObject:@"WastePile:notes:0:Y::string:"];
         [wastePileMappingAry addObject:@"WastePile:comment:0:Y::string:"];
+        
     }
 }
 

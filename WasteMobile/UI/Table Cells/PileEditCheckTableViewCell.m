@@ -203,7 +203,7 @@
         self.wasteBlock = wasteBlock;
         self.wasteStratum = wasteStratum;
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
-        int locationCounter = 0;
+        int locationCounter = 45;
         int total = 0;
         NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
         
@@ -259,12 +259,12 @@
                     lbl.backgroundColor = [UIColor grayColor];
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"]){
                     lbl.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) {
                     lbl.backgroundColor = [UIColor grayColor];
                     if ([lbl.text isEqualToString:@"0.0"]) {
                         lbl.text = @"";
                     }
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"]) {
                     lbl.backgroundColor = [UIColor grayColor];
                     if ([lbl.text isEqualToString:@"0.0"]) {
                         lbl.text = @"";
@@ -277,7 +277,7 @@
                 lbl.layer.borderColor = [UIColor blackColor].CGColor;
                 lbl.layer.borderWidth = 1.0;
                 // If the value is > 10 characters, reduce the font size to make it more readable so it doesn't overlap with the edge of the cell
-                if (([[lbStrAry objectAtIndex:1] isEqualToString:@"pileArea"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) && ([lbl.text floatValue] > 99999999.9)) {
+                if (([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) && ([lbl.text floatValue] > 99999999.9)) {
                     [lbl setFont:[UIFont fontWithName:@"Helvetica" size:15]];
                 } else {
                     [lbl setFont:[UIFont fontWithName:@"Helvetica" size:18]];
@@ -333,9 +333,9 @@
                     btn.backgroundColor = [UIColor grayColor];
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"]){
                     btn.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) {
                     btn.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"]) {
                     btn.backgroundColor = [UIColor grayColor];
                 }
                 
@@ -506,12 +506,12 @@
                    [zeroAlert addAction:okZeroAction];
                    [self.pileView presentViewController:zeroAlert animated:YES completion:nil];
                } else {
-                   self.cellWastePile.measuredLength = measuredLength;
-                   self.cellWastePile.measuredWidth = measuredWidth;
-                   self.cellWastePile.measuredHeight = measuredHeight;
+                   self.cellWastePile.checkmLength = measuredLength;
+                   self.cellWastePile.checkmWidth = measuredWidth;
+                   self.cellWastePile.checkmHeight = measuredHeight;
                    
                    [self bindCell:self.cellWastePile wasteBlock:self.wasteBlock wasteStratum:self.wasteStratum userCreatedBlock:self.wasteBlock.userCreated];
-                   [self.pileView calculatePileAreaAndVolume:self.cellWastePile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
+                   [self.pileView calculateCheckPileAreaAndVolume:self.cellWastePile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
                    [WasteCalculator calculateEFWStat:self.wasteBlock];
                    if(![self.wasteStratum.stratumBlock.isAggregate isEqualToNumber:[NSNumber numberWithInt:1]]){
                        [self.pileView.efwFooterView setPileViewValue2:self.wasteStratum];

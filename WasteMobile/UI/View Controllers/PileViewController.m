@@ -196,7 +196,7 @@
     {
         [self calculatePileAreaAndVolume:currentPile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
         if([currentPile.isChanged integerValue] == 1){
-            [self calculateCheckPileAreaAndVolume:self.wastePile];
+            [self calculateCheckPileAreaAndVolume:self.wastePile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
         }
     }
     
@@ -538,18 +538,22 @@
 }
 
 - (IBAction)changePileStatus:(id)sender{
-    NSString *title = NSLocalizedString(@"Pile Status Change", nil);
-    NSString *message = NSLocalizedString(@"Please select a status.", nil);
-    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
-    NSString *otherButtonTitleOne = NSLocalizedString(@"Not Checked", nil);
-    NSString *otherButtonTitleTwo = NSLocalizedString(@"Approved", nil);
-    NSString *otherButtonTitleThree = NSLocalizedString(@"No Tally", nil);
-    NSString *otherButtonTitleFour = NSLocalizedString(@"Edit", nil);
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, otherButtonTitleTwo, otherButtonTitleThree, otherButtonTitleFour, nil];
-    alert.tag = ((UIButton *)sender).tag;
-    NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
-    [alert show];
+    if([self.wastePile.isSample integerValue] == 1 ){
+        NSString *title = NSLocalizedString(@"Pile Status Change", nil);
+        NSString *message = NSLocalizedString(@"Please select a status.", nil);
+        NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+        NSString *otherButtonTitleOne = NSLocalizedString(@"Not Checked", nil);
+        NSString *otherButtonTitleTwo = NSLocalizedString(@"Approved", nil);
+        NSString *otherButtonTitleThree = NSLocalizedString(@"No Tally", nil);
+        NSString *otherButtonTitleFour = NSLocalizedString(@"Edit", nil);
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, otherButtonTitleTwo, otherButtonTitleThree, otherButtonTitleFour, nil];
+        alert.tag = ((UIButton *)sender).tag;
+        NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
+        [alert show];
+    } else {
+        NSLog(@"The system must not allow the entry of 'Check' data for Aggregate Ratio or Single Block Ratio survey plots that are 'Prediction Only' plots");
+    }
 }
 
 
@@ -1027,7 +1031,7 @@
         //NSLog(@"Save Plot - ok click");
     }else{
         //other alertview
-        NSNumber *targetPileNumber =[(WastePile *)[self.wastePiles objectAtIndex:alertView.tag] pileNumber];
+        NSNumber *targetPileNumber =self.wastePile.pileNumber;
         //get the original piece number
         //targetPileNumber = [targetPileNumber stringByReplacingOccurrencesOfString:@"C" withString:@""];
         
@@ -1077,6 +1081,10 @@
                     /*if ([wp.pieceNumber isEqualToString:[targetPieceNumber stringByAppendingString:@"C"]]){
                      [self deletePieceFromPlot:wp targetWastePlot:self.wastePlot];
                      }*/
+                    //get rid of edit data
+                    if([wp.isChanged integerValue] == 1){
+                        wp.isChanged = [[NSNumber alloc] initWithBool:NO];
+                    }
                 }
                 // 2 - change the status to the new status
                 if ((long)buttonIndex == 1){
@@ -1144,9 +1152,8 @@
          cellStr = @"EditOriginalPieceTableCell";
         }
     }else{
-        cellStr = @"NewPileTableCell";
+        cellStr = @"NotCheckedTableCell";
     }
-    
     
     //PileEditTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
     PileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellStr];
@@ -1291,26 +1298,51 @@
     }
 }
 
--(void) calculateCheckPileAreaAndVolume:(WastePile *)wastePile {
+-(void) calculateCheckPileAreaAndVolume:(WastePile *)wastePile srsOrRatio:(NSInteger)ratio {
     float pi = 3.141592;
-    NSLog(@"pile shapeCode ======== > %@", wastePile.pileCheckPileShapeCode.pileShapeCode);
-    if([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@""]){
-        wastePile.checkmPileArea = 0;
-        wastePile.checkmPileVolume = 0;
-    }else if([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@"CN"]){
-         wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.checkmWidth doubleValue] + [wastePile.checkmLength doubleValue]) / 2) / 2, 2) * pi)] ;
-        wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:((1.0/3.0) * pi * [wastePile.checkmLength doubleValue] * ([wastePile.checkmWidth doubleValue]/4) * [wastePile.checkmHeight doubleValue])] ;
-    }else if ([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@"CY"]) {
-        wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:[wastePile.checkmLength doubleValue] * [wastePile.checkmWidth doubleValue]] ;
-        wastePile.checkmPileVolume =  [[NSDecimalNumber alloc] initWithDouble:((pi * [wastePile.checkmWidth doubleValue] * [wastePile.checkmLength doubleValue] * [wastePile.checkmHeight doubleValue])/4)] ;
-    }else if ([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@"PR"]) {
-        wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.checkmWidth doubleValue] + [wastePile.checkmLength doubleValue]) / 2) / 2, 2) * pi)] ;
-        wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:((1.0/2.0) * pi * [wastePile.checkmLength doubleValue] * ([wastePile.checkmWidth doubleValue] / 4) * [wastePile.checkmHeight doubleValue])];
-    }else {
-        wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:0];
-        wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:0];
+    if(ratio == 1){
+        // measured calculations
+        if([wastePile.pilecheckmPileShapecode.measuredPileShapeCode isEqual:@""]){
+            wastePile.checkmPileArea = [NSDecimalNumber zero];
+            wastePile.checkmPileVolume = [NSDecimalNumber zero];
+        }else if([wastePile.pilecheckmPileShapecode.measuredPileShapeCode isEqual:@"CN"]){
+            wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.checkmWidth doubleValue] + [wastePile.checkmLength doubleValue]) / 2) / 2, 2) * pi)] ;
+            wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:((1.0/3.0) * pi * [wastePile.checkmLength doubleValue] * ([wastePile.checkmWidth doubleValue]/4) * [wastePile.checkmHeight doubleValue])] ;
+        }else if ([wastePile.pilecheckmPileShapecode.measuredPileShapeCode isEqual:@"CY"]) {
+            wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:[wastePile.checkmLength doubleValue] * [wastePile.checkmWidth doubleValue]] ;
+            wastePile.checkmPileVolume =  [[NSDecimalNumber alloc] initWithDouble:((pi * [wastePile.checkmWidth doubleValue] * [wastePile.checkmLength doubleValue] * [wastePile.checkmHeight doubleValue])/4)] ;
+        }else if ([wastePile.pilecheckmPileShapecode.measuredPileShapeCode isEqual:@"PR"]) {
+            wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.checkmWidth doubleValue] + [wastePile.checkmLength doubleValue]) / 2) / 2, 2) * pi)] ;
+            wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:((1.0/2.0) * pi * [wastePile.checkmLength doubleValue] * ([wastePile.checkmWidth doubleValue] / 4) * [wastePile.checkmHeight doubleValue])];
+        }else {
+            wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:0];
+            wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:0];
+        }
+        // set measured area / volume to 0 if length, width, or height is missing
+        if ([wastePile.checkmLength isEqualToNumber:[NSDecimalNumber zero]] || wastePile.checkmLength == nil ||
+                   [wastePile.checkmWidth isEqualToNumber:[NSDecimalNumber zero]] || wastePile.checkmWidth == nil ||
+                   [wastePile.checkmHeight isEqualToNumber:[NSDecimalNumber zero]] || wastePile.checkmHeight == nil) {
+            wastePile.checkmPileArea = [NSDecimalNumber zero];
+            wastePile.checkmPileVolume = [NSDecimalNumber zero];
+        }
+    }else{
+        if([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@""]){
+            wastePile.checkmPileArea = 0;
+            wastePile.checkmPileVolume = 0;
+        }else if([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@"CN"]){
+             wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.checkmWidth doubleValue] + [wastePile.checkmLength doubleValue]) / 2) / 2, 2) * pi)] ;
+            wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:((1.0/3.0) * pi * [wastePile.checkmLength doubleValue] * ([wastePile.checkmWidth doubleValue]/4) * [wastePile.checkmHeight doubleValue])] ;
+        }else if ([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@"CY"]) {
+            wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:[wastePile.checkmLength doubleValue] * [wastePile.checkmWidth doubleValue]] ;
+            wastePile.checkmPileVolume =  [[NSDecimalNumber alloc] initWithDouble:((pi * [wastePile.checkmWidth doubleValue] * [wastePile.checkmLength doubleValue] * [wastePile.checkmHeight doubleValue])/4)] ;
+        }else if ([wastePile.pileCheckPileShapeCode.pileShapeCode isEqual:@"PR"]) {
+            wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.checkmWidth doubleValue] + [wastePile.checkmLength doubleValue]) / 2) / 2, 2) * pi)] ;
+            wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:((1.0/2.0) * pi * [wastePile.checkmLength doubleValue] * ([wastePile.checkmWidth doubleValue] / 4) * [wastePile.checkmHeight doubleValue])];
+        }else {
+            wastePile.checkmPileVolume = [[NSDecimalNumber alloc] initWithDouble:0];
+            wastePile.checkmPileArea = [[NSDecimalNumber alloc] initWithDouble:0];
+        }
     }
-    
 }
 
 // this shouldn't get called for single block stratums?
@@ -1366,7 +1398,11 @@
     originalPile.checkmLength = originalPile.measuredLength;
     originalPile.checkmWidth = originalPile.measuredWidth;
     originalPile.checkmHeight = originalPile.measuredHeight;
-    originalPile.pileCheckPileShapeCode = originalPile.pilePileShapeCode;
+    if([wasteStratum.stratumBlock.ratioSamplingEnabled integerValue]== 1){
+        originalPile.pilecheckmPileShapecode = originalPile.pileMeasuredPileShapeCode;
+    }else{
+        originalPile.pileCheckPileShapeCode = originalPile.pilePileShapeCode;
+    }
     originalPile.checkmPileArea = originalPile.measuredPileArea;
     originalPile.checkmPileVolume = originalPile.measuredPileVolume;
     

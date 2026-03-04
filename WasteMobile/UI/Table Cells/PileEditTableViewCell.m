@@ -203,7 +203,7 @@
         self.wasteBlock = wasteBlock;
         self.wasteStratum = wasteStratum;
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
-        int locationCounter = 0;
+        int locationCounter = 45;
         int total = 0;
         NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
         

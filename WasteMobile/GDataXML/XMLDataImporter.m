@@ -314,18 +314,19 @@
                         NSString *attStrValue = [(GDataXMLElement *)att[0] stringValue];
                         
                         [self fillManagedObject:(NSManagedObject *)wpile valueString:attStrValue dataTypeString:strAry[2] fieldName:strAry[1]];
-                    }else{
+                    } else{
                         //some field need to set to nil
                         if([strAry[2] isEqualToString:@"2"]){
                             [(NSManagedObject *)wpile setValue:nil forKey:strAry[1]];
                         }
                     }
                 }
-                
+                NSLog(@"wastepile number **********************  %@", wpile.pileNumber);
                 //manually set for import of EFW files
                 if([[[fileName pathExtension] lowercaseString] isEqualToString:@"efw"])
                 {
                     wpile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"1"];
+                   
                 }
                 NSLog(@"attempting to add pile data object");
                 NSLog(@"wpile class: %@", NSStringFromClass([wpile class]));

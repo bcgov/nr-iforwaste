@@ -2129,6 +2129,9 @@
                                                     <state key="normal" title="Delete">
                                                         <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="deletePileShow:" destination="Mkd-4v-F1V" eventType="touchUpInside" id="WM1-xr-fgu"/>
+                                                    </connections>
                                                 </button>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrow.png" translatesAutoresizingMaskIntoConstraints="NO" id="HuW-eA-9W5">
                                                     <rect key="frame" x="941" y="7" width="35" height="512"/>
