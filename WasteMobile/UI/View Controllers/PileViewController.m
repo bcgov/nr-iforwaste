@@ -212,6 +212,8 @@
             //            [WasteCalculator calculateEFWStat:self.wasteBlock];
             //            [self.efwFooterView setPileViewValue:self.aggregatecutblock.aggPile];
         }
+    }else {
+        [self.footerStatView setViewValue:self.wastePile];
     }
     
     // Hide certain fields if single block, show them if aggregate
@@ -1223,6 +1225,8 @@
     if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
         [WasteCalculator calculateEFWStat:self.wasteBlock];
         [self.efwFooterView setPileViewValue2:self.wasteStratum];
+    } else {
+        [self.footerStatView setViewValue:self.wastePile];
     }
 }
 

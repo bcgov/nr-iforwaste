@@ -373,6 +373,14 @@
     }
     return NO;
 }
+-(BOOL) isPileAudited:(WastePile *) wpile {
+  
+    NSLog(@"pileCheckerStatusCode: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
+    if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+        return YES;
+    }
+    return NO;
+}
 
 +(void) calculatePiecesValue:(WasteBlock *) wasteBlock {
 
