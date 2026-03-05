@@ -546,10 +546,10 @@
         NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
         NSString *otherButtonTitleOne = NSLocalizedString(@"Not Checked", nil);
         NSString *otherButtonTitleTwo = NSLocalizedString(@"Approved", nil);
-        NSString *otherButtonTitleThree = NSLocalizedString(@"No Tally", nil);
+        //NSString *otherButtonTitleThree = NSLocalizedString(@"No Tally", nil);
         NSString *otherButtonTitleFour = NSLocalizedString(@"Edit", nil);
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, otherButtonTitleTwo, otherButtonTitleThree, otherButtonTitleFour, nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, otherButtonTitleTwo, otherButtonTitleFour, nil];
         alert.tag = ((UIButton *)sender).tag;
         NSLog(@"Passing the tag from button to the alert view, %ld to %ld",(long)((UIButton *)sender).tag, (long)alert.tag );
         [alert show];
@@ -1040,7 +1040,7 @@
         if (alertView.cancelButtonIndex == buttonIndex) {
             //NSLog(@"Alert view clicked with the cancel button index.");
         }else {
-            if((long)buttonIndex ==4){
+            if((long)buttonIndex ==3){
                 
                 //1 - check if the edit piece record exit, if not, create a edit record with "C" append to the original piece number
                 BOOL isEditRecordCreated = NO;
@@ -1095,9 +1095,6 @@
                 }else if((long)buttonIndex ==2) {
                     //approved
                     p.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
-                }else if((long)buttonIndex ==3) {
-                    //no tally
-                    p.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"3"];
                 }
                 
                 //NSLog(@" plot size %d", self.wastePieces.count);

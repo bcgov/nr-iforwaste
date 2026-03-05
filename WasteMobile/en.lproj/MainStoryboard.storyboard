@@ -4981,6 +4981,7 @@
                         <outlet property="checkedBy" destination="A3h-j0-MdT" id="9f5-dX-VVR"/>
                         <outlet property="cuttingPermit" destination="qTy-EM-Uz3" id="s20-vO-y4b"/>
                         <outlet property="cuttingPermitLabel" destination="aZ1-mn-5HY" id="Bl9-hd-5V5"/>
+                        <outlet property="footerStatView" destination="vLk-Va-AlR" id="Od6-T9-G6r"/>
                         <outlet property="headerView" destination="Ap8-Os-e6W" id="3cb-LZ-4Fw"/>
                         <outlet property="isMeasurePlot" destination="qLY-ki-kFh" id="5Yf-j7-Wdt"/>
                         <outlet property="isMeasurePlotLabel" destination="Ry0-AA-rDy" id="251-Xf-b0V"/>
@@ -5101,7 +5102,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="2NT-KX-ffW"/>
+        <segue reference="JY6-XQ-rkC"/>
         <segue reference="BK3-M5-iDF"/>
         <segue reference="rsi-Jo-9f6"/>
         <segue reference="GQ1-Xd-ei5"/>
