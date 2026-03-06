@@ -365,6 +365,21 @@
     return [[NSDecimalNumber alloc] initWithDouble:(billableTotalVol * measurePercent) * [ws.stratumPlotSizeCode.plotMultipler doubleValue]];
 }
 
++(double) originalSurveyMerchantableVolume:(double) billableTotalVol wasteStratum:(WasteStratum *) ws interior:(BOOL) isinterior{
+    if(isinterior){
+        return ((billableTotalVol) * [ws.grade12Percent doubleValue]) + ((billableTotalVol) * [ws.grade4Percent doubleValue]) ;
+    } else {
+        return ((billableTotalVol) * [ws.gradeJPercent doubleValue]) + ((billableTotalVol) * [ws.gradeXPercent doubleValue]) + ((billableTotalVol) * [ws.gradeYPercent doubleValue]) ;
+    }
+}
+
++(NSDecimalNumber *) calculatePileTotalBillableVolume:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior{
+    NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    double a = ([wpile.measuredPileArea doubleValue]/10000.0);
+    NSDecimalNumber *originalSurveyMerchantableVolume = [[[NSDecimalNumber alloc] initWithDouble:[self originalSurveyMerchantableVolume:billableTotalVol wasteStratum:ws interior:isinterior] / a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+    return originalSurveyMerchantableVolume;
+}
+
 +(BOOL) isPlotAudited:(WastePlot *) wplot {
     for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
         if ([wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpiece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpiece.pieceCheckerStatusCode.checkerStatusCode == nil ) {
@@ -373,7 +388,7 @@
     }
     return NO;
 }
--(BOOL) isPileAudited:(WastePile *) wpile {
++(BOOL) isPileAudited:(WastePile *) wpile {
   
     NSLog(@"pileCheckerStatusCode: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
     if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
@@ -404,11 +419,96 @@
     
     int blockCheckCounter = 0;
     int blockSurveyCounter = 0;
-    
+    BOOL isinterior = NO;
     for (WasteStratum *ws in [wasteBlock.blockStratum allObjects]) {
         NSLog(@" stratum  = %@, assessment method code = %@", ws.stratum, ws.stratumAssessmentMethodCode.assessmentMethodCode);
-        
-        if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
+        //adding as part of IFORWASTE-147
+        if([wasteBlock.regionId intValue] == InteriorRegion){
+            isinterior = YES;
+        }
+        if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]) {
+            NSLog(@"assessment code R!!");
+            double stratumCheckBillTotalVol = 0.0;
+            double stratumCheckCutControlTotalVol = 0.0;
+            
+            double stratumSurveyBillTotalVol = 0.0;
+            double stratumSurveyCutControlTotalVol = 0.0;
+
+            int stratumCheckCounter = 0;
+            int stratumSurveyCounter = 0;
+            
+            //to store the total value of all pile within a stratum
+            double stratumSurveyTotalValue = 0.0;
+            double stratumCheckTotalValue = 0.0;
+            for (WastePile *wpile in [ws.stratumPile allObjects]) {
+                double pileCheckBillTotalVol = 0.0;
+                double pileCheckCutControlTotalVol = 0.0;
+                double pileSurveyBillTotalVol = 0.0;
+                double pileSurveyCutControlTotalVol = 0.0;
+                
+                BOOL isSurvey = NO;
+                BOOL isCheck = NO;
+                
+                NSLog(@"%@ CheckerStatus Code", wpile.pileCheckerStatusCode.checkerStatusCode );
+                if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]) {
+                    isCheck = NO;
+                    isSurvey = YES;
+                } else if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+                    if ([wpile.isChanged integerValue] == 1) {
+                        isCheck = YES;
+                    }
+                }
+                
+                //------------------------------------------------------------------
+                //   ***---For Pile Level Volume Calculation---***
+                //------------------------------------------------------------------
+                if(isSurvey){
+                    pileSurveyBillTotalVol = pileSurveyBillTotalVol + [wpile.measuredPileVolume doubleValue];
+                    pileSurveyCutControlTotalVol = pileSurveyCutControlTotalVol + [wpile.measuredPileVolume doubleValue];
+                    pileCheckBillTotalVol = pileCheckBillTotalVol + [wpile.measuredPileVolume doubleValue];
+                    pileCheckCutControlTotalVol = pileCheckCutControlTotalVol + [wpile.measuredPileVolume doubleValue];
+                }
+                if(isCheck) {
+                    pileSurveyBillTotalVol = pileSurveyBillTotalVol + [wpile.measuredPileVolume doubleValue];
+                    pileSurveyCutControlTotalVol = pileSurveyCutControlTotalVol + [wpile.measuredPileVolume doubleValue];
+                    pileCheckBillTotalVol = pileCheckBillTotalVol + [wpile.checkmPileVolume doubleValue];
+                    pileCheckCutControlTotalVol = pileCheckCutControlTotalVol + [wpile.checkmPileVolume doubleValue];
+                }
+                wpile.surveyAvoidY = [[self calculatePileTotalBillableVolume:pileSurveyBillTotalVol wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                wpile.surveyAvoidX = [[self calculatePileTotalBillableVolume:pileSurveyCutControlTotalVol wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                
+                wpile.checkAvoidY = [[self calculatePileTotalBillableVolume:pileCheckBillTotalVol wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                wpile.checkAvoidX = [[self calculatePileTotalBillableVolume:pileCheckCutControlTotalVol wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+                
+                wpile.deltaAvoidX = [[NSDecimalNumber alloc] initWithDouble:([wpile.checkAvoidX doubleValue] > 0.0 ? fabs((([wpile.checkAvoidX doubleValue] - [wpile.surveyAvoidX doubleValue])/ [wpile.checkAvoidX doubleValue]) * 100.0) : ([wpile.surveyAvoidX doubleValue] > 0.0 ? 100.0 : 0.0))];
+                wpile.deltaAvoidX = [wpile.deltaAvoidX decimalNumberByRoundingAccordingToBehavior:behaviorND];
+
+                wpile.deltaAvoidY = [[NSDecimalNumber alloc] initWithDouble:([wpile.checkAvoidY doubleValue] > 0.0 ? fabs((([wpile.checkAvoidY doubleValue] - [wpile.surveyAvoidY doubleValue])/ [wpile.checkAvoidY doubleValue]) * 100.0) : ([wpile.surveyAvoidY doubleValue] > 0.0 ? 100.0 : 0.0))];
+                wpile.deltaAvoidY = [wpile.deltaAvoidY decimalNumberByRoundingAccordingToBehavior:behaviorND];
+                
+                if ([self isPileAudited:wpile]){
+                    stratumCheckCounter = stratumCheckCounter + 1;
+                    stratumSurveyCounter = stratumSurveyCounter +1;
+                    //if(isCheck) {
+                        stratumSurveyBillTotalVol = stratumSurveyBillTotalVol + pileSurveyBillTotalVol;
+                        stratumSurveyCutControlTotalVol = stratumSurveyCutControlTotalVol + pileSurveyCutControlTotalVol;
+                        stratumCheckBillTotalVol = stratumCheckBillTotalVol + pileCheckBillTotalVol;
+                        stratumCheckCutControlTotalVol = stratumCheckCutControlTotalVol + pileCheckCutControlTotalVol;
+                    //}
+                }
+                
+            }// pile
+            ws.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyBillTotalVol / stratumSurveyCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            ws.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCutControlTotalVol / stratumSurveyCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            
+            ws.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckBillTotalVol / stratumCheckCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCutControlTotalVol / stratumCheckCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            
+            ws.deltaAvoidX = [[[NSDecimalNumber alloc] initWithDouble:([ws.surveyAvoidX doubleValue] / [ws.checkAvoidX doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
+            ws.deltaAvoidY = [[[NSDecimalNumber alloc] initWithDouble:([ws.surveyAvoidY doubleValue] / [ws.checkAvoidY doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
+            
+            
+        }else if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"]){
         
             double plotMultipler = [ws.stratumPlotSizeCode.plotMultipler doubleValue];
             double stratumCheckBillTotalVol = 0.0;
@@ -697,7 +797,7 @@
                     //benchmark
                    // stratumBenchmark = stratumBenchmark + (wplot.checkerMeasurePercent > 0 ? plotBenchmark * (100.0/[wplot.checkerMeasurePercent integerValue]) : plotBenchmark);
                 }
-            }
+            }//end of plot
     
             if ([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"P"]) {
                 ws.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyBillTotalVol / stratumSurveyCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD4];

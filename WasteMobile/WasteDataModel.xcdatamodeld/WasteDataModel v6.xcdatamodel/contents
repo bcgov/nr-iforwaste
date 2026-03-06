@@ -393,12 +393,15 @@
     <entity name="WastePile" representedClassName="WastePile" syncable="YES">
         <attribute name="assistant" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="block" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="checkAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="checkDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="checkmHeight" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="checkmLength" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="checkmPileArea" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="checkmPileVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="checkmWidth" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="checkNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="comment" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="cuttingPermit" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dcDesignation" optional="YES" attributeType="String" syncable="YES"/>
@@ -406,6 +409,9 @@
         <attribute name="dcRationale" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="dcSignature" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="dcSurveyorName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="deltaAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="deltaNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="height" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="isChanged" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isSample" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -422,7 +428,10 @@
         <attribute name="pileNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="pileVolume" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="returnNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="surveyAvoidX" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="surveyAvoidY" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="surveyDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="surveyNetVal" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
         <attribute name="surveyorLicence" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="surveyorName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="weather" optional="YES" attributeType="String" syncable="YES"/>

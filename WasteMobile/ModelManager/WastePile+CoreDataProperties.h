@@ -62,6 +62,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSDecimalNumber *checkmPileVolume;
 @property (nullable, nonatomic, retain) MeasuredPileShapeCode *pilecheckmPileShapecode;
 @property (nullable, nonatomic, retain) PileShapeCode *pileCheckPileShapeCode;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkAvoidX;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkAvoidY;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkNetVal;
+@property (nullable, nonatomic, copy) NSDecimalNumber *deltaAvoidX;
+@property (nullable, nonatomic, copy) NSDecimalNumber *deltaAvoidY;
+@property (nullable, nonatomic, copy) NSDecimalNumber *deltaNetVal;
+@property (nullable, nonatomic, copy) NSDecimalNumber *surveyAvoidX;
+@property (nullable, nonatomic, copy) NSDecimalNumber *surveyAvoidY;
+@property (nullable, nonatomic, copy) NSDecimalNumber *surveyNetVal;
 @end
 
 NS_ASSUME_NONNULL_END

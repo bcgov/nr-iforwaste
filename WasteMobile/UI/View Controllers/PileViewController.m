@@ -213,6 +213,7 @@
             //            [self.efwFooterView setPileViewValue:self.aggregatecutblock.aggPile];
         }
     }else {
+        [WasteCalculator calculatePiecesValue:self.wasteBlock];
         [self.footerStatView setViewValue:self.wastePile];
     }
     
@@ -1057,18 +1058,16 @@
                     [self editWastePile:self.wastePile editPileNumber:targetPileNumber statusCode:@"4"];
                     orgPile.pileCheckerStatusCode =(CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"4"];
                 }
-                NSLog(@"*******self.wastePiles******* %@",self.wastePiles);
-                NSLog(@"*******stratumPile******* %@",self.wasteStratum.stratumPile);
+                
                 NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 //2 - refresh the local piece array
-                 self.wastePiles = [self.wasteStratum.stratumPile allObjects];
-                NSLog(@"*******self.wastePiles******* %@",self.wastePiles);
+                self.wastePiles = [self.wasteStratum.stratumPile allObjects];
                 NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 [self sortPiles];
                 
                 [self.pileTableView reloadData];
                 
-                [WasteCalculator calculateEFWStat:self.wasteBlock];
+                [WasteCalculator calculatePiecesValue:self.wasteBlock];
                 [self.footerStatView setViewValue:self.wastePile];
                 
             } else {
@@ -1104,7 +1103,7 @@
                 
                 [self.pileTableView reloadData];
                 
-                [WasteCalculator calculateEFWStat:self.wasteBlock];
+                [WasteCalculator calculatePiecesValue:self.wasteBlock];
                 [self.footerStatView setViewValue:self.wastePile];
             }
         }

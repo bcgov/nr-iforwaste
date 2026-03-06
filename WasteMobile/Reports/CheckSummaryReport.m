@@ -25,6 +25,7 @@
 #import "WasteStratum.h"
 #import "CheckerStatusCode.h"
 #import "WasteCalculator.h"
+#import "WastePile+CoreDataClass.h"
 
 
 @implementation CheckSummaryReport
@@ -314,6 +315,12 @@
             }
         }
     }
+    for(WastePile *wpile in [wstratum.stratumPile allObjects]) {
+        if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpile.pileCheckerStatusCode.checkerStatusCode == nil) {
+            return YES;
+        }
+        
+    }
     return NO;
 }
 
@@ -326,6 +333,13 @@
     return NO;
 }
 
+-(BOOL) isPileAudited:(WastePile *) wpile {
+    
+    if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+        return YES;
+    }
+    return NO;
+}
 
 /*
  takes the object containing data
@@ -355,6 +369,8 @@
         NSSortDescriptor *sortPieces = [[NSSortDescriptor alloc ] initWithKey:@"pieceNumber" ascending:YES]; // is key ok ? does it actually sort according to it / TEST - @"pieceNumber"
         NSArray *sortedPieces = [[NSArray alloc] init];
         
+        NSSortDescriptor *sortPiles = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES];
+        NSArray *sortedPiles = [[NSArray alloc] init];
         
         int sumSurveyPieces = 0;
         int sumCheckPieces = 0;
@@ -384,7 +400,7 @@
                 NSLog(@"Audited stratum: %@",stratum.stratum );
                 
                 sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
-                
+                sortedPiles = [stratum.stratumPile sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPiles]];
                 //NSLog(@"STRATUM = %@", stratum.stratum);
                 
                 // TD2
@@ -577,6 +593,189 @@
                         missedPiece = 0;
                     }
                 }// end of plots
+                for(WastePile *pile in sortedPiles){
+                    if ([self isPileAudited:pile]) {
+                        
+                        // TD1
+                        td1 = pile.pileNumber ? [pile.pileNumber stringValue] : @"";
+                        
+                        for(WastePiece *piece in sortedPieces) // check every piece in this plot, for which columns can it be counted
+                        {
+                            
+                            /*
+                             NSLog(@"Piece \n");
+                             NSLog(@"pieceNumber = %@", piece.pieceNumber);
+                             NSLog(@"pieceID = %@", piece.piece);
+                             NSLog(@"piece status = %@", piece.pieceCheckerStatusCode.checkerStatusCode);
+                             NSLog(@"piece grade = %@", piece.pieceScaleGradeCode.scaleGradeCode);
+                             NSLog(@"piece species = %@", piece.pieceScaleSpeciesCode.scaleSpeciesCode);
+                             NSLog(@"piece waste = %@", piece.pieceWasteClassCode.wasteClassCode);
+                             NSLog(@"\n");
+                             */
+                            
+                            // TD3 - Survey pieces count = all pieces except those without pieceID
+                            if(piece.pieceCheckerStatusCode.checkerStatusCode != nil && ![self stringHasC: piece.pieceNumber]){
+                                surveyPieces++;
+                            }
+                            
+                            
+                            // TD4 - Check pieces count
+                            if (![self stringHasC: piece.pieceNumber] && ![piece.pieceCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
+                                checkPieces++;
+                            }
+                            
+                            
+                            // if there arent any previousPieces then none are valid for adding
+                            if(previousPiece != nil)
+                            {
+                                // TD5 // POTENTIAL BUG, comparing strings
+                                // for the changed pieces - those with (c)
+                                if( piece.pieceNumber!=nil && [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    
+                                    if(!piece.pieceScaleGradeCode && !previousPiece.pieceScaleGradeCode){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // counting nil cases too ( if original has code, and changed doesnt, then count it)
+                                    else if( (!piece.pieceScaleGradeCode && previousPiece.pieceScaleGradeCode) ||  (piece.pieceScaleGradeCode && !previousPiece.pieceScaleGradeCode)  ){
+                                        grades++;
+                                    }
+                                    // for those that have their grade changed
+                                    else if( ! [piece.pieceScaleGradeCode.scaleGradeCode isEqualToString:previousPiece.pieceScaleGradeCode.scaleGradeCode]){
+                                        grades++;
+                                    }
+                                }
+                                
+                                
+                                // TD6 // POTENTIAL BUG, comparing strings
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    
+                                    
+                                    if( (!piece.pieceScaleSpeciesCode && !previousPiece.pieceScaleSpeciesCode) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // counting nil cases too ( if original has code, and changed doesnt, then count it)
+                                    else if( (!piece.pieceScaleSpeciesCode && previousPiece.pieceScaleSpeciesCode) ||  (piece.pieceScaleSpeciesCode && !previousPiece.pieceScaleSpeciesCode)  ){
+                                        species++;
+                                    }
+                                    // for those that have their species changed
+                                    else if( ![piece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:previousPiece.pieceScaleSpeciesCode.scaleSpeciesCode] ){
+                                        species++;
+                                    }
+                                }
+                                
+                                
+                                // TD7 // POTENTIAL BUG, comparing strings
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    if( (!piece.pieceWasteClassCode && !previousPiece.pieceWasteClassCode) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // counting nil cases too ( if original has code, and changed doesnt, then count it)
+                                    else if( (!piece.pieceWasteClassCode && previousPiece.pieceWasteClassCode) ||  (piece.pieceWasteClassCode && !previousPiece.pieceWasteClassCode)  ){
+                                        wasteClass++;
+                                    }
+                                    // for those that have their wasteclass changed
+                                    else if( ! [piece.pieceWasteClassCode.wasteClassCode isEqualToString:previousPiece.pieceWasteClassCode.wasteClassCode] ){
+                                        wasteClass++;
+                                    }
+                                }
+                                
+                                // TD8
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    if( (!previousPiece.length && !piece.length) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // for those that have their length changed
+                                    else if( ! [piece.length isEqualToNumber: previousPiece.length] ){
+                                        length++;
+                                    }
+                                }
+                                
+                                // TD9
+                                if( [self stringHasC: piece.pieceNumber] )
+                                {
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    if( (!previousPiece.topDiameter && !piece.topDiameter) && (!previousPiece.buttDiameter && !piece.buttDiameter) ){
+                                        // dont count if both are nil, they havent changed
+                                    }
+                                    // one of the pieces was initialy nil, and now it has a value
+                                    else if( ((!previousPiece.topDiameter && piece.topDiameter) || (previousPiece.topDiameter && !piece.topDiameter)) ||
+                                            ((!previousPiece.buttDiameter && piece.buttDiameter) || (previousPiece.buttDiameter && !piece.buttDiameter))
+                                            ){
+                                        radii++;
+                                    }
+                                    // for those that have their diameter value changed
+                                    // note: isEqualToNumber CANNOT accept nil values, if it does, the behavior is undefined
+                                    else if( (piece.topDiameter && previousPiece.topDiameter) && ![piece.topDiameter isEqualToNumber: previousPiece.topDiameter] ){
+                                        radii++;
+                                    }
+                                    else if( (piece.buttDiameter && previousPiece.buttDiameter) && ![piece.buttDiameter isEqualToNumber: previousPiece.buttDiameter]  ){
+                                        radii++;
+                                    }
+                                    
+                                    
+                                    
+                                }
+                            }
+                            
+                            
+                            
+                            // TD10
+                            if(piece.pieceCheckerStatusCode.checkerStatusCode == nil){ // if nil, count him too
+                                // POTENTIAL BUG, comparing strings
+                                missedPiece++;
+                            }
+                            
+                            
+                            
+                            previousPiece = piece;
+                        }// end of pieces
+                        
+                        previousPiece = nil; // test
+                        
+                        td3 = [NSString stringWithFormat:@"%d", surveyPieces];
+                        td4 = [NSString stringWithFormat:@"%d", checkPieces];
+                        td5 = [NSString stringWithFormat:@"%d", grades];
+                        td6 = [NSString stringWithFormat:@"%d", species];
+                        td7 = [NSString stringWithFormat:@"%d", wasteClass];
+                        td8 = [NSString stringWithFormat:@"%d", length];
+                        td9 = [NSString stringWithFormat:@"%d", radii];
+                        td10 = [NSString stringWithFormat:@"%d", missedPiece];
+                        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, nil];
+                        [rows addObject:row];
+                        
+                        // compound values for total calc
+                        sumSurveyPieces += surveyPieces;
+                        sumCheckPieces += checkPieces;
+                        sumGrades += grades;
+                        sumSpecies += species;
+                        sumWasteClass += wasteClass;
+                        sumLength += length;
+                        sumRadii += radii;
+                        sumMissedPiece += missedPiece;
+                        
+                        // reset counters for the next pieces (next row)
+                        surveyPieces = 0;
+                        checkPieces = 0;
+                        grades = 0;
+                        species = 0;
+                        wasteClass = 0;
+                        length = 0;
+                        radii = 0;
+                        missedPiece = 0;
+                    }
+                }
             }
         }// end for stratum
         

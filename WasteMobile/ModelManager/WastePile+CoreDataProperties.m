@@ -61,4 +61,13 @@
 @dynamic checkmPileVolume;
 @dynamic pilecheckmPileShapecode;
 @dynamic pileCheckPileShapeCode;
+@dynamic checkAvoidX;
+@dynamic checkAvoidY;
+@dynamic checkNetVal;
+@dynamic deltaAvoidX;
+@dynamic deltaAvoidY;
+@dynamic deltaNetVal;
+@dynamic surveyAvoidX;
+@dynamic surveyAvoidY;
+@dynamic surveyNetVal;
 @end
