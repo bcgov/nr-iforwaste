@@ -385,18 +385,24 @@
 +(NSDecimalNumber *) calculatePileTotalBillableVolume:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
-    double a = ([wpile.measuredPileArea doubleValue]/10000.0 );
+    double a = 0.0;
+    if([wpile.isChanged integerValue] == 0 || orig){
+        a = ([wpile.measuredPileArea doubleValue]/10000.0 );
+    } else {
+        a = ([wpile.checkmPileArea doubleValue]/10000.0 );
+    }
+    NSLog(@" a %f", a);
     NSDecimalNumber *pa = [[[NSDecimalNumber alloc] initWithDouble:a] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
     NSDecimalNumber *originalSurveyMerchantableVolume;
     if(orig){
          originalSurveyMerchantableVolume = [[[self originalSurveyMerchantableVolume:billableTotalVol wasteStratum:ws interior:isinterior] decimalNumberByDividingBy:pa] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
     } else {
          originalSurveyMerchantableVolume = [[[self checkSurveyMerchantableVolume:billableTotalVol wasteStratum:ws interior:isinterior] decimalNumberByDividingBy:pa] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-    }
+    }NSLog(@" originalSurveyMerchantableVolume %@", originalSurveyMerchantableVolume);
     return originalSurveyMerchantableVolume;
 }
 
-+(NSDecimalNumber *) calculatePileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior{
++(NSDecimalNumber *) calculatePileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -433,7 +439,7 @@
     return total;
 }
 
-+(NSDecimalNumber *) calculateCheckPileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior{
++(NSDecimalNumber *) calculateCheckPileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -443,7 +449,12 @@
     double checkgrade4Volume = 0.0;
     checkgrade4Volume = billableTotalVol * ([ws.checkgrade4Percent doubleValue]/100);
     
-    NSDecimalNumber *a = [[[NSDecimalNumber alloc] initWithDouble:([wpile.measuredPileArea doubleValue]/10000.0)]  decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+    NSDecimalNumber *a = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    if([wpile.isChanged integerValue] == 0 || orig){
+        a = [[[NSDecimalNumber alloc] initWithDouble:([wpile.measuredPileArea doubleValue]/10000.0)]  decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+    } else {
+        a = [[[NSDecimalNumber alloc] initWithDouble:([wpile.checkmPileArea doubleValue]/10000.0)]  decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+    }
     NSLog(@" a %@", a);
     
     NSDecimalNumber *checkSurveyMerchantableVolume = [[[NSDecimalNumber alloc] initWithDouble:checkSawlogVolume > 0.0 ? checkSawlogVolume : 0.0] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
@@ -470,10 +481,12 @@
     return total;
 }
 
-+(NSDecimalNumber *) calculatePileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior{
++(NSDecimalNumber *) calculatePileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wst wastePile:(WastePile *)wpile interior:(BOOL) isinterior{
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     
     double totalValue = 0.0;
+    double coniferSawlogPercent = 0.0;
+    double decidousSawlogPercent = 0.0;
     NSDecimalNumber* total = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     for (WasteStratum *ws in [wb.blockStratum allObjects]) {
         double stratumTotalVol = 0.0;
@@ -488,8 +501,6 @@
         double stratumWeightedAVGdeciduousSawlog = 0.0;
         double stratumWeightedAVGconfierSawlog = 0.0;
         double totalSawlogVolume = 0.0;
-        double coniferSawlogPercent = 0.0;
-        double decidousSawlogPercent = 0.0;
         
         double prconiferSawlogPercent = 0.0;
         double prdecidousSawlogPercent = 0.0;
@@ -547,9 +558,9 @@
                 //To Calculate volume for standard and other stratums expect packing ratio
                 if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
                    ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-                    totalplotdeciduousSawlogVol = totalplotdeciduousSawlogVol + plotdeciduousSawlogVol * (100.0/([wplot.surveyedMeasurePercent doubleValue]/100.0));
-                    totalplotconfierSawlogVol = totalplotconfierSawlogVol + plotconfierSawlogVol * (100.0/([wplot.surveyedMeasurePercent doubleValue]/100.0));
-                    totalplotlowgradeVol = totalplotlowgradeVol + plotlowgradeVol * (100.0/([wplot.surveyedMeasurePercent doubleValue]/100.0));
+                    totalplotdeciduousSawlogVol =  plotdeciduousSawlogVol * (100.0/([wplot.surveyedMeasurePercent doubleValue]));
+                    totalplotconfierSawlogVol =   plotconfierSawlogVol * (100.0/([wplot.surveyedMeasurePercent doubleValue]));
+                    totalplotlowgradeVol = plotlowgradeVol * (100.0/([wplot.surveyedMeasurePercent doubleValue]));
                 } else {
                     totalplotdeciduousSawlogVol = totalplotdeciduousSawlogVol + plotdeciduousSawlogVol;
                     totalplotconfierSawlogVol = totalplotconfierSawlogVol + plotconfierSawlogVol;
@@ -583,7 +594,7 @@
             //4. Calculate Total Sawlog Volume and %
             stratumTotalVol = stratumconfierSawlogVol + stratumdeciduousSawlogVol + stratumlowgradeVol;
             totalSawlogVolume = stratumconfierSawlogVol + stratumdeciduousSawlogVol;
-            coniferSawlogPercent = stratumconfierSawlogVol /totalSawlogVolume;
+            coniferSawlogPercent = (stratumconfierSawlogVol /totalSawlogVolume) ;
             decidousSawlogPercent = stratumdeciduousSawlogVol / totalSawlogVolume;
         }
         // 5.Calculate Packing Ratio Conifer vs Deciduous Sawlog Percentages
@@ -591,7 +602,7 @@
             prconiferSawlogPercent = [ws.gradeJPercent doubleValue] * coniferSawlogPercent;
             prdecidousSawlogPercent = [ws.gradeJPercent doubleValue] * decidousSawlogPercent;
             // 6.Determine Merchantable Volumes for the Packing Ratio Plot
-            coniferSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prconiferSawlogPercent;
+            coniferSawlogMerchVolume = ([wpile.measuredPileVolume doubleValue] * prconiferSawlogPercent)/100;
             deciduousSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prdecidousSawlogPercent;
             lowGradeMerchVolume = [wpile.measuredPileVolume doubleValue] * [ws.gradeYPercent doubleValue];
             
@@ -845,7 +856,7 @@
                 
                 NSLog(@"%@ CheckerStatus Code", wpile.pileCheckerStatusCode.checkerStatusCode );
                 if (!wpile.pileCheckerStatusCode ){
-                    isSurvey = YES;
+                   // isSurvey = YES;
                 }
                 if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"]) {
                     isCheck = NO;
@@ -886,15 +897,16 @@
                 //------------------------------------------------------------------
                 //   ***---For Pile Level Value Calculation---***
                 //------------------------------------------------------------------
-                //interior
+                //interior value calculation
                 if(isinterior){
-                    wpile.surveyNetVal = [[self calculatePileTotalInteriorRate:pileSurveyBillTotalVol wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                    wpile.checkNetVal = [[self calculateCheckPileTotalInteriorRate:pileCheckBillTotalVol wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                    wpile.deltaNetVal = [[[NSDecimalNumber alloc] initWithDouble:( 100/100 -([wpile.surveyNetVal doubleValue] / [wpile.checkNetVal doubleValue] ))] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
-                } else {
-                    wpile.surveyNetVal = [[self calculatePileTotalRate:pileSurveyBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                    wpile.checkNetVal = [[self calculateCheckPileTotalRate:pileCheckBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                    wpile.deltaNetVal = [[[NSDecimalNumber alloc] initWithDouble:( 100/100 -([wpile.surveyNetVal doubleValue] / [wpile.checkNetVal doubleValue] ))] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
+                    wpile.surveyNetVal = [[self calculatePileTotalInteriorRate:pileSurveyBillTotalVol wasteStratum:ws wastePile:wpile interior:isinterior original:true] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                    wpile.checkNetVal = [[self calculateCheckPileTotalInteriorRate:pileCheckBillTotalVol wasteStratum:ws wastePile:wpile interior:isinterior original:false] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                    wpile.deltaNetVal = [[[NSDecimalNumber alloc] initWithDouble: fabs(( 100/100 -([wpile.surveyNetVal doubleValue] / [wpile.checkNetVal doubleValue] )))] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
+                } else {//coast value calculation
+                    if(isSurvey || isCheck){
+                        wpile.surveyNetVal = [[self calculatePileTotalRate:pileSurveyBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                        wpile.checkNetVal = [[self calculateCheckPileTotalRate:pileCheckBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                        wpile.deltaNetVal = [[[NSDecimalNumber alloc] initWithDouble: fabs(( 100/100 -([wpile.surveyNetVal doubleValue] / [wpile.checkNetVal doubleValue] )))] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];}
                 }
                 
                 if ([self isPileAudited:wpile]){
@@ -917,14 +929,14 @@
             ws.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:((stratumCheckBillTotalVol) / stratumCheckCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
             ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:((stratumCheckCutControlTotalVol) / stratumCheckCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
             
-            ws.deltaAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(  (100/100) - [ws.surveyAvoidX doubleValue] / [ws.checkAvoidX doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
-            ws.deltaAvoidY = [[[NSDecimalNumber alloc] initWithDouble:( (100/100) -  [ws.surveyAvoidY doubleValue] / [ws.checkAvoidY doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
+            ws.deltaAvoidX = [[[NSDecimalNumber alloc] initWithDouble:fabs((  (100/100) - [ws.surveyAvoidX doubleValue] / [ws.checkAvoidX doubleValue] ))] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
+            ws.deltaAvoidY = [[[NSDecimalNumber alloc] initWithDouble:fabs(( (100/100) -  [ws.surveyAvoidY doubleValue] / [ws.checkAvoidY doubleValue] ))] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
             //value field calculation
             ws.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyTotalValue / stratumSurveyCounter )] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
             
             ws.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckTotalValue / stratumCheckCounter )] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
             
-            ws.deltaNetVal =[[[NSDecimalNumber alloc] initWithDouble:((100/100) -  [ws.surveyNetVal doubleValue] / [ws.checkNetVal doubleValue] )] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
+            ws.deltaNetVal =[[[NSDecimalNumber alloc] initWithDouble:fabs(((100/100) -  [ws.surveyNetVal doubleValue] / [ws.checkNetVal doubleValue] ))] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
             
             //------------------------------------------------------------------
             //   ***---For Block Level Volume & Value Calculation---***
