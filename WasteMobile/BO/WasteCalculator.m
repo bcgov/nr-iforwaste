@@ -376,6 +376,7 @@
 +(NSDecimalNumber *) checkSurveyMerchantableVolume:(double) billableTotalVol wasteStratum:(WasteStratum *) ws interior:(BOOL) isinterior{
     NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     if(isinterior){
+        NSLog(@"checkSurveyMerchantableVolume %@", [[[NSDecimalNumber alloc] initWithDouble:((billableTotalVol) * ([ws.checkgrade12Percent doubleValue]/100)) + ((billableTotalVol) * ([ws.checkgrade4Percent doubleValue]/100))] decimalNumberByRoundingAccordingToBehavior:behaviorD3]);
         return [[[NSDecimalNumber alloc] initWithDouble:((billableTotalVol) * ([ws.checkgrade12Percent doubleValue]/100)) + ((billableTotalVol) * ([ws.checkgrade4Percent doubleValue]/100))] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
     } else {
         return [[[NSDecimalNumber alloc] initWithDouble:((billableTotalVol) * ([ws.checkgradeJPercent doubleValue]/100)) + ((billableTotalVol) * ([ws.checkgradeXPercent doubleValue]/100)) + ((billableTotalVol) * ([ws.checkgradeYPercent doubleValue]/100))] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
@@ -481,9 +482,9 @@
     return total;
 }
 
-+(NSDecimalNumber *) calculatePileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wst wastePile:(WastePile *)wpile interior:(BOOL) isinterior{
++(NSDecimalNumber *) calculatePileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wst wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
-    
+    NSLog(@"billableTotalVol%f",billableTotalVol);
     double totalValue = 0.0;
     double coniferSawlogPercent = 0.0;
     double decidousSawlogPercent = 0.0;
@@ -501,15 +502,6 @@
         double stratumWeightedAVGdeciduousSawlog = 0.0;
         double stratumWeightedAVGconfierSawlog = 0.0;
         double totalSawlogVolume = 0.0;
-        
-        double prconiferSawlogPercent = 0.0;
-        double prdecidousSawlogPercent = 0.0;
-        double coniferSawlogMerchVolume = 0.0;
-        double deciduousSawlogMerchVolume = 0.0;
-        double lowGradeMerchVolume = 0.0;
-        double originalconiferValue = 0.0;
-        double originaldecidousValue = 0.0;
-        double originallowgradeValue = 0.0;
         
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]) {
             
@@ -596,13 +588,15 @@
             totalSawlogVolume = stratumconfierSawlogVol + stratumdeciduousSawlogVol;
             coniferSawlogPercent = (stratumconfierSawlogVol /totalSawlogVolume) ;
             decidousSawlogPercent = stratumdeciduousSawlogVol / totalSawlogVolume;
+            NSLog(@"totalSawlogVolume %f,coniferSawlogPercent %f, decidousSawlogPercent%f ",totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);
         }
         // 5.Calculate Packing Ratio Conifer vs Deciduous Sawlog Percentages
-        if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-            prconiferSawlogPercent = [ws.gradeJPercent doubleValue] * coniferSawlogPercent;
-            prdecidousSawlogPercent = [ws.gradeJPercent doubleValue] * decidousSawlogPercent;
+        /*if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
+            prconiferSawlogPercent = ([ws.gradeJPercent doubleValue]/100) * coniferSawlogPercent;
+            prdecidousSawlogPercent = ([ws.gradeJPercent doubleValue]/100) * decidousSawlogPercent;
+            NSLog(@"prconiferSawlogPercent %f,prconiferSawlogPercent %f ",prconiferSawlogPercent,prconiferSawlogPercent);
             // 6.Determine Merchantable Volumes for the Packing Ratio Plot
-            coniferSawlogMerchVolume = ([wpile.measuredPileVolume doubleValue] * prconiferSawlogPercent)/100;
+            coniferSawlogMerchVolume = ([wpile.measuredPileVolume doubleValue] * prconiferSawlogPercent);
             deciduousSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prdecidousSawlogPercent;
             lowGradeMerchVolume = [wpile.measuredPileVolume doubleValue] * [ws.gradeYPercent doubleValue];
             
@@ -627,16 +621,60 @@
             
             totalValue = (originalconiferValue + originaldecidousValue + originallowgradeValue) / ([wpile.measuredPileArea doubleValue]/10000.0);
             
-        }
+        }*/
     }//end of stratum
+    for (WasteStratum *ws in [wb.blockStratum allObjects]) {
+        double prconiferSawlogPercent = 0.0;
+        double prdecidousSawlogPercent = 0.0;
+        double coniferSawlogMerchVolume = 0.0;
+        double deciduousSawlogMerchVolume = 0.0;
+        double lowGradeMerchVolume = 0.0;
+        double originalconiferValue = 0.0;
+        double originaldecidousValue = 0.0;
+        double originallowgradeValue = 0.0;
+        // 5.Calculate Packing Ratio Conifer vs Deciduous Sawlog Percentages
+        if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
+            prconiferSawlogPercent = ([ws.gradeJPercent doubleValue]/100) * coniferSawlogPercent;
+            prdecidousSawlogPercent = ([ws.gradeJPercent doubleValue]/100) * decidousSawlogPercent;
+            NSLog(@"prconiferSawlogPercent %f,prconiferSawlogPercent %f ",prconiferSawlogPercent,prconiferSawlogPercent);
+            // 6.Determine Merchantable Volumes for the Packing Ratio Plot
+            coniferSawlogMerchVolume = ([wpile.measuredPileVolume doubleValue] * prconiferSawlogPercent);
+            deciduousSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prdecidousSawlogPercent;
+            lowGradeMerchVolume = [wpile.measuredPileVolume doubleValue] * ([ws.gradeYPercent doubleValue]/100);
+            NSLog(@"coniferSawlogMerchVolume %f,deciduousSawlogMerchVolume %f , lowGradeMerchVolume %f",coniferSawlogMerchVolume,deciduousSawlogMerchVolume,lowGradeMerchVolume);
+            double coniferRate = 0.0;
+            double decRate = 0.0;
+            double hembalRate = 0.0;
+            double gradexRate = 0.0;
+            double gradeyRate = 0.0;
+            for (Timbermark *tm in [ws.stratumBlock.blockTimbermark allObjects]) {
+                if ([tm.primaryInd integerValue] == 1) {
+                    coniferRate = [tm.coniferWMRF doubleValue];
+                    decRate = [tm.deciduousPrice doubleValue];
+                    hembalRate = [tm.hembalPrice doubleValue];
+                    gradexRate = [tm.xPrice doubleValue];
+                    gradeyRate = [tm.yPrice doubleValue];
+                }
+            }
+            //7.Calculate the Packing Ratio Plot's Total Merchantable Volume
+            originalconiferValue = coniferSawlogMerchVolume * coniferRate;
+            originaldecidousValue = deciduousSawlogMerchVolume * decRate;
+            originallowgradeValue = lowGradeMerchVolume * gradeyRate;
+            NSLog(@"originalconiferValue %f,originaldecidousValue %f , originallowgradeValue %f",originalconiferValue,originaldecidousValue,originallowgradeValue);
+            totalValue = (originalconiferValue + originaldecidousValue + originallowgradeValue) / ([wpile.measuredPileArea doubleValue]/10000.0);
+            
+        }
+    }
     total = [[[NSDecimalNumber alloc] initWithDouble:totalValue] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
     return total;
 }
 
-+(NSDecimalNumber *) calculateCheckPileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior{
++(NSDecimalNumber *) calculateCheckPileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wstat wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     
     double totalValue = 0.0;
+    double coniferSawlogPercent = 0.0;
+    double decidousSawlogPercent = 0.0;
     NSDecimalNumber* total = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     for (WasteStratum *ws in [wb.blockStratum allObjects]) {
         double stratumTotalVol = 0.0;
@@ -651,17 +689,6 @@
         double stratumWeightedAVGdeciduousSawlog = 0.0;
         double stratumWeightedAVGconfierSawlog = 0.0;
         double totalSawlogVolume = 0.0;
-        double coniferSawlogPercent = 0.0;
-        double decidousSawlogPercent = 0.0;
-        
-        double prconiferSawlogPercent = 0.0;
-        double prdecidousSawlogPercent = 0.0;
-        double coniferSawlogMerchVolume = 0.0;
-        double deciduousSawlogMerchVolume = 0.0;
-        double lowGradeMerchVolume = 0.0;
-        double originalconiferValue = 0.0;
-        double originaldecidousValue = 0.0;
-        double originallowgradeValue = 0.0;
         
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]) {
             
@@ -710,9 +737,9 @@
                 //To Calculate volume for standard and other stratums expect packing ratio
                 if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
                    ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-                    totalplotdeciduousSawlogVol = totalplotdeciduousSawlogVol + plotdeciduousSawlogVol * (100.0/([wplot.checkerMeasurePercent doubleValue]/100.0));
-                    totalplotconfierSawlogVol = totalplotconfierSawlogVol + plotconfierSawlogVol * (100.0/([wplot.checkerMeasurePercent doubleValue]/100.0));
-                    totalplotlowgradeVol = totalplotlowgradeVol + plotlowgradeVol * (100.0/([wplot.checkerMeasurePercent doubleValue]/100.0));
+                    totalplotdeciduousSawlogVol = totalplotdeciduousSawlogVol + plotdeciduousSawlogVol * (100.0/([wplot.checkerMeasurePercent doubleValue]));
+                    totalplotconfierSawlogVol = totalplotconfierSawlogVol + plotconfierSawlogVol * (100.0/([wplot.checkerMeasurePercent doubleValue]));
+                    totalplotlowgradeVol = totalplotlowgradeVol + plotlowgradeVol * (100.0/([wplot.checkerMeasurePercent doubleValue]));
                 } else {
                     totalplotdeciduousSawlogVol = totalplotdeciduousSawlogVol + plotdeciduousSawlogVol;
                     totalplotconfierSawlogVol = totalplotconfierSawlogVol + plotconfierSawlogVol;
@@ -749,15 +776,31 @@
             coniferSawlogPercent = stratumconfierSawlogVol /totalSawlogVolume;
             decidousSawlogPercent = stratumdeciduousSawlogVol / totalSawlogVolume;
         }
+        
+    }//end of stratum
+    for (WasteStratum *ws in [wb.blockStratum allObjects]) {
+        double prconiferSawlogPercent = 0.0;
+        double prdecidousSawlogPercent = 0.0;
+        double coniferSawlogMerchVolume = 0.0;
+        double deciduousSawlogMerchVolume = 0.0;
+        double lowGradeMerchVolume = 0.0;
+        double originalconiferValue = 0.0;
+        double originaldecidousValue = 0.0;
+        double originallowgradeValue = 0.0;
         // 5.Calculate Packing Ratio Conifer vs Deciduous Sawlog Percentages
         if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-            prconiferSawlogPercent = [ws.checkgradeJPercent doubleValue] * coniferSawlogPercent;
-            prdecidousSawlogPercent = [ws.checkgradeJPercent doubleValue] * decidousSawlogPercent;
+            prconiferSawlogPercent = ([ws.checkgradeJPercent doubleValue]/100) * coniferSawlogPercent;
+            prdecidousSawlogPercent = ([ws.checkgradeJPercent doubleValue]/100) * decidousSawlogPercent;
             // 6.Determine Merchantable Volumes for the Packing Ratio Plot
-            coniferSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prconiferSawlogPercent;
-            deciduousSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prdecidousSawlogPercent;
-            lowGradeMerchVolume = [wpile.measuredPileVolume doubleValue] * [ws.checkgradeYPercent doubleValue];
-            
+            if([wpile.isChanged integerValue] == 0){
+                coniferSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prconiferSawlogPercent;
+                deciduousSawlogMerchVolume = [wpile.measuredPileVolume doubleValue] * prdecidousSawlogPercent;
+                lowGradeMerchVolume = [wpile.measuredPileVolume doubleValue] * ([ws.checkgradeYPercent doubleValue]/100);
+            }else {
+                coniferSawlogMerchVolume = [wpile.checkmPileVolume doubleValue] * prconiferSawlogPercent;
+                deciduousSawlogMerchVolume = [wpile.checkmPileVolume doubleValue] * prdecidousSawlogPercent;
+                lowGradeMerchVolume = [wpile.checkmPileVolume doubleValue] * ([ws.checkgradeYPercent doubleValue]/100);
+            }
             double coniferRate = 0.0;
             double decRate = 0.0;
             double hembalRate = 0.0;
@@ -776,11 +819,14 @@
             originalconiferValue = coniferSawlogMerchVolume * coniferRate;
             originaldecidousValue = deciduousSawlogMerchVolume * decRate;
             originallowgradeValue = lowGradeMerchVolume * gradeyRate;
-            
-            totalValue = (originalconiferValue + originaldecidousValue + originallowgradeValue) / ([wpile.measuredPileArea doubleValue]/10000.0);
-            
+            if([wpile.isChanged integerValue] == 0){
+                totalValue = (originalconiferValue + originaldecidousValue + originallowgradeValue) / ([wpile.measuredPileArea doubleValue]/10000.0);
+            }else{
+                totalValue = (originalconiferValue + originaldecidousValue + originallowgradeValue) / ([wpile.checkmPileArea doubleValue]/10000.0);
+            }
         }
-    }//end of stratum
+    }
+    
     total = [[[NSDecimalNumber alloc] initWithDouble:totalValue] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
     return total;
 }
@@ -871,16 +917,19 @@
                 //   ***---For Pile Level Volume Calculation---***
                 //------------------------------------------------------------------
                 if(isSurvey){
-                    pileSurveyBillTotalVol = pileSurveyBillTotalVol + [wpile.measuredPileVolume doubleValue];
-                    pileSurveyCutControlTotalVol = pileSurveyCutControlTotalVol + [wpile.measuredPileVolume doubleValue];
-                    pileCheckBillTotalVol = pileCheckBillTotalVol + [wpile.measuredPileVolume doubleValue];
-                    pileCheckCutControlTotalVol = pileCheckCutControlTotalVol + [wpile.measuredPileVolume doubleValue];
+                    double roundedbillableTotalVol = round([wpile.measuredPileVolume doubleValue] * 10.0) / 10.0;
+                    pileSurveyBillTotalVol = pileSurveyBillTotalVol +roundedbillableTotalVol;
+                    pileSurveyCutControlTotalVol = pileSurveyCutControlTotalVol + roundedbillableTotalVol;
+                    pileCheckBillTotalVol = pileCheckBillTotalVol + roundedbillableTotalVol;
+                    pileCheckCutControlTotalVol = pileCheckCutControlTotalVol + roundedbillableTotalVol;
                 }
                 if(isCheck) {
-                    pileSurveyBillTotalVol = pileSurveyBillTotalVol + [wpile.measuredPileVolume doubleValue];
-                    pileSurveyCutControlTotalVol = pileSurveyCutControlTotalVol + [wpile.measuredPileVolume doubleValue];
-                    pileCheckBillTotalVol = pileCheckBillTotalVol + [wpile.checkmPileVolume doubleValue];
-                    pileCheckCutControlTotalVol = pileCheckCutControlTotalVol + [wpile.checkmPileVolume doubleValue];
+                    double roundedbillableTotalVol = round([wpile.measuredPileVolume doubleValue] * 10.0) / 10.0;
+                    double roundedcheckbillableTotalVol = round([wpile.checkmPileVolume doubleValue] * 10.0) / 10.0;
+                    pileSurveyBillTotalVol = pileSurveyBillTotalVol + roundedbillableTotalVol;
+                    pileSurveyCutControlTotalVol = pileSurveyCutControlTotalVol + roundedbillableTotalVol;
+                    pileCheckBillTotalVol = pileCheckBillTotalVol + roundedcheckbillableTotalVol;
+                    pileCheckCutControlTotalVol = pileCheckCutControlTotalVol + roundedcheckbillableTotalVol;
                 }
                 wpile.surveyAvoidY = [[self calculatePileTotalBillableVolume:pileSurveyBillTotalVol wasteStratum:ws wastePile:wpile interior:isinterior original:true] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                 wpile.surveyAvoidX = [[self calculatePileTotalBillableVolume:pileSurveyCutControlTotalVol wasteStratum:ws wastePile:wpile interior:isinterior original:true] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
@@ -904,8 +953,8 @@
                     wpile.deltaNetVal = [[[NSDecimalNumber alloc] initWithDouble: fabs(( 100/100 -([wpile.surveyNetVal doubleValue] / [wpile.checkNetVal doubleValue] )))] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
                 } else {//coast value calculation
                     if(isSurvey || isCheck){
-                        wpile.surveyNetVal = [[self calculatePileTotalRate:pileSurveyBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-                        wpile.checkNetVal = [[self calculateCheckPileTotalRate:pileCheckBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                        wpile.surveyNetVal = [[self calculatePileTotalRate:pileSurveyBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior original:true] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                        wpile.checkNetVal = [[self calculateCheckPileTotalRate:pileCheckBillTotalVol wasteBlock:wasteBlock wasteStratum:ws wastePile:wpile interior:isinterior original:false] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
                         wpile.deltaNetVal = [[[NSDecimalNumber alloc] initWithDouble: fabs(( 100/100 -([wpile.surveyNetVal doubleValue] / [wpile.checkNetVal doubleValue] )))] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];}
                 }
                 
