@@ -520,6 +520,8 @@
                    {
                        [self.pileView.efwFooterView setPileViewValue2:self.wasteStratum]; // agg used to be different
                    }
+                   [WasteCalculator calculatePiecesValue:self.wasteBlock];
+                   [self.pileView.footerStatView setViewValue:self.cellWastePile];
                    [self.pileView.efwFooterView reloadInputViews];
                    [self.pileView.pileTableView reloadData];
                }
