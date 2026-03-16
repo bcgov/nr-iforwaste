@@ -31,7 +31,7 @@
         <attribute name="expiryDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="checkerStatusCodePiece" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePiece" inverseName="pieceCheckerStatusCode" inverseEntity="WastePiece" syncable="YES"/>
-        <relationship name="checkerStatusCodePile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WastePile" inverseName="pileCheckerStatusCode" inverseEntity="WastePile" syncable="YES"/>
+        <relationship name="checkerStatusCodePile" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WastePile" inverseName="pileCheckerStatusCode" inverseEntity="WastePile" syncable="YES"/>
     </entity>
     <entity name="CommentCode" representedClassName="CommentCode" syncable="YES">
         <attribute name="commentCode" optional="YES" attributeType="String" syncable="YES"/>

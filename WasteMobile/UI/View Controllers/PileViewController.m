@@ -196,7 +196,7 @@
     {
         [self calculatePileAreaAndVolume:currentPile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
         if([currentPile.isChanged integerValue] == 1){
-            [self calculateCheckPileAreaAndVolume:self.wastePile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
+            [self calculateCheckPileAreaAndVolume:currentPile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
         }
     }
     
@@ -265,7 +265,7 @@
     
     // unsure on this line
     self.wastePile.pileStratum.stratumSurveyArea = self.wasteStratum.stratumSurveyArea;
-    
+    NSLog(@"checker status code - save data : %@", self.wastePile.pileCheckerStatusCode.checkerStatusCode);
     // SINGLE BLOCK and NON-RATIO
     if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
         NSLog(@"Saving SINGLE BLOCK and NON-RATIO pile");
@@ -1071,17 +1071,13 @@
                 [self.footerStatView setViewValue:self.wastePile];
                 
             } else {
-                
                 // 1 - check if a edit piece with "C" exit, delete it if exists
-                WastePile *p;
+                WastePile *p = nil;
                 
                 for (WastePile *wp in self.wastePiles){
                     if ([wp.pileNumber isEqual:targetPileNumber]){
                         p = wp;
                     }
-                    /*if ([wp.pieceNumber isEqualToString:[targetPieceNumber stringByAppendingString:@"C"]]){
-                     [self deletePieceFromPlot:wp targetWastePlot:self.wastePlot];
-                     }*/
                     //get rid of edit data
                     if([wp.isChanged integerValue] == 1){
                         wp.isChanged = [[NSNumber alloc] initWithBool:NO];
@@ -1094,10 +1090,17 @@
                 }else if((long)buttonIndex ==2) {
                     //approved
                     p.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
+                    self.wastePile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
                 }
-                
+                NSLog(@"wastepile p ======> %@",p);
+                NSLog(@"checker status code - current pile : %@", self.wastePile.pileCheckerStatusCode.checkerStatusCode);
                 //NSLog(@" plot size %d", self.wastePieces.count);
-                self.wastePiles = [self.wasteStratum.stratumPile allObjects];
+                NSLog(@"checker status code - button Index : %@", p.pileCheckerStatusCode.checkerStatusCode);
+                for(WastePile *wp in [self.wasteStratum.stratumPile allObjects]){
+                    
+                    NSLog(@"checker status code - self.wasteStratum.stratumPile : %@", wp.pileCheckerStatusCode.checkerStatusCode);
+                }
+                //self.wastePiles = [self.wasteStratum.stratumPile allObjects];
                 //NSLog(@" plot size %d", self.wastePieces.count);
                 [self sortPiles];
                 
@@ -1130,6 +1133,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellStr = @"";
+    
     WastePile *currentPileCell = self.wastePile;
     
     if ([currentPileCell.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
@@ -1407,7 +1411,7 @@
     originalPile.checkmPileVolume = originalPile.measuredPileVolume;
     
     originalPile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"4"];
-    
+
     
     return originalPile;
 }

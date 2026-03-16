@@ -1007,7 +1007,7 @@ NSInteger orignialWasteTypeRow;
 
 -(BOOL) isPileAudited:(WastePile *) wpile {
   
-    NSLog(@"pileCheckerStatusCode: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
+    NSLog(@"pileCheckerStatusCode in stratum controller: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
     if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
         return YES;
     }
@@ -1022,7 +1022,6 @@ NSInteger orignialWasteTypeRow;
         
         if ([self.sortedPiles count] > 0) {
             WastePile *pl = ([self.sortedPiles count] == 1) ? [self.sortedPiles objectAtIndex:0] : [self.sortedPiles objectAtIndex:indexPath.row];
-            
             NSString *pileNumber = pl.pileNumber ? [NSString stringWithFormat:@"%@", pl.pileNumber] : @"";
             NSString *block = pl.block ? [NSString stringWithFormat:@"%@", pl.block] : @"";
             NSString *cuttingPermit = pl.cuttingPermit ? [NSString stringWithFormat:@"%@", pl.cuttingPermit] : @"";
@@ -1055,7 +1054,8 @@ NSInteger orignialWasteTypeRow;
         PackingRatioTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PackingRatioTableCellId"];
         NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES];
         self.sortedblocks = [[self.wasteStratum.stratumPile allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-        WastePile *pl  = ([self.wasteStratum.stratumPile count] == 1) ? [self.sortedblocks objectAtIndex:0] : [self.sortedblocks objectAtIndex:indexPath.row];
+        WastePile *pl  = ([self.sortedPiles count] == 1) ? [self.sortedPiles objectAtIndex:0] : [self.sortedPiles objectAtIndex:indexPath.row];
+        
         cell.plotNumberPR.text = pl.pileNumber ? [NSString stringWithFormat:@"%@", pl.pileNumber] : @"";
         cell.deleteButtonPR.tag = indexPath.row;
         if ([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]) {
