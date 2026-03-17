@@ -1092,14 +1092,9 @@
                     p.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
                     self.wastePile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
                 }
-                NSLog(@"wastepile p ======> %@",p);
-                NSLog(@"checker status code - current pile : %@", self.wastePile.pileCheckerStatusCode.checkerStatusCode);
+                //NSLog(@"wastepile p ======> %@",p);
                 //NSLog(@" plot size %d", self.wastePieces.count);
-                NSLog(@"checker status code - button Index : %@", p.pileCheckerStatusCode.checkerStatusCode);
-                for(WastePile *wp in [self.wasteStratum.stratumPile allObjects]){
-                    
-                    NSLog(@"checker status code - self.wasteStratum.stratumPile : %@", wp.pileCheckerStatusCode.checkerStatusCode);
-                }
+                
                 //self.wastePiles = [self.wasteStratum.stratumPile allObjects];
                 //NSLog(@" plot size %d", self.wastePieces.count);
                 [self sortPiles];

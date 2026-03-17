@@ -1007,7 +1007,7 @@ NSInteger orignialWasteTypeRow;
 
 -(BOOL) isPileAudited:(WastePile *) wpile {
   
-    NSLog(@"pileCheckerStatusCode in stratum controller: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
+    //NSLog(@"pileCheckerStatusCode in stratum controller: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
     if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
         return YES;
     }
