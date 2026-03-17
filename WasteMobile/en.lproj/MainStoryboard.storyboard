@@ -4962,7 +4962,7 @@
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <toolbarItems>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="iBC-Y9-JbR"/>
-                        <barButtonItem title="Report" id="tFK-RV-EVq"/>
+                        <barButtonItem title=" " id="tFK-RV-EVq"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Pile" id="VuD-00-BEV">
                         <barButtonItem key="rightBarButtonItem" title="Save" id="N05-8G-jmR">

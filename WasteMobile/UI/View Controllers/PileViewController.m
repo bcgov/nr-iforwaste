@@ -265,7 +265,7 @@
     
     // unsure on this line
     self.wastePile.pileStratum.stratumSurveyArea = self.wasteStratum.stratumSurveyArea;
-    NSLog(@"checker status code - save data : %@", self.wastePile.pileCheckerStatusCode.checkerStatusCode);
+
     // SINGLE BLOCK and NON-RATIO
     if([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:FALSE] intValue] && [self.wasteBlock.isAggregate intValue] == [[NSNumber numberWithBool:FALSE] intValue]){
         NSLog(@"Saving SINGLE BLOCK and NON-RATIO pile");
@@ -522,7 +522,7 @@
 
 -(void) changePileStatusByType:(NSString *) type {
     for (WastePile *wpile in [self.wasteStratum.stratumPile allObjects]){
-        NSLog(@"piece status code %@", wpile.pileCheckerStatusCode.checkerStatusCode);
+        //NSLog(@"piece status code %@", wpile.pileCheckerStatusCode.checkerStatusCode);
         if ([type isEqualToString:@"approved"] ) {
             if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"1"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"])
                 wpile.pileCheckerStatusCode = (CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"2"];
@@ -1059,10 +1059,10 @@
                     orgPile.pileCheckerStatusCode =(CheckerStatusCode *)[[CodeDAO sharedInstance] getCodeByNameCode:@"checkerStatusCode" code:@"4"];
                 }
                 
-                NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
+                //NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 //2 - refresh the local piece array
                 self.wastePiles = [self.wasteStratum.stratumPile allObjects];
-                NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
+                //NSLog(@" plot size %lu", (unsigned long)self.wastePiles.count);
                 [self sortPiles];
                 
                 [self.pileTableView reloadData];
@@ -1244,7 +1244,7 @@
             wastePile.pileArea = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.width doubleValue] + [wastePile.length doubleValue]) / 2) / 2, 2) * pi)] ;
             //wastePile.pileVolume = [[NSDecimalNumber alloc] initWithDouble:(pow((([wastePile.width doubleValue] + [wastePile.length doubleValue]) / 2), 2) * pi) * ([wastePile.height doubleValue]/8)] ;
             wastePile.pileVolume = [[NSDecimalNumber alloc] initWithDouble:((1.0/2.0) * pi * [wastePile.length doubleValue] * ([wastePile.width doubleValue] / 4) * [wastePile.height doubleValue])];
-            NSLog(@"volume %f", [wastePile.pileVolume doubleValue]);
+            //NSLog(@"volume %f", [wastePile.pileVolume doubleValue]);
         }else {
             wastePile.pileVolume = [[NSDecimalNumber alloc] initWithDouble:0];
             wastePile.pileArea = [[NSDecimalNumber alloc] initWithDouble:0];

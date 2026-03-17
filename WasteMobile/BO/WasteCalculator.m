@@ -396,7 +396,6 @@
     NSDecimalNumber *originalSurveyMerchantableVolume;
     if(orig){
         originalSurveyMerchantableVolume = [[[self originalSurveyMerchantableVolume:billableTotalVol wasteStratum:ws interior:isinterior] decimalNumberByDividingBy:pa] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-       
     } else {
          originalSurveyMerchantableVolume = [[[self checkSurveyMerchantableVolume:billableTotalVol wasteStratum:ws interior:isinterior] decimalNumberByDividingBy:pa] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
     }//NSLog(@" originalSurveyMerchantableVolume %@", originalSurveyMerchantableVolume);
