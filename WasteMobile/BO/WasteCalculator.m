@@ -402,7 +402,7 @@
     return originalSurveyMerchantableVolume;
 }
 
-+(NSDecimalNumber *) calculatePileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
+/*+(NSDecimalNumber *) calculatePileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -437,9 +437,54 @@
     NSDecimalNumber* total = [[totalValue decimalNumberByDividingBy:a ] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
     //NSLog(@" total %@", total);
     return total;
+}*/
+
++(NSDecimalNumber *) calculatePileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
+
+    NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    
+    NSDecimalNumber* originalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    
+    NSDecimalNumber* billTotalVol = [[NSDecimalNumber alloc] initWithDouble:billableTotalVol];
+    
+    NSDecimalNumber *grade12 = [[NSDecimalNumber alloc] initWithDouble:([ws.grade12Percent doubleValue]/100)  ] ;
+    originalSawlogVolume = [billTotalVol decimalNumberByMultiplyingBy:grade12];
+    NSLog(@"billTotalVol%@, originalSawlogVolume %@, grade12 %@",billTotalVol, originalSawlogVolume, grade12);
+    NSDecimalNumber*  originalgrade4Volume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber *grade4 = [[NSDecimalNumber alloc] initWithDouble:([ws.grade4Percent doubleValue]/100)  ] ;
+    originalgrade4Volume = [billTotalVol decimalNumberByMultiplyingBy:grade4];
+    NSLog(@"billTotalVol%@, originalgrade4Volume %@, grade4 %@",billTotalVol, originalgrade4Volume, grade4);
+    
+    NSDecimalNumber * a = [[wpile.measuredPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+    NSLog(@" a %@", a);
+    
+    //NSDecimalNumber *originalSurveyMerchantableVolume = [[[NSDecimalNumber alloc] initWithDouble:originalSawlogVolume > 0.0 ? originalSawlogVolume : 0.0] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
+    //NSLog(@" originalSurveyMerchantableVolume %@", originalSurveyMerchantableVolume);
+    //NSDecimalNumber *originalGrade4SurveyMerchantableVolume = [[[NSDecimalNumber alloc] initWithDouble:originalgrade4Volume > 0.0 ? originalgrade4Volume  : 0.0] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
+    //NSLog(@" originalGrade4SurveyMerchantableVolume %@", originalGrade4SurveyMerchantableVolume);
+    NSDecimalNumber *grade12rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber *grade4rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    for (Timbermark *tm in [ws.stratumBlock.blockTimbermark allObjects]) {
+        if ([tm.primaryInd integerValue] == 1) {
+            grade12rate = tm.coniferWMRF;
+            grade4rate = tm.yPrice;
+        }
+    }
+
+    NSDecimalNumber *grade12Value = [originalSawlogVolume decimalNumberByMultiplyingBy:grade12rate];
+    NSDecimalNumber *grade4Value = [originalgrade4Volume decimalNumberByMultiplyingBy:grade4rate];
+    NSLog(@" grade12Value %@", grade12Value);
+    NSLog(@" grade4Value %@", grade4Value);
+    NSDecimalNumber *totalValue = [grade12Value decimalNumberByAdding:grade4Value] ;
+    NSLog(@" totalValue %@", totalValue);
+    NSDecimalNumber* total = [[totalValue decimalNumberByDividingBy:a ] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
+    NSLog(@" total %@", total);
+    return total;
 }
 
-+(NSDecimalNumber *) calculateCheckPileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
+/*+(NSDecimalNumber *) calculateCheckPileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -479,7 +524,53 @@
     NSDecimalNumber* total = [[totalValue decimalNumberByDividingBy:a ] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
     //NSLog(@" total %@", total);
     return total;
+}*/
++(NSDecimalNumber *) calculateCheckPileTotalInteriorRate:(double) billableTotalVol wasteStratum:(WasteStratum *) ws wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
+    
+    NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD3 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:3 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    
+    NSDecimalNumber* originalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    
+    NSDecimalNumber* billTotalVol = [[NSDecimalNumber alloc] initWithDouble:billableTotalVol];
+    
+    NSDecimalNumber *grade12 = [[NSDecimalNumber alloc] initWithDouble:([ws.checkgrade12Percent doubleValue]/100)  ] ;
+    originalSawlogVolume = [billTotalVol decimalNumberByMultiplyingBy:grade12];
+    NSLog(@"billTotalVol%@, originalSawlogVolume %@, grade12 %@",billTotalVol, originalSawlogVolume, grade12);
+    NSDecimalNumber*  originalgrade4Volume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber *grade4 = [[NSDecimalNumber alloc] initWithDouble:([ws.checkgrade4Percent doubleValue]/100)  ] ;
+    originalgrade4Volume = [billTotalVol decimalNumberByMultiplyingBy:grade4];
+    NSLog(@"billTotalVol%@, originalgrade4Volume %@, grade4 %@",billTotalVol, originalgrade4Volume, grade4);
+    
+    NSDecimalNumber *a = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    if([wpile.isChanged integerValue] == 0 || orig){
+        a =  [[wpile.measuredPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+    } else {
+        a = [[wpile.checkmPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+    }
+    NSLog(@" a %@", a);
+    
+    NSDecimalNumber *grade12rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber *grade4rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    for (Timbermark *tm in [ws.stratumBlock.blockTimbermark allObjects]) {
+        if ([tm.primaryInd integerValue] == 1) {
+            grade12rate = tm.coniferWMRF;
+            grade4rate = tm.yPrice;
+        }
+    }
+
+    NSDecimalNumber *grade12Value = [originalSawlogVolume decimalNumberByMultiplyingBy:grade12rate];
+    NSDecimalNumber *grade4Value = [originalgrade4Volume decimalNumberByMultiplyingBy:grade4rate];
+    NSLog(@" grade12Value %@", grade12Value);
+    NSLog(@" grade4Value %@", grade4Value);
+    NSDecimalNumber *totalValue = [grade12Value decimalNumberByAdding:grade4Value] ;
+    NSLog(@" totalValue %@", totalValue);
+    NSDecimalNumber* total = [[totalValue decimalNumberByDividingBy:a ] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
+    NSLog(@" total %@", total);
+    return total;
 }
+
 
 +(NSDecimalNumber *) calculatePileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wst wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];

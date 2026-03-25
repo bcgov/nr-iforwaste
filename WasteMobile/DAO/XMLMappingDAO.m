@@ -266,6 +266,7 @@
         [wastePileMappingAry addObject:@"WastePile:pilecheckmPileShapecode:measuredPileShapeCode:Y::"];
         [wastePileMappingAry addObject:@"WastePile:pileCheckPileShapeCode:pileShapeCode:Y::"];
         [wastePileMappingAry addObject:@"WastePile:pileCheckerStatusCode:checkerStatusCode:Y::"];
+        [wastePileMappingAry addObject:@"WastePlot:isChanged:2:Y::string:"];
         
     }
 }

@@ -881,6 +881,9 @@
                 if( sortedPlots.count != 0 ){
                     [rows addObject:row]; // if no plots dont add
                 }
+                if( sortedPiles.count != 0 ){
+                    [rows addObject:row]; // if no plots dont add
+                }
             }
         }// end for stratum
         
@@ -1018,9 +1021,8 @@
                             td6 = [NSString stringWithFormat:@"%@", passFail];
                             
                         }
-                        
-                        NSDecimalNumber *surveyVal = pile.surveyNetVal;
-                        NSDecimalNumber *checkVal = pile.checkNetVal;
+                        NSDecimalNumber *surveyVal = [pile.surveyNetVal decimalNumberByMultiplyingBy:stratum.stratumSurveyArea];
+                        NSDecimalNumber *checkVal = [pile.checkNetVal decimalNumberByMultiplyingBy:stratum.stratumArea];
                         td3 = [self currencyFormat:surveyVal fractionDigit:2 isCurrency:true];
                         td4 = [self currencyFormat:checkVal fractionDigit:2 isCurrency:true];
                         
@@ -1063,7 +1065,9 @@
                 if( sortedPlots.count != 0 ){
                     [rows addObject:row]; // if no plots dont add
                 }
-                
+                if( sortedPiles.count != 0 ){
+                    [rows addObject:row]; // if no plots dont add
+                }
             }
             
         }// end for stratum
