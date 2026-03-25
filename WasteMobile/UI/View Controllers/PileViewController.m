@@ -1080,7 +1080,7 @@
                     }
                     //get rid of edit data
                     if([wp.isChanged integerValue] == 1){
-                        wp.isChanged = [[NSNumber alloc] initWithBool:NO];
+                        p.isChanged = [[NSNumber alloc] initWithBool:NO];
                     }
                 }
                 // 2 - change the status to the new status

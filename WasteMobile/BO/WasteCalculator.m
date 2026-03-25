@@ -460,10 +460,6 @@
     NSDecimalNumber * a = [[wpile.measuredPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
     NSLog(@" a %@", a);
     
-    //NSDecimalNumber *originalSurveyMerchantableVolume = [[[NSDecimalNumber alloc] initWithDouble:originalSawlogVolume > 0.0 ? originalSawlogVolume : 0.0] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
-    //NSLog(@" originalSurveyMerchantableVolume %@", originalSurveyMerchantableVolume);
-    //NSDecimalNumber *originalGrade4SurveyMerchantableVolume = [[[NSDecimalNumber alloc] initWithDouble:originalgrade4Volume > 0.0 ? originalgrade4Volume  : 0.0] decimalNumberByRoundingAccordingToBehavior:behaviorD3];
-    //NSLog(@" originalGrade4SurveyMerchantableVolume %@", originalGrade4SurveyMerchantableVolume);
     NSDecimalNumber *grade12rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     NSDecimalNumber *grade4rate = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     for (Timbermark *tm in [ws.stratumBlock.blockTimbermark allObjects]) {
@@ -686,8 +682,9 @@
             //4. Calculate Total Sawlog Volume and %
             stratumTotalVol = [stratumconfierSawlogVol decimalNumberByAdding:([stratumdeciduousSawlogVol decimalNumberByAdding: stratumlowgradeVol])];
             totalSawlogVolume = [stratumconfierSawlogVol decimalNumberByAdding:stratumdeciduousSawlogVol];
-            coniferSawlogPercent = [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] ;
-            decidousSawlogPercent = [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume];
+            //NSLog(@"stratumTotalVol %@,totalSawlogVolume %@ ",stratumTotalVol,totalSawlogVolume);
+            coniferSawlogPercent = ([stratumconfierSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+            decidousSawlogPercent = ([stratumdeciduousSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
             //NSLog(@"stratumTotalVol %@,totalSawlogVolume %@,coniferSawlogPercent %@, decidousSawlogPercent%@ ",stratumTotalVol,totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);
         }
     }//end of stratum
@@ -857,8 +854,10 @@
             //4. Calculate Total Sawlog Volume and %
             stratumTotalVol = [stratumconfierSawlogVol decimalNumberByAdding:([stratumdeciduousSawlogVol decimalNumberByAdding: stratumlowgradeVol])];
             totalSawlogVolume = [stratumconfierSawlogVol decimalNumberByAdding:stratumdeciduousSawlogVol];
-            coniferSawlogPercent = [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] ;
-            decidousSawlogPercent = [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume];
+            //coniferSawlogPercent = [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] ;
+            //decidousSawlogPercent = [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume];
+            coniferSawlogPercent = ([stratumconfierSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+            decidousSawlogPercent = ([stratumdeciduousSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
             //NSLog(@"totalSawlogVolume %@,coniferSawlogPercent %@, decidousSawlogPercent %@",totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);
         }
         
