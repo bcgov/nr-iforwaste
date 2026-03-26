@@ -817,8 +817,8 @@
                         double totalPieceVol = 0.0;
                         double totalCheckPieceVol = 0.0;
                             
-                        NSDecimalNumber *surveyVol = pile.surveyAvoidX;
-                        NSDecimalNumber *checkVol = pile.checkAvoidX;
+                        NSDecimalNumber *surveyVol = [pile.surveyAvoidX decimalNumberByMultiplyingBy:stratum.stratumSurveyArea];
+                        NSDecimalNumber *checkVol = [pile.checkAvoidX decimalNumberByMultiplyingBy:stratum.stratumArea];
                         
                         td3 = [self currencyFormat:surveyVol fractionDigit:3 isCurrency:false];
                         td4 = [self currencyFormat:checkVol fractionDigit:3 isCurrency:false];
