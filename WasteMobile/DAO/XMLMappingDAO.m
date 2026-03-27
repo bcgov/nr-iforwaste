@@ -226,6 +226,7 @@
         [TimberMarkMappingAry addObject:@"Timebermark:hembalPrice:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:deciduousPrice:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:benchmark:1:N:benchmarkVolume:string::"];
+        [TimberMarkMappingAry addObject:@"Timebermark:coniferPrice:1:Y::"];
         
         wastePileMappingAry = [[NSMutableArray alloc] init];
         [wastePileMappingAry addObject:@"WastePile:pileId:2:Y::string:"];
