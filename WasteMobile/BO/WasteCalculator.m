@@ -572,25 +572,257 @@
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD1 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     
     NSDecimalNumber * totalValue = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     NSDecimalNumber * coniferSawlogPercent = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     NSDecimalNumber * decidousSawlogPercent = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     NSDecimalNumber* total = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     
+    NSDecimalNumber * stratumAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumWeightedAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumWeightedAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumWeightedAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * totalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumTotalVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     for (WasteStratum *ws in [wb.blockStratum allObjects]) {
-        NSDecimalNumber * stratumTotalVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumTotalVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         
-        NSDecimalNumber * stratumAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumWeightedAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumWeightedAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * stratumWeightedAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        NSDecimalNumber * totalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumWeightedAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumWeightedAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumWeightedAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * totalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *totalplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *totalplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *totalplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber *plotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber *plotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber *plotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        
+        if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]) {
+            NSLog(@"Stratum %@", ws.stratum);
+            //1.calculate volume for each non packing ratio stratum
+            for (WastePlot *wplot in [ws.stratumPlot allObjects]) {
+                NSDecimalNumber *plotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                NSDecimalNumber *plotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                NSDecimalNumber *plotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                //NSDecimalNumber *totalplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                //NSDecimalNumber *totalplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                //NSDecimalNumber *totalplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                
+                for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
+                    //NSLog(@" Species %@", wpiece.pieceScaleSpeciesCode.scaleSpeciesCode);
+                    if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] &&
+                       ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
+                        [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AR"] ||
+                        [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AS"] ||
+                        [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BI"] ||
+                        [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CO"] ||
+                        [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"MA"] ||
+                        [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WI"] ||
+                        [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"UU"])) {
+                        plotdeciduousSawlogVol =  [plotdeciduousSawlogVol decimalNumberByAdding:wpiece.pieceVolume];
+                    } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"J"] &&
+                              ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CE"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CY"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"FI"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"LA"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"LO"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"SP"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WB"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WH"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"YE"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"] ||
+                               [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"])){
+                        plotconfierSawlogVol = [plotconfierSawlogVol decimalNumberByAdding:wpiece.pieceVolume] ;
+                    } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] ||
+                              [wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"] ||
+                              [wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"]){
+                        plotlowgradeVol = [plotlowgradeVol decimalNumberByAdding:wpiece.pieceVolume];
+                    } else {
+                        
+                    }
+                }// end of piece
+                //To Calculate volume for standard and other stratums expect packing ratio
+                if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
+                   ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
+                    NSDecimalNumber *t = [[NSDecimalNumber alloc] initWithDouble:(100.0/ [wplot.surveyedMeasurePercent doubleValue]) ] ;
+                    tplotdeciduousSawlogVol =[plotdeciduousSawlogVol decimalNumberByMultiplyingBy:t];
+                    tplotconfierSawlogVol =[plotconfierSawlogVol decimalNumberByMultiplyingBy:t];
+                    tplotlowgradeVol =[plotlowgradeVol decimalNumberByMultiplyingBy:t];
+                    totalplotdeciduousSawlogVol = [totalplotdeciduousSawlogVol decimalNumberByAdding:tplotdeciduousSawlogVol];
+                    totalplotconfierSawlogVol = [totalplotconfierSawlogVol decimalNumberByAdding:tplotconfierSawlogVol];
+                    totalplotlowgradeVol = [totalplotlowgradeVol decimalNumberByAdding:tplotlowgradeVol];
+                    NSLog(@"totalplotdeciduousSawlogVol %@,totalplotconfierSawlogVol %@,totalplotlowgradeVol %@ ",totalplotdeciduousSawlogVol,totalplotconfierSawlogVol,totalplotlowgradeVol);
+                } else {
+                    NSLog(@"plotdeciduousSawlogVol %@,plotconfierSawlogVol %@,plotlowgradeVol %@ ",plotdeciduousSawlogVol,plotconfierSawlogVol,plotlowgradeVol);
+                    totalplotdeciduousSawlogVol = [totalplotdeciduousSawlogVol decimalNumberByAdding:plotdeciduousSawlogVol];
+                    totalplotconfierSawlogVol = [totalplotconfierSawlogVol decimalNumberByAdding: plotconfierSawlogVol];
+                    totalplotlowgradeVol = [totalplotlowgradeVol decimalNumberByAdding: plotlowgradeVol];
+                    NSLog(@"totalplotdeciduousSawlogVol %@,totalplotconfierSawlogVol %@,totalplotlowgradeVol %@ ",totalplotdeciduousSawlogVol,totalplotconfierSawlogVol,totalplotlowgradeVol);
+                }
+            }//endofplot
+            // 2. Convert Each Category to A Weighted Original Volume
+                if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
+                    ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
+                    NSDecimalNumber *count = [[NSDecimalNumber alloc] initWithInt:ws.stratumPlot.count ] ;
+                    stratumAVGlowgrade = [totalplotlowgradeVol decimalNumberByDividingBy:count];
+                    stratumAVGdeciduousSawlog = [totalplotdeciduousSawlogVol decimalNumberByDividingBy:count];
+                    stratumAVGconfierSawlog = [totalplotconfierSawlogVol decimalNumberByDividingBy:count];
+                    NSLog(@"stratumAVGlowgrade %@,stratumAVGdeciduousSawlog %@,stratumAVGconfierSawlog %@ ",stratumAVGlowgrade,stratumAVGdeciduousSawlog,stratumAVGconfierSawlog);
+                    NSDecimalNumber *a = [[NSDecimalNumber alloc] initWithDouble: ([ws.stratumSurveyArea doubleValue]/[wb.surveyArea doubleValue])];
+                    stratumWeightedAVGconfierSawlog = [stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a];
+                    stratumWeightedAVGdeciduousSawlog = [stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a];
+                    stratumWeightedAVGlowgrade = [stratumAVGlowgrade decimalNumberByMultiplyingBy:a];
+                    NSLog(@"stratumWeightedAVGconfierSawlog %@,stratumWeightedAVGdeciduousSawlog %@,stratumWeightedAVGlowgrade %@ ",stratumWeightedAVGconfierSawlog,stratumWeightedAVGdeciduousSawlog,stratumWeightedAVGlowgrade);
+                } else {
+                    NSDecimalNumber *count = [[NSDecimalNumber alloc] initWithInt:ws.stratumPlot.count ] ;
+                    stratumAVGlowgrade = [totalplotlowgradeVol decimalNumberByDividingBy:count];
+                    stratumAVGdeciduousSawlog = [totalplotdeciduousSawlogVol decimalNumberByDividingBy:count];
+                    stratumAVGconfierSawlog = [totalplotconfierSawlogVol decimalNumberByDividingBy:count];
+                    NSLog(@"stratumAVGlowgrade %@,stratumAVGdeciduousSawlog %@,stratumAVGconfierSawlog %@ ",stratumAVGlowgrade,stratumAVGdeciduousSawlog,stratumAVGconfierSawlog);
+                    NSDecimalNumber *a = [[NSDecimalNumber alloc] initWithDouble: ([ws.stratumSurveyArea doubleValue]/[wb.surveyArea doubleValue])];
+                    stratumWeightedAVGconfierSawlog = [stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a];
+                    stratumWeightedAVGdeciduousSawlog = [stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a];
+                    stratumWeightedAVGlowgrade = [stratumAVGlowgrade decimalNumberByMultiplyingBy:a];
+                    NSLog(@"stratumWeightedAVGconfierSawlog %@,stratumWeightedAVGdeciduousSawlog %@,stratumWeightedAVGlowgrade %@ ",stratumWeightedAVGconfierSawlog,stratumWeightedAVGdeciduousSawlog,stratumWeightedAVGlowgrade);
+                }
+            //}//end of plot
+            //3.Determine Total Original Volumes for the Population
+            stratumconfierSawlogVol = [[stratumconfierSawlogVol decimalNumberByAdding:stratumWeightedAVGconfierSawlog] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            stratumdeciduousSawlogVol = [[stratumdeciduousSawlogVol decimalNumberByAdding: stratumWeightedAVGdeciduousSawlog] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            stratumlowgradeVol = [[stratumlowgradeVol decimalNumberByAdding: stratumWeightedAVGlowgrade] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            NSLog(@"stratumconfierSawlogVol %@,stratumdeciduousSawlogVol %@,stratumlowgradeVol %@ ",stratumconfierSawlogVol,stratumdeciduousSawlogVol,stratumlowgradeVol);
+           /* //4. Calculate Total Sawlog Volume and %
+            stratumTotalVol = [stratumconfierSawlogVol decimalNumberByAdding:([stratumdeciduousSawlogVol decimalNumberByAdding: stratumlowgradeVol])];
+            totalSawlogVolume = [stratumconfierSawlogVol decimalNumberByAdding:stratumdeciduousSawlogVol];
+            NSLog(@"stratumTotalVol %@,totalSawlogVolume %@ ",stratumTotalVol,totalSawlogVolume);
+            coniferSawlogPercent = ([stratumconfierSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+            decidousSawlogPercent = ([stratumdeciduousSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+            NSLog(@"stratumTotalVol %@,totalSawlogVolume %@,coniferSawlogPercent %@, decidousSawlogPercent%@ ",stratumTotalVol,totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);*/
+        }
+    }//end of stratum
+    //4. Calculate Total Sawlog Volume and %
+    stratumTotalVol = [stratumconfierSawlogVol decimalNumberByAdding:([stratumdeciduousSawlogVol decimalNumberByAdding: stratumlowgradeVol])];
+    totalSawlogVolume = [stratumconfierSawlogVol decimalNumberByAdding:stratumdeciduousSawlogVol];
+    NSLog(@"stratumTotalVol %@,totalSawlogVolume %@ ",stratumTotalVol,totalSawlogVolume);
+    coniferSawlogPercent = ([stratumconfierSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+    decidousSawlogPercent = ([stratumdeciduousSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+    NSLog(@"stratumTotalVol %@,totalSawlogVolume %@,coniferSawlogPercent %@, decidousSawlogPercent%@ ",stratumTotalVol,totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);
+    for (WasteStratum *ws in [wb.blockStratum allObjects]) {
+        NSLog(@"Stratum %@", ws.stratum);
+        NSDecimalNumber * prconiferSawlogPercent =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber * prdecidousSawlogPercent =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber * coniferSawlogMerchVolume =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber * deciduousSawlogMerchVolume =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber * lowGradeMerchVolume =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber * originalconiferValue =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber * originaldecidousValue =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber * originallowgradeValue =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        // 5.Calculate Packing Ratio Conifer vs Deciduous Sawlog Percentages
+        if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
+            NSDecimalNumber *gradej = [[NSDecimalNumber alloc] initWithDouble:([ws.gradeJPercent doubleValue]/100)  ] ;
+            prconiferSawlogPercent = [gradej decimalNumberByMultiplyingBy:coniferSawlogPercent];
+            prdecidousSawlogPercent = [gradej decimalNumberByMultiplyingBy:decidousSawlogPercent];
+            NSLog(@"prconiferSawlogPercent %@,prconiferSawlogPercent %@ ",prconiferSawlogPercent,prconiferSawlogPercent);
+            // 6.Determine Merchantable Volumes for the Packing Ratio Plot
+            NSDecimalNumber *gradey = [[NSDecimalNumber alloc] initWithDouble:([ws.gradeYPercent doubleValue]/100)  ] ;
+            NSDecimalNumber *roundedvolume = [wpile.measuredPileVolume decimalNumberByRoundingAccordingToBehavior:behaviorD1];
+            coniferSawlogMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:prconiferSawlogPercent];
+            deciduousSawlogMerchVolume = [roundedvolume  decimalNumberByMultiplyingBy: prdecidousSawlogPercent];
+            lowGradeMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:gradey] ;
+            NSLog(@"roundedvolume %@,coniferSawlogMerchVolume %@,deciduousSawlogMerchVolume %@, lowGradeMerchVolume%@ ",roundedvolume,coniferSawlogMerchVolume,deciduousSawlogMerchVolume,lowGradeMerchVolume);
+            NSLog(@"coniferSawlogMerchVolume %@,deciduousSawlogMerchVolume %@ , lowGradeMerchVolume %@",coniferSawlogMerchVolume,deciduousSawlogMerchVolume,lowGradeMerchVolume);
+            double coniferRate = 0.0;
+            double decRate = 0.0;
+            double hembalRate = 0.0;
+            double gradexRate = 0.0;
+            double gradeyRate = 0.0;
+            for (Timbermark *tm in [ws.stratumBlock.blockTimbermark allObjects]) {
+                if ([tm.primaryInd integerValue] == 1) {
+                    coniferRate = [tm.coniferWMRF doubleValue];
+                    decRate = [tm.deciduousPrice doubleValue];
+                    hembalRate = [tm.hembalPrice doubleValue];
+                    gradexRate = [tm.xPrice doubleValue];
+                    gradeyRate = [tm.yPrice doubleValue];
+                }
+            }
+            //7.Calculate the Packing Ratio Plot's Total Merchantable Volume
+            originalconiferValue = [[coniferSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:coniferRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            originaldecidousValue = [[deciduousSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:decRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            originallowgradeValue = [[lowGradeMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:gradeyRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            NSLog(@"originalconiferValue %@,originaldecidousValue %@ , originallowgradeValue %@",originalconiferValue,originaldecidousValue,originallowgradeValue);
+            
+            NSDecimalNumber * pilearea = [[wpile.measuredPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+            //double sum =originalconiferValue + originaldecidousValue + originallowgradeValue;
+            NSLog(@"pile area %@", pilearea);
+            NSDecimalNumber * sum = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            NSLog(@"sum %@", [originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])]);
+            totalValue = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByDividingBy:pilearea] ;
+        }
+    }
+    total = totalValue ;
+    return total;
+}
+
++(NSDecimalNumber *) calculateCheckPileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wstat wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
+    NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD1 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    NSDecimalNumberHandler *behaviorD4 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:4 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+    
+    NSDecimalNumber * totalValue = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * coniferSawlogPercent = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * decidousSawlogPercent = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber* total = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    
+    NSDecimalNumber * stratumAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumWeightedAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumWeightedAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumWeightedAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * totalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    NSDecimalNumber * stratumTotalVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    for (WasteStratum *ws in [wb.blockStratum allObjects]) {
+        //NSDecimalNumber * stratumTotalVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        
+        //NSDecimalNumber * stratumAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumWeightedAVGlowgrade = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumWeightedAVGdeciduousSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * stratumWeightedAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber * totalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *totalplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *totalplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *totalplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+    //NSDecimalNumber *plotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber *plotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        //NSDecimalNumber *plotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]) {
             
@@ -599,12 +831,12 @@
                 NSDecimalNumber *plotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
                 NSDecimalNumber *plotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
                 NSDecimalNumber *plotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-                NSDecimalNumber *totalplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-                NSDecimalNumber *totalplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-                NSDecimalNumber *totalplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                //NSDecimalNumber *totalplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                //NSDecimalNumber *totalplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+                //NSDecimalNumber *totalplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
                 
                 for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
-                    //NSLog(@" Species %@", wpiece.pieceScaleSpeciesCode.scaleSpeciesCode);
+                    NSLog(@" Species %@", wpiece.pieceScaleSpeciesCode.scaleSpeciesCode);
                     if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] &&
                          ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
                          [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AR"] ||
@@ -639,16 +871,20 @@
                 //To Calculate volume for standard and other stratums expect packing ratio
                 if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
                    ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-                    NSDecimalNumber *t = [[NSDecimalNumber alloc] initWithDouble:(100.0/ [wplot.surveyedMeasurePercent doubleValue]) ] ;
-                    totalplotdeciduousSawlogVol =[plotdeciduousSawlogVol decimalNumberByMultiplyingBy:t];
-                    totalplotconfierSawlogVol =[plotconfierSawlogVol decimalNumberByMultiplyingBy:t];
-                    totalplotlowgradeVol =[plotlowgradeVol decimalNumberByMultiplyingBy:t];
-                    //NSLog(@"totalplotdeciduousSawlogVol %@,totalplotconfierSawlogVol %@,totalplotlowgradeVol %@ ",totalplotdeciduousSawlogVol,totalplotconfierSawlogVol,totalplotlowgradeVol);
+                    NSDecimalNumber *t = [[NSDecimalNumber alloc] initWithDouble:(100.0/ [wplot.checkerMeasurePercent doubleValue]) ] ;
+                    tplotdeciduousSawlogVol =[plotdeciduousSawlogVol decimalNumberByMultiplyingBy:t];
+                    tplotconfierSawlogVol =[plotconfierSawlogVol decimalNumberByMultiplyingBy:t];
+                    tplotlowgradeVol =[plotlowgradeVol decimalNumberByMultiplyingBy:t];
+                    totalplotdeciduousSawlogVol = [totalplotdeciduousSawlogVol decimalNumberByAdding:tplotdeciduousSawlogVol];
+                    totalplotconfierSawlogVol = [totalplotconfierSawlogVol decimalNumberByAdding:tplotconfierSawlogVol];
+                    totalplotlowgradeVol = [totalplotlowgradeVol decimalNumberByAdding:tplotlowgradeVol];
+                    NSLog(@"totalplotdeciduousSawlogVol %@,totalplotconfierSawlogVol %@,totalplotlowgradeVol %@ ",totalplotdeciduousSawlogVol,totalplotconfierSawlogVol,totalplotlowgradeVol);
                 } else {
                     totalplotdeciduousSawlogVol = [totalplotdeciduousSawlogVol decimalNumberByAdding:plotdeciduousSawlogVol];
                     totalplotconfierSawlogVol = [totalplotconfierSawlogVol decimalNumberByAdding: plotconfierSawlogVol];
                     totalplotlowgradeVol = [totalplotlowgradeVol decimalNumberByAdding: plotlowgradeVol];
                 }
+            }//endofplot
             // 2. Convert Each Category to A Weighted Original Volume
                 if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
                     ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
@@ -656,38 +892,47 @@
                     stratumAVGlowgrade = [totalplotlowgradeVol decimalNumberByDividingBy:count];
                     stratumAVGdeciduousSawlog = [totalplotdeciduousSawlogVol decimalNumberByDividingBy:count];
                     stratumAVGconfierSawlog = [totalplotconfierSawlogVol decimalNumberByDividingBy:count];
-                    //NSLog(@"stratumAVGlowgrade %@,stratumAVGdeciduousSawlog %@,stratumAVGconfierSawlog %@ ",stratumAVGlowgrade,stratumAVGdeciduousSawlog,stratumAVGconfierSawlog);
-                    NSDecimalNumber *a = [[NSDecimalNumber alloc] initWithDouble: ([ws.stratumSurveyArea doubleValue]/[wb.surveyArea doubleValue])];
-                    stratumWeightedAVGconfierSawlog = [stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a];
-                    stratumWeightedAVGdeciduousSawlog = [stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a];
-                    stratumWeightedAVGlowgrade = [stratumAVGlowgrade decimalNumberByMultiplyingBy:a];
-                    //NSLog(@"stratumWeightedAVGconfierSawlog %@,stratumWeightedAVGdeciduousSawlog %@,stratumWeightedAVGlowgrade %@ ",stratumWeightedAVGconfierSawlog,stratumWeightedAVGdeciduousSawlog,stratumWeightedAVGlowgrade);
+                   
+                   NSDecimalNumber *a = [[NSDecimalNumber alloc] initWithDouble: ([ws.stratumArea doubleValue]/[wb.netArea doubleValue])];
+                   stratumWeightedAVGconfierSawlog = [stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a];
+                   stratumWeightedAVGdeciduousSawlog = [stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a];
+                   stratumWeightedAVGlowgrade = [stratumAVGlowgrade decimalNumberByMultiplyingBy:a];
                 } else {
                     NSDecimalNumber *count = [[NSDecimalNumber alloc] initWithInt:ws.stratumPlot.count ] ;
                     stratumAVGlowgrade = [totalplotlowgradeVol decimalNumberByDividingBy:count];
                     stratumAVGdeciduousSawlog = [totalplotdeciduousSawlogVol decimalNumberByDividingBy:count];
                     stratumAVGconfierSawlog = [totalplotconfierSawlogVol decimalNumberByDividingBy:count];
                     
-                    NSDecimalNumber *a = [[NSDecimalNumber alloc] initWithDouble: ([ws.stratumSurveyArea doubleValue]/[wb.surveyArea doubleValue])];
+                    NSDecimalNumber *a = [[NSDecimalNumber alloc] initWithDouble: ([ws.stratumArea doubleValue]/[wb.netArea doubleValue])];
                     stratumWeightedAVGconfierSawlog = [stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a];
                     stratumWeightedAVGdeciduousSawlog = [stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a];
                     stratumWeightedAVGlowgrade = [stratumAVGlowgrade decimalNumberByMultiplyingBy:a];
                 }
-            }//end of plot
+            //}//end of plot
             //3.Determine Total Original Volumes for the Population
-            stratumconfierSawlogVol = [stratumconfierSawlogVol decimalNumberByAdding:stratumWeightedAVGconfierSawlog];
-            stratumdeciduousSawlogVol = [stratumdeciduousSawlogVol decimalNumberByAdding: stratumWeightedAVGdeciduousSawlog];
-            stratumlowgradeVol = [stratumlowgradeVol decimalNumberByAdding: stratumWeightedAVGlowgrade];
-            //NSLog(@"stratumconfierSawlogVol %@,stratumdeciduousSawlogVol %@,stratumlowgradeVol %@ ",stratumconfierSawlogVol,stratumdeciduousSawlogVol,stratumlowgradeVol);
-            //4. Calculate Total Sawlog Volume and %
+            stratumconfierSawlogVol = [[stratumconfierSawlogVol decimalNumberByAdding:stratumWeightedAVGconfierSawlog] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            stratumdeciduousSawlogVol = [[stratumdeciduousSawlogVol decimalNumberByAdding: stratumWeightedAVGdeciduousSawlog] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            stratumlowgradeVol = [[stratumlowgradeVol decimalNumberByAdding: stratumWeightedAVGlowgrade] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            
+            /*//4. Calculate Total Sawlog Volume and %
             stratumTotalVol = [stratumconfierSawlogVol decimalNumberByAdding:([stratumdeciduousSawlogVol decimalNumberByAdding: stratumlowgradeVol])];
             totalSawlogVolume = [stratumconfierSawlogVol decimalNumberByAdding:stratumdeciduousSawlogVol];
-            //NSLog(@"stratumTotalVol %@,totalSawlogVolume %@ ",stratumTotalVol,totalSawlogVolume);
+            //coniferSawlogPercent = [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] ;
+            //decidousSawlogPercent = [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume];
             coniferSawlogPercent = ([stratumconfierSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
             decidousSawlogPercent = ([stratumdeciduousSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
-            //NSLog(@"stratumTotalVol %@,totalSawlogVolume %@,coniferSawlogPercent %@, decidousSawlogPercent%@ ",stratumTotalVol,totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);
+            //NSLog(@"totalSawlogVolume %@,coniferSawlogPercent %@, decidousSawlogPercent %@",totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);*/
         }
+        
     }//end of stratum
+    //4. Calculate Total Sawlog Volume and %
+            stratumTotalVol = [stratumconfierSawlogVol decimalNumberByAdding:([stratumdeciduousSawlogVol decimalNumberByAdding: stratumlowgradeVol])];
+            totalSawlogVolume = [stratumconfierSawlogVol decimalNumberByAdding:stratumdeciduousSawlogVol];
+            //coniferSawlogPercent = [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] ;
+            //decidousSawlogPercent = [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume];
+            coniferSawlogPercent = ([stratumconfierSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumconfierSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+            decidousSawlogPercent = ([stratumdeciduousSawlogVol compare:[NSDecimalNumber zero]] == NSOrderedDescending && [totalSawlogVolume compare:[NSDecimalNumber zero]] != NSOrderedSame ? [stratumdeciduousSawlogVol decimalNumberByDividingBy:totalSawlogVolume] : [NSDecimalNumber zero]);
+            //NSLog(@"totalSawlogVolume %@,coniferSawlogPercent %@, decidousSawlogPercent %@",totalSawlogVolume,coniferSawlogPercent,decidousSawlogPercent);
     for (WasteStratum *ws in [wb.blockStratum allObjects]) {
         NSDecimalNumber * prconiferSawlogPercent =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber * prdecidousSawlogPercent =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
@@ -697,20 +942,30 @@
         NSDecimalNumber * originalconiferValue =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber * originaldecidousValue =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber * originallowgradeValue =  [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+
         // 5.Calculate Packing Ratio Conifer vs Deciduous Sawlog Percentages
         if([ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:TRUE] intValue]){
-            NSDecimalNumber *gradej = [[NSDecimalNumber alloc] initWithDouble:([ws.gradeJPercent doubleValue]/100)  ] ;
+            NSDecimalNumber *gradej = [[NSDecimalNumber alloc] initWithDouble:([ws.checkgradeJPercent doubleValue]/100)  ] ;
             prconiferSawlogPercent = [gradej decimalNumberByMultiplyingBy:coniferSawlogPercent];
             prdecidousSawlogPercent = [gradej decimalNumberByMultiplyingBy:decidousSawlogPercent];
-            //NSLog(@"prconiferSawlogPercent %@,prconiferSawlogPercent %@ ",prconiferSawlogPercent,prconiferSawlogPercent);
+            //NSLog(@"prconiferSawlogPercent %@,prdecidousSawlogPercent %@",prconiferSawlogPercent,prdecidousSawlogPercent);
             // 6.Determine Merchantable Volumes for the Packing Ratio Plot
-            NSDecimalNumber *gradey = [[NSDecimalNumber alloc] initWithDouble:([ws.gradeYPercent doubleValue]/100)  ] ;
-            NSDecimalNumber *roundedvolume = [wpile.measuredPileVolume decimalNumberByRoundingAccordingToBehavior:behaviorD1];
-            coniferSawlogMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:prconiferSawlogPercent];
-            deciduousSawlogMerchVolume = [roundedvolume  decimalNumberByMultiplyingBy: prdecidousSawlogPercent];
-            lowGradeMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:gradey] ;
-            //NSLog(@"roundedvolume %@,coniferSawlogMerchVolume %@,deciduousSawlogMerchVolume %@, lowGradeMerchVolume%@ ",roundedvolume,coniferSawlogMerchVolume,deciduousSawlogMerchVolume,lowGradeMerchVolume);
-            //NSLog(@"coniferSawlogMerchVolume %f,deciduousSawlogMerchVolume %f , lowGradeMerchVolume %f",coniferSawlogMerchVolume,deciduousSawlogMerchVolume,lowGradeMerchVolume);
+            if([wpile.isChanged integerValue] == 0){
+                NSDecimalNumber *gradey = [[NSDecimalNumber alloc] initWithDouble:([ws.checkgradeYPercent doubleValue]/100)  ] ;
+                NSDecimalNumber * roundedvolume= [wpile.measuredPileVolume decimalNumberByRoundingAccordingToBehavior:behaviorD1];
+                coniferSawlogMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:prconiferSawlogPercent];
+                deciduousSawlogMerchVolume = [roundedvolume  decimalNumberByMultiplyingBy: prdecidousSawlogPercent];
+                lowGradeMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:gradey] ;
+                //NSLog(@"isChanged 0 coniferSawlogMerchVolume %f,deciduousSawlogMerchVolume %f, lowGradeMerchVolume %f",coniferSawlogMerchVolume,deciduousSawlogMerchVolume,lowGradeMerchVolume);
+            }else {
+                NSDecimalNumber *gradey = [[NSDecimalNumber alloc] initWithDouble:([ws.checkgradeYPercent doubleValue]/100)  ] ;
+                NSDecimalNumber * roundedvolume= [wpile.checkmPileVolume decimalNumberByRoundingAccordingToBehavior:behaviorD1];
+                coniferSawlogMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:prconiferSawlogPercent];
+                deciduousSawlogMerchVolume = [roundedvolume  decimalNumberByMultiplyingBy: prdecidousSawlogPercent];
+                lowGradeMerchVolume = [roundedvolume decimalNumberByMultiplyingBy:gradey] ;
+                //NSLog(@"isChanged 1 roundedvolume %@,coniferSawlogMerchVolume %@,deciduousSawlogMerchVolume %@, lowGradeMerchVolume %@",roundedvolume,coniferSawlogMerchVolume,deciduousSawlogMerchVolume,lowGradeMerchVolume);
+            }
+            
             double coniferRate = 0.0;
             double decRate = 0.0;
             double hembalRate = 0.0;
@@ -726,23 +981,33 @@
                 }
             }
             //7.Calculate the Packing Ratio Plot's Total Merchantable Volume
-            originalconiferValue = [coniferSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:coniferRate ])] ;
-            originaldecidousValue = [deciduousSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:decRate ])] ;
-            originallowgradeValue = [lowGradeMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:gradeyRate ])] ;
-            //NSLog(@"originalconiferValue %@,originaldecidousValue %@ , originallowgradeValue %@",originalconiferValue,originaldecidousValue,originallowgradeValue);
-            
-            NSDecimalNumber * pilearea = [[wpile.measuredPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
-            //double sum =originalconiferValue + originaldecidousValue + originallowgradeValue;
-            //NSLog(@"pile area %@", pilearea);
-            NSDecimalNumber * sum = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            //NSLog(@"sum %@", [originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])]);
-            totalValue = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByDividingBy:pilearea] ;
+            originalconiferValue = [[coniferSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:coniferRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            originaldecidousValue = [[deciduousSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:decRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            originallowgradeValue = [[lowGradeMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:gradeyRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            //NSLog(@" originalconiferValue %@,originaldecidousValue %@, originallowgradeValue %@",originalconiferValue,originaldecidousValue,originallowgradeValue);
+            if([wpile.isChanged integerValue] == 0){
+                NSDecimalNumber * pilearea = [[wpile.measuredPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+                //double sum =originalconiferValue + originaldecidousValue + originallowgradeValue;
+                //NSLog(@"pile area %@", pilearea);
+                //NSLog(@"sum %@", [originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])]);
+                totalValue = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByDividingBy:pilearea] ;
+            }else{
+                //NSLog(@"check pile area %f", [wpile.checkmPileArea doubleValue]);
+                NSDecimalNumber * pilearea = [[wpile.checkmPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
+                //double sum =originalconiferValue + originaldecidousValue + originallowgradeValue;
+                //NSLog(@"pile area %@", pilearea);
+                NSDecimalNumber * sum = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+                //NSLog(@"sum %@", [originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])]);
+                totalValue = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByDividingBy:pilearea] ;
+            }
         }
     }
-    total = totalValue ;
+    
+    total = totalValue;
     return total;
 }
-+(NSDecimalNumber *) calculateCheckPileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wstat wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
+
+/*+(NSDecimalNumber *) calculateCheckPileTotalRate:(double) billableTotalVol wasteBlock:(WasteBlock *) wb wasteStratum:(WasteStratum *) wstat wastePile:(WastePile *)wpile interior:(BOOL) isinterior original:(BOOL) orig{
     NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:2 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD5 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:5 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
     NSDecimalNumberHandler *behaviorD1 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
@@ -934,7 +1199,7 @@
     
     total = totalValue;
     return total;
-}
+}*/
 
 +(BOOL) isPlotAudited:(WastePlot *) wplot {
     for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
@@ -1097,24 +1362,25 @@
                 }
                 
             }// pile
-            ws.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:((stratumSurveyBillTotalVol) / stratumSurveyCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-            ws.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:((stratumSurveyCutControlTotalVol) / stratumSurveyCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            ws.surveyAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyBillTotalVol / stratumSurveyCounter : 0.0)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            ws.surveyAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyCutControlTotalVol / stratumSurveyCounter : 0.0)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
             
-            ws.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:((stratumCheckBillTotalVol) / stratumCheckCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-            ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:((stratumCheckCutControlTotalVol) / stratumCheckCounter)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            ws.checkAvoidY = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCounter > 0 ? stratumCheckBillTotalVol / stratumCheckCounter : 0.0)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
+            ws.checkAvoidX = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCounter > 0 ? stratumCheckCutControlTotalVol / stratumCheckCounter : 0.0)]decimalNumberByRoundingAccordingToBehavior:behaviorD4];
             
             ws.deltaAvoidX = [[[NSDecimalNumber alloc] initWithDouble:fabs((  (100/100) - [ws.surveyAvoidX doubleValue] / [ws.checkAvoidX doubleValue] )*100)] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
             ws.deltaAvoidY = [[[NSDecimalNumber alloc] initWithDouble:fabs(( (100/100) -  [ws.surveyAvoidY doubleValue] / [ws.checkAvoidY doubleValue] )*100)] decimalNumberByRoundingAccordingToBehavior:behaviorD4 ];
             //value field calculation
-            ws.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyTotalValue / stratumSurveyCounter )] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
+            ws.surveyNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumSurveyCounter > 0 ? stratumSurveyTotalValue / stratumSurveyCounter : 0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
             
-            ws.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckTotalValue / stratumCheckCounter )] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
+            ws.checkNetVal = [[[NSDecimalNumber alloc] initWithDouble:(stratumCheckCounter > 0 ? stratumCheckTotalValue / stratumCheckCounter :0.0)] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
             
             ws.deltaNetVal =[[[NSDecimalNumber alloc] initWithDouble:fabs(((100/100) -  [ws.surveyNetVal doubleValue] / [ws.checkNetVal doubleValue] )*100)] decimalNumberByRoundingAccordingToBehavior:behaviorD2 ];
             
             //------------------------------------------------------------------
             //   ***---For Block Level Volume & Value Calculation---***
             //------------------------------------------------------------------
+            
             blockCheckBillTotalVol = blockCheckBillTotalVol + ([ws.checkAvoidY doubleValue] * [ws.stratumArea doubleValue]);
             blockCheckCutControlTotalVol = blockCheckCutControlTotalVol + ([ws.checkAvoidX doubleValue] * [ws.stratumArea doubleValue]);
             NSDecimalNumber *valueDN = [[[NSDecimalNumber alloc] initWithDouble:([ws.checkNetVal doubleValue] * [ws.stratumArea doubleValue])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
