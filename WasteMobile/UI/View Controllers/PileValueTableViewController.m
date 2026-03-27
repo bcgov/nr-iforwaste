@@ -107,7 +107,7 @@
         self.title = @"(IFOR 205-4) Measured Pile Shape Code";
         self.lookupValues = [[CodeDAO sharedInstance] getMeasuredPileShapeCodeList];
         self.displayMode = LookupMode;
-        self.propertyName = @"pileMeasuredPileShapeCode";
+        self.propertyName = @"pilecheckmPileShapecode";
         self.codeName = @"measuredPileShapeCode";
     } else if([self.propertyName isEqualToString:@"pileCheckPileShapeCode"]){
         self.title = @"(IFOR 205-4) Pile Shape Code";
