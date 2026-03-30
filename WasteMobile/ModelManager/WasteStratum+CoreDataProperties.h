@@ -72,6 +72,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSString *dcLicenseNumber;
 @property (nullable, nonatomic, copy) UIImage *dcSignature;
 @property (nullable, nonatomic, copy) NSString *dcRationale;
+
+//add check grade for packing ratio strtum in ifw
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkgrade12Percent;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkgrade4Percent;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkgradeJPercent;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkgradeUPercent;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkgradeYPercent;
+@property (nullable, nonatomic, copy) NSDecimalNumber *checkgradeXPercent;
 @end
 
 @interface WasteStratum (CoreDataGeneratedAccessors)

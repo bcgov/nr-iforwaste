@@ -25,6 +25,7 @@
 #import "WasteStratum.h"
 #import "CheckerStatusCode.h"
 #import "WasteCalculator.h"
+#import "WastePile+CoreDataClass.h"
 
 
 @implementation CheckSummaryReport
@@ -314,6 +315,12 @@
             }
         }
     }
+    for(WastePile *wpile in [wstratum.stratumPile allObjects]) {
+        if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"] || wpile.pileCheckerStatusCode.checkerStatusCode == nil) {
+            return YES;
+        }
+        
+    }
     return NO;
 }
 
@@ -326,6 +333,13 @@
     return NO;
 }
 
+-(BOOL) isPileAudited:(WastePile *) wpile {
+    
+    if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+        return YES;
+    }
+    return NO;
+}
 
 /*
  takes the object containing data
@@ -355,6 +369,8 @@
         NSSortDescriptor *sortPieces = [[NSSortDescriptor alloc ] initWithKey:@"pieceNumber" ascending:YES]; // is key ok ? does it actually sort according to it / TEST - @"pieceNumber"
         NSArray *sortedPieces = [[NSArray alloc] init];
         
+        NSSortDescriptor *sortPiles = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES];
+        NSArray *sortedPiles = [[NSArray alloc] init];
         
         int sumSurveyPieces = 0;
         int sumCheckPieces = 0;
@@ -384,7 +400,7 @@
                 NSLog(@"Audited stratum: %@",stratum.stratum );
                 
                 sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
-                
+                sortedPiles = [stratum.stratumPile sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPiles]];
                 //NSLog(@"STRATUM = %@", stratum.stratum);
                 
                 // TD2
@@ -577,6 +593,81 @@
                         missedPiece = 0;
                     }
                 }// end of plots
+                for(WastePile *pile in sortedPiles){
+                    if ([self isPileAudited:pile]) {
+                        // TD1
+                        td1 = pile.pileNumber ? [pile.pileNumber stringValue] : @"";
+                    
+                        /*
+                         NSLog(@"Piece \n");
+                         NSLog(@"pieceNumber = %@", piece.pieceNumber);
+                         NSLog(@"pieceID = %@", piece.piece);
+                         NSLog(@"piece status = %@", piece.pieceCheckerStatusCode.checkerStatusCode);
+                         NSLog(@"piece grade = %@", piece.pieceScaleGradeCode.scaleGradeCode);
+                         NSLog(@"piece species = %@", piece.pieceScaleSpeciesCode.scaleSpeciesCode);
+                         NSLog(@"piece waste = %@", piece.pieceWasteClassCode.wasteClassCode);
+                         NSLog(@"\n");
+                         */
+                        // TD3 - Survey pieces count = all pieces except those without pieceID
+                        if(pile.pileCheckerStatusCode.checkerStatusCode != nil && [pile.isChanged integerValue] == 0){
+                            surveyPieces++;
+                        }
+                        // TD4 - Check pieces count
+                        if ([pile.isChanged integerValue] == 1 && ![pile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"1"]){
+                            checkPieces++;
+                        }
+                            // TD5 // POTENTIAL BUG, comparing strings
+                            // for the changed pieces - those with (c)
+                            if( pile.pileNumber!=nil && [pile.isChanged integerValue] == 1 )
+                            {
+                                grades = 0; //TD5
+                                species = 0;//TD6
+                                wasteClass = 0;//TD7
+                                length = 0;//TD8
+                                radii = 0;//TD9
+                            }
+                            
+                            // TD10
+                            if(pile.pileCheckerStatusCode.checkerStatusCode == nil){ // if nil, count him too
+                                // POTENTIAL BUG, comparing strings
+                                missedPiece++;
+                            }
+                            
+                        
+                        previousPiece = nil; // test
+                        
+                        td3 = [NSString stringWithFormat:@"%d", surveyPieces];
+                        td4 = [NSString stringWithFormat:@"%d", checkPieces];
+                        td5 = [NSString stringWithFormat:@"%d", grades];
+                        td6 = [NSString stringWithFormat:@"%d", species];
+                        td7 = [NSString stringWithFormat:@"%d", wasteClass];
+                        td8 = [NSString stringWithFormat:@"%d", length];
+                        td9 = [NSString stringWithFormat:@"%d", radii];
+                        td10 = [NSString stringWithFormat:@"%d", missedPiece];
+                        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, nil];
+                        [rows addObject:row];
+                        
+                        // compound values for total calc
+                        sumSurveyPieces += surveyPieces;
+                        sumCheckPieces += checkPieces;
+                        sumGrades += grades;
+                        sumSpecies += species;
+                        sumWasteClass += wasteClass;
+                        sumLength += length;
+                        sumRadii += radii;
+                        sumMissedPiece += missedPiece;
+                        
+                        // reset counters for the next pieces (next row)
+                        surveyPieces = 0;
+                        checkPieces = 0;
+                        grades = 0;
+                        species = 0;
+                        wasteClass = 0;
+                        length = 0;
+                        radii = 0;
+                        missedPiece = 0;
+                    }
+                }
             }
         }// end for stratum
         
@@ -623,6 +714,8 @@
         NSSortDescriptor *sortPlots = [[NSSortDescriptor alloc ] initWithKey:@"plotNumber" ascending:YES]; // is key ok ? does it actually sort according to it
         NSArray *sortedPlots = [[NSArray alloc] init];
         
+        NSSortDescriptor *sortPiles = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES]; // is key ok ? does it actually sort according to it
+        NSArray *sortedPiles = [[NSArray alloc] init];
         
         NSSortDescriptor *sortPieces = [[NSSortDescriptor alloc ] initWithKey:@"piece" ascending:YES]; // is key ok ? does it actually sort according to it
         NSArray *sortedPieces = [[NSArray alloc] init];
@@ -635,7 +728,7 @@
         {
             if ([self isStratumAudited:stratum]) {
                 sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
-                
+                sortedPiles = [stratum.stratumPile sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPiles]];
                 //NSLog(@"STRATUM = %@", stratum.stratum);
                 
                 // TD1
@@ -708,7 +801,40 @@
                         
                     }
                 }// end of plots
-                
+                for(WastePile *pile in sortedPiles){
+                    if ([self isPileAudited:pile]) {
+                        // TD2
+                        td2 = pile.pileNumber ? [pile.pileNumber stringValue] : @"";
+                        // calc pass/fail
+                        passFail = @"P";
+                        NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
+                        NSComparisonResult result = [pile.deltaAvoidY compare:limit];
+                        if (result == NSOrderedDescending)
+                        {
+                            //NSLog(@"diff > limit");
+                            passFail = @"F";
+                        }
+                        double totalPieceVol = 0.0;
+                        double totalCheckPieceVol = 0.0;
+                            
+                        NSDecimalNumber *surveyVol = [pile.surveyAvoidX decimalNumberByMultiplyingBy:stratum.stratumSurveyArea];
+                        NSDecimalNumber *checkVol = [pile.checkAvoidX decimalNumberByMultiplyingBy:stratum.stratumArea];
+                        
+                        td3 = [self currencyFormat:surveyVol fractionDigit:3 isCurrency:false];
+                        td4 = [self currencyFormat:checkVol fractionDigit:3 isCurrency:false];
+                       
+                        
+                        td5 = [NSString stringWithFormat:@"%.1f%%", [pile.deltaAvoidX floatValue]];
+                        td6 = [NSString stringWithFormat:@"%@", passFail];
+                        
+                        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
+                        [rows addObject:row];
+                        
+                        totalOriginalCutCtrlVol += [pile.surveyAvoidX doubleValue];
+                        totalCheckCutCtrlVol += [pile.checkAvoidX doubleValue];
+                        
+                    }
+                }
                 
                 if(stratum.checkAvoidX.floatValue < 0.005){
                     td5 = @"";
@@ -722,9 +848,6 @@
                     NSComparisonResult result = [absDiff compare:limit];
                     if (result == NSOrderedDescending)
                     {
-                        //NSLog(@"diff > limit");
-                        
-                        // FAIL
                         passFail = @"F";
                     }
                     
@@ -756,6 +879,9 @@
                 row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
                 
                 if( sortedPlots.count != 0 ){
+                    [rows addObject:row]; // if no plots dont add
+                }
+                if( sortedPiles.count != 0 ){
                     [rows addObject:row]; // if no plots dont add
                 }
             }
@@ -816,6 +942,8 @@
         
         NSSortDescriptor *sortPlots = [[NSSortDescriptor alloc ] initWithKey:@"plotNumber" ascending:YES]; // is key ok ? does it actually sort according to it
         NSArray *sortedPlots = [[NSArray alloc] init];
+        NSSortDescriptor *sortPiles = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES];
+        NSArray *sortedPiles = [[NSArray alloc] init];
         
         
         NSSortDescriptor *sortPieces = [[NSSortDescriptor alloc ] initWithKey:@"piece" ascending:YES]; // is key ok ? does it actually sort according to it
@@ -828,7 +956,7 @@
         {
             if ([self isStratumAudited:stratum]) {
                 sortedPlots = [stratum.stratumPlot sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPlots]];
-                
+                sortedPiles = [stratum.stratumPile sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortPiles]];
                 //NSLog(@"STRATUM = %@", stratum.stratum);
                 
                 // TD1
@@ -852,9 +980,6 @@
                             NSComparisonResult result = [absDiff compare:limit];
                             if (result == NSOrderedDescending)
                             {
-                                //NSLog(@"diff > limit");
-                                
-                                // FAIL
                                 passFail = @"F";
                             }
                             
@@ -872,7 +997,39 @@
                         [rows addObject:row];
                     }
                 }// end of plots
-                
+                for(WastePile *pile in sortedPiles)
+                {
+                    if ([self isPileAudited:pile]) {
+                        // TD2
+                        td2 = pile.pileNumber ? [pile.pileNumber stringValue] : @"";
+                        
+                        if (pile.checkAvoidY.floatValue < 0.005) {
+                            td5 = @"";
+                            td6 = @"";
+                        } else {
+                            // calc pass/fail
+                            passFail = @"P";
+                            NSDecimalNumber *absDiff = [self abs:pile.deltaNetVal];
+                            NSDecimalNumber *limit = [NSDecimalNumber decimalNumberWithString:@"10"];
+                            NSComparisonResult result = [absDiff compare:limit];
+                            if (result == NSOrderedDescending)
+                            {
+                                passFail = @"F";
+                            }
+                            
+                            td5 = [NSString stringWithFormat:@"%.1f%%", pile.deltaNetVal.floatValue];
+                            td6 = [NSString stringWithFormat:@"%@", passFail];
+                            
+                        }
+                        NSDecimalNumber *surveyVal = [pile.surveyNetVal decimalNumberByMultiplyingBy:stratum.stratumSurveyArea];
+                        NSDecimalNumber *checkVal = [pile.checkNetVal decimalNumberByMultiplyingBy:stratum.stratumArea];
+                        td3 = [self currencyFormat:surveyVal fractionDigit:2 isCurrency:true];
+                        td4 = [self currencyFormat:checkVal fractionDigit:2 isCurrency:true];
+                        
+                        row = [NSArray arrayWithObjects:td1, td2, td3, td4, td5, td6, nil];
+                        [rows addObject:row];
+                    }
+                }
                 
                 if(stratum.checkAvoidY.floatValue < 0.005){
                     td5 = @"";
@@ -908,7 +1065,9 @@
                 if( sortedPlots.count != 0 ){
                     [rows addObject:row]; // if no plots dont add
                 }
-                
+                if( sortedPiles.count != 0 ){
+                    [rows addObject:row]; // if no plots dont add
+                }
             }
             
         }// end for stratum

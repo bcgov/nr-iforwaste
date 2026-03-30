@@ -62,6 +62,8 @@ typedef enum PileAlertTypeCode{
 
 @property (weak, nonatomic) IBOutlet UILabel *warningMsg;
 
+@property (weak, nonatomic) IBOutlet UILabel *checkedBy;
+@property (weak, nonatomic) IBOutlet UITextField *checkSurveyDate;
 
 @property (strong, nonatomic) WasteBlock *wasteBlock;
 @property (strong, nonatomic) WasteStratum *wasteStratum;
@@ -81,6 +83,7 @@ typedef enum PileAlertTypeCode{
 -(void) updateCurrentPileProperty:(WastePile*)wp property:(NSString*)property;
 
 -(void) calculatePileAreaAndVolume:(WastePile *)wastePile srsOrRatio:(NSInteger)ratio;
+-(void) calculateCheckPileAreaAndVolume:(WastePile *)wastePile srsOrRatio:(NSInteger)ratio;
 
 @end
 

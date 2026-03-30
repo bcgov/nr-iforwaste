@@ -11,6 +11,7 @@
 #import "WastePile+CoreDataClass.h"
 #import "PileShapeCode+CoreDataClass.h"
 #import "WasteBlock.h"
+#import "MeasuredPileShapeCode+CoreDataClass.h"
 
 @implementation PileTableViewCell
 
@@ -36,19 +37,19 @@
     // Configure the view for the selected state
 }
 
--(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock userCreatedBlock:(BOOL)userCreatedBlock{
+-(void)bindCell:(WastePile *)wastePile wasteBlock:(WasteBlock *)wasteBlock wasteStratum:(WasteStratum *)wasteStratum userCreatedBlock:(BOOL)userCreatedBlock{
     
     if([wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:NO] intValue]){
-        NSMutableArray *labelArray = [[NSMutableArray alloc] init];
-        int locationCounter = 0;
+        NSMutableArray *labelArray = [[NSMutableArray alloc] init];NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
+        int locationCounter = 44;
         
         //[labelArray addObject:@";pileNumber;w;44"];
-        [labelArray addObject:@";measuredLength;w;111"];
+        [labelArray addObject:@";measuredLength;w;110"];
         [labelArray addObject:@";measuredWidth;w;110"];
         [labelArray addObject:@";measuredHeight;w;110"];
-        [labelArray addObject:@"CN;pilePileShapeCode;w;110"];
-        [labelArray addObject:@";measuredPileArea;w;110"];
-        [labelArray addObject:@";measuredPileVolume;w;110"];
+        [labelArray addObject:@";pilePileShapeCode;w;110"];
+        [labelArray addObject:@";measuredPileArea;w;140"];
+        [labelArray addObject:@";measuredPileVolume;w;140"];
         //[labelArray addObject:@"0.000;;w;110"];
         //[labelArray addObject:@"*;comment;w;110"];
         
@@ -81,12 +82,12 @@
                             lbl.text = @"*";
                         }
                     }else{
-                        if ([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
+                        if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
+                            lbl.text = [[NSString alloc] initWithFormat:@"%0.1f", [[(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] decimalNumberByRoundingAccordingToBehavior:behaviorD2] floatValue]];
+                        }else if ([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
                             lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ?[(NSNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] stringValue] : @"";
                         }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
                             lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [wastePile valueForKey:[lbStrAry objectAtIndex:1]]: @"";
-                        }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
-                            lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [[NSString alloc] initWithFormat:@"%0.4f", [(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] floatValue]] : @"";
                         }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[PileShapeCode class]]){
                             lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [(PileShapeCode *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] pileShapeCode] : @"";
                         }else{
@@ -128,21 +129,21 @@
         }
     }else if([wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:YES] intValue]){
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
-        int locationCounter = 0;
+        int locationCounter = 45;
+        NSDecimalNumberHandler *behaviorD2 = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundPlain scale:1 raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:NO];
         
-        [labelArray addObject:@";pileNumber;w;43"];
-        [labelArray addObject:@";length;e;43"];
-        [labelArray addObject:@";width;e;43"];
-        [labelArray addObject:@";height;e;43"];
-        [labelArray addObject:@"CN;pilePileShapeCode;e;43"];
-        [labelArray addObject:@";pileArea;w;43"];
-        [labelArray addObject:@";pileVolume;w;43"];
-        [labelArray addObject:@";isSample;w;43"];
-        [labelArray addObject:@";measuredLength;m;43"];
-        [labelArray addObject:@";measuredWidth;m;43"];
-        [labelArray addObject:@";measuredHeight;m;43"];
-        [labelArray addObject:@";measuredPileArea;w;43"];
-        [labelArray addObject:@";measuredPileVolume;w;43"];
+        [labelArray addObject:@";length;e;70"];
+        [labelArray addObject:@";width;e;70"];
+        [labelArray addObject:@";height;e;70"];
+        [labelArray addObject:@";pilePileShapeCode;e;70"];
+        [labelArray addObject:@";pileArea;w;105"];
+        [labelArray addObject:@";pileVolume;w;105"];
+        [labelArray addObject:@";measuredLength;m;70"];
+        [labelArray addObject:@";measuredWidth;m;70"];
+        [labelArray addObject:@";measuredHeight;m;70"];
+        [labelArray addObject:@";pileMeasuredPileShapeCode;e;70"];
+        [labelArray addObject:@";measuredPileArea;w;105"];
+        [labelArray addObject:@";measuredPileVolume;w;105"];
         //[labelArray addObject:@"0.000;;w;110"];
         //[labelArray addObject:@"*;comment;w;43"];
         
@@ -175,12 +176,15 @@
                             lbl.text = @"*";
                         }
                     }else{
-                        if ([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
+                        if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
+                           /* lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [[NSString alloc] initWithFormat:@"%0.4f", [(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] floatValue]] : @"";*/
+                            lbl.text = [[NSString alloc] initWithFormat:@"%0.1f", [[(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] decimalNumberByRoundingAccordingToBehavior:behaviorD2] floatValue]];
+                        }else if ([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSNumber class]]){
                             lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ?[(NSNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] stringValue] : @"";
                         }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSString class]]){
                             lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [wastePile valueForKey:[lbStrAry objectAtIndex:1]]: @"";
-                        }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[NSDecimalNumber class]]){
-                            lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [[NSString alloc] initWithFormat:@"%0.4f", [(NSDecimalNumber *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] floatValue]] : @"";
+                        }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[MeasuredPileShapeCode class]]){
+                            lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [(MeasuredPileShapeCode *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] measuredPileShapeCode] : @"";
                         }else if([[wastePile valueForKey:[lbStrAry objectAtIndex:1]] isKindOfClass:[PileShapeCode class]]){
                             lbl.text = [wastePile valueForKey:[lbStrAry objectAtIndex:1]] ? [(PileShapeCode *)[wastePile valueForKey:[lbStrAry objectAtIndex:1]] pileShapeCode] : @"";
                         }else{

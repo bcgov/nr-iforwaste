@@ -33,7 +33,7 @@
 - (void) drawHeaderForPileSRS: (BOOL) userCreated{
     
     NSMutableArray *labelArray = [[NSMutableArray alloc] init];
-    
+    [labelArray addObject:@" Checked;w;y"];
     [labelArray addObject:@" \n\n\nL;m;n"];
     [labelArray addObject:@" \n\n\nW;m;n"];
     [labelArray addObject:@" \n\n\nH;m;n"];
@@ -52,7 +52,7 @@
         
         UILabel *lbl = nil;
         if ([[lbStrAry objectAtIndex:2]  isEqualToString:@"y"]){
-            lbl = [[UILabel alloc] initWithFrame:CGRectMake(locationCounter+44, 88, 140, 45)];
+            lbl = [[UILabel alloc] initWithFrame:CGRectMake(locationCounter, 88, 140, 45)];
             lbl.transform = CGAffineTransformMakeRotation(-M_PI_2);
             lbl.textAlignment = NSTextAlignmentLeft;
             
@@ -140,7 +140,7 @@
 - (void) drawHeaderForPileRatio: (BOOL) userCreated{
     NSMutableArray *labelArray = [[NSMutableArray alloc] init];
     
-    [labelArray addObject:@" Sample Pile #;w;y"];
+    [labelArray addObject:@" Checked #;w;y"];
     [labelArray addObject:@" L;e;n"];
     [labelArray addObject:@" W;e;n"];
     [labelArray addObject:@" H;e;n"];

@@ -18,5 +18,5 @@
 @dynamic expiryDate;
 @dynamic updateTimestamp;
 @dynamic checkerStatusCodePiece;
-
+@dynamic checkerStatusCodePile;
 @end

@@ -564,6 +564,26 @@ NSInteger orignialWasteTypeRow;
             } else {
                 self.wasteStratum.grade5Percent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
             }
+            if(![self.checkgrade12Percent.text isEqualToString:@""]){
+                if([self.checkgrade12Percent.text doubleValue] >= 0.0 && [self.checkgrade12Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgrade12Percent = [[NSDecimalNumber alloc] initWithString:self.checkgrade12Percent.text];
+                }else{
+                    self.wasteStratum.checkgrade12Percent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade12Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgrade12Percent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
+            if(![self.checkgrade4Percent.text isEqualToString:@""]){
+                if([self.checkgrade4Percent.text doubleValue] >= 0.0 && [self.checkgrade4Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgrade4Percent = [[NSDecimalNumber alloc] initWithString:self.checkgrade4Percent.text];
+                }else{
+                    self.wasteStratum.checkgrade4Percent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade4Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgrade4Percent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
         }else if([self.wasteBlock.regionId intValue] == CoastRegion){
             if(![self.grade12Percent.text isEqualToString:@""]){
                 if([self.grade12Percent.text doubleValue] >= 0.0 && [self.grade12Percent.text doubleValue] <= 100.0 ){
@@ -595,6 +615,26 @@ NSInteger orignialWasteTypeRow;
             } else {
                 self.wasteStratum.gradeWPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
             }
+            if(![self.checkgrade12Percent.text isEqualToString:@""]){
+                if([self.checkgrade12Percent.text doubleValue] >= 0.0 && [self.checkgrade12Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgradeJPercent = [[NSDecimalNumber alloc] initWithString:self.checkgrade12Percent.text];
+                }else{
+                    self.wasteStratum.checkgradeJPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade12Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgradeJPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
+            if(![self.checkgrade4Percent.text isEqualToString:@""]){
+                if([self.checkgrade4Percent.text doubleValue] >= 0.0 && [self.checkgrade4Percent.text doubleValue] <= 100.0 ){
+                    self.wasteStratum.checkgradeUPercent = [[NSDecimalNumber alloc] initWithString:self.checkgrade4Percent.text];
+                }else{
+                    self.wasteStratum.checkgradeUPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                    self.checkgrade4Percent.text = @"";
+                }
+            } else {
+                self.wasteStratum.checkgradeUPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+            }
         }
         if(![self.gradeXPercent.text isEqualToString:@""]){
             if([self.gradeXPercent.text doubleValue] >= 0.0 && [self.gradeXPercent.text doubleValue] <= 100.0 ){
@@ -615,6 +655,26 @@ NSInteger orignialWasteTypeRow;
             }
         } else {
             self.wasteStratum.gradeYPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+        }
+        if(![self.checkgradeXPercent.text isEqualToString:@""]){
+            if([self.checkgradeXPercent.text doubleValue] >= 0.0 && [self.checkgradeXPercent.text doubleValue] <= 100.0 ){
+                self.wasteStratum.checkgradeXPercent = [[NSDecimalNumber alloc] initWithString:self.checkgradeXPercent.text];
+            }else{
+                self.wasteStratum.checkgradeXPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                self.checkgradeXPercent.text = @"";
+            }
+        } else {
+            self.wasteStratum.checkgradeXPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
+        }
+        if(![self.checkgradeYPercent.text isEqualToString:@""]){
+            if([self.checkgradeYPercent.text doubleValue] >= 0.0 && [self.checkgradeYPercent.text doubleValue] <= 100.0 ){
+                self.wasteStratum.checkgradeYPercent = [[NSDecimalNumber alloc] initWithString:self.checkgradeYPercent.text];
+            }else{
+                self.wasteStratum.checkgradeYPercent = [[NSDecimalNumber alloc] initWithString:@""];
+                self.checkgradeYPercent.text = @"";
+            }
+        } else {
+            self.wasteStratum.checkgradeYPercent = [[NSDecimalNumber alloc] initWithString:@"0.0"];
         }
         
         // Packing Ratio disable these fields on save if they are filled in
@@ -945,6 +1005,15 @@ NSInteger orignialWasteTypeRow;
     return NO;
 }
 
+-(BOOL) isPileAudited:(WastePile *) wpile {
+  
+    //NSLog(@"pileCheckerStatusCode in stratum controller: %@", wpile.pileCheckerStatusCode.checkerStatusCode );
+    if ([wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"2"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"3"] || [wpile.pileCheckerStatusCode.checkerStatusCode isEqualToString:@"4"]) {
+        return YES;
+    }
+    return NO;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if(tableView==aggregatePackingRatioPlotTableView) {
@@ -953,7 +1022,6 @@ NSInteger orignialWasteTypeRow;
         
         if ([self.sortedPiles count] > 0) {
             WastePile *pl = ([self.sortedPiles count] == 1) ? [self.sortedPiles objectAtIndex:0] : [self.sortedPiles objectAtIndex:indexPath.row];
-            
             NSString *pileNumber = pl.pileNumber ? [NSString stringWithFormat:@"%@", pl.pileNumber] : @"";
             NSString *block = pl.block ? [NSString stringWithFormat:@"%@", pl.block] : @"";
             NSString *cuttingPermit = pl.cuttingPermit ? [NSString stringWithFormat:@"%@", pl.cuttingPermit] : @"";
@@ -975,6 +1043,10 @@ NSInteger orignialWasteTypeRow;
                 cell.plotNumberAPR.backgroundColor = [UIColor whiteColor];
                 cell.plotNumberAPR.textColor = [UIColor blackColor];
             }
+            if ([self isPileAudited:pl])
+                cell.isPileAudited.hidden = NO;
+            else
+                cell.isPileAudited.hidden = YES;
             return cell;
         }
     } else if (tableView == packingRatioTableView) {
@@ -982,7 +1054,8 @@ NSInteger orignialWasteTypeRow;
         PackingRatioTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PackingRatioTableCellId"];
         NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES];
         self.sortedblocks = [[self.wasteStratum.stratumPile allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
-        WastePile *pl  = ([self.wasteStratum.stratumPile count] == 1) ? [self.sortedblocks objectAtIndex:0] : [self.sortedblocks objectAtIndex:indexPath.row];
+        WastePile *pl  = ([self.sortedPiles count] == 1) ? [self.sortedPiles objectAtIndex:0] : [self.sortedPiles objectAtIndex:indexPath.row];
+        
         cell.plotNumberPR.text = pl.pileNumber ? [NSString stringWithFormat:@"%@", pl.pileNumber] : @"";
         cell.deleteButtonPR.tag = indexPath.row;
         if ([self.wasteBlock.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue]) {
@@ -996,6 +1069,10 @@ NSInteger orignialWasteTypeRow;
             cell.plotNumberPR.backgroundColor = [UIColor whiteColor];
             cell.plotNumberPR.textColor = [UIColor blackColor];
         }
+        if ([self isPileAudited:pl])
+            cell.isPileAudited.hidden = NO;
+        else
+            cell.isPileAudited.hidden = YES;
         return cell;
     } else if (tableView == plotTableView) {
         NSLog(@"plotTableView");
@@ -2076,18 +2153,36 @@ NSInteger orignialWasteTypeRow;
             // SB-RATIO-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"SINGLE block RATIO COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2106,18 +2201,32 @@ NSInteger orignialWasteTypeRow;
             // SB-RATIO-INT
             else {
                 NSLog(@"SINGLE block RATIO INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2138,18 +2247,36 @@ NSInteger orignialWasteTypeRow;
             // SB-SRS-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"single block SRS COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
@@ -2163,18 +2290,32 @@ NSInteger orignialWasteTypeRow;
             // SB-SRS-INTERIOR
             else {
                 NSLog(@"single block SRS INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
@@ -2194,18 +2335,36 @@ NSInteger orignialWasteTypeRow;
             // AGG-RATIO-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"aggregate RATIO COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2223,18 +2382,32 @@ NSInteger orignialWasteTypeRow;
             // AGG-RATIO-INT
             else {
                 NSLog(@"aggregate RATIO INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 if ([self.predictionPlot.text intValue] > 0 && [self.measurePlot.text intValue] > 0 && ([self.wasteStratum.totalNumPile intValue] < [self.wasteStratum.predictionPlot intValue])) {
@@ -2255,18 +2428,36 @@ NSInteger orignialWasteTypeRow;
             // AGG-SRS-COAST
             if ([wasteBlock.regionId integerValue] == CoastRegion) {
                 NSLog(@"aggregate SRS COAST - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade J%"];
+                [self.grade12Label setText:@"Survey Grade J%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade U%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:NO];
                 [self.gradeXPercent setHidden:NO];
+                [self.gradeXPercent setEnabled:NO];
+                [self.gradeXPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.gradeYLabel setHidden:NO];
                 [self.gradeYPercent setHidden:NO];
+                [self.gradeYPercent setEnabled:NO];
+                [self.gradeYPercent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
+                [self.checkgrade12Label setText:@"Check Grade J%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade U%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:NO];
+                [self.checkgradeXPercent setHidden:NO];
+                [self.checkgradeYLabel setHidden:NO];
+                [self.checkgradeYPercent setHidden:NO];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
@@ -2280,18 +2471,32 @@ NSInteger orignialWasteTypeRow;
             // AGG-SRS-INTERIOR
             if ([wasteBlock.regionId integerValue] == InteriorRegion) {
                 NSLog(@"aggregate SRS INTERIOR - HARVEST METHOD R");
-                [self.grade12Label setText:@"Grade 1,2%"];
+                [self.grade12Label setText:@"Survey Grade 1,2%"];
                 [self.grade12Label setHidden:NO];
                 [self.grade12Percent setHidden:NO];
+                [self.grade12Percent setEnabled:NO];
+                [self.grade12Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade4Label setHidden:NO];
                 [self.grade4Label setText:@"Grade 4%"];
                 [self.grade4Percent setHidden:NO];
+                [self.grade4Percent setEnabled:NO];
+                [self.grade4Percent setBackgroundColor:[UIColor disabledTextFieldBackgroundColor]];
                 [self.grade5Label setHidden:YES];
                 [self.grade5Percent setHidden:YES];
                 [self.gradeXLabel setHidden:YES];
                 [self.gradeXPercent setHidden:YES];
                 [self.gradeYLabel setHidden:YES];
                 [self.gradeYPercent setHidden:YES];
+                [self.checkgrade12Label setText:@"Check Grade 1,2%"];
+                [self.checkgrade12Label setHidden:NO];
+                [self.checkgrade12Percent setHidden:NO];
+                [self.checkgrade4Label setHidden:NO];
+                [self.checkgrade4Label setText:@"Grade 4%"];
+                [self.checkgrade4Percent setHidden:NO];
+                [self.checkgradeXLabel setHidden:YES];
+                [self.checkgradeXPercent setHidden:YES];
+                [self.checkgradeYLabel setHidden:YES];
+                [self.checkgradeYPercent setHidden:YES];
                 
                 [self.continueButton setHidden:NO];
                 [self.continueButton setEnabled:YES];
@@ -2657,12 +2862,18 @@ NSInteger orignialWasteTypeRow;
             self.grade12Percent.text = self.wasteStratum.grade12Percent && [self.wasteStratum.grade12Percent floatValue] >= 0.0 && [self.wasteStratum.grade12Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.grade12Percent floatValue]] : @"";
             self.grade4Percent.text = self.wasteStratum.grade4Percent && [self.wasteStratum.grade4Percent floatValue] >= 0.0 && [self.wasteStratum.grade4Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.grade4Percent floatValue]] : @"";
             self.grade5Percent.text = self.wasteStratum.grade5Percent && [self.wasteStratum.grade5Percent floatValue] >= 0.0 && [self.wasteStratum.grade5Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.grade5Percent floatValue]] : @"";
+            self.checkgrade12Percent.text = self.wasteStratum.checkgrade12Percent && [self.wasteStratum.checkgrade12Percent floatValue] >= 0.0 && [self.wasteStratum.checkgrade12Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.checkgrade12Percent floatValue]] : @"";
+            self.checkgrade4Percent.text = self.wasteStratum.checkgrade4Percent && [self.wasteStratum.checkgrade4Percent floatValue] >= 0.0 && [self.wasteStratum.checkgrade4Percent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.checkgrade4Percent floatValue]] : @"";
         }else if([wasteBlock.regionId integerValue] == CoastRegion){
             self.grade12Percent.text = self.wasteStratum.gradeJPercent && [self.wasteStratum.gradeJPercent floatValue] >= 0.0 && [self.wasteStratum.gradeJPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeJPercent floatValue]] : @"";
             self.grade4Percent.text = self.wasteStratum.gradeWPercent && [self.wasteStratum.gradeWPercent floatValue] >= 0.0 && [self.wasteStratum.gradeWPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeWPercent floatValue]] : @"";
             self.grade5Percent.text = self.wasteStratum.gradeUPercent && [self.wasteStratum.gradeUPercent floatValue] >= 0.0 && [self.wasteStratum.gradeUPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeUPercent floatValue]] : @"";
             self.gradeXPercent.text = self.wasteStratum.gradeXPercent && [self.wasteStratum.gradeXPercent floatValue] >= 0.0 && [self.wasteStratum.gradeXPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeXPercent floatValue]] : @"";
             self.gradeYPercent.text = self.wasteStratum.gradeYPercent && [self.wasteStratum.gradeYPercent floatValue] >= 0.0 && [self.wasteStratum.gradeYPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.gradeYPercent floatValue]] : @"";
+            self.checkgrade12Percent.text = self.wasteStratum.checkgradeJPercent && [self.wasteStratum.checkgradeJPercent floatValue] >= 0.0 && [self.wasteStratum.checkgradeJPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.checkgradeJPercent floatValue]] : @"";
+            self.checkgrade4Percent.text = self.wasteStratum.checkgradeUPercent && [self.wasteStratum.checkgradeUPercent floatValue] >= 0.0 && [self.wasteStratum.checkgradeUPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.checkgradeUPercent floatValue]] : @"";
+            self.checkgradeXPercent.text = self.wasteStratum.checkgradeXPercent && [self.wasteStratum.checkgradeXPercent floatValue] >= 0.0 && [self.wasteStratum.checkgradeXPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.checkgradeXPercent floatValue]] : @"";
+            self.checkgradeYPercent.text = self.wasteStratum.checkgradeYPercent && [self.wasteStratum.checkgradeYPercent floatValue] >= 0.0 && [self.wasteStratum.checkgradeYPercent floatValue] <= 100.0 ? [[NSString alloc] initWithFormat:@"%.1f", [self.wasteStratum.checkgradeYPercent floatValue]] : @"";
         }
         
         self.totalPile.text =  self.wasteStratum.totalNumPile && [self.wasteStratum.totalNumPile intValue] > 0 ? [[NSString alloc] initWithFormat:@"%d", [self.wasteStratum.totalNumPile intValue]] : @"";
@@ -3713,7 +3924,7 @@ NSInteger orignialWasteTypeRow;
 }
 
 - (IBAction)deletePileShow:(id)sender{
-    NSString *title = NSLocalizedString(@"Endorsement of Data Changes", nil);
+    /*NSString *title = NSLocalizedString(@"Endorsement of Data Changes", nil);
     NSString *message = NSLocalizedString(@"Delete Pile", nil);
     NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
     NSString *otherButtonTitleOne = NSLocalizedString(@"Confirm Deletion", nil);
@@ -3777,7 +3988,54 @@ NSInteger orignialWasteTypeRow;
     devc.endorsementType = @"Delete Pile";
     UIButton *button = (UIButton *)sender;
     devc.plotNumber = [NSNumber numberWithInt:button.tag];
-    [self.navigationController pushViewController:devc animated:YES];
+    [self.navigationController pushViewController:devc animated:YES];*/
+    NSString *title = NSLocalizedString(@"Delete Pile", nil);
+    NSString *message = NSLocalizedString(@"", nil);
+    NSString *cancelButtonTitle = NSLocalizedString(@"Cancel", nil);
+    NSString *otherButtonTitleOne = NSLocalizedString(@"Delete", nil);
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    //UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:cancelButtonTitle otherButtonTitles:otherButtonTitleOne, nil];
+
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:otherButtonTitleOne style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+        UIButton *button = (UIButton *)sender;
+        [self deletePile:alert pileNumber:button.tag];
+    }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:cancelButtonTitle style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * action) {
+    }];
+    
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+-(void)deletePile:(UIAlertController*)alert pileNumber:(int)pileNumber{
+   
+        WastePile *targetPile = [self.sortedPiles objectAtIndex:pileNumber];
+        [PlotSampleGenerator deletePlot2:wasteStratum plotNumber:[targetPile.pileNumber intValue]]; // this function works with piles as well
+        [self deletePile:targetPile targetWastePile:wasteStratum];
+        
+        NSSortDescriptor *sort = [[NSSortDescriptor alloc ] initWithKey:@"pileNumber" ascending:YES];
+        self.sortedPiles = [[[self.wasteStratum stratumPile] allObjects] sortedArrayUsingDescriptors:[NSArray arrayWithObject:sort]];
+        
+        // may want to skip calculations / set to 0
+        [WasteCalculator calculateWMRF:self.wasteBlock updateOriginal:NO];
+        [WasteCalculator calculateRate:self.wasteBlock ];
+        [WasteCalculator calculatePiecesValue:self.wasteBlock];
+        if([[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"] isEqualToString:@"EForWasteBC"]){
+            [WasteCalculator calculateEFWStat:self.wasteBlock];
+            [self.efwFooterView setStratumViewValue:self.wasteStratum];
+        }else{
+            [self.footerStatView setViewValue:self.wasteStratum];
+        }
+        
+        [self.packingRatioTableView reloadData];
+        [self.aggregatePackingRatioPlotTableView reloadData];
+    
 }
 
 -(void)validateAndDeletePile:(UIAlertController*)alert pileNumber:(int)pileNumber{

@@ -138,7 +138,12 @@
         [wasteStratumMappingAry addObject:@"WasteStratum:gradeWPercent:1:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:gradeXPercent:1:Y::string:"];
         [wasteStratumMappingAry addObject:@"WasteStratum:gradeYPercent:1:Y::string:"];
-        
+        [wasteStratumMappingAry addObject:@"WasteStratum:checkgradeYPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:checkgradeXPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:checkgradeUPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:checkgradeJPercent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:checkgrade12Percent:1:Y::string:"];
+        [wasteStratumMappingAry addObject:@"WasteStratum:checkgrade4Percent:1:Y::string:"];
 
         wastePlotMappingAry = [[NSMutableArray alloc] init];
         //xml fields
@@ -221,6 +226,7 @@
         [TimberMarkMappingAry addObject:@"Timebermark:hembalPrice:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:deciduousPrice:1:Y::"];
         [TimberMarkMappingAry addObject:@"Timebermark:benchmark:1:N:benchmarkVolume:string::"];
+        [TimberMarkMappingAry addObject:@"Timebermark:coniferPrice:1:Y::"];
         
         wastePileMappingAry = [[NSMutableArray alloc] init];
         [wastePileMappingAry addObject:@"WastePile:pileId:2:Y::string:"];
@@ -251,6 +257,18 @@
 
         [wastePileMappingAry addObject:@"WastePile:notes:0:Y::string:"];
         [wastePileMappingAry addObject:@"WastePile:comment:0:Y::string:"];
+        
+        [wastePileMappingAry addObject:@"WastePile:checkDate:3:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:checkmLength:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:checkmWidth:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:checkmHeight:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:checkmPileArea:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:checkmPileVolume:1:Y:::"];
+        [wastePileMappingAry addObject:@"WastePile:pilecheckmPileShapecode:measuredPileShapeCode:Y::"];
+        [wastePileMappingAry addObject:@"WastePile:pileCheckPileShapeCode:pileShapeCode:Y::"];
+        [wastePileMappingAry addObject:@"WastePile:pileCheckerStatusCode:checkerStatusCode:Y::"];
+        [wastePileMappingAry addObject:@"WastePlot:isChanged:2:Y::string:"];
+        
     }
 }
 

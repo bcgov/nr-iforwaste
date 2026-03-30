@@ -1,12 +1,12 @@
 //
-//  PileEditTableViewCell.m
+//  PileEditCheckTableViewCell.m
 //  iForWaste
 //
-//  Created by Sweta Kutty on 2019-03-04.
+//  Created by Sweta Kutty on 2026-03-02.
 //  Copyright © 2019 Salus Systems. All rights reserved.
 //
 
-#import "PileEditTableViewCell.h"
+#import "PileEditCheckTableViewCell.h"
 #import "UIColor+WasteColor.h"
 #import "WastePile+CoreDataClass.h"
 #import "PileValueTableViewController.h"
@@ -21,7 +21,7 @@
 #import "PlotSelectorLog.h"
 #import "WasteCalculator.h"
 
-@implementation PileEditTableViewCell
+@implementation PileEditCheckTableViewCell
 
 @synthesize cellWastePile, wasteStratum;
 @synthesize displayObjectDictionary;
@@ -58,12 +58,12 @@
         NSMutableArray *labelArray = [[NSMutableArray alloc] init];
         int locationCounter = 44;
         int total = 0;
-        [labelArray addObject:@";measuredLength;m;110;b;2"];
-        [labelArray addObject:@";measuredWidth;m;110;b;3"];
-        [labelArray addObject:@";measuredHeight;m;110;b;4"];
-        [labelArray addObject:@";pilePileShapeCode;w;110;b;5"];
-        [labelArray addObject:@";measuredPileArea;w;140;l;6"];
-        [labelArray addObject:@";measuredPileVolume;w;140;l;7"];
+        [labelArray addObject:@";checkmLength;m;110;b;2"];
+        [labelArray addObject:@";checkmWidth;m;110;b;3"];
+        [labelArray addObject:@";checkmHeight;m;110;b;4"];
+        [labelArray addObject:@";pileCheckPileShapeCode;w;110;b;5"];
+        [labelArray addObject:@";checkmPileArea;w;140;l;6"];
+        [labelArray addObject:@";checkmPileVolume;w;140;l;7"];
         
         
         //init the display object dictionary if it is not initialized yet
@@ -103,9 +103,9 @@
                     lbl.backgroundColor = [UIColor grayColor];
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"]){
                     lbl.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) {
                     lbl.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"]) {
                     lbl.backgroundColor = [UIColor grayColor];
                 }
                 
@@ -162,9 +162,9 @@
                     btn.backgroundColor = [UIColor grayColor];
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"]){
                     btn.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) {
                     btn.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"]) {
                     btn.backgroundColor = [UIColor grayColor];
                 }
                 
@@ -213,12 +213,12 @@
         [labelArray addObject:@";pilePileShapeCode;e;70;l;5"];
         [labelArray addObject:@";pileArea;w;105;l;6"];
         [labelArray addObject:@";pileVolume;w;105;l;7"];
-        [labelArray addObject:@";measuredLength;m;70;b;9"];
-        [labelArray addObject:@";measuredWidth;m;70;b;10"];
-        [labelArray addObject:@";measuredHeight;m;70;b;11"];
-        [labelArray addObject:@";pileMeasuredPileShapeCode;e;70;b;12"];
-        [labelArray addObject:@";measuredPileArea;w;105;l;13"];
-        [labelArray addObject:@";measuredPileVolume;w;105;l;14"];
+        [labelArray addObject:@";checkmLength;m;70;b;9"];
+        [labelArray addObject:@";checkmWidth;m;70;b;10"];
+        [labelArray addObject:@";checkmHeight;m;70;b;11"];
+        [labelArray addObject:@";pilecheckmPileShapecode;e;70;b;12"];
+        [labelArray addObject:@";checkmPileArea;w;105;l;13"];
+        [labelArray addObject:@";checkmPileVolume;w;105;l;14"];
 
         
         //init the display object dictionary if it is not initialized yet
@@ -259,12 +259,12 @@
                     lbl.backgroundColor = [UIColor grayColor];
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"]){
                     lbl.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) {
                     lbl.backgroundColor = [UIColor grayColor];
                     if ([lbl.text isEqualToString:@"0.0"]) {
                         lbl.text = @"";
                     }
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"]) {
                     lbl.backgroundColor = [UIColor grayColor];
                     if ([lbl.text isEqualToString:@"0.0"]) {
                         lbl.text = @"";
@@ -277,7 +277,7 @@
                 lbl.layer.borderColor = [UIColor blackColor].CGColor;
                 lbl.layer.borderWidth = 1.0;
                 // If the value is > 10 characters, reduce the font size to make it more readable so it doesn't overlap with the edge of the cell
-                if (([[lbStrAry objectAtIndex:1] isEqualToString:@"pileArea"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) && ([lbl.text floatValue] > 99999999.9)) {
+                if (([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"] || [[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) && ([lbl.text floatValue] > 99999999.9)) {
                     [lbl setFont:[UIFont fontWithName:@"Helvetica" size:15]];
                 } else {
                     [lbl setFont:[UIFont fontWithName:@"Helvetica" size:18]];
@@ -333,9 +333,9 @@
                     btn.backgroundColor = [UIColor grayColor];
                 }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"pileVolume"]){
                     btn.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileArea"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileArea"]) {
                     btn.backgroundColor = [UIColor grayColor];
-                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"measuredPileVolume"]) {
+                }else if([[lbStrAry objectAtIndex:1] isEqualToString:@"checkmPileVolume"]) {
                     btn.backgroundColor = [UIColor grayColor];
                 }
                 
@@ -382,22 +382,22 @@
     
     switch (btn.tag) {
         case 2:
-            pvc.propertyName = @"measuredLength";
+            pvc.propertyName = @"checkmLength";
             break;
         case 3:
-            pvc.propertyName = @"measuredWidth";
+            pvc.propertyName = @"checkmWidth";
             break;
         case 4:
-            pvc.propertyName = @"measuredHeight";
+            pvc.propertyName = @"checkmHeight";
             break;
         case 5:
-            pvc.propertyName = @"pilePileShapeCode";
+            pvc.propertyName = @"pileCheckPileShapeCode";
             break;
         case 9:
             pvc.propertyName = @"comment";
             break;
         case 12:
-            pvc.propertyName = @"pileMeasuredPileShapeCode";
+            pvc.propertyName = @"pilecheckmPileShapecode";
         default:
             break;
     }
@@ -415,13 +415,13 @@
 
         switch (btn.tag) {
             case 9:
-                pvc.propertyName = @"measuredLength";
+                pvc.propertyName = @"checkmLength";
                 break;
             case 10:
-                pvc.propertyName = @"measuredWidth";
+                pvc.propertyName = @"checkmWidth";
                 break;
             case 11:
-                pvc.propertyName = @"measuredHeight";
+                pvc.propertyName = @"checkmHeight";
                 break;
             case 15:
                 pvc.propertyName = @"comment";
@@ -506,12 +506,12 @@
                    [zeroAlert addAction:okZeroAction];
                    [self.pileView presentViewController:zeroAlert animated:YES completion:nil];
                } else {
-                   self.cellWastePile.measuredLength = measuredLength;
-                   self.cellWastePile.measuredWidth = measuredWidth;
-                   self.cellWastePile.measuredHeight = measuredHeight;
+                   self.cellWastePile.checkmLength = measuredLength;
+                   self.cellWastePile.checkmWidth = measuredWidth;
+                   self.cellWastePile.checkmHeight = measuredHeight;
                    
                    [self bindCell:self.cellWastePile wasteBlock:self.wasteBlock wasteStratum:self.wasteStratum userCreatedBlock:self.wasteBlock.userCreated];
-                   [self.pileView calculatePileAreaAndVolume:self.cellWastePile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
+                   [self.pileView calculateCheckPileAreaAndVolume:self.cellWastePile srsOrRatio:[self.wasteBlock.ratioSamplingEnabled intValue]];
                    [WasteCalculator calculateEFWStat:self.wasteBlock];
                    if(![self.wasteStratum.stratumBlock.isAggregate isEqualToNumber:[NSNumber numberWithInt:1]]){
                        [self.pileView.efwFooterView setPileViewValue2:self.wasteStratum];
@@ -520,6 +520,8 @@
                    {
                        [self.pileView.efwFooterView setPileViewValue2:self.wasteStratum]; // agg used to be different
                    }
+                   [WasteCalculator calculatePiecesValue:self.wasteBlock];
+                   [self.pileView.footerStatView setViewValue:self.cellWastePile];
                    [self.pileView.efwFooterView reloadInputViews];
                    [self.pileView.pileTableView reloadData];
                }
