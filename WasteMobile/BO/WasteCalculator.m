@@ -686,9 +686,9 @@
             originalconiferValue = [[coniferSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:coniferRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             originaldecidousValue = [[deciduousSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:decRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             originallowgradeValue = [[lowGradeMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:gradeyRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            originallowgradeValueu = [[lowGradeMerchVolumeU decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:hembalRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            originallowgradeValueu = [[lowGradeMerchVolumeU decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:coniferRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             originallowgradeValuex = [[lowGradeMerchVolumeX decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:gradexRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            NSLog(@"originalconiferValue %@,originaldecidousValue %@ , originallowgradeValue %@, originallowgradeValueu %@, originallowgradeValuex%@",originalconiferValue,originaldecidousValue,originallowgradeValue, originallowgradeValueu, originallowgradeValuex);
+            //NSLog(@"originalconiferValue %@,originaldecidousValue %@ , originallowgradeValue %@, originallowgradeValueu %@, originallowgradeValuex%@",originalconiferValue,originaldecidousValue,originallowgradeValue, originallowgradeValueu, originallowgradeValuex);
             
             NSDecimalNumber * pilearea = [[wpile.measuredPileArea decimalNumberByDividingBy:[[NSDecimalNumber alloc] initWithDouble:10000.0]] decimalNumberByRoundingAccordingToBehavior:behaviorD5];
             //double sum =originalconiferValue + originaldecidousValue + originallowgradeValue;
@@ -910,7 +910,7 @@
             originalconiferValue = [[coniferSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:coniferRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             originaldecidousValue = [[deciduousSawlogMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:decRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             originallowgradeValue = [[lowGradeMerchVolume decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:gradeyRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
-            originallowgradeValueu = [[lowGradeMerchVolumeU decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:hembalRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
+            originallowgradeValueu = [[lowGradeMerchVolumeU decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:coniferRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             originallowgradeValuex = [[lowGradeMerchVolumeX decimalNumberByMultiplyingBy:([[NSDecimalNumber alloc] initWithDouble:gradexRate ])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             //NSLog(@"CHECK  originalconiferValue %@,originaldecidousValue %@, originallowgradeValue %@, originallowgradeValueu %@, originallowgradeValuex %@",originalconiferValue,originaldecidousValue,originallowgradeValue, originallowgradeValueu, originallowgradeValuex);
             if([wpile.isChanged integerValue] == 0){
