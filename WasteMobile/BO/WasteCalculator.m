@@ -589,7 +589,6 @@
             // 2. Convert Each Category to A Weighted Original Volume
                 if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
                     ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-                    //NSLog(@"totalMeasurPlot ====> %d", totalMeasurPlot);
                     NSDecimalNumber *count =[NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
                     if([wb.ratioSamplingEnabled intValue] == [[NSNumber numberWithBool:TRUE] intValue])
                     {
@@ -725,7 +724,7 @@
     NSDecimalNumber * stratumWeightedAVGconfierSawlog = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     NSDecimalNumber * totalSawlogVolume = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
     NSDecimalNumber * stratumTotalVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-    int totalMeasurPlot =0 ;
+    
     for (WasteStratum *ws in [wb.blockStratum allObjects]) {
         NSDecimalNumber *totalplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber *totalplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
@@ -733,7 +732,7 @@
         NSDecimalNumber *tplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber *tplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber *tplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
-        
+        int totalMeasurPlot =0 ;
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]) {
             
             //1.calculate volume for each non packing ratio stratum
