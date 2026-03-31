@@ -2,22 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>teamID</key>
-    <string>KH9MTRSDAZ</string>
-    <key>method</key>
-    <string>enterprise</string>
-    <key>signingStyle</key>
-    <string>manual</string>
-    <key>stripSwiftSymbols</key>
-    <true/>
-    <key>uploadBitcode</key>
-    <false/>
-    <key>uploadSymbols</key>
-    <true/>
-    <key>provisioningProfiles</key>
-    <dict>
-        <key>com.SalusSystems.WasteMobile</key>
-        <string>a82c1306-6a94-4305-b163-798843d98106</string>
-    </dict>
+	<key>teamID</key>
+	<string>KH9MTRSDAZ</string>
+	<key>method</key>
+	<string>enterprise</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>uploadBitcode</key>
+	<false/>
+	<key>uploadSymbols</key>
+	<true/>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.SalusSystems.WasteMobile</key>
+		<string>15c43da4-8aa1-4b16-81eb-fec854e0f511</string>
+	</dict>
 </dict>
 </plist>
