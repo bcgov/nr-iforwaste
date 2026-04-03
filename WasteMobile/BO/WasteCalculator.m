@@ -536,18 +536,16 @@
                 }
                 for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
                     if ([wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
-                        if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] &&
-                           ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
+                        if([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AR"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AS"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BI"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CO"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"MA"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WI"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"UU"])) {
+                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"UU"]) {
                             plotdeciduousSawlogVol =  [plotdeciduousSawlogVol decimalNumberByAdding:wpiece.pieceVolume];
-                        } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"J"] &&
-                                  ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CE"] ||
+                        } else if([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CE"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CY"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"FI"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"LA"] ||
@@ -557,7 +555,7 @@
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WH"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"YE"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"])){
+                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"]){
                             plotconfierSawlogVol = [plotconfierSawlogVol decimalNumberByAdding:wpiece.pieceVolume] ;
                         } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] ||
                                   [wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"] ||
@@ -572,9 +570,10 @@
                 if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
                    ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
                     NSDecimalNumber *t = [[NSDecimalNumber alloc] initWithDouble:(100.0/ [wplot.surveyedMeasurePercent doubleValue]) ] ;
-                    tplotdeciduousSawlogVol =[plotdeciduousSawlogVol decimalNumberByMultiplyingBy:t];
-                    tplotconfierSawlogVol =[plotconfierSawlogVol decimalNumberByMultiplyingBy:t];
-                    tplotlowgradeVol =[plotlowgradeVol decimalNumberByMultiplyingBy:t];
+                    NSDecimalNumber *plotMultiplier = [[NSDecimalNumber alloc] initWithDouble:([wplot.plotSizeCode.plotMultipler doubleValue]) ] ;
+                    tplotdeciduousSawlogVol =[[[plotdeciduousSawlogVol decimalNumberByMultiplyingBy:t] decimalNumberByMultiplyingBy:plotMultiplier] decimalNumberByMultiplyingBy:ws.stratumSurveyArea];
+                    tplotconfierSawlogVol =[[[plotconfierSawlogVol decimalNumberByMultiplyingBy:t] decimalNumberByMultiplyingBy:plotMultiplier] decimalNumberByMultiplyingBy:ws.stratumSurveyArea];
+                    tplotlowgradeVol =[[[plotlowgradeVol decimalNumberByMultiplyingBy:t] decimalNumberByMultiplyingBy:plotMultiplier] decimalNumberByMultiplyingBy:ws.stratumSurveyArea];
                     totalplotdeciduousSawlogVol = [totalplotdeciduousSawlogVol decimalNumberByAdding:tplotdeciduousSawlogVol];
                     totalplotconfierSawlogVol = [totalplotconfierSawlogVol decimalNumberByAdding:tplotconfierSawlogVol];
                     totalplotlowgradeVol = [totalplotlowgradeVol decimalNumberByAdding:tplotlowgradeVol];
@@ -618,7 +617,7 @@
                     stratumWeightedAVGconfierSawlog = [[stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                     stratumWeightedAVGdeciduousSawlog = [[stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                     stratumWeightedAVGlowgrade = [[stratumAVGlowgrade decimalNumberByMultiplyingBy:a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
-                    //NSLog(@"stratumWeightedAVGconfierSawlog %@,stratumWeightedAVGdeciduousSawlog %@,stratumWeightedAVGlowgrade %@ ",stratumWeightedAVGconfierSawlog,stratumWeightedAVGdeciduousSawlog,stratumWeightedAVGlowgrade);
+                   // NSLog(@"stratumWeightedAVGconfierSawlog %@,stratumWeightedAVGdeciduousSawlog %@,stratumWeightedAVGlowgrade %@ ",stratumWeightedAVGconfierSawlog,stratumWeightedAVGdeciduousSawlog,stratumWeightedAVGlowgrade);
                 }
             //}//end of plot
             //3.Determine Total Original Volumes for the Population
@@ -655,7 +654,7 @@
             NSDecimalNumber *gradej = [[NSDecimalNumber alloc] initWithDouble:([ws.gradeJPercent doubleValue]/100)  ] ;
             prconiferSawlogPercent = [gradej decimalNumberByMultiplyingBy:coniferSawlogPercent];
             prdecidousSawlogPercent = [gradej decimalNumberByMultiplyingBy:decidousSawlogPercent];
-            //NSLog(@"prconiferSawlogPercent %@,prconiferSawlogPercent %@ ",prconiferSawlogPercent,prconiferSawlogPercent);
+            //NSLog(@"prconiferSawlogPercent %@,prdecidousSawlogPercent %@ ",prconiferSawlogPercent,prdecidousSawlogPercent);
             // 6.Determine Merchantable Volumes for the Packing Ratio Plot
             NSDecimalNumber *gradey = [[NSDecimalNumber alloc] initWithDouble:([ws.gradeYPercent doubleValue]/100)  ] ;
             NSDecimalNumber *gradeu = [[NSDecimalNumber alloc] initWithDouble:([ws.gradeWPercent doubleValue]/100)  ] ;//grade u percent but in the stratumviewcontroller there is a mishap . so grade u value is stored in field named grade w label
@@ -695,7 +694,7 @@
             //NSLog(@"pile area %@", pilearea);
             NSDecimalNumber * sum = [[originalconiferValue decimalNumberByAdding:([[originaldecidousValue decimalNumberByAdding:originallowgradeValue] decimalNumberByAdding:([originallowgradeValueu decimalNumberByAdding:originallowgradeValuex])])] decimalNumberByRoundingAccordingToBehavior:behaviorD2];
             //NSLog(@"sum %@", [originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])]);
-            //totalValue = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByDividingBy:pilearea] ;
+            totalValue = [[originalconiferValue decimalNumberByAdding:([originaldecidousValue decimalNumberByAdding:originallowgradeValue])] decimalNumberByDividingBy:pilearea] ;
             totalValue = [[originalconiferValue decimalNumberByAdding:([[[originaldecidousValue decimalNumberByAdding:originallowgradeValue] decimalNumberByAdding:originallowgradeValueu] decimalNumberByAdding:originallowgradeValuex])] decimalNumberByDividingBy:pilearea] ;
         }
     }
@@ -732,6 +731,8 @@
         NSDecimalNumber *totalplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber *tplotconfierSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber *tplotdeciduousSawlogVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotconfierVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
+        NSDecimalNumber *tplotdeciduousVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         NSDecimalNumber *tplotlowgradeVol = [NSDecimalNumber decimalNumberWithDecimal: [[NSNumber numberWithInt:0] decimalValue]];
         int totalMeasurPlot =0 ;
         if (![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"R"] || [ws.isPileStratum intValue] == [[[NSNumber alloc] initWithBool:FALSE] intValue]) {
@@ -748,19 +749,17 @@
                     }
                 }
                 for (WastePiece *wpiece in [wplot.plotPiece allObjects]) {
-                    if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"]){
-                        if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] &&
-                           ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
+                    if ([wpiece.pieceNumber rangeOfString:@"C"].location == NSNotFound) {
+                        if([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AR"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AS"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BI"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CO"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"MA"] ||
                             [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WI"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"UU"])) {
-                            plotdeciduousSawlogVol =  [plotdeciduousSawlogVol decimalNumberByAdding:wpiece.pieceVolume];
-                        } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"J"] &&
-                                  ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CE"] ||
+                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"UU"]) {
+                            plotdeciduousSawlogVol = [plotdeciduousSawlogVol decimalNumberByAdding:wpiece.pieceVolume];
+                        } else if([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CE"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CY"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"FI"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"LA"] ||
@@ -770,7 +769,7 @@
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WH"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"YE"] ||
                                    [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"])){
+                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"]){
                             plotconfierSawlogVol = [plotconfierSawlogVol decimalNumberByAdding:wpiece.pieceVolume] ;
                         } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] ||
                                   [wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"] ||
@@ -779,49 +778,16 @@
                         } else {
                             
                         }
-                    }else{
-                        if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"W"] &&
-                           ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AL"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AR"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"AS"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BI"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CO"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"MA"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WI"] ||
-                            [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"UU"])) {
-                            NSDecimalNumber *volume = [wpiece.checkPieceVolume isEqualToNumber:[NSDecimalNumber zero]] ? wpiece.pieceVolume : wpiece.checkPieceVolume;
-                            plotdeciduousSawlogVol =  [plotdeciduousSawlogVol decimalNumberByAdding:volume];
-                        } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"J"] &&
-                                  ([wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CE"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"CY"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"FI"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"LA"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"LO"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"SP"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WB"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"WH"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"YE"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"BA"] ||
-                                   [wpiece.pieceScaleSpeciesCode.scaleSpeciesCode isEqualToString:@"HE"])){
-                            NSDecimalNumber *volume = [wpiece.checkPieceVolume isEqualToNumber:[NSDecimalNumber zero]] ? wpiece.pieceVolume : wpiece.checkPieceVolume;
-                            plotconfierSawlogVol = [plotconfierSawlogVol decimalNumberByAdding:volume] ;
-                        } else if([wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"U"] ||
-                                  [wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"X"] ||
-                                  [wpiece.pieceScaleGradeCode.scaleGradeCode isEqualToString:@"Y"]){
-                            NSDecimalNumber *volume = [wpiece.checkPieceVolume isEqualToNumber:[NSDecimalNumber zero]] ? wpiece.pieceVolume : wpiece.checkPieceVolume;
-                            plotlowgradeVol = [plotlowgradeVol decimalNumberByAdding:volume];
-                        } else {
-                            
-                        }
                     }
                 }// end of piece
                 //To Calculate volume for standard and other stratums expect packing ratio
                 if(![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"O"] && ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"E"] &&
                    ![ws.stratumAssessmentMethodCode.assessmentMethodCode isEqualToString:@"S"]){
-                    NSDecimalNumber *t = [[NSDecimalNumber alloc] initWithDouble:(100.0/ [wplot.checkerMeasurePercent doubleValue]) ] ;
-                    tplotdeciduousSawlogVol =[plotdeciduousSawlogVol decimalNumberByMultiplyingBy:t];
-                    tplotconfierSawlogVol =[plotconfierSawlogVol decimalNumberByMultiplyingBy:t];
-                    tplotlowgradeVol =[plotlowgradeVol decimalNumberByMultiplyingBy:t];
+                    NSDecimalNumber *t = [[NSDecimalNumber alloc] initWithDouble:(100.0/ [wplot.surveyedMeasurePercent doubleValue]) ] ;
+                    NSDecimalNumber *plotMultiplier = [[NSDecimalNumber alloc] initWithDouble:([wplot.plotSizeCode.plotMultipler doubleValue]) ] ;
+                    tplotdeciduousSawlogVol =[[[plotdeciduousSawlogVol decimalNumberByMultiplyingBy:t] decimalNumberByMultiplyingBy:plotMultiplier] decimalNumberByMultiplyingBy:ws.stratumSurveyArea];
+                    tplotconfierSawlogVol =[[[plotconfierSawlogVol decimalNumberByMultiplyingBy:t] decimalNumberByMultiplyingBy:plotMultiplier] decimalNumberByMultiplyingBy:ws.stratumSurveyArea];
+                    tplotlowgradeVol =[[[plotlowgradeVol decimalNumberByMultiplyingBy:t] decimalNumberByMultiplyingBy:plotMultiplier] decimalNumberByMultiplyingBy:ws.stratumSurveyArea];
                     totalplotdeciduousSawlogVol = [totalplotdeciduousSawlogVol decimalNumberByAdding:tplotdeciduousSawlogVol];
                     totalplotconfierSawlogVol = [totalplotconfierSawlogVol decimalNumberByAdding:tplotconfierSawlogVol];
                     totalplotlowgradeVol = [totalplotlowgradeVol decimalNumberByAdding:tplotlowgradeVol];
@@ -847,7 +813,8 @@
                     stratumAVGdeciduousSawlog = [totalplotdeciduousSawlogVol decimalNumberByDividingBy:count];
                     stratumAVGconfierSawlog = [totalplotconfierSawlogVol decimalNumberByDividingBy:count];
                     //NSLog(@"CHECK stratumAVGlowgrade %@,stratumAVGdeciduousSawlog %@,stratumAVGconfierSawlog %@ ",stratumAVGlowgrade,stratumAVGdeciduousSawlog,stratumAVGconfierSawlog);
-                   NSDecimalNumber *a = [ws.stratumArea decimalNumberByDividingBy:wb.netArea ];
+                   //NSDecimalNumber *a = [ws.stratumArea decimalNumberByDividingBy:wb.netArea ];
+                    NSDecimalNumber *a = [ws.stratumSurveyArea decimalNumberByDividingBy:wb.surveyArea];
                     //NSLog(@"CHECK a %@ ",a);
                     stratumWeightedAVGconfierSawlog = [[stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                     stratumWeightedAVGdeciduousSawlog = [[stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
@@ -859,7 +826,8 @@
                     stratumAVGdeciduousSawlog = [totalplotdeciduousSawlogVol decimalNumberByDividingBy:count];
                     stratumAVGconfierSawlog = [totalplotconfierSawlogVol decimalNumberByDividingBy:count];
                     //NSLog(@"CHECK stratumAVGlowgrade %@,stratumAVGdeciduousSawlog %@,stratumAVGconfierSawlog %@ ",stratumAVGlowgrade,stratumAVGdeciduousSawlog,stratumAVGconfierSawlog);
-                    NSDecimalNumber *a = [ws.stratumArea decimalNumberByDividingBy:wb.netArea ];
+                    //NSDecimalNumber *a = [ws.stratumArea decimalNumberByDividingBy:wb.netArea ];
+                    NSDecimalNumber *a = [ws.stratumSurveyArea decimalNumberByDividingBy:wb.surveyArea];
                     //NSLog(@"CHECK a %@ ",a);
                     stratumWeightedAVGconfierSawlog = [[stratumAVGconfierSawlog decimalNumberByMultiplyingBy:a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
                     stratumWeightedAVGdeciduousSawlog = [[stratumAVGdeciduousSawlog decimalNumberByMultiplyingBy:a] decimalNumberByRoundingAccordingToBehavior:behaviorD4];
