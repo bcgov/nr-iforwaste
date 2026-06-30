@@ -62,6 +62,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIMainStoryboardFile</key>
@@ -131,7 +133,7 @@
 		</dict>
 	</array>
 	<key>iForWasteVersionNumber</key>
-	<string>iForWaste 2.0</string>
+	<string>iForWaste 2.0 TEST</string>
 	<key>iForWasteWebServiceEndPoint</key>
 	<string>http://apps.nrs.gov.bc.ca/int/wastews/</string>
 </dict>
