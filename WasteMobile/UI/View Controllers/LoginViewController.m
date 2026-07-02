@@ -37,9 +37,7 @@
     // Set the side bar button action. When it's tapped, it'll show up the sidebar.
     _sidebarButton.target = self.revealViewController;
     _sidebarButton.action = @selector(revealToggle:);
-    if (@available(iOS 26.0, *)) {
-        self.sidebarButton.hidesSharedBackground = YES;
-    }
+    
     // Set the gesture
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     
