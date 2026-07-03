@@ -135,7 +135,14 @@ UITextField *activeTextField;
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+    // Add this line to force the normal full-width keyboard layout
+    if (@available(iOS 26.0, *)) {
+        // This line runs safely ONLY on iOS 26+ devices where the popup bug exists
+        self.netArea.allowsNumberPadPopover = NO;
+    } else {
+        // This implicit block automatically handles older iOS versions safely
+        // and ignores the new property entirely, preventing runtime crashes!
+    }
     // Change button color
     _sidebarButton.tintColor = [UIColor colorWithWhite:0.16f alpha:1.0f];
     

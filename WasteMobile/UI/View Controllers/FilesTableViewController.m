@@ -383,6 +383,13 @@
         textField.accessibilityLabel = NSLocalizedString(@"Piece Number", nil);
         textField.keyboardType       = UIKeyboardTypeNumberPad;
         textField.delegate           = self;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     UIAlertAction* searchAction = [UIAlertAction actionWithTitle:@"Search" style:UIAlertActionStyleDefault

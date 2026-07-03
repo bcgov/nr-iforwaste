@@ -24,6 +24,14 @@
 - (void)awakeFromNib
 {
     // Initialization code
+    [super awakeFromNib];
+    // Disable the small popover layout on the numberField asset
+       if (@available(iOS 26.0, *)) {
+           self.numberField.allowsNumberPadPopover = NO;
+       } else {
+           // This implicit block automatically handles older iOS versions safely
+           // and ignores the new property entirely, preventing runtime crashes!
+       }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

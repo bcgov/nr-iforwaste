@@ -581,6 +581,13 @@
         textField.keyboardType       = UIKeyboardTypeNumberPad;
         textField.tag                = 9;
         textField.delegate           = self;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -590,6 +597,13 @@
         textField.keyboardType       = UIKeyboardTypeNumberPad;
         textField.tag                = 8;
         textField.delegate           = self;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -599,6 +613,13 @@
         textField.keyboardType       = UIKeyboardTypeNumberPad;
         textField.tag                = 8;
         textField.delegate           = self;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -608,6 +629,13 @@
         textField.keyboardType       = UIKeyboardTypeNumberPad;
         textField.tag                = 8;
         textField.delegate           = self;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
                                                      handler:^(UIAlertAction * action) {
