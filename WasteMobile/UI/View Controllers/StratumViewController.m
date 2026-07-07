@@ -110,7 +110,17 @@ NSInteger orignialWasteTypeRow;
     // Do any additional setup after loading the view.
     
     self.areaHa.delegate = self;
-    
+    // Add this line to force the normal full-width keyboard layout
+    if (@available(iOS 26.0, *)) {
+        self.areaHa.allowsNumberPadPopover = NO;
+        self.checkgrade12Percent.allowsNumberPadPopover = NO;;
+        self.checkgrade4Percent.allowsNumberPadPopover = NO;;
+        self.checkgradeXPercent.allowsNumberPadPopover = NO;;
+        self.checkgradeYPercent.allowsNumberPadPopover = NO;;
+    } else {
+        // This implicit block automatically handles older iOS versions safely
+        // and ignores the new property entirely, preventing runtime crashes!
+    }
     // Change button color
     _sidebarButton.tintColor = [UIColor colorWithWhite:0.16f alpha:1.0f];
     
@@ -841,6 +851,13 @@ NSInteger orignialWasteTypeRow;
             textField.keyboardType       = UIKeyboardTypeNumberPad;
             textField.tag                = 3;
             textField.delegate           = self;
+            // Add this line to force the normal full-width keyboard layout
+            if (@available(iOS 26.0, *)) {
+                textField.allowsNumberPadPopover = NO;
+            } else {
+                // This implicit block automatically handles older iOS versions safely
+                // and ignores the new property entirely, preventing runtime crashes!
+            }
         }];
         
         [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -850,6 +867,13 @@ NSInteger orignialWasteTypeRow;
             textField.keyboardType       = UIKeyboardTypeNumberPad;
             textField.tag                = 3;
             textField.delegate           = self;
+            // Add this line to force the normal full-width keyboard layout
+            if (@available(iOS 26.0, *)) {
+                textField.allowsNumberPadPopover = NO;
+            } else {
+                // This implicit block automatically handles older iOS versions safely
+                // and ignores the new property entirely, preventing runtime crashes!
+            }
         }];
         
         UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
@@ -876,6 +900,13 @@ NSInteger orignialWasteTypeRow;
             textField.keyboardType       = UIKeyboardTypeNumberPad;
             textField.tag                = 3;
             textField.delegate           = self;
+            // Add this line to force the normal full-width keyboard layout
+            if (@available(iOS 26.0, *)) {
+                textField.allowsNumberPadPopover = NO;
+            } else {
+                // This implicit block automatically handles older iOS versions safely
+                // and ignores the new property entirely, preventing runtime crashes!
+            }
         }];
         
         [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -885,6 +916,13 @@ NSInteger orignialWasteTypeRow;
             textField.keyboardType       = UIKeyboardTypeNumberPad;
             textField.tag                = 3;
             textField.delegate           = self;
+            // Add this line to force the normal full-width keyboard layout
+            if (@available(iOS 26.0, *)) {
+                textField.allowsNumberPadPopover = NO;
+            } else {
+                // This implicit block automatically handles older iOS versions safely
+                // and ignores the new property entirely, preventing runtime crashes!
+            }
         }];
         
         UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
@@ -3582,6 +3620,13 @@ NSInteger orignialWasteTypeRow;
         textField.tag                = 9;
         textField.delegate           = self;
         self.plotNumberTextField          = textField;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -3592,6 +3637,13 @@ NSInteger orignialWasteTypeRow;
         textField.tag                = 4;
         textField.delegate           = self;
         self.lengthTextField              = textField;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -3602,6 +3654,13 @@ NSInteger orignialWasteTypeRow;
         textField.tag                = 4;
         textField.delegate           = self;
         self.widthTextField               = textField;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
@@ -3612,6 +3671,13 @@ NSInteger orignialWasteTypeRow;
         textField.tag                = 4;
         textField.delegate           = self;
         self.heightTextField              = textField;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault

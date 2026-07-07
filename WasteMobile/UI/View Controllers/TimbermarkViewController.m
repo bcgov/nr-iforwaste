@@ -48,7 +48,24 @@
     
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+    // Add this line to force the normal full-width keyboard layout
+    if (@available(iOS 26.0, *)) {
+        self.primaryArea.allowsNumberPadPopover = NO;
+        self.primaryConifer.allowsNumberPadPopover = NO;
+        self.primaryDeciduous.allowsNumberPadPopover = NO;
+        self.primaryHembal.allowsNumberPadPopover = NO;
+        self.primaryXgrade.allowsNumberPadPopover = NO;
+        self.primaryYgrade.allowsNumberPadPopover = NO;
+        self.secondaryArea.allowsNumberPadPopover = NO;
+        self.secondaryConifer.allowsNumberPadPopover = NO;
+        self.secondaryDeciduous.allowsNumberPadPopover = NO;
+        self.secondaryHembal.allowsNumberPadPopover = NO;
+        self.secondaryXgrade.allowsNumberPadPopover = NO;
+        self.secondaryYgrade.allowsNumberPadPopover = NO;
+    } else {
+        // This implicit block automatically handles older iOS versions safely
+        // and ignores the new property entirely, preventing runtime crashes!
+    }
     // set up the label text with special character
     self.primaryTMB.text = @"B = Established Benchmark (m\u00B3/ha)";
     self.primaryStumpageRate.text = @"Stumpage Rate ($/m\u00B3)";

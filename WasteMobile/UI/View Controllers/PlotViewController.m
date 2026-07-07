@@ -761,6 +761,13 @@
         textField.tag                = 7;
         textField.delegate           = self;
         self.numberOfDuplicatePieces = textField;
+        // Add this line to force the normal full-width keyboard layout
+        if (@available(iOS 26.0, *)) {
+            textField.allowsNumberPadPopover = NO;
+        } else {
+            // This implicit block automatically handles older iOS versions safely
+            // and ignores the new property entirely, preventing runtime crashes!
+        }
     }];
     
     [alert addAction: [UIAlertAction actionWithTitle:cancelTitle style:UIAlertActionStyleCancel  handler:nil]];
